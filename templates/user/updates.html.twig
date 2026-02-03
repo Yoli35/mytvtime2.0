@@ -18,6 +18,51 @@
                 </div>
             </div>
             <div class="site-update glowing-border">
+                <h2>66ᵉ mise à jour : 03/02/2026</h2>
+                <ul>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:code') }}→ Add string representation to SeriesLocalizedName</div>
+                        <div class="details">Enables displaying the localized series name directly as a string. Improves usability when working with series names in user-facing contexts.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:tv') }}{{ ux_icon('mdi:comment-text-outline') }}→ Switch comment input to textarea</div>
+                        <div class="details">Improves usability with a larger, resizable input field for comments. Enhances layout consistency and user experience for longer messages.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:tv') }}{{ ux_icon('mdi:language-css3') }}→ Update episode layout and styling</div>
+                        <div class="details">Improves visual clarity with updated episode numbering and refined styles for backdrop effects and buttons. Enhances user experience with better readability and hover states.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:map-outline') }}→ Fix an error by toggling the marker instead of clicking the marker element</div>
+                        <div class="details">Improves interactivity by automatically toggling the popup on the first map marker after a brief delay. Enhances the user experience by providing immediate context for the selected shooting location.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:tv') }}{{ ux_icon('mdi:map-outline') }}→ Add shooting locations map and a comment section to episode pages</div>
+                        <div class="details">Enhances user experience with an interactive map displaying shooting locations and comment section for episodes. Allows users to explore and manage locations visually for better engagement and navigation and react to episode and episode comments.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:tv') }}{{ ux_icon('mdi:user-outline') }}→ Update cast and credits sections in series views</div>
+                        <div class="details">Simplifies cast and crew rendering by consolidating templates and improving layout consistency. Enhances maintainability and user experience by unifying appearance and behavior across series, seasons, and episodes.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:tv') }}{{ ux_icon('mdi:user-outline') }}→ Add a people section to episode and season views</div>
+                        <div class="details">Improves the user experience by displaying guest stars, cast and crew in dedicated sections for episodes.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:code') }}→ Remove redundant image resource cleanup steps</div>
+                        <div class="details">Simplifies the code by removing redundant image destruction calls. Relies on PHP's automatic resource cleanup to ensure proper resource management without explicit calls, improving maintainability.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:tv') }}→ Update series season route across the app</div>
+                        <div class="details">Replaces references to the outdated series season route with the updated one throughout the application. Ensures consistency and prevents navigation errors by linking to the correct route for season details.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:tv') }}→ Add episode detail view - wip</div>
+                        <div class="details">Introduces a dedicated episode detail view with dynamic content and design improvements. Enhances user experience by allowing users to explore detailed information, guest stars, and visuals for individual episodes.</div>
+                    </li>
+                </ul>
+            </div>
+            <div class="site-update glowing-border">
                 <h2>65ᵉ mise à jour : 31/01/2026</h2>
                 <ul>
                     <li>
