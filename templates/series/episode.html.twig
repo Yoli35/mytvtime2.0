@@ -32,7 +32,7 @@
                     </div>
                 {% endif %}
                 <div class="infos">
-                    <h1>{{ episode.episode_number }}/{{ season.episodes|length }}. {{ episode.user_episode.substitute_name ?: episode.name }}</h1>
+                    <h1>{{ episode.episode_number }} / {{ season.episodes|length }}. {{ episode.user_episode.substitute_name ?: episode.name }}</h1>
                     <div class="overview">{{ episode.user_episode.localized_overview ?: episode.overview }}</div>
                 </div>
                 <a href="{{ path('app_series_season_show', {id: series.id, slug: season.series_localized_name.slug ?? series.slug, seasonNumber: season.season_number}) }}">
