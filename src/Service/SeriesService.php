@@ -254,6 +254,7 @@ class SeriesService extends AbstractController
             'Add' => $this->translator->trans('Add'),
             'Add answer' => $this->translator->trans('Add answer'),
             'Add images' => $this->translator->trans('Add images'),
+            'Back to the season' => $this->translator->trans('Back to the season'),
             'Not a valid file type. Update your selection' => $this->translator->trans('Not a valid file type. Update your selection'),
             'Send your comment' => $this->translator->trans('Send your comment'),
             'This field is required' => $this->translator->trans('This field is required'),
