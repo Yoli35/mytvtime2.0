@@ -128,6 +128,45 @@
                 }
             }
         }
+
+        .user-episode:hover {
+            .add-this-episode {
+                border-radius: 5rem 5rem .25rem .25rem !important;
+            }
+
+            .add-this-episode, .remove-this-episode,
+            .select-provider, .select-device, .select-vote {
+                overflow: visible;
+            }
+
+            .back-to-top, .back-to-series {
+                height: 3rem;
+                margin-block-start: unset;
+                opacity: 1;
+                width: 100%;
+
+                svg {
+                    height: 2rem;
+                    width: 2rem;
+                }
+            }
+
+            .select-device, .select-vote {
+                border-radius: .25rem !important;
+            }
+
+            .select-provider, .select-vote {
+                display: flex;
+                /*font-size: 1.25rem;
+                margin-block: unset;*/
+            }
+        }
+
+        .user-episode:has(.select-vote > svg) {
+            .select-device {
+                border-radius: .25rem 5rem 5rem .25rem;
+            }
+        }
     }
 
     main {

@@ -36,6 +36,8 @@ import {SeasonComments} from "SeasonComments";
  * @type {Object}
  * @property {number} seriesId
  * @property {string} seriesName
+ * @property {number} seasonNumber
+ * @property {number} episodeNumber
  */
 /**
  * @typedef GlobsMap
@@ -70,6 +72,8 @@ export class Episode {
         this.flashMessage = flashMessage;
         this.menu = menu;
         this.episodeActions = new EpisodeActions({...this.globs, ...this.globsMap}, flashMessage, toolTips, menu);
+
+        this.backToSeason = this.backToSeason.bind(this);
     }
 
     init() {
@@ -77,6 +81,7 @@ export class Episode {
         const seriesId = this.globs.seriesId;
         const seriesName = this.globs.seriesName;
         const seasonNumber = this.globs.seasonNumber;
+        const episodeNumber = this.globs.episodeNumber;
         const translations = this.globs.translations;
 
         const fieldList = this.globsMap.fieldList;
@@ -114,5 +119,18 @@ export class Episode {
          ******************************************************************************/
         const addCast = new AddCast();
         addCast.init(this.menu, this.toolTips, this.flashMessage);
+
+        /******************************************************************************
+         * Refactor "back to top" to "back to season"                                 *
+         ******************************************************************************/
+        const backToTop = document.querySelector('.back-to-top');
+        backToTop.setAttribute("data-title", translations['Back to the season'] + ' ' + seasonNumber);
+        backToTop.addEventListener('click', this.backToSeason);
+    }
+
+    backToSeason(e) {
+        e.preventDefault();
+        const backLink = document.querySelector('.episode-show > header > a');
+        window.location.href = backLink.getAttribute("href") + '#episode-' + this.globs.seasonNumber + '-' + this.globs.episodeNumber;
     }
 }

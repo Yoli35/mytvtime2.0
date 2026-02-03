@@ -291,7 +291,6 @@ export class Season {
             });
         });
 
-
         const backToTops = document.querySelectorAll('.back-to-top');
         const top = document.querySelector('#top');
         backToTops.forEach(backToTop => {

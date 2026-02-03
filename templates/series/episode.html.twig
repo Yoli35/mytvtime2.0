@@ -70,6 +70,7 @@
             "seriesId": {{ series.id }},
             "showId": {{ series.tmdbId }},
             "seasonNumber": {{ season.season_number }},
+            "episodeNumber": {{ episode.episode_number }},
             "seriesName": "{{ season.series_localized_name ?:series.name }}",
             "seasonProvider": {{ season["watch/providers"]|json_encode(constant('JSON_PRETTY_PRINT'))|raw }},
             "providers": {{ providers|json_encode(constant('JSON_PRETTY_PRINT'))|raw }},
