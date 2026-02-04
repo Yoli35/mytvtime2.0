@@ -32,15 +32,15 @@ readonly class ApiSeasonOverview
     public function get(Request $request, Series $series, int $seasonNumber): Response
     {
         $locale = $request->getLocale();
-        dump($series, $seasonNumber, $locale);
         $seasonLocalizedOverview = $this->seasonLocalizedOverviewRepository->findOneBy(['series' => $series, 'seasonNumber'=>$seasonNumber, 'locale' => $locale]);
-        dump($seasonLocalizedOverview);
+
         if (null === $seasonLocalizedOverview) {
             return ($this->json)([
                 'success' => false,
                 'message' => 'Season overview not found',
             ]);
         }
+
         return ($this->json)([
             'success' => true,
             'overview' => $seasonLocalizedOverview->getOverview(),
