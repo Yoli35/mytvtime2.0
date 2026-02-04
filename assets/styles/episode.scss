@@ -145,6 +145,14 @@
                     top: 3.5rem;
                 }
             }
+
+            .comment-badge {
+                position: relative;
+
+                .count-badge {
+                    right: calc(50% - 1.75rem);
+                }
+            }
         }
 
         .user-episode:hover {

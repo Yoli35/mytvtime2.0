@@ -118,9 +118,11 @@ export class EpisodeActions {
         const backToTopLink = episode.parentElement.querySelector('.back-to-top');
         /*const backToSeriesLink = episode.parentElement.querySelector('.back-to-series').closest('a');*/
         const quickEpisodeLink = document.querySelector('.quick-episode[data-number="' + episodeNumber + '"]');
-        const substituteNameDiv = episode.closest('.episode').querySelector('.substitute');
-        const episodeWatchLinks = episode.closest('.episode').querySelector('.watch-links');
-        const finaleDivs = episode.closest('.episode').querySelectorAll('.finale');
+        const episodeDiv = episode.closest('.episode')
+        const substituteNameDiv = episodeDiv ? episodeDiv.querySelector('.substitute') : null;
+        const episodeWatchLinks = episodeDiv ? episodeDiv.querySelector('.watch-links') : null;
+        const numberDiv = episodeDiv ? episodeDiv.querySelector('.number') : null;
+        const finaleDivs = episodeDiv ? episodeDiv.querySelectorAll('.finale') : null;
 
         fetch('/api/episode/add/' + id, {
             method: 'POST',
@@ -139,25 +141,26 @@ export class EpisodeActions {
             .then(data => {
                 // TODO: Vérifier "data"
                 console.log(data);
-                const airDateDiv = episode.closest('.episode').querySelector('.air-date');
-                const block = document.createElement('div');
-                block.innerHTML = data['airDateBlock'];
-                const newAirDateDiv = block.querySelector('.air-date');
-                const newWatchedAtDivs = block.querySelectorAll('.watched-at');
-                newWatchedAtDivs.forEach(newWatchedAtDiv => {
-                    newWatchedAtDiv.addEventListener('click', this.modifyWatchedAtOpen);
-                });
-                airDateDiv.replaceWith(newAirDateDiv);
+                if (episodeDiv) {
+                    const airDateDiv = episodeDiv.querySelector('.air-date');
+                    const block = document.createElement('div');
+                    block.innerHTML = data['airDateBlock'];
+                    const newAirDateDiv = block.querySelector('.air-date');
+                    const newWatchedAtDivs = block.querySelectorAll('.watched-at');
+                    newWatchedAtDivs.forEach(newWatchedAtDiv => {
+                        newWatchedAtDiv.addEventListener('click', this.modifyWatchedAtOpen);
+                    });
+                    airDateDiv.replaceWith(newAirDateDiv);
 
-                const numberDiv = episode.closest('.episode').querySelector('.number');
-                numberDiv.setAttribute('data-title', data['views']);
+                    numberDiv.setAttribute('data-title', data['views']);
+                }
 
-                episode.setAttribute('data-views', '' + (views + 1));
-                episode.setAttribute('data-title', this.translations.now);
                 const now = new Date();
-                episode.setAttribute('data-time', now.toISOString());
-                episode.addEventListener('mouseenter', this.updateRelativeTime);
                 if (episodeId) {
+                    episode.setAttribute('data-views', '' + (views + 1));
+                    episode.setAttribute('data-title', this.translations.now);
+                    episode.setAttribute('data-time', now.toISOString());
+                    episode.addEventListener('mouseenter', this.updateRelativeTime);
                     return;
                 }
 
@@ -200,7 +203,7 @@ export class EpisodeActions {
 
                 episodeWatchLinks?.closest('.user-actions').classList.add('d-none');
 
-                finaleDivs.forEach(f => {
+                finaleDivs?.forEach(f => {
                     f.classList.add('watched');
                 });
 
@@ -721,6 +724,7 @@ export class EpisodeActions {
         });
         deviceList.appendChild(deviceSvg);
     }
+
     selectVote(e) {
         if (this.handleClick(e)) {
             return;
@@ -758,7 +762,7 @@ export class EpisodeActions {
             body: JSON.stringify({
                 providerId: providerId
             })
-        }).then( (response)=> {
+        }).then((response) => {
             if (response.ok) {
                 if (selectProviderDiv) {
                     if (providerId === -1) {
@@ -827,31 +831,33 @@ export class EpisodeActions {
                         selectVoteDiv.innerHTML = voteValue;
                         // Add the vote to the graph
                         const voteGraphDiv = document.querySelector('.vote-graph');
-                        const voteDiv = voteGraphDiv.querySelector('.vote[data-ep-id="' + episodeId + '"]');
-                        const div = voteDiv.querySelector('div');
-                        const episodeVoteDiv = voteDiv.closest('.episode-vote');
-                        div.classList.remove('dashed-vote');
-                        div.classList.add('user-vote');
-                        div.style.height = (voteValue * 16) + 'px';
-                        div.innerText = voteValue;
-                        episodeVoteDiv.setAttribute('data-vote', voteValue);
-                        // Average vote for the season
-                        const voteAverageDiv = voteGraphDiv.querySelector('.vote-average');
-                        const voteDivs = voteGraphDiv.querySelectorAll('.episode-vote');
-                        let sum = 0, count = 0;
-                        voteDivs.forEach((element) => {
-                            const vote = 1 * element.getAttribute('data-vote');
-                            if (vote) {
-                                sum += vote;
-                                count++;
+                        if (voteGraphDiv) {
+                            const voteDiv = voteGraphDiv.querySelector('.vote[data-ep-id="' + episodeId + '"]');
+                            const div = voteDiv.querySelector('div');
+                            const episodeVoteDiv = voteDiv.closest('.episode-vote');
+                            div.classList.remove('dashed-vote');
+                            div.classList.add('user-vote');
+                            div.style.height = (voteValue * 16) + 'px';
+                            div.innerText = voteValue;
+                            episodeVoteDiv.setAttribute('data-vote', voteValue);
+                            // Average vote for the season
+                            const voteAverageDiv = voteGraphDiv.querySelector('.vote-average');
+                            const voteDivs = voteGraphDiv.querySelectorAll('.episode-vote');
+                            let sum = 0, count = 0;
+                            voteDivs.forEach((element) => {
+                                const vote = 1 * element.getAttribute('data-vote');
+                                if (vote) {
+                                    sum += vote;
+                                    count++;
+                                }
+                            });
+                            if (count) {
+                                let result = (sum / count);
+                                if (result > 10) result = "10+"; else result = result.toFixed(1);
+                                voteAverageDiv.innerHTML = result + " / 10";
+                            } else {
+                                voteAverageDiv.innerHTML = this.translations['No votes'];
                             }
-                        });
-                        if (count) {
-                            let result = (sum / count);
-                            if (result > 10) result = "10+"; else result = result.toFixed(1);
-                            voteAverageDiv.innerHTML = result + " / 10";
-                        } else {
-                            voteAverageDiv.innerHTML = this.translations['No votes'];
                         }
                         // If finale, confetti!!
                         const episodeDiv = selectVoteDiv.closest(".episode");
@@ -876,7 +882,8 @@ export class EpisodeActions {
                                         'hsl(0deg 0% 100%)',
                                     ],
                                 }).then(r => {
-                                    console.log(r)});
+                                    console.log(r)
+                                });
                             }
                         }
                     }

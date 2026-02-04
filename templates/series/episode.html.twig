@@ -41,7 +41,7 @@
                             <div class="previous-episode">{{ ux_icon('mdi:arrow-left') }}</div>
                         </a>
                     {% endif %}
-                    <a href="{{ path('app_series_season_show', {id: series.id, slug: season.series_localized_name.slug ?? series.slug, seasonNumber: season.season_number}) }}">
+                    <a id="back-to-season" href="{{ path('app_series_season_show', {id: series.id, slug: season.series_localized_name.slug ?? series.slug, seasonNumber: season.season_number}) }}">
                         <div class="back">
                             {% if season.season_number %}
                                 {{ 'Season'|trans }} {{ season.season_number }}

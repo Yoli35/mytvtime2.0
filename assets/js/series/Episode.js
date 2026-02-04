@@ -130,7 +130,7 @@ export class Episode {
 
     backToSeason(e) {
         e.preventDefault();
-        const backLink = document.querySelector('.episode-show > header > a');
+        const backLink = document.querySelector('.episode-show > header > .navigation #back-to-season');
         window.location.href = backLink.getAttribute("href") + '#episode-' + this.globs.seasonNumber + '-' + this.globs.episodeNumber;
     }
 }
