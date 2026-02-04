@@ -156,16 +156,21 @@ export class Show {
         }
 
         /******************************************************************************
-         * Add a copy badge to the name and localized name.                               *
+         * Add a copy badge to the name and localized name.                           *
          ******************************************************************************/
         new CopyName(document.querySelector('.header .name h1'));
+
+        /******************************************************************************
+         * Fetch localized season overviews.                                          *
+         ******************************************************************************/
+        const seasonDivs = document.querySelectorAll('.seasons .season');
+        this.fetchSeasonOverviews(seriesId, seasonDivs, 0, seasonDivs.length);
 
         /******************************************************************************
          * Fetch episode stills for each season.                                      *
          ******************************************************************************/
         const episodeCardDivs = document.querySelectorAll('.episode__cards');
-        const length = episodeCardDivs.length;
-        gThis.fetchEpisodeCards(episodeCardDivs, 0, length);
+        this.fetchEpisodeCards(episodeCardDivs, 0, episodeCardDivs.length);
 
         /******************************************************************************
          * Old series added?                                                          *
@@ -228,7 +233,6 @@ export class Show {
         /******************************************************************************
          * Hide votes when the mouse leaves season div.                               *
          ******************************************************************************/
-        const seasonDivs = document.querySelectorAll('.season');
         if (seasonDivs) {
             seasonDivs.forEach(function (seasonDiv) {
                 seasonDiv.addEventListener('mouseleave', function () {
@@ -569,6 +573,27 @@ export class Show {
          ******************************************************************************/
         const addCast = new AddCast();
         addCast.init(menu, this.toolTips, this.flashMessage);
+    }
+
+    fetchSeasonOverviews(seriesId, seasonDivs, index, length) {
+        if (!length) return;
+        const seasonDiv = seasonDivs.item(index);
+        const seasonNumber = seasonDiv.getAttribute('data-season-number');
+
+        fetch('/api/season/overview/get/' + seriesId + '/' + seasonNumber, {method: 'GET'})
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                const infosDiv = seasonDiv.querySelector(".infos");
+                const seasonEpisodesDiv = seasonDiv.querySelector(".season__episodes");
+                const overviewDiv = document.createElement("div");
+                overviewDiv.classList.add('season__overview');
+                overviewDiv.innerText = data['overview'];
+                infosDiv.insertBefore(overviewDiv, seasonEpisodesDiv);
+            }
+            index++;
+            if (index<length) gThis.fetchSeasonOverviews(seriesId, seasonDivs, index, length);
+        })
     }
 
     fetchEpisodeCards(cards, index, length) {

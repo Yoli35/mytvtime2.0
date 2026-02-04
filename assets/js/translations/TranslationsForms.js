@@ -275,7 +275,7 @@ export class TranslationsForms {
                 const overviewType = deleteOverviewForm.querySelector('#overview-type').value;
                 const overviewId = deleteOverviewForm.querySelector('#overview-id').value;
                 fetch('/api/' + mediaType + '/overview/remove/' + overviewId, {
-                    method: 'POST',
+                    method: 'DELETE',
                     headers: {
                         'Content-Type': 'application/json'
                     },

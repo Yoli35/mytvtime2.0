@@ -3056,15 +3056,21 @@ h2 {
             position: relative;
             width: 100%;
 
+            &:has(.season__overview) {
+                justify-content: flex-start;
+            }
+
             .season__name {
                 font-size: clamp(2rem, 2vw, 4rem);
                 font-weight: 300;
             }
 
             .season__overview {
-                /*font-size: 1rem;*/
+                font-size: 1rem;
+                border-radius: 1rem;
+                box-shadow: 0 0 1rem rgba(0, 0, 0, .25) inset;
                 font-weight: 300;
-                line-height: 1.25em;
+                padding: 1rem;
             }
 
             .season__air-date, .season__episodes, .season__runtime {

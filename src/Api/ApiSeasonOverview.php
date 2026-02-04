@@ -7,21 +7,44 @@ use App\Entity\Series;
 use App\Repository\SeasonLocalizedOverviewRepository;
 use App\Repository\SeriesRepository;
 use App\Repository\SourceRepository;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Closure;
+use Symfony\Bundle\FrameworkBundle\Controller\ControllerHelper;
+use Symfony\Component\DependencyInjection\Attribute\AutowireMethodOf;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Routing\Requirement\Requirement;
 
 #[Route('/api/season/overview', name: 'api_season_overview_')]
-class ApiSeasonOverview extends AbstractController
+readonly class ApiSeasonOverview
 {
     public function __construct(
-        private readonly SeriesRepository                  $seriesRepository,
-        private readonly SeasonLocalizedOverviewRepository $seasonLocalizedOverviewRepository,
-        private readonly SourceRepository                  $sourceRepository,
+        #[AutowireMethodOf(ControllerHelper::class)]
+        private Closure                           $json,
+        private SeriesRepository                  $seriesRepository,
+        private SeasonLocalizedOverviewRepository $seasonLocalizedOverviewRepository,
+        private SourceRepository                  $sourceRepository,
     )
     {
+    }
+
+    #[Route('/get/{id}/{seasonNumber}', name: 'get', requirements: ['id' => Requirement::DIGITS, 'seasonNumber' => Requirement::DIGITS], methods: ['GET'])]
+    public function get(Request $request, Series $series, int $seasonNumber): Response
+    {
+        $locale = $request->getLocale();
+        dump($series, $seasonNumber, $locale);
+        $seasonLocalizedOverview = $this->seasonLocalizedOverviewRepository->findOneBy(['series' => $series, 'seasonNumber'=>$seasonNumber, 'locale' => $locale]);
+        dump($seasonLocalizedOverview);
+        if (null === $seasonLocalizedOverview) {
+            return ($this->json)([
+                'success' => false,
+                'message' => 'Season overview not found',
+            ]);
+        }
+        return ($this->json)([
+            'success' => true,
+            'overview' => $seasonLocalizedOverview->getOverview(),
+        ]);
     }
 
     #[Route('/add/{id}', name: 'add', requirements: ['id' => Requirement::DIGITS], methods: ['POST'])]
@@ -53,14 +76,14 @@ class ApiSeasonOverview extends AbstractController
             }
         }
 
-        return $this->json([
+        return ($this->json)([
             'success' => true,
             'id' => $overviewId,
             'source' => $source ? ['id' => $source->getId(), 'name' => $source->getName(), 'path' => $source->getPath(), 'logoPath' => $source->getLogoPath()] : null,
         ]);
     }
 
-    #[Route('/remove/{id}', name: 'remove', requirements: ['id' => Requirement::DIGITS], methods: ['POST'])]
+    #[Route('/remove/{id}', name: 'remove', requirements: ['id' => Requirement::DIGITS], methods: ['DELETE'])]
     public function remove(?SeasonLocalizedOverview $overview): Response
     {
         if ($overview) {
@@ -70,7 +93,7 @@ class ApiSeasonOverview extends AbstractController
             $this->seriesRepository->save($series, true);
         }
 
-        return $this->json([
+        return ($this->json)([
             'success' => true,
         ]);
     }
