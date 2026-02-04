@@ -29,6 +29,9 @@
                 {% if episode.still_path %}
                     <div class="still">
                         <img src="{{ episode.still_path }}" alt="{{ episode.name }} still image">
+                        {% if episode.episode_type == "finale" %}
+                            <div class="finale season-finale"></div>
+                        {% endif %}
                     </div>
                 {% endif %}
                 <div class="infos">

@@ -860,7 +860,7 @@ export class EpisodeActions {
                             }
                         }
                         // If finale, confetti!!
-                        const episodeDiv = selectVoteDiv.closest(".episode");
+                        const episodeDiv = selectVoteDiv.closest(".episode") || selectVoteDiv.closest("header");
                         if (episodeDiv.querySelector(".still .finale.season-finale")) {
                             {
                                 const jsConfetti = new JSConfetti();
