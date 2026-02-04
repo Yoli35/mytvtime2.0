@@ -94,6 +94,9 @@
         }
     </div>
     <div id="svgs" style="display: none">
+        {% for d in devices %}
+            {{ ux_icon(d.svg, {id: 'device-'~d.id, height: '18px', width: '18px'}) }}
+        {% endfor %}
         {{ ux_icon('mdi:asterisk', {id: 'asterisk'}) }}
         {{ ux_icon('mdi:checkbox-outline', {id: 'save' }) }}
         {{ ux_icon('mdi:close', {id: 'cancel' }) }}
