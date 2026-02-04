@@ -1031,6 +1031,7 @@ class SeriesController extends AbstractController
         $peopleUserPreferredNames = $this->getPreferredNames($user);
         $episode['guest_stars'] = $this->episodeGuestStars($episode, new AsciiSlugger(), $series, $profileUrl, $peopleUserPreferredNames);
 
+        $season['episodes'] = $this->seasonEpisodes($season, $userSeries);
         $season['watch/providers'] = $this->watchProviders($season, $country);
         $season['credits'] = $this->castAndCrew($season, $series);
         $season['series_localized_name'] = $series->getLocalizedName($request->getLocale());
@@ -1069,6 +1070,9 @@ class SeriesController extends AbstractController
                 ]
             ],
         ];
+
+        $nextEpisode = array_find($season['episodes'], fn($ep) => $ep['episode_number'] == $episodeNumber + 1);
+        $episode['next_episode_is_available'] = $nextEpisode && $this->isAvailable($nextEpisode['air_date']);
 
         $episode['show_id'] = $series->getTmdbId();
 
@@ -2489,6 +2493,16 @@ class SeriesController extends AbstractController
         $user = $this->getUser();
         $timezone = $user ? $user->getTimezone() : 'Europe/Paris';
         return $this->dateService->newDateImmutable($dateString, $timezone, $allDays);
+    }
+
+    public function isAvailable(string $dateString, bool $allDays = false): bool
+    {
+        $user = $this->getUser();
+        $timezone = $user ? $user->getTimezone() : 'Europe/Paris';
+        $date = $this->dateService->newDateImmutable($dateString, $timezone, $allDays);
+        $now = $this->dateService->newDateImmutable('now', $timezone);
+
+        return $date->getTimestamp() <= $now->getTimestamp();
     }
 
     public function dateModify(DateTimeImmutable $date, string $modify): DateTimeImmutable

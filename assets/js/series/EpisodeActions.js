@@ -207,9 +207,6 @@ export class EpisodeActions {
                     f.classList.add('watched');
                 });
 
-                // <div className="comment-badge" data-id="{{ episode.id }}" data-title="{{ 'Add a comment or reply to it for the episode'|trans }} {{ episode.episode_number }}">
-                //     {{ux_icon('mdi:comment-text-outline')}}
-                // </div>;
                 const episodesCommentsDiv = document.querySelector(".episodes-comments");
                 const commentBadge = document.createElement("div");
                 commentBadge.classList.add("comment-badge");
@@ -222,7 +219,8 @@ export class EpisodeActions {
                 const episodeGroup = this.seasonComments.createEpisodeGroup(seasonNumber, episodeNumber);
                 episodesCommentsDiv.appendChild(episodeGroup);
 
-                const previousEpisode = userEpisode.closest('.episodes').querySelector('.remove-this-episode[data-e-number="' + (episodeNumber - 1) + '"]');
+                const episodesDiv = userEpisode.closest('.episodes');
+                const previousEpisode = episodesDiv?.querySelector('.remove-this-episode[data-e-number="' + (episodeNumber - 1) + '"]');
                 const previousProvider = previousEpisode?.parentElement.querySelector('.select-provider');
                 if (previousProvider) {
                     const clone = previousProvider.cloneNode(true);

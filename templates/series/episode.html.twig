@@ -53,13 +53,14 @@
                             {% endif %}
                         </div>
                     </a>
-                    {% if  episode.episode_type == "standard" %} {# Last episode: episode.episode_type == "finale" #}
+                    {% if episode.next_episode_is_available %}
                         <a href="{{ path("app_series_episode_show", {id: series.id, slug: slug, seasonNumber: season.season_number, episodeNumber: episode.episode_number + 1}) }}">
                             <div class="next-episode">{{ ux_icon('mdi:arrow-right') }}</div>
                         </a>
                     {% endif %}
                 </div>
                 {{ include('_blocks/series/_user_episode.html.twig', {ue: episode.user_episode, episode: episode, series: series, season: season}) }}
+                {{ include('_blocks/series/_watch_links.html.twig', {watchLinks: series.seriesWatchLinks, seasonNumber: season.season_number, hidden: (episode.user_episode.watch_at != null)}) }}
             </header>
             <main>
                 <div class="episodes-comments"></div>
@@ -102,10 +103,13 @@
         {{ ux_icon('mdi:close', {id: 'cancel' }) }}
         {{ ux_icon('mdi:comment-text', {id: 'comment-badge'}) }}
         {{ ux_icon('mdi:comment-text-outline', {id: 'comment-badge-outline'}) }}
+        {{ ux_icon('mdi:eye', {id: 'eye' }) }}
         {{ ux_icon('mdi:image-plus', {id: 'image-plus'}) }}
+        {{ ux_icon('mdi:plus', {id: 'plus' }) }}
         {{ ux_icon('mdi:question-answer', {id: 'answer-badge'}) }}
         {{ ux_icon('mdi:send', {id: 'send'}) }}
         {{ ux_icon('mdi:trash', {id: 'trash' }) }}
+        <div class="svg" id="svg-xmark">{{ ux_icon('mdi:close') }}</div>
     </div>
     {{ include('_blocks/series/_map_stuff.html.twig', {locations: locations, mapSettings: mapSettings, addLocationFormData: addLocationFormData}) }}
 

@@ -188,6 +188,52 @@
             }
         }
 
+        .user-actions {
+            left: 2rem;
+            position: absolute;
+            bottom: 2rem;
+
+            .watch-links {
+                background-color: var(--orange);
+
+                .label {
+                    font-size: 1.5rem;
+                }
+
+                > :last-child {
+                    padding-inline-end: 0;
+                }
+
+                .watch-link {
+                    height: 3rem;
+
+                    img {
+                        height: 3rem;
+                        width: 3rem;
+                    }
+
+                    &:last-child {
+                        border-bottom-right-radius: 5rem;
+                        border-top-right-radius: 5rem;
+
+                        img {
+                            border-bottom-right-radius: 5rem;
+                            border-top-right-radius: 5rem;
+                        }
+                    }
+
+                    .watch-link-tools {
+                        background-color: hsla(from var(--ardoise-90) h s l / .8);
+                        top: 3rem;
+
+                        .watch-link-name {
+                            padding-inline-end: 1rem;
+                        }
+                    }
+                }
+            }
+        }
+
         .user-episode:has(.select-vote > svg) {
             .select-device {
                 border-radius: .25rem 5rem 5rem .25rem;
