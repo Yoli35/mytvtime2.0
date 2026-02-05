@@ -462,7 +462,7 @@ export class Map {
                         tempDiv.innerHTML = block;
                         locationWrapper.insertBefore(tempDiv.querySelector('.series-location'), firstLocationDiv);
                         const locationDiv = locationWrapper.querySelector('.series-location');
-                        const image = locationDiv.querySelectorAll('.series-location-image');
+                        const image = locationDiv.querySelector('.series-location-image');
                         this.toolTips.initElement(image);
                         const imageList = image.querySelector('.image-list');
                         if (imageList) {
