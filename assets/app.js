@@ -115,7 +115,7 @@ window.addEventListener("DOMContentLoaded", () => {
     const importMap = document.querySelector(".import-map");
     if (importMap) {
         console.log("Import map");
-        new Map({cooperativeGesturesOption: false});
+        new Map({cooperativeGesturesOption: false}, toolTips);
     }
 
 // Series & season page

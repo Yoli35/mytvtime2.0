@@ -5,11 +5,11 @@ namespace App\Controller;
 use App\DTO\MapDTO;
 use App\Form\MapType;
 use App\Repository\CountryRepository;
-use App\Repository\FilmingLocationImageRepository;
 use App\Repository\FilmingLocationRepository;
 use App\Repository\PointOfInterestImageRepository;
 use App\Repository\PointOfInterestRepository;
 use App\Repository\SettingsRepository;
+use App\Service\MapService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -21,8 +21,8 @@ class MapController extends AbstractController
 {
     public function __construct(
         private readonly CountryRepository              $countryRepository,
-        private readonly FilmingLocationImageRepository $filmingLocationImageRepository,
         private readonly FilmingLocationRepository      $filmingLocationRepository,
+        private readonly MapService                     $mapService,
         private readonly PointOfInterestImageRepository $pointOfInterestImageRepository,
         private readonly PointOfInterestRepository      $pointOfInterestRepository,
         private readonly SettingsRepository             $settingsRepository,
@@ -33,11 +33,11 @@ class MapController extends AbstractController
     #[Route('/index', name: 'index')]
     public function index(Request $request): Response
     {
-        $selectedFilmingLocation = $request->get('fl', 0);
+        $selectedFilmingLocation = $request->request->get('fl', 0);
 
         $settings = $this->settingsRepository->findOneBy(['name' => 'mapbox']);
 
-        $locations = $this->getAllFilmingLocations('title');
+        $locations = $this->mapService->get('title');
 
         $fl = [];
         $countries = [];
@@ -112,10 +112,10 @@ class MapController extends AbstractController
     #[Route('/last', name: 'last')]
     public function last(Request $request): Response
     {
-        $type = $request->get('type', 'creation');
+        $type = $request->request->get('type', 'creation');
         $settings = $this->settingsRepository->findOneBy(['name' => 'mapbox']);
 
-        $mapDTO = new MapDTO($type, 1, $perPage = 20);
+        $mapDTO = new MapDTO($type, 1,20);
         $form = $this->createForm(MapType::class, $mapDTO);
 
         $form->handleRequest($request);
@@ -128,7 +128,7 @@ class MapController extends AbstractController
         $page = $data->getPage();
         $perPage = $data->getPerPage();
 
-        $locations = $this->getAllFilmingLocations($type, $page, $perPage);
+        $locations = $this->mapService->get($type, $page, $perPage);
 
         return $this->render('map/last.html.twig', [
             'form' => $form->createView(),
@@ -142,35 +142,6 @@ class MapController extends AbstractController
             'pages' => ceil($locations['filmingLocationCount'] / $perPage),
             'settings' => $settings,
         ]);
-    }
-
-    public function getAllFilmingLocations(string $order, int $page = 1, int $perPage = 50): array
-    {
-        $filmingLocations = $this->filmingLocationRepository->allLocations($order, $page, $perPage);
-        $filmingLocationIds = array_column($filmingLocations, 'id');
-
-        // Bounding box → center
-        $minLat = min(array_column($filmingLocations, 'latitude'));
-        $maxLat = max(array_column($filmingLocations, 'latitude'));
-        $minLng = min(array_column($filmingLocations, 'longitude'));
-        $maxLng = max(array_column($filmingLocations, 'longitude'));
-        $bounds = [[$maxLng, $maxLat], [$minLng, $minLat]];
-
-        $filmingLocationImages = $this->filmingLocationRepository->locationImages($filmingLocationIds);
-        $flImages = [];
-        foreach ($filmingLocationImages as $image) {
-            $flImages[$image['filming_location_id']][] = $image;
-        }
-        foreach ($filmingLocations as &$location) {
-            $location['filmingLocationImages'] = $flImages[$location['id']] ?? [];
-        }
-
-        return [
-            'filmingLocations' => $filmingLocations,
-            'filmingLocationCount' => $this->filmingLocationRepository->count(),//count($filmingLocations),
-            'filmingLocationImageCount' => $this->filmingLocationImageRepository->count(),//count($filmingLocationImages),
-            'bounds' => $bounds,
-        ];
     }
 
     public function getALlPointsOfInterest(): array

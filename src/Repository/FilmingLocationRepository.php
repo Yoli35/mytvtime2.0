@@ -18,7 +18,7 @@ class FilmingLocationRepository extends ServiceEntityRepository
         parent::__construct($registry, FilmingLocation::class);
     }
 
-    public function save(FilmingLocation $filmingLocation, bool $flush= false): void
+    public function save(FilmingLocation $filmingLocation, bool $flush = false): void
     {
         $this->em->persist($filmingLocation);
 
@@ -140,6 +140,22 @@ class FilmingLocationRepository extends ServiceEntityRepository
                 FROM filming_location
                 WHERE source_name IS NOT NULL AND source_name!=''
                 ORDER BY source_name";
+        return $this->getAll($sql);
+    }
+
+    public function lastId(): int
+    {
+        $sql = "SELECT MAX(id) as id FROM filming_location";
+        return $this->getOne($sql)['id'];
+    }
+
+    public function findLatestLocations(int $lastId): array
+    {
+        $sql = "SELECT fl.*, fli.path as still_path
+                FROM filming_location fl
+                LEFT JOIN filming_location_image fli ON fl.`still_id` = fli.`id`
+                WHERE fl.id > $lastId
+                ORDER BY fl.id DESC";
         return $this->getAll($sql);
     }
 }

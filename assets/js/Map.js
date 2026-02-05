@@ -4,9 +4,10 @@ import {MapboxSearchBox} from '@mapbox/search-js-web'
 let gThis = null;
 
 export class Map {
-    constructor(options) {
+    constructor(options, toolTips) {
         console.log('Map starting');
         gThis = this;
+        this.toolTips = toolTips;
         const globsData = document.querySelector('#globs-map');
         this.data = JSON.parse(globsData.textContent);
         this.locations = this.data.locations || [];
@@ -17,6 +18,7 @@ export class Map {
         this.locale = document.querySelector('html').getAttribute('lang');
         this.map = null;
         this.circles = [];
+        this.lastId = -1;
         this.init(options);
     }
 
@@ -78,21 +80,14 @@ export class Map {
                             }
                         });
                     });
-                    setTimeout(()=>{ poiToggler.click();}, 5000);
+                    setTimeout(() => {
+                        poiToggler.click();
+                    }, 5000);
                 });
 
             let firstMarker = null;
             this.locations.forEach((location, index) => {
-                let marker = new mapboxgl.Marker({color: "#B46B18FF"})
-                    .setLngLat([location.longitude, location.latitude])
-                    .setPopup(new mapboxgl.Popup({closeOnMove: true}).setMaxWidth("24rem").setHTML('<div class="leaflet-popup-content-title">' + location.title + '</div><div class="leaflet-popup-content-description"><div class="location">' + location.location + '</div>' + location.description + '</div><div class="leaflet-popup-content-image"><img src="/images/map' + location['still_path'] + '" alt="' + location['title'] + '" style="height: auto; width: 100%"></div>'))
-                    .addTo(this.map);
-                let markerIcon = marker.getElement();
-                markerIcon.setAttribute('data-target-id', location.id);
-                markerIcon.setAttribute('data-tmdb-id', location.tmdb_id);
-                // markerIcon.setAttribute('data-country', location.country);
-                markerIcon.setAttribute('data-latitude', location.latitude);
-                markerIcon.setAttribute('data-longitude', location.longitude);
+                let marker = this.addLocationMarker(location);
 
                 if (!index) firstMarker = marker;
 
@@ -101,7 +96,9 @@ export class Map {
                 }
             });
             if (firstMarker) {
-                setTimeout(()=>{ firstMarker.togglePopup(); }, 5000);
+                setTimeout(() => {
+                    firstMarker.togglePopup();
+                }, 5000);
             }
 
             if (this.circles.length) {
@@ -390,7 +387,7 @@ export class Map {
                         const lat = targetMapDiv.getAttribute('data-lat');
                         const lng = targetMapDiv.getAttribute('data-lng');
                         // Center map to location (lat, lng)
-                        this.map.flyTo({center: [lng, lat], duration: 5000, zoom: 15, curve: 2,easing: (n) => n, essential: true});
+                        this.map.flyTo({center: [lng, lat], duration: 5000, zoom: 15, curve: 2, easing: (n) => n, essential: true});
                         const markerElement = document.querySelector('div[data-target-id="' + locId + '"]');
                         if (markerElement) {
                             markerElement.click();
@@ -440,6 +437,82 @@ export class Map {
         }
 
         initializeMap();
+
+        const mapLastPage = document.querySelector('#map-last');
+        if (mapLastPage) {
+            this.lastId = this.locations[0].id;
+            console.log(this.lastId);
+            document.addEventListener("visibilitychange", this.checkForNewLocations.bind(this));
+        }
+    }
+
+    checkForNewLocations() {
+        if (document.visibilityState === 'visible') {
+            fetch('/api/map/update', {method: 'POST', body: JSON.stringify({lastId: this.lastId})})
+                .then(res => res.json())
+                .then(data => {
+                    console.log(data);
+                    if (data['update'] === false) return;
+                    // Affichage des cartes des nouveaux lieux
+                    const locationWrapper = document.querySelector(".series-location-content");
+                    const firstLocationDiv = document.querySelector(".series-location");
+                    const tempDiv = document.createElement('div');
+                    const blocks = data['blocks'];
+                    blocks.forEach(block => {
+                        tempDiv.innerHTML = block;
+                        locationWrapper.insertBefore(tempDiv.querySelector('.series-location'), firstLocationDiv);
+                        const locationDiv = locationWrapper.querySelector('.series-location');
+                        const image = locationDiv.querySelectorAll('.series-location-image');
+                        this.toolTips.initElement(image);
+                        const imageList = image.querySelector('.image-list');
+                        if (imageList) {
+                            image.addEventListener('mouseenter', () => {
+                                image.addEventListener('mousemove', gThis.getPosition);
+                            });
+                            image.addEventListener('mouseleave', () => {
+                                image.removeEventListener('mousemove', gThis.getPosition);
+                                image.setAttribute('data-position', "0");
+                                const imageSrc = imageList.children[0].getAttribute('src');
+                                image.querySelector('img').setAttribute('src', imageSrc);
+                            });
+                        }
+                        const targetMapDiv = locationDiv.querySelector('.target-map');
+                            targetMapDiv.addEventListener('click', (event) => {
+                                event.preventDefault();
+                                const locId = targetMapDiv.getAttribute('data-loc-id');
+                                const lat = targetMapDiv.getAttribute('data-lat');
+                                const lng = targetMapDiv.getAttribute('data-lng');
+                                // Center map to location (lat, lng)
+                                this.map.flyTo({center: [lng, lat], duration: 5000, zoom: 15, curve: 2, easing: (n) => n, essential: true});
+                                const markerElement = document.querySelector('div[data-target-id="' + locId + '"]');
+                                if (markerElement) {
+                                    markerElement.click();
+                                }
+                            });
+                    });
+                    // Ajout des markers des nouveaux lieux
+                    const locations = data['locations']['filmingLocations'];
+                    locations.forEach((location, index) => {
+                        let marker = this.addLocationMarker(location);
+                        if (!index) marker.togglePopup();
+                    });
+                })
+                .catch(err => console.log(err));
+        }
+    }
+
+    addLocationMarker(location) {
+        let marker = new mapboxgl.Marker({color: "#B46B18FF"})
+            .setLngLat([location.longitude, location.latitude])
+            .setPopup(new mapboxgl.Popup({closeOnMove: true}).setMaxWidth("24rem").setHTML('<div class="leaflet-popup-content-title">' + location.title + '</div><div class="leaflet-popup-content-description"><div class="location">' + location.location + '</div>' + location.description + '</div><div class="leaflet-popup-content-image"><img src="/images/map' + location['still_path'] + '" alt="' + location['title'] + '" style="height: auto; width: 100%"></div>'))
+            .addTo(this.map);
+        let markerIcon = marker.getElement();
+        markerIcon.setAttribute('data-target-id', location.id);
+        markerIcon.setAttribute('data-tmdb-id', location.tmdb_id);
+        // markerIcon.setAttribute('data-country', location.country);
+        markerIcon.setAttribute('data-latitude', location.latitude);
+        markerIcon.setAttribute('data-longitude', location.longitude);
+        return marker;
     }
 
     addPoiMarker(point, index) {
