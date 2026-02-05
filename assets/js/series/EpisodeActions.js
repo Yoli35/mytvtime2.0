@@ -607,6 +607,8 @@ export class EpisodeActions {
         const datetimeInput = document.createElement('input');
         datetimeInput.setAttribute('type', 'datetime-local');
         datetimeInput.setAttribute('value', watchedAt);
+        const buttonsDiv = document.createElement('div');
+        buttonsDiv.classList.add('buttons');
         const datetimeSaveButton = document.createElement('button');
         const svgSave = this.getSvg('save');
         datetimeSaveButton.appendChild(svgSave);
@@ -618,10 +620,11 @@ export class EpisodeActions {
         const datetimeCancelButton = document.createElement('button');
         const svgCancel = this.getSvg('cancel');
         datetimeCancelButton.appendChild(svgCancel);
+        buttonsDiv.appendChild(datetimeSaveButton);
+        buttonsDiv.appendChild(datetimeDeleteButton);
+        buttonsDiv.appendChild(datetimeCancelButton);
         watchedAtModifyDiv.appendChild(datetimeInput);
-        watchedAtModifyDiv.appendChild(datetimeSaveButton);
-        watchedAtModifyDiv.appendChild(datetimeDeleteButton);
-        watchedAtModifyDiv.appendChild(datetimeCancelButton);
+        watchedAtModifyDiv.appendChild(buttonsDiv);
         airDateDiv.appendChild(watchedAtModifyDiv);
         watchedAtDiv.classList.add('editing');
 
