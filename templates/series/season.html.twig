@@ -285,6 +285,7 @@
                                                         {% if episode.vote_average %}
                                                             <div class="vote-average">{{ episode.vote_average }} / 10 - {{ episode.vote_count }} {{ (episode.vote_count > 1 ? 'votes':'vote')|trans }}</div>
                                                         {% endif %}
+                                                        <div class="light-dark-toggler">{{ ux_icon('mdi:theme-light-dark') }}</div>
                                                     </div>
                                                 {% endif %}
                                                 <div class="episode-overview" data-id="{{ episode.id }}">

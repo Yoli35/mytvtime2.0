@@ -433,6 +433,24 @@ export class Season {
         });
 
         /******************************************************************************
+         * Force text color to light or dark                                          *
+         ******************************************************************************/
+        const lightDarkTogglers = document.querySelectorAll('.light-dark-toggler');
+        lightDarkTogglers.forEach(el => {
+            el.addEventListener('click', (e) => {
+                const toggler = e.currentTarget;
+                const infosContentDiv = toggler.closest('.infos-content');
+                if (!infosContentDiv.classList.contains('dark')) {
+                    infosContentDiv.classList.add('dark');
+                    infosContentDiv.classList.remove('light');
+                } else {
+                    infosContentDiv.classList.remove('dark');
+                    infosContentDiv.classList.add('light');
+                }
+            });
+        });
+
+        /******************************************************************************
          * Add a person to the cast - Search input                                    *
          ******************************************************************************/
         const addCast = new AddCast();

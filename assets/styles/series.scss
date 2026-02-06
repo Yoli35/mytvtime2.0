@@ -4214,6 +4214,34 @@ h2 {
                     scroll-behavior: smooth;
                     width: 100%;
 
+                    &.light {
+                        color: var(--ardoise-90);
+
+                        .episode-stats {
+                            .light-dark-toggler {
+                                background-color: var(--orange-70);
+                                color: var(--ardoise-90);
+                            }
+                            .light-dark-toggler:hover {
+                                background-color: var(--orange-60);
+                            }
+                        }
+                    }
+
+                    &.dark {
+                        color: var(--ardoise-10);
+
+                        .episode-stats {
+                            .light-dark-toggler {
+                                background-color: var(--orange-30);
+                                color: var(--ardoise-10);
+                            }
+                            .light-dark-toggler:hover {
+                                background-color: var(--orange-40);
+                            }
+                        }
+                    }
+
                     .episode-name {
                         align-items: center;
                         /*color: var(--ardoise-10);*/
@@ -4376,6 +4404,24 @@ h2 {
 
                         .runtime, .vote-average {
 
+                        }
+
+                        .light-dark-toggler {
+                            align-items: center;
+                            border-radius: 50%;
+                            border: 2px solid;
+                            color: var(--ardoise-10);
+                            cursor: pointer;
+                            display: flex;
+                            height: 2rem;
+                            justify-content: center;
+                            margin-inline-start: auto;
+                            transition: background-color 0.3s ease-in-out;
+                            width: 2rem;
+
+                            &:hover {
+                                background-color: var(--orange);
+                            }
                         }
                     }
 
