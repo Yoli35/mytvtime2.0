@@ -112,7 +112,7 @@ readonly class ApiLocation
         $firstImageIndex = 1;
         if ($filmingLocation) {
             // Récupérer les images existantes et récupérer l'index le plus élevé
-            $existingImages = array_map(fn($image) => $image->getFilename(), $this->filmingLocationImageRepository->findBy(['filmingLocation' => $filmingLocation]));
+            $existingImages = array_map(fn($image) => $image->getPath(), $this->filmingLocationImageRepository->findBy(['filmingLocation' => $filmingLocation]));
             $lastImageIndex = $this->getHighestImageIndex($existingImages);
             $firstImageIndex = $lastImageIndex + 1; /*count($existingImages);*/
         }

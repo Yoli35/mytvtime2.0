@@ -51,10 +51,9 @@ readonly class ApiMap
                 'update' => false,
             ]);
         }
-        dump($latest);
+
         $blocks = [];
         foreach ($latest['filmingLocations'] as $location) {
-            dump($location);
             $blocks[] = ($this->renderView)('_blocks/series/_map_location.html.twig', ['loc' => $location]);
         }
 

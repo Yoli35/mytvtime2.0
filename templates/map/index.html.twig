@@ -93,39 +93,7 @@
                         </div>
                         <div class="series-location-content">
                             {% for loc in l.locations %}
-                                <div class="series-location" data-tmdb-id="{{ key }}">
-                                    <div class="series-location-image" data-title="{{ loc.location }}" data-position="0">
-                                        <img src="/images/map{{ loc.still_path }}" alt="{{ loc.location ?? 'No title entry!!' }}">
-                                        <div class="image-count">{{ loc.filmingLocationImages|length }}</div>
-                                        {% if loc.season_number and loc.episode_number %}
-                                            <div class="episode">
-                                                {{ 'S%02dE%02d'|format(loc.season_number, loc.episode_number) }}
-                                            </div>
-                                        {% endif %}
-                                        <div class="image-list">
-                                            {% for image in loc.filmingLocationImages %}
-                                                <img src="/images/map{{ image.path }}" alt="{{ loc.title }} #{{ loop.index }}">
-                                            {% endfor %}
-                                        </div>
-                                    </div>
-                                    <div class="series-location-infos">
-                                        <div class="series-location-title">
-                                            <div class="text">{{ loc.title ?? 'No title entry!!' }}</div>
-                                            <div class="show-location">
-                                                <!-- Lien vers Google Maps -->
-                                                <a href="https://www.google.com/maps?q={{ loc.latitude }},{{ loc.longitude }}" target="_blank">
-                                                    {{ ux_icon('logos:google-maps', {height: '36px', width: '36px'}) }}
-                                                </a>
-                                                <!-- Center location on map -->
-                                                <div class="target-map" data-title="{{ 'Center the map on this location'|trans }}" data-loc-id="{{ loc.id }}" data-lat="{{ loc.latitude }}" data-lng="{{ loc.longitude }}">
-                                                    {{ ux_icon('mdi:crosshairs-gps', {height: '36px', width: '36px'}) }}
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="series-location-location">{{ loc.location }}</div>
-                                        <div class="series-location-description">{{ loc.description }}</div>
-                                    </div>
-                                </div>
+                                {{ include('_blocks/series/_map_location.html.twig', {'loc': loc}) }}
                             {% endfor %}
                         </div>
                     </div>

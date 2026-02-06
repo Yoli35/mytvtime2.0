@@ -5,9 +5,9 @@
         {% if loc.episode_number %}
             <div class="episode">{{ "S%02dE%02d"|format(loc.season_number, loc.episode_number) }}</div>
         {% endif %}
-        <div class="image-list">
+        <div class="image-list" data-still-id="{{ loc.still_id }}">
             {% for image in loc.filmingLocationImages %}
-                <img src="/images/map{{ image.path }}" alt="{{ loc.title }} #{{ loop.index }}">
+                <img data-id="{{ image.id }}" src="/images/map{{ image.path }}" alt="{{ loc.title }} #{{ loop.index }}">
             {% endfor %}
         </div>
     </div>
@@ -19,7 +19,7 @@
                 <a href="https://www.google.com/maps?q={{ loc.latitude }},{{ loc.longitude }}" target="_blank">
                     {{ ux_icon('logos:google-maps', {height: '36px', width: '36px'}) }}
                 </a>
-                <!-- Center location on map -->
+                <!-- Center location on the map -->
                 <div class="target-map" data-title="{{ 'Center the map on this location'|trans }}" data-loc-id="{{ loc.id }}" data-lat="{{ loc.latitude }}" data-lng="{{ loc.longitude }}">
                     {{ ux_icon('mdi:crosshairs-gps', {height: '36px', width: '36px'}) }}
                 </div>

@@ -38,9 +38,9 @@
                                 <div class="edit-images" data-loc-id="{{ location.id }}">{{ ux_icon('mdi:images') }}</div>
                                 <div class="arrow left">{{ ux_icon('mdi:arrow-left') }}</div>
                                 <div class="arrow right">{{ ux_icon('mdi:arrow-right') }}</div>
-                                <div class="image-list">
+                                <div class="image-list" data-still-id="{{ location.still_id }}">
                                     {% for i in location.filmingLocationImages %}
-                                        <img src="/images/map{{ i.path }}" alt="{{ location.title ~ ' - ' ~ 'image'|trans ~ ' #' ~ (loop.index + 1) }}">
+                                        <img data-id="{{ i.id }}" src="/images/map{{ i.path }}" alt="{{ location.title ~ ' - ' ~ 'image'|trans ~ ' #' ~ (loop.index + 1) }}">
                                     {% endfor %}
                                 </div>
                             {% endif %}

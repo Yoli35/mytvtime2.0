@@ -19,6 +19,10 @@ export class Map {
         this.map = null;
         this.circles = [];
         this.lastId = -1;
+
+        this.initImageList = this.initImageList.bind(this);
+        this.initTargetMap = this.initTargetMap.bind(this);
+
         this.init(options);
     }
 
@@ -397,18 +401,7 @@ export class Map {
 
                 const seriesLocationImages = document.querySelectorAll('.series-location-image');
                 seriesLocationImages.forEach(image => {
-                    const imageList = image.querySelector('.image-list');
-                    if (imageList) {
-                        image.addEventListener('mouseenter', () => {
-                            image.addEventListener('mousemove', gThis.getPosition);
-                        });
-                        image.addEventListener('mouseleave', () => {
-                            image.removeEventListener('mousemove', gThis.getPosition);
-                            image.setAttribute('data-position', "0");
-                            const imageSrc = imageList.children[0].getAttribute('src');
-                            image.querySelector('img').setAttribute('src', imageSrc);
-                        });
-                    }
+                    this.initImageList(image);
                 });
 
                 const toggleCooperativeGesturesButton = document.querySelector('.toggle-cooperative-gestures');
@@ -464,35 +457,13 @@ export class Map {
                         const locationDiv = locationWrapper.querySelector('.series-location');
                         const image = locationDiv.querySelector('.series-location-image');
                         this.toolTips.initElement(image);
-                        const imageList = image.querySelector('.image-list');
-                        if (imageList) {
-                            image.addEventListener('mouseenter', () => {
-                                image.addEventListener('mousemove', gThis.getPosition);
-                            });
-                            image.addEventListener('mouseleave', () => {
-                                image.removeEventListener('mousemove', gThis.getPosition);
-                                image.setAttribute('data-position', "0");
-                                const imageSrc = imageList.children[0].getAttribute('src');
-                                image.querySelector('img').setAttribute('src', imageSrc);
-                            });
-                        }
-                        const targetMapDiv = locationDiv.querySelector('.target-map');
-                            targetMapDiv.addEventListener('click', (event) => {
-                                event.preventDefault();
-                                const locId = targetMapDiv.getAttribute('data-loc-id');
-                                const lat = targetMapDiv.getAttribute('data-lat');
-                                const lng = targetMapDiv.getAttribute('data-lng');
-                                // Center map to location (lat, lng)
-                                this.map.flyTo({center: [lng, lat], duration: 5000, zoom: 15, curve: 2, easing: (n) => n, essential: true});
-                                const markerElement = document.querySelector('div[data-target-id="' + locId + '"]');
-                                if (markerElement) {
-                                    markerElement.click();
-                                }
-                            });
+                        this.initImageList(image);
+                        this.initTargetMap(locationDiv);
                     });
-                    // Ajout des markers des nouveaux lieux
                     const locations = data['locations']['filmingLocations'];
+                    // Ajout des markers des nouveaux lieux
                     locations.forEach((location, index) => {
+                        this.lastId = location.id;
                         let marker = this.addLocationMarker(location);
                         if (!index) marker.togglePopup();
                     });
@@ -548,6 +519,43 @@ export class Map {
             if (index)
                 markerIcon.setAttribute('data-index', index.toString());
         }
+    }
+
+    initImageList(image) {
+        const imageList = image.querySelector('.image-list');
+        if (!imageList) {
+            return;
+        }
+        const stillId = imageList.getAttribute('data-still-id');
+
+        image.addEventListener('mouseenter', () => {
+            image.addEventListener('mousemove', gThis.getPosition);
+        });
+        image.addEventListener('mouseleave', () => {
+            image.removeEventListener('mousemove', gThis.getPosition);
+            image.setAttribute('data-position', "0");
+            const imageSrc = imageList.querySelector('img[data-id="' + stillId + '"]').getAttribute('src');
+            image.querySelector('img').setAttribute('src', imageSrc);
+        });
+    }
+
+    initTargetMap(locationDiv) {
+        const targetMapDiv = locationDiv.querySelector('.target-map');
+        if (!targetMapDiv) {
+            return;
+        }
+        targetMapDiv.addEventListener('click', (event) => {
+            event.preventDefault();
+            const locId = targetMapDiv.getAttribute('data-loc-id');
+            const lat = targetMapDiv.getAttribute('data-lat');
+            const lng = targetMapDiv.getAttribute('data-lng');
+            // Center map to location (lat, lng)
+            this.map.flyTo({center: [lng, lat], duration: 5000, zoom: 15, curve: 2, easing: (n) => n, essential: true});
+            const markerElement = document.querySelector('div[data-target-id="' + locId + '"]');
+            if (markerElement) {
+                markerElement.click();
+            }
+        });
     }
 
     adjustBounds(type) {
