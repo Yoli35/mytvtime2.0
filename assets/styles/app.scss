@@ -1409,6 +1409,21 @@ label:has(input[type="text"]) {
     }
 }
 
+.menu.main {
+    .a-preview a {
+        isolation: isolate;
+        position: relative;
+
+        .episode-progress {
+            background-color: var(--green);
+            border-radius: 5rem;
+            inset: 0 0 0 0;
+            position: absolute;
+            z-index: -1;
+        }
+    }
+}
+
 .menu.main, .menu.user {
     > a,
     .a-preview > a,

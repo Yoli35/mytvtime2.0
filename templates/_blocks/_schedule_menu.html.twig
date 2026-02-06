@@ -22,7 +22,8 @@
                    data-episode-ids="{{ eotd.episodeIds }}"
                    data-episode-count="{{ eotd.episodeCount }}"
                    data-first-episode-number="{{ eotd.firstEpisodeNumber }}"
-                   style="background: linear-gradient(90deg, var(--green-50) {{ eotd.progress }}%, transparent {{ eotd.progress }}%)">
+                   {#style="background: linear-gradient(90deg, var(--green-50) {{ eotd.progress }}%, transparent {{ eotd.progress }}%)"#}>
+                    <div class="episode-progress" data-id="{{ eotd.id }}" style="right: {{ 100 - eotd.progress }}%;"></div>
                     <div>
                         {{ eotd.display }}
                         {% if eotd.customDate %}

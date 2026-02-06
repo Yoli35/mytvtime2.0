@@ -86,11 +86,11 @@ export class EpisodeActions {
         });
     }
 
-    setProgress() {
+    setProgress(progress) {
         const progressDiv = document.querySelector('.progress');
         if (progressDiv) {
             const progressBarDiv = document.querySelector('.progress-bar');
-            const progress = progressDiv.getAttribute('data-value');
+            progressDiv.setAttribute('data-value', progress);
             progressBarDiv.classList.add('set');
             progressBarDiv.style.width = progress + '%';
             progressBarDiv.setAttribute('aria-valuenow', progress);
@@ -171,11 +171,7 @@ export class EpisodeActions {
                     });
                 }
 
-                const progressDiv = document.querySelector('.progress');
-                if (progressDiv) {
-                    progressDiv.setAttribute('data-value', data['season_progress']);
-                    this.setProgress();
-                }
+                this.setProgress(data['season_progress']);
 
                 const newEpisode = document.createElement('div');
                 newEpisode.classList.add('remove-this-episode');
@@ -351,9 +347,8 @@ export class EpisodeActions {
                 if (views > 0) {
                     return;
                 }
-                const progressDiv = document.querySelector('.progress');
-                progressDiv.setAttribute('data-value', data['progress']);
-                this.setProgress();
+
+                this.setProgress(data['progress']);
 
                 const airDateDiv = episode.closest('.episode').querySelector('.air-date');
                 const watchedAtDiv = airDateDiv.querySelector(`.watched-at[data-ue-id="${ueId}"]`);

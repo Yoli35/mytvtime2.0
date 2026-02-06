@@ -304,7 +304,8 @@
                                id="sip-menu-item-{{ inProgress.id }}"
                                data-episode-count="{{ inProgress.episodeCount }}"
                                data-first-episode-number="1"
-                               style="background: linear-gradient(90deg, var(--green-50) {{ inProgress.progress }}%, transparent {{ inProgress.progress }}%)">
+                               {#style="background: linear-gradient(90deg, var(--green-50) {{ inProgress.progress }}%, transparent {{ inProgress.progress }}%)"#}>
+                                <div class="episode-progress" style="right: {{ 100 - inProgress.progress }}%;"></div>
                                 {{ inProgress.name }}{% if inProgress.nextEpisode %} {{ 'S%02dE%02d'|format(inProgress.seasonNumber, inProgress.nextEpisode) }}{% endif %}
                             </a>
                             <div id="sip-preview-{{ inProgress.id }}" class="episode-of-the-day-preview">
