@@ -505,9 +505,7 @@ export class Menu {
                 const blockDiv = document.createElement('div');
                 blockDiv.innerHTML = block;
                 const newScheduleMenuDiv = blockDiv.querySelector(".schedule-menu");
-                scheduleMenuDiv.innerHTML = newScheduleMenuDiv.innerHTML;
-                scheduleMenuDiv.setAttribute("data-id", newScheduleMenuDiv.getAttribute("data-id"));
-
+                scheduleMenuDiv.replaceWith(newScheduleMenuDiv);
                 gThis.posterPreview();
             })
             .catch(err => {

@@ -1302,14 +1302,30 @@ label:has(input[type="text"]) {
 
             .loader {
                 align-items: center;
-                background-color: var(--orange-50);
-                border-radius: .25rem;
-                color: var(--orange-90);
                 display: flex;
-                height: 20rem;
+                gap: 1rem;
+                height: 0;
                 justify-content: center;
                 min-width: 20rem;
+                overflow: hidden;
+                transition: height 100ms;
                 width: 100%;
+
+                .red-light {
+                    /*border: 1px solid hsl(0 100% 50%);*/
+                    border-radius: 5rem;
+                    height: .25rem;
+                    width: .25rem;
+                }
+
+                &.on {
+                    height: 3rem;
+
+                    .red-light {
+                        animation: loading 1800ms infinite ease-in-out;
+                        animation-delay: var(--delay);
+                    }
+                }
             }
         }
     }
@@ -1317,6 +1333,21 @@ label:has(input[type="text"]) {
     svg {
         height: 1.5rem;
         width: 1.5rem;
+    }
+}
+
+@keyframes loading {
+    0% {
+        background-color: hsl(0 0% 0% / 0);
+        box-shadow: 0 0 0 0 hsl(0 0% 0% / 0);
+    }
+    50% {
+        background-color: var(--orange);
+        box-shadow: 0 0 .25rem .5rem var(--orange);
+    }
+    100% {
+        background-color: hsl(0 0% 0% / 0);
+        box-shadow: 0 0 0 0 hsl(0 0% 0% / 0);
     }
 }
 
