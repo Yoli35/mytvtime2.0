@@ -117,7 +117,7 @@ export class EpisodeActions {
         const views = parseInt(episode.getAttribute('data-views') ?? "0");
         const backToTopLink = episode.parentElement.querySelector('.back-to-top');
         /*const backToSeriesLink = episode.parentElement.querySelector('.back-to-series').closest('a');*/
-        const quickEpisodeLink = document.querySelector('.quick-episode[data-number="' + episodeNumber + '"]');
+        const quickEpisodeLinks = document.querySelectorAll('.quick-episode[data-number="' + episodeNumber + '"]');
         const episodeDiv = episode.closest('.episode')
         const substituteNameDiv = episodeDiv ? episodeDiv.querySelector('.substitute') : null;
         const episodeWatchLinks = episodeDiv ? episodeDiv.querySelector('.watch-links') : null;
@@ -191,7 +191,7 @@ export class EpisodeActions {
                 episode.replaceWith(newEpisode);
                 this.toolTips.init(newEpisode);/*episode.querySelector('.remove-this-episode'));*/
 
-                quickEpisodeLink?.classList.add('watched');
+                quickEpisodeLinks.forEach((q) => q.classList.add('watched'));
 
                 numberDiv?.classList.add('watched');
 
@@ -359,8 +359,8 @@ export class EpisodeActions {
                     this.intervals[episodeId] = 0;
                 }
 
-                const quickEpisodeLink = document.querySelector('.quick-episode[data-number="' + episodeNumber + '"]');
-                quickEpisodeLink.classList.remove('watched');
+                const quickEpisodeLinks = document.querySelectorAll('.quick-episode[data-number="' + episodeNumber + '"]');
+                quickEpisodeLinks.forEach((q) => q.classList.remove('watched'));
 
                 numberDiv.classList.remove('watched');
 
