@@ -4517,7 +4517,7 @@ h2 {
                                     }
 
                                     &:first-child {
-                                        border-radius: 5rem .0 0 5rem;
+                                        border-radius: 5rem 0 0 5rem;
 
                                         svg {
                                             padding-inline-start: .25rem;
@@ -4551,34 +4551,8 @@ h2 {
                         }
                     }
 
-                    .guest-stars {
-                        display: flex;
+                    .cast {
                         flex-shrink: 0;
-                        height: 16rem;
-                        overflow-x: auto;
-
-                        .wrapper {
-                            height: 100%;
-                            padding-inline: 1rem;
-
-                            .people {
-                                height: 100%;
-
-                                a {
-                                    display: flex;
-                                    gap: .5rem;
-                                    height: 100%;
-
-                                    .photo {
-                                        height: 100%;
-
-                                        img {
-                                            border-radius: .25rem;
-                                        }
-                                    }
-                                }
-                            }
-                        }
                     }
 
                     .season-filming-locations {
@@ -4668,7 +4642,7 @@ h2 {
         }
 
         .episode:hover {
-            .still, .infos, .user-episode {
+            .still, > .infos, .user-episode {
                 border-color: var(--orange-50);
             }
 
@@ -5349,7 +5323,7 @@ h2 {
         text-align: center;
         text-wrap: nowrap;
         top: 50%;
-        transition: all 300ms ease-in-out,;
+        transition: all 300ms ease-in-out;
         translate: -50% -50%;
     }
 
