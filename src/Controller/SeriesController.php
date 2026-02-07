@@ -676,7 +676,7 @@ class SeriesController extends AbstractController
     }
 
     #[Route('/tmdb/{id}-{slug}', name: 'tmdb', requirements: ['id' => Requirement::DIGITS])]
-    public function tmdb(#[CurrentUser] User $user, Request $request, $id, $slug): Response
+    public function tmdb(#[CurrentUser] User $user, Request $request, int $id, string $slug): Response
     {
         $series = $this->seriesRepository->findOneBy(['tmdbId' => $id]);
         $userSeries = $series ? $this->userSeriesRepository->findOneBy(['user' => $user, 'series' => $series]) : null;
@@ -691,20 +691,35 @@ class SeriesController extends AbstractController
             ], 301);
         }
 
+        $tv = json_decode($this->tmdbService->getTv($id, $request->getLocale(), ["images", "videos", "credits", "watch/providers", "content/ratings", "keywords", "similar", "translations"]), true);
+        $overview = null;
         if ($series) {
             $series->setVisitNumber($series->getVisitNumber() + 1);
             $this->seriesRepository->save($series, true);
             $localizedName = $series->getLocalizedName($locale);
             $localizedOverview = $series->getLocalizedOverview($locale);
+            $overview = $localizedOverview->getOverview();
+            $localizedSlug = $localizedName?->getSlug() ?: $series->getSlug();
         } else {
             $localizedName = null;
             $localizedOverview = null;
-        }
-        $tv = json_decode($this->tmdbService->getTv($id, $request->getLocale(), ["images", "videos", "credits", "watch/providers", "content/ratings", "keywords", "similar", "translations"]), true);
-        $this->checkTmdbSlug($tv, $slug, $localizedName?->getSlug());
+            $localizedSlug = $slug;
 
-        if ($tv['overview'] == "" && $localizedOverview) {
-            $tv['overview'] = $localizedOverview->getOverview();
+            $translations = array_find($tv['translations']['translations'], function ($item) {
+                return $item['iso_639_1'] == 'en';
+            });
+            if ($translations) {
+                if ($this->seriesService->hasNoLatinChars($tv['name'])) {
+                    $localizedName = $translations['data']['name'];
+                }
+                $overview = $translations['data']['overview'];
+                $localizedSlug = new AsciiSlugger()->slug($localizedName)->lower()->toString();
+            }
+        }
+        $this->checkTmdbSlug($tv, $slug, $localizedSlug);
+
+        if ($tv['overview'] == "" && $overview) {
+            $tv['overview'] = $overview;
         }
         if ($tv['overview'] == "" && !$localizedOverview) {
             $enTranslations = array_find($tv['translations']['translations'], function ($item) {

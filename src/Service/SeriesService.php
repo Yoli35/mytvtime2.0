@@ -381,6 +381,15 @@ class SeriesService extends AbstractController
         return $newLocalizedName;
     }
 
+    public function hasNoLatinChars(?string $value): bool
+    {
+        if ($value === null || $value === '') {
+            return true; // à ajuster selon ton besoin (vide = "pas de latin")
+        }
+
+        return preg_match('/\p{Latin}/u', $value) !== 1;
+    }
+
     public function getEpisodeToAir(?array $ep, Series $series): ?array
     {
         if (!$ep) return null;
