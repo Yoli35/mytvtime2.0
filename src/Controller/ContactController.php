@@ -32,7 +32,7 @@ class ContactController extends AbstractController
     {
         /** @var User $user */
         $user = $this->getUser();
-        $data = new ContactMessage($user->getTimezone() ?? 'Europe/Paris');
+        $data = new ContactMessage($user?->getTimezone() ?? 'Europe/Paris');
         if ($user) {
             $data->setName($user->getUsername());
             $data->setEmail($user->getEmail());
