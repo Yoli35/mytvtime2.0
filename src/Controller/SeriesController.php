@@ -701,20 +701,10 @@ class SeriesController extends AbstractController
             $overview = $localizedOverview->getOverview();
             $localizedSlug = $localizedName?->getSlug() ?: $series->getSlug();
         } else {
-            $localizedName = null;
-            $localizedOverview = null;
-            $localizedSlug = $slug;
-
-            $translations = array_find($tv['translations']['translations'], function ($item) {
-                return $item['iso_639_1'] == 'en';
-            });
-            if ($translations) {
-                if ($this->seriesService->hasNoLatinChars($tv['name'])) {
-                    $localizedName = $translations['data']['name'];
-                }
-                $overview = $translations['data']['overview'];
-                $localizedSlug = new AsciiSlugger()->slug($localizedName)->lower()->toString();
-            }
+            $localization = $this->localizeSeries($tv);
+            $localizedName = $localization['localizedName'];
+            $localizedOverview = $localization['localizedOverview'];
+            $localizedSlug = $localization['localizedSlug'];
         }
         $this->checkTmdbSlug($tv, $slug, $localizedSlug);
 
@@ -1117,13 +1107,17 @@ class SeriesController extends AbstractController
     public function add(#[CurrentUser] User $user, int $id): Response
     {
         $date = $this->now();
-        $language = ($user->getPreferredLanguage() ?: 'fr') . '-' . ($user->getCountry() ?: 'FR');
+        $locale = $user->getPreferredLanguage() ?: 'fr';
+        $language = $locale . '-' . ($user->getCountry() ?: 'FR');
 
-        $result = $this->addSeries($id, $date, $language);
+        $result = $this->addSeries($id, $date, $locale, $language);
         $tv = $result['tv'];
         $series = $result['series'];
+        $localizedName = $result['localizedName'];
+        $localizedSlug = $result['localizedSlug'];
+
         $userSeries = $this->addSeriesToUser($user, $series, $tv, $date);
-        $this->sendMail('Nouvelle série', $this->prepareMail($userSeries), $userSeries);
+        $this->sendMail('Nouvelle série', $this->prepareMail($userSeries, $localizedName), $userSeries);
 
         $firstAirDate = $tv['first_air_date'] ? $this->dateService->newDateImmutable($tv['first_air_date'], 'Europe/Paris', true) : null;
         $oldSeries = false;
@@ -1138,7 +1132,7 @@ class SeriesController extends AbstractController
 
         return $this->redirectToRoute('app_series_show', [
             'id' => $series->getId(),
-            'slug' => $series->getSlug(),
+            'slug' => $localizedSlug ?: $series->getSlug(),
             'oldSeriesAdded' => $oldSeries,
         ]);
     }
@@ -2208,12 +2202,12 @@ class SeriesController extends AbstractController
         $series->addUpdate($this->translator->trans(ucfirst($imageType) . ' added'));
     }
 
-    public function addSeries(int $id, DateTimeImmutable $date, string $language): array
+    public function addSeries(int $id, DateTimeImmutable $date, string $locale, string $language): array
     {
         $series = $this->seriesRepository->findOneBy(['tmdbId' => $id]);
 
         $slugger = new AsciiSlugger();
-        $tv = json_decode($this->tmdbService->getTv($id, $language), true);
+        $tv = json_decode($this->tmdbService->getTv($id, $language, ['translations']), true);
 
         if (!$series) $series = new Series();
         $series->setBackdropPath($tv['backdrop_path']);
@@ -2231,8 +2225,13 @@ class SeriesController extends AbstractController
         $series->setVisitNumber(0);
         $this->seriesRepository->save($series, true);
 
+        $localization = $this->localizeSeries($tv);
+        $this->seriesService->localizeSeries($series, $localization, $locale);
+
         return [
             'series' => $this->seriesRepository->findOneBy(['tmdbId' => $id]),
+            'localizedName' => $localization['localizedName'],
+            'localizedSlug' => $localization['localizedSlug'],
             'tv' => $tv,
         ];
     }
@@ -2256,7 +2255,7 @@ class SeriesController extends AbstractController
         return $userSeries;
     }
 
-    public function prepareMail(UserSeries $userSeries): ContactMessage
+    public function prepareMail(UserSeries $userSeries, string $localizedName): ContactMessage
     {
         $user = $userSeries->getUser();
         $series = $userSeries->getSeries();
@@ -2267,7 +2266,7 @@ class SeriesController extends AbstractController
         $message->setSubject('Nouvel ajout par ' . $user->getUsername() . "(" . $user->getId() . ")");
         $message->setMessage(
             "IDs : " . $series->getId() . " / " . $userSeries->getId() . "\n\n"
-            . "Nom : " . $series->getName() . "\n\n"
+            . "Nom : " . $series->getName() . ($localizedName ? " - " . $localizedName : '') . "\n\n"
             . ($sln ? "Nom localisé : " . $series->getLocalizedName($user->getPreferredLanguage() ?: 'fr')->getName() . "\n\n" : "")
             . "Résumé : " . $series->getOverview() . "\n\n"
         );
@@ -2296,6 +2295,26 @@ class SeriesController extends AbstractController
         }
     }
 
+    public function localizeSeries(array $tv): array{
+        $localizedName = null;
+        $localizedSlug = null;
+        $localizedOverview = null;
+        $translations = array_find($tv['translations']['translations'], function ($item) {
+            return $item['iso_639_1'] == 'en';
+        });
+        if ($translations) {
+            if ($this->seriesService->hasNoLatinChars($tv['name'])) {
+                $localizedName = $translations['data']['name'];
+            }
+            $localizedOverview = $translations['data']['overview'];
+            $localizedSlug = new AsciiSlugger()->slug($localizedName)->lower()->toString();
+        }
+        return [
+            'localizedName' => $localizedName,
+            'localizedOverview' => $localizedOverview,
+            'localizedSlug' => $localizedSlug,
+        ];
+    }
     public function checkSeasons(UserSeries $userSeries, array $userEpisodes, array $tv): array
     {
         $user = $userSeries->getUser();

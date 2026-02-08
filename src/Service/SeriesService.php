@@ -6,11 +6,13 @@ use App\Entity\Network;
 use App\Entity\Series;
 use App\Entity\SeriesBroadcastSchedule;
 use App\Entity\SeriesLocalizedName;
+//use App\Entity\SeriesLocalizedOverview;
 use App\Entity\Settings;
 use App\Entity\User;
 use App\Entity\UserEpisode;
 use App\Repository\NetworkRepository;
 use App\Repository\SeriesLocalizedNameRepository;
+//use App\Repository\SeriesLocalizedOverviewRepository;
 use App\Repository\SettingsRepository;
 use App\Repository\SourceRepository;
 use App\Repository\UserSeriesRepository;
@@ -25,18 +27,19 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 class SeriesService extends AbstractController
 {
     public function __construct(
-        private readonly DateService                   $dateService,
-        private readonly ImageConfiguration            $imageConfiguration,
-        private readonly ImageService                  $imageService,
-        private readonly KeywordService                $keywordService,
-        private readonly MonologLogger                 $logger,
-        private readonly NetworkRepository             $networkRepository,
-        private readonly SeriesLocalizedNameRepository $seriesLocalizedNameRepository,
-        private readonly SettingsRepository            $settingsRepository,
-        private readonly SourceRepository              $sourceRepository,
-        private readonly TMDBService                   $tmdbService,
-        private readonly TranslatorInterface           $translator,
-        private readonly UserSeriesRepository          $userSeriesRepository,
+        private readonly DateService                       $dateService,
+        private readonly ImageConfiguration                $imageConfiguration,
+        private readonly ImageService                      $imageService,
+        private readonly KeywordService                    $keywordService,
+        private readonly MonologLogger                     $logger,
+        private readonly NetworkRepository                 $networkRepository,
+        private readonly SeriesLocalizedNameRepository     $seriesLocalizedNameRepository,
+//        private readonly SeriesLocalizedOverviewRepository $seriesLocalizedOverviewRepository,
+        private readonly SettingsRepository                $settingsRepository,
+        private readonly SourceRepository                  $sourceRepository,
+        private readonly TMDBService                       $tmdbService,
+        private readonly TranslatorInterface               $translator,
+        private readonly UserSeriesRepository              $userSeriesRepository,
     )
     {
     }
@@ -106,23 +109,38 @@ class SeriesService extends AbstractController
         return $tv;
     }
 
-    public function getTvMini(Series $series): ?array
+//    public function getTvMini(Series $series): ?array
+//    {
+//        $seriesTmdbId = $series->getTmdbId();
+//        $tv = json_decode($this->tmdbService->getTv($seriesTmdbId, 'en-US'), true);
+//
+//        if (key_exists('error', $tv)) {
+//            $this->logger->error("TMDB TV show not found", ['series_id' => $series->getId(), 'tmdb_id' => $seriesTmdbId]);
+//            return null;
+//        }
+//
+//        if (!$tv) {
+//            return null;
+//        }
+//
+//        $tv['seasons'] = $this->seasonsPosterPath($tv['seasons']);
+//
+//        return $tv;
+//    }
+
+    public function localizeSeries(Series $series, array $localization, string $locale): void
     {
-        $seriesTmdbId = $series->getTmdbId();
-        $tv = json_decode($this->tmdbService->getTv($seriesTmdbId, 'en-US'), true);
-
-        if (key_exists('error', $tv)) {
-            $this->logger->error("TMDB TV show not found", ['series_id' => $series->getId(), 'tmdb_id' => $seriesTmdbId]);
-            return null;
+        $localizedName = $localization['localizedName'];
+//        $localizedOverview = $localization['localizedOverview'];
+        $localizedSlug = $localization['localizedSlug'];
+        if ($localizedName) {
+            $newLocalizedName = new SeriesLocalizedName($series, $localizedName, $localizedSlug, $locale);
+            $this->seriesLocalizedNameRepository->save($newLocalizedName, true);
         }
-
-        if (!$tv) {
-            return null;
-        }
-
-        $tv['seasons'] = $this->seasonsPosterPath($tv['seasons']);
-
-        return $tv;
+//        if ($localizedOverview) {
+//            $newLocalizedOverview = new SeriesLocalizedOverview($series, $localizedOverview, $locale);
+//            $this->seriesLocalizedOverviewRepository->save($newLocalizedOverview, true);
+//        }
     }
 
     public function seasonsPosterPath(array $seasons): array
@@ -765,7 +783,7 @@ class SeriesService extends AbstractController
     private function isValidDaysOfWeek(array $daysOfWeek, int $selectedDayCount, int $firstDayOfWeek): bool
     {
         if (!$selectedDayCount) {
-            // No selected days of week
+            // No selected days of the week
             $this->addFlash('error', $this->translator->trans('No selected days of week.'));
             return false;
         }
@@ -907,7 +925,7 @@ class SeriesService extends AbstractController
         }
     }
 
-    private function buildOverview(array $tv):string
+    private function buildOverview(array $tv): string
     {
         $overview = '';
         if (key_exists('overview', $tv) && strlen($tv['overview'])) {
