@@ -680,6 +680,7 @@
     }
 
     .all-series-locations {
+        --svgSize: 24px;
         display: flex;
         flex-direction: column;
         gap: 1rem;
