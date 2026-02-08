@@ -18,6 +18,95 @@
                 </div>
             </div>
             <div class="site-update glowing-border">
+                <h2>67ᵉ mise à jour : 08/02/2026</h2>
+                <ul>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:tv') }}{{ ux_icon('mdi:translate') }}→ Improve localization of series names, summaries, slugs</div>
+                        <div class="details">Introduces better handling of localized series information, including names, summaries, slugs for non-Latin character sets. Enhances overall user experience with improved fallback mechanisms and email notifications.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:tv') }}{{ ux_icon('mdi:map-outline') }}→ Prevent popups from stealing focus on open in the map</div>
+                        <div class="details">Ensures map popups no longer take focus when opened, improving navigation and user experience.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:tv') }}{{ ux_icon('mdi:translate') }}→ Improve fallback localization for series names and summaries</div>
+                        <div class="details">Enhances handling of non-Latin characters by using translated names and summaries when available. Improves display and slug generation for better localization and user experience.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:bug-outline') }}{{ ux_icon('mdi:tv') }}→ Update handling of quick episode links for watched state</div>
+                        <div class="details">Ensures all relevant quick episode links correctly update their watched state. Fixes inconsistencies when marking or unmarking episodes as watched for better user feedback.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:bug-outline') }}{{ ux_icon('mdi:email') }}→ Fix null-safe operator usage in contact form initialization</div>
+                        <div class="details">Improves reliability when initializing contact messages by using the null-safe operator. Ensures proper handling of cases where user information might be unavailable.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:tv') }}{{ ux_icon('mdi:language-css3') }}→ Fix border-radius typo and simplify cast styling</div>
+                        <div class="details">Corrects a typo in border-radius values for the first-child selector. Merges `.guest-stars` into `.cast` to streamline styling and improve code maintainability. Fixes unnecessary trailing comma in transition property.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:menu') }}{{ ux_icon('mdi:calendar') }}→ Redesign schedule menu loader and improve menu replacement logic</div>
+                        <div class="details">Replaces the loader visuals with animated red-light indicators for a modernized look and smoother transitions. Refactors `scheduleMenuDiv` updates by switching to `replaceWith` for cleaner element handling.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:menu') }}{{ ux_icon('mdi:calendar') }}→ Redesign episode progress visualization</div>
+                        <div class="details">Replaces gradient-based progress indicators with a dedicated progress bar element for improved clarity and flexibility. Enhances the interface by providing a more intuitive and modern visualization of episode completion.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:tv') }}→ Add light/dark mode toggler for episode details</div>
+                        <div class="details">Introduces a toggle button to switch between light and dark modes in the episode details display. Enhances accessibility and allows users to customize the viewing experience according to their preferences.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:tv') }}{{ ux_icon('mdi:map-outline') }}→ Adjust map popups and icon sizing</div>
+                        <div class="details">Improves the visual styling of map popups and adjusts icon sizes for better clarity and consistency. Enhances the overall user experience with more polished and readable map elements.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:tv') }}{{ ux_icon('mdi:map-outline') }}→ Improve map image handling and interactivity</div>
+                        <div class="details">Improve dynamic behavior for image lists and location centering in the map interface. Enhances usability by refining the handling of image transitions and map interactions for filming locations.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:tv') }}→ Group action buttons in watched-at editor</div>
+                        <div class="details">Rearranges watched-at editor buttons into a grouped layout for a cleaner and more organized presentation. Improves usability and ensures consistent styling across the interface.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:map-outline') }}→ Refactor map location handling and improve update behavior</div>
+                        <div class="details">Simplifies map location handling by delegating data access to a new service. Introduces real-time updates for map locations, enhancing interactivity and keeping the map content current.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:tv') }}→ Add next episode link and availability indicator</div>
+                        <div class="details">Enables users to see and navigate to the next episode if available. Improves usability by visually indicating when the next episode can be accessed.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:tv') }}{{ ux_icon('mdi:translate') }}→ Add localized season overviews to series view</div>
+                        <div class="details">Enables fetching and displaying localized season overviews within the series view. Improves user experience by providing detailed season summaries directly on the series page.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:tv') }}→ Add device icons and adjust episode layout</div>
+                        <div class="details">Introduces new device icons for better representation across platforms. Adjusts episode layout for improved styling and clarity.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:tv') }}→ Mark season finales on episode pages</div>
+                        <div class="details">Highlights season finales with a visual indicator on the episode image. Enhances user experience with confetti animation for added excitement when viewing finale episodes.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:tv') }}→ Refactor "add episode" code from episode page</div>
+                        <div class="details">Take in account that the "user episode" div has different parents in episode view than in season view. Marking an episode as viewed doesn't affect the same elements.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:tv') }}→ Add episode navigation for improved usability</div>
+                        <div class="details">Adds "previous" and "next" episode links alongside the updated "back to season" button. Enhances navigation by allowing users to move between episodes more easily. Refines button and layout styling for better visual clarity.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:tv') }}→ Refactor "back to top" feature to "back to season"</div>
+                        <div class="details">On episode page, renames and updates the "back to top" functionality to take users back to the specific season. Improves navigation clarity by directly linking to the corresponding season and episode.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:tv') }}→ Add episode actions and reorganize layout</div>
+                        <div class="details">Integrates new user actions for episodes, including adding, removing, and setting preferences. Simplifies management by consolidating logic and updating episode layouts for improved clarity and usability.</div>
+                    </li>
+                </ul>
+            </div>
+            <div class="site-update glowing-border">
                 <h2>66ᵉ mise à jour : 03/02/2026</h2>
                 <ul>
                     <li>
