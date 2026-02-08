@@ -475,7 +475,7 @@ export class Map {
     addLocationMarker(location) {
         let marker = new mapboxgl.Marker({color: "#B46B18FF"})
             .setLngLat([location.longitude, location.latitude])
-            .setPopup(new mapboxgl.Popup({closeOnMove: true}).setMaxWidth("24rem").setHTML('<div class="leaflet-popup-content-title">' + location.title + '</div><div class="leaflet-popup-content-description"><div class="location">' + location.location + '</div>' + location.description + '</div><div class="leaflet-popup-content-image"><img src="/images/map' + location['still_path'] + '" alt="' + location['title'] + '" style="height: auto; width: 100%"></div>'))
+            .setPopup(new mapboxgl.Popup({closeOnMove: true, focusAfterOpen: false}).setMaxWidth("24rem").setHTML('<div class="leaflet-popup-content-title">' + location.title + '</div><div class="leaflet-popup-content-description"><div class="location">' + location.location + '</div>' + location.description + '</div><div class="leaflet-popup-content-image"><img src="/images/map' + location['still_path'] + '" alt="' + location['title'] + '" style="height: auto; width: 100%"></div>'))
             .addTo(this.map);
         let markerIcon = marker.getElement();
         markerIcon.setAttribute('data-target-id', location.id);
