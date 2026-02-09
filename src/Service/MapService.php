@@ -36,6 +36,10 @@ readonly class MapService
         return $this->filmingLocationRepository->lastId();
     }
 
+    public function seriesCount(): int{
+        return $this->filmingLocationRepository->seriesCount();
+    }
+
     private function locationsWithImages($filmingLocations): array
     {
         $filmingLocationIds = array_column($filmingLocations, 'id');

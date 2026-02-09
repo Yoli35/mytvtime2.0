@@ -1,4 +1,4 @@
-<div class="series-location" data-tmdb-id="{{ loc.tmdb_id }}">
+<div class="series-location" data-id="{{ loc.id }}" data-tmdb-id="{{ loc.tmdb_id }}">
     <div class="series-location-image" data-title="{{ loc.location }}">
         <img src="/images/map{{ loc.still_path }}" alt="{{ loc.location ?? 'No title entry!!' }}">
         <div class="image-count">{{ loc.filmingLocationImages|length }}</div>

@@ -23,9 +23,18 @@
             <div class="series-map-header">
                 <h1>{{ (type=='creation' ? 'Recent additions':'Recent updates')|trans }}</h1>
                 <div class="numbers">
-                    <div>{{ seriesCount }} {{ 'Series'|trans }}</div>
-                    <div data-title="{{ filmingLocationCount }} {{ 'locations'|trans }}">{{ filmingLocationCount }} {{ ux_icon('mdi:map-marker', {height: '32px', width: '32px'}) }}</div>
-                    <div data-title="{{ filmingLocationImageCount }} {{ 'images'|trans }}">{{ filmingLocationImageCount }} {{ ux_icon('mdi:image-multiple', {height: '32px', width: '32px'}) }}</div>
+                    <div class="series-count" data-count="{{ seriesCount }}">
+                        <span>{{ seriesCount }}</span> {{ 'Series'|trans }}
+                        <div class="badge" data-badge="0"></div>
+                    </div>
+                    <div class="location-count" data-count="{{ filmingLocationCount }}" data-title="{{ filmingLocationCount }} {{ 'locations'|trans }}">
+                        <span>{{ filmingLocationCount }}</span> {{ ux_icon('mdi:map-marker', {height: '32px', width: '32px'}) }}
+                        <div class="badge" data-badge="0"></div>
+                    </div>
+                    <div class="image-count" data-count="{{ filmingLocationImageCount }}" data-title="{{ filmingLocationImageCount }} {{ 'images'|trans }}">
+                        <span>{{ filmingLocationImageCount }}</span> {{ ux_icon('mdi:image-multiple', {height: '32px', width: '32px'}) }}
+                        <div class="badge" data-badge="0"></div>
+                    </div>
                 </div>
             </div>
             {{ include('_blocks/map/_map_container.html.twig', {type: 'all', styleSettings: settings.data.styles}) }}

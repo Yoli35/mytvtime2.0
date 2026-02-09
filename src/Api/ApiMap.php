@@ -60,6 +60,7 @@ readonly class ApiMap
         return ($this->json)([
             'ok' => true,
             'update' => true,
+            'seriesCount' =>$this->mapService->seriesCount(),
             'locations' => $latest,
             'blocks' => $blocks,
         ]);

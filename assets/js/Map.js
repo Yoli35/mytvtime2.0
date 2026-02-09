@@ -445,10 +445,21 @@ export class Map {
                 .then(res => res.json())
                 .then(data => {
                     console.log(data);
-                    if (data['update'] === false) return;
+                    const seriesCountDiv = document.querySelector(".series-count");
+                    const locationCountDiv = document.querySelector(".location-count");
+                    const imageCountDiv = document.querySelector(".image-count");
+                    if (data['update'] === false) {
+                        this.setBadge(seriesCountDiv, 0);
+                        this.setBadge(locationCountDiv, 0);
+                        this.setBadge(imageCountDiv, 0);
+                        return;
+                    }
                     // Affichage des cartes des nouveaux lieux
                     const locationWrapper = document.querySelector(".series-location-content");
                     const firstLocationDiv = document.querySelector(".series-location");
+                    this.setBadge(seriesCountDiv, data['seriesCount']);
+                    this.setBadge(locationCountDiv, data['locations']['filmingLocationCount']);
+                    this.setBadge(imageCountDiv, data['locations']['filmingLocationImageCount']);
                     const tempDiv = document.createElement('div');
                     const blocks = data['blocks'];
                     blocks.forEach(block => {
@@ -463,13 +474,41 @@ export class Map {
                     const locations = data['locations']['filmingLocations'];
                     // Ajout des markers des nouveaux lieux
                     locations.forEach((location, index) => {
-                        this.lastId = location.id;
                         let marker = this.addLocationMarker(location);
                         if (!index) marker.togglePopup();
                     });
+                    // Récupérer le dernier ID
+                    const lastLocation = locationWrapper.querySelector('.series-location');
+                    this.lastId = lastLocation.getAttribute("data-id");
+                    console.log(lastLocation);
                 })
                 .catch(err => console.log(err));
         }
+    }
+
+    setBadge(counterDiv, newCount) {
+        const oldCount = parseInt(counterDiv.dataset.count ?? "0", 10);
+        const delta = Math.max(0, newCount - oldCount);
+
+        const badge = counterDiv.querySelector(".badge");
+        if (badge) {
+            badge.dataset.badge = String(delta);
+            badge.textContent = delta ? `+${delta}` : "";
+            if (delta) {
+                badge.setAttribute("aria-label", `${delta} nouveau(x)`);
+            } else {
+                badge.removeAttribute("aria-label");
+            }
+        }
+
+        if (newCount > 0) {
+            counterDiv.dataset.count = String(newCount);
+
+            const span = counterDiv.querySelector("span");
+            if (span) span.textContent = String(newCount);
+        }
+
+        return delta;
     }
 
     addLocationMarker(location) {

@@ -353,6 +353,23 @@
                 align-items: center;
                 display: flex;
                 gap: .5rem;
+                position: relative;
+
+                .badge {
+                    background-color: var(--red-50);
+                    border-radius: 5rem;
+                    bottom: -0.8rem;
+                    color: var(--orange-90);
+                    font-size: 1rem;
+                    font-weight: 500;
+                    padding-inline: .5rem;
+                    position: absolute;
+                    right: -0.5rem;
+                }
+
+                .badge[data-badge="0"] {
+                    display: none;
+                }
             }
         }
     }
