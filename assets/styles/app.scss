@@ -462,7 +462,7 @@ label:has(input[type="text"]) {
                 color: var(--navbar-color-hover);
                 padding-block: 2px;
 
-                &:not(:has(svg)) {
+                &:not(:has(svg),:has(img)) {
                     padding-inline: 1rem;
                 }
 
