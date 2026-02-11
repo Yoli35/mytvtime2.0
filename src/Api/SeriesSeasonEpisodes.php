@@ -70,7 +70,9 @@ class SeriesSeasonEpisodes extends AbstractController
         $this->userEpisodes = $this->userEpisodeRepository->findBy(['user' => $user, 'episodeId' => $this->episodeIds]);
         $this->providersInfos = $this->getProvidersInfos();
 
-        $baseLink = "/" . $this->locale . "/series/season/$id-$slug/$seasonNumber#episode-$seasonNumber-";
+//      $baseLink = "/" . $this->locale . "/series/season/$id-$slug/$seasonNumber#episode-$seasonNumber-";
+//      https://localhost:8000/fr/series/episode/1374-reim-him-hawci-deim/1/1
+        $baseLink = "/" . $this->locale . "/series/episode/$id-$slug/$seasonNumber/";
 
         // TODO: Utiliser cette logique pour toutes les saisons
         // Trouver l'épisode final avec 'episode_type' = 'finale' pour supprimer les suivants

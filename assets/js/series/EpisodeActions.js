@@ -471,7 +471,7 @@ export class EpisodeActions {
         const id = datetimeSaveButton.getAttribute('data-ue-id');
         const airDateDiv = datetimeSaveButton.closest('.air-date');
         const watchedAtDiv = airDateDiv.querySelector('.watched-at[data-ue-id="' + id + '"]');
-        const watchedAtModifyDiv = datetimeSaveButton.parentElement;
+        const watchedAtModifyDiv = datetimeSaveButton.closest(".watched-at-modify");
         const datetimeInput = watchedAtModifyDiv.querySelector('input');
         const newDatetime = datetimeInput.value;
         console.log(newDatetime);
