@@ -3,52 +3,56 @@
 3- .env: APP_ENV: prod
 4- Paste this in your local terminal:
 
-clear;
-echo '' > var/log/dev.log;
-rm -R var/cache/dev;
-composer install --no-dev --optimize-autoloader;
-APP_ENV=prod APP_DEBUG=0 php bin/console cache:clear;
-zip -r Archives.zip bin composer.json composer.lock config importmap.php package.json src symfony.lock templates translations var vendor;
-find ./public/ -type f -mmin -9181 -exec zip -n .png:.webp:.jpg:.jpeg:.mp4 public.zip {} \;
-cons asset-map:compile
-zip -r assets.zip ./public/assets;
-zip -r Archives.zip assets.zip public.zip;
-rm assets.zip public.zip;
+        clear;
+        echo '' > var/log/dev.log;
+        rm -R var/cache/dev;
+        composer install --no-dev --optimize-autoloader;
+        APP_ENV=prod APP_DEBUG=0 php bin/console cache:clear;
+        zip -r Archives.zip bin composer.json composer.lock config importmap.php package.json src symfony.lock templates translations var vendor;
+
+ >>     find ./public/ -type f -mmin -9181 -exec zip -n .png:.webp:.jpg:.jpeg:.mp4 public.zip {} \;
+
+        cons asset-map:compile
+        zip -r assets.zip ./public/assets;
+        zip -r Archives.zip assets.zip public.zip;
+        rm assets.zip public.zip;
+        scp /Users/iboy/Sites/mytvtime2.0/Archives.zip u109355875@access922206626.webspace-data.io:/
 
 5- copy Archives.zip to server
 6- export db
 7- ionos > Espace web > Utiliser l'espace web > Connecter le domaine au dossier "/"
 8- if 5, delete all tables, then import db
-9- on server, move
-        [bin]
-		config
-		public/assets
-		src
-		templates
-		translations
-		var
-		vendor
-		composer.json
-		composer.lock
-		importmap.php
-		package.json
-		symfony.lock > temp
+9- on server:
 
-10- paste this in your remote terminal:
-
-clear;
-unzip -n Archives.zip;
-unzip -o public.zip -d ./;
-unzip -o assets.zip -d ./;
-rm Archives.zip assets.zip public.zip;
-find ./ -depth -name ".DS_Store" -exec rm {} \;
-clear;
-echo 'Cleaning temp directory ...';
-cd temp;
-rm -R *;
-cd ..;
-clear;
-echo 'Done';
+        echo 'Moving previous files and folders to temp directory ...'
+        mv bin temp/
+        mv config temp/
+        mv public/assets temp/
+        mv src temp/
+        mv templates temp/
+        mv translations temp/
+        mv var temp/
+        mv vendor temp/
+        mv composer.json temp/
+        mv composer.lock temp/
+        mv importmap.php temp/
+        mv package.json temp/
+        mv symfony.lock temp/
+        echo 'Unzip new files and folders...'
+        unzip -nq Archives.zip;
+        echo 'Unzip new image files in public...'
+        unzip -oq public.zip -d ./;
+        echo 'Unzip new asset files and folders...'
+        unzip -oq assets.zip -d ./;
+        echo 'Removing archive files...'
+        rm Archives.zip assets.zip public.zip;
+        echo 'Removing .DS_Store files...';
+        find ./ -depth -name ".DS_Store" -exec rm {} \;
+        echo 'Cleaning temp directory ...';
+        cd temp;
+        rm -R *;
+        cd ..;
+        echo 'Done';
 
 11- 'Penser à connecter le domaine au dossier "/public"'
 12- ionos > Espace web > Utiliser l'espace web > Connecter le domaine au dossier "/public"
