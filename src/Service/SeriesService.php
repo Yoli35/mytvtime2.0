@@ -408,6 +408,14 @@ class SeriesService extends AbstractController
         return preg_match('/\p{Latin}/u', $value) !== 1;
     }
 
+    public function getLatinPart(?string $value): ?string
+    {
+        if ($value === null || $value === '') {
+            return null;
+        }
+        return preg_replace('/[^a-zA-Z0-9\s]/', '', $value);
+    }
+
     public function getEpisodeToAir(?array $ep, Series $series): ?array
     {
         if (!$ep) return null;

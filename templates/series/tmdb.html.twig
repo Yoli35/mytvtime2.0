@@ -27,13 +27,13 @@
                     </div>
                 {% endif %}
                 <div class="poster-container">
-                <div class="poster">
-                    {% if tv.poster_path %}
-                        <img src="/series/posters{{ tv.poster_path }}" alt="{{ tv.name }}">
-                    {% else %}
-                        <div>{{ 'No poster'|trans }}</div>
-                    {% endif %}
-                </div>
+                    <div class="poster">
+                        {% if tv.poster_path %}
+                            <img src="/series/posters{{ tv.poster_path }}" alt="{{ tv.name }}">
+                        {% else %}
+                            <div>{{ 'No poster'|trans }}</div>
+                        {% endif %}
+                    </div>
                 </div>
                 <div class="infos">
                     <div class="infos-content">
@@ -51,6 +51,11 @@
                         <div class="series-overview">
                             {{ tv.overview|nl2br }}
                         </div>
+                        {% if localizedOverview %}
+                            <div class="series-overview">
+                                {{ localizedOverview }}
+                            </div>
+                        {% endif %}
                     </div>
                 </div>
             </div>
@@ -188,21 +193,21 @@
                         <div class="cast">
                             <div class="wrapper">
                                 {% for people in tv.credits.cast %}
-{#                                    <a href="{{ path('app_people_show', {id: people.id, slug: people.slug}) }}">#}
-{#                                        <div class="people">#}
-{#                                            <div class="profile">#}
-{#                                                {% if people.profile_path %}#}
-{#                                                    <img src="{{ people.profile_path }}" alt="{{ people.name }}">#}
-{#                                                {% else %}#}
-{#                                                    {{ 'No picture'|trans }}#}
-{#                                                {% endif %}#}
-{#                                            </div>#}
-{#                                            <div class="infos">#}
-{#                                                <div class="name">{{ people.name }}</div>#}
-{#                                                <div>{{ people.character }}</div>#}
-{#                                            </div>#}
-{#                                        </div>#}
-{#                                    </a>#}
+                                    {#                                    <a href="{{ path('app_people_show', {id: people.id, slug: people.slug}) }}"> #}
+                                    {#                                        <div class="people"> #}
+                                    {#                                            <div class="profile"> #}
+                                    {#                                                {% if people.profile_path %} #}
+                                    {#                                                    <img src="{{ people.profile_path }}" alt="{{ people.name }}"> #}
+                                    {#                                                {% else %} #}
+                                    {#                                                    {{ 'No picture'|trans }} #}
+                                    {#                                                {% endif %} #}
+                                    {#                                            </div> #}
+                                    {#                                            <div class="infos"> #}
+                                    {#                                                <div class="name">{{ people.name }}</div> #}
+                                    {#                                                <div>{{ people.character }}</div> #}
+                                    {#                                            </div> #}
+                                    {#                                        </div> #}
+                                    {#                                    </a> #}
                                     {{ include('_blocks/series/_cast.html.twig', { people: people, role: people.character }) }}
                                 {% endfor %}
                             </div>

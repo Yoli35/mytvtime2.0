@@ -2303,6 +2303,7 @@ class SeriesController extends AbstractController
             return $item['iso_639_1'] == 'en';
         });
         if ($translations) {
+            $localizedName = $this->seriesService->getLatinPart($tv['name']);
             if ($this->seriesService->hasNoLatinChars($tv['name'])) {
                 $localizedName = $translations['data']['name'];
             }
