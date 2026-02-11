@@ -1115,9 +1115,10 @@ class SeriesController extends AbstractController
         $series = $result['series'];
         $localizedName = $result['localizedName'];
         $localizedSlug = $result['localizedSlug'];
+        $localizedOverview = $result['localizedOverview'];
 
         $userSeries = $this->addSeriesToUser($user, $series, $tv, $date);
-        $this->sendMail('Nouvelle série', $this->prepareMail($userSeries, $localizedName), $userSeries);
+        $this->sendMail('Nouvelle série', $this->prepareMail($userSeries, $localizedName, $localizedOverview), $userSeries);
 
         $firstAirDate = $tv['first_air_date'] ? $this->dateService->newDateImmutable($tv['first_air_date'], 'Europe/Paris', true) : null;
         $oldSeries = false;
@@ -2232,6 +2233,7 @@ class SeriesController extends AbstractController
             'series' => $this->seriesRepository->findOneBy(['tmdbId' => $id]),
             'localizedName' => $localization['localizedName'],
             'localizedSlug' => $localization['localizedSlug'],
+            'localizedOverview' => $localization['localizedOverview'],
             'tv' => $tv,
         ];
     }
@@ -2255,7 +2257,7 @@ class SeriesController extends AbstractController
         return $userSeries;
     }
 
-    public function prepareMail(UserSeries $userSeries, string $localizedName): ContactMessage
+    public function prepareMail(UserSeries $userSeries, string $localizedName, string $localizedOverview): ContactMessage
     {
         $user = $userSeries->getUser();
         $series = $userSeries->getSeries();
@@ -2268,7 +2270,7 @@ class SeriesController extends AbstractController
             "IDs : " . $series->getId() . " / " . $userSeries->getId() . "\n\n"
             . "Nom : " . $series->getName() . ($localizedName ? " - " . $localizedName : '') . "\n\n"
             . ($sln ? "Nom localisé : " . $series->getLocalizedName($user->getPreferredLanguage() ?: 'fr')->getName() . "\n\n" : "")
-            . "Résumé : " . $series->getOverview() . "\n\n"
+            . "Résumé : " . $localizedOverview ?: $series->getOverview() . "\n\n"
         );
 
         return $message;
