@@ -4,8 +4,8 @@
     <div class="user-actions{% if hidden %} d-none{% endif %}">
         <div class="wrapper">
             <div class="watch-links">
-                <div class="label">{{ 'Watch on'|trans }}</div>
-                <div class="label-small" data-title="{{ 'Watch on'|trans }}">{{ ux_icon('mdi:link-variant') }}</div>
+                <div class="label">{{ 'Watch'|trans }}</div>
+                <div class="label-small" data-title="{{ 'Watch'|trans }}">{{ ux_icon('mdi:link-variant') }}</div>
                 {% for link in links %}
                     {% set linkSeasonNumber = link.seasonNumber ?? -1 %}
                     {% if linkSeasonNumber == seasonNumber or linkSeasonNumber == -1 %}
@@ -17,7 +17,7 @@
                                     <span>{{ link.name }}</span>
                                 {% endif %}
                             </a>
-                            <div class="watch-link-tools"
+                            {#<div class="watch-link-tools"
                                  data-id="{{ link.id }}"
                                  data-provider="{{ link.providerId }}"
                                  data-name="{{ link.name }}"
@@ -27,11 +27,28 @@
                                     {{ ux_icon('mdi:content-paste') }}
                                 </div>
                                 <div class="watch-link-name">{{ link.name }}</div>
-                            </div>
+                            </div>#}
                         </div>
                     {% endif %}
                 {% endfor %}
             </div>
+
+            {% for link in links %}
+                {% set linkSeasonNumber = link.seasonNumber ?? -1 %}
+                {% if linkSeasonNumber == seasonNumber or linkSeasonNumber == -1 %}
+                    <div class="watch-links copy" data-url="{{ link.url }}" data-title="{{ 'Copy watch link'|trans }}">
+                        <div class="label">{{ 'Copy'|trans }}</div>
+                        <div class="label-small">{{ ux_icon('mdi:link-variant') }}</div>
+                        <div class="watch-link">
+                            {% if link.providerId > 0 %}
+                                <img src="{{ providers.logos[link.providerId] }}" alt="{{ providers.names[link.providerId] }}"{# data-title="{{ link.name ?? providers.names[link.providerId] }}" #}>
+                            {% else %}
+                                <span>{{ link.name }}</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                {% endif %}
+            {% endfor %}
         </div>
     </div>
 {% endif %}

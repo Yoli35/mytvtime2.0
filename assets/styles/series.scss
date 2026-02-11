@@ -2650,9 +2650,25 @@ h2 {
             gap: .125rem;
             padding-block: .125rem;
             padding-inline: .75rem .125rem;
+            transition: background-color 0.5s ease-in-out;
 
             .label {
                 font-weight: 600;
+                padding-inline-end: .5rem;
+            }
+
+            &.copy {
+                background-color: var(--green);
+                cursor: pointer;
+                gap: .5rem;
+
+                .label {
+                    padding-inline-end: unset;
+                }
+            }
+
+            &.copied {
+                box-shadow: 0 0 1rem var(--orange);
             }
         }
     }

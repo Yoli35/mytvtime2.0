@@ -178,19 +178,35 @@ export class Season {
         const watchLinks = document.querySelectorAll('.watch-link');
         watchLinks.forEach(function (watchLink) {
             const tools = watchLink.querySelector('.watch-link-tools');
-            const href = watchLink.querySelector('a').getAttribute('href');
-            const copy = tools.querySelector('.watch-link-tool.copy');
-            const linkNameDiv = tools.querySelector('.watch-link-name');
-            const name = linkNameDiv.innerText;
+            const a = watchLink.querySelector('a');
+            if (a) {
+                const href = a.getAttribute('href');
+                const copy = tools.querySelector('.watch-link-tool.copy');
+                const linkNameDiv = tools.querySelector('.watch-link-name');
+                const name = linkNameDiv.innerText;
 
-            copy.addEventListener('click', function () {
+                copy.addEventListener('click', function () {
+                    navigator.clipboard.writeText(href).then(function () {
+                        copy.classList.add('copied');
+                        linkNameDiv.innerText = gThis.translations['copied'];
+                        setTimeout(function () {
+                            copy.classList.remove('copied');
+                            linkNameDiv.innerText = name;
+                        }, 2000);
+                    });
+                });
+            }
+        });
+
+        const watchLinksCopyBadge = document.querySelectorAll(".watch-links.copy");
+        watchLinksCopyBadge.forEach(function (badge) {
+            badge.addEventListener('click', function () {
+                const href = badge.getAttribute("data-url");
                 navigator.clipboard.writeText(href).then(function () {
-                    copy.classList.add('copied');
-                    linkNameDiv.innerText = gThis.translations['copied'];
+                    badge.classList.add('copied');
                     setTimeout(function () {
-                        copy.classList.remove('copied');
-                        linkNameDiv.innerText = name;
-                    }, 2000);
+                        badge.classList.remove('copied');
+                    }, 1000);
                 });
             });
         });
