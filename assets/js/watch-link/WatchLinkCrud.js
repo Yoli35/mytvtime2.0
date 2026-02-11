@@ -32,24 +32,39 @@ export class WatchLinkCrud {
         this.toolTips = new ToolTips();
 
         // this.list();
+
+        this.associations = [
+            {needle: 'tv.apple.com', providerId: 350},
+            {needle: 'www.disneyplus.com', providerId: 337},
+            {needle: 'www.gagaoolala.com', providerId: 3266},
+            {needle: 'www.france.tv', providerId: 236},
+            {needle: 'kisskh.co', providerId: 3267},
+            {needle: 'www.iq.com', providerId: 581},
+            {needle: 'www.netflix.com', providerId: 8},
+            {needle: 'novo19.ouest-france.fr', providerId: 3268},
+            {needle: 'www.paramountplus.com', providerId: 531},
+            {needle: 'www.primevideo.com', providerId: 119},
+            {needle: 'www.viki.com', providerId: 1390},
+            {needle: 'wetv.vip', providerId: 623},
+            {needle: 'www.youtube.com', providerId: 192},
+        ];
+
         this.init();
     }
 
     init() {
         const watchLinks = document.querySelectorAll('.watch-link');
         const addWatchLink = document.querySelector('.add-watch-link');
-        const watchLinkForm = document.querySelector('.watch-link-form');
-        const watchLinkFormProvider = watchLinkForm.querySelector('#provider');
-        const watchLinkFormName = watchLinkForm.querySelector('#name');
-        const watchLinkFormUrl = watchLinkForm.querySelector('#url');
-        const watchLinkFormSaisonNumber = watchLinkForm.querySelector('#season-number');
-        const watchLinkFormType = watchLinkForm.querySelector('#crud-type');
-        const watchLinkFormId = watchLinkForm.querySelector('#crud-id');
-        const form = document.querySelector('#watch-link-form');
-        const seasonSelect = form.querySelector('#season-number');
-        const providerSelect = form.querySelector('#provider');
-        const watchLinkFormCancel = form.querySelector('button[type="button"]');
-        const watchLinkFormSubmit = form.querySelector('button[type="submit"]');
+        const watchLinkFormContainer = document.querySelector('.watch-link-form');
+        const watchLinkForm = document.querySelector('#watch_link_form');
+        const watchLinkFormUrl = watchLinkFormContainer.querySelector('#watch_link_form_url');
+        const watchLinkFormProvider = watchLinkForm.querySelector('#watch_link_form_provider');
+        const watchLinkFormName = watchLinkForm.querySelector('#watch_link_form_name');
+        const watchLinkFormSaisonNumber = watchLinkForm.querySelector('#watch_link_form_season_number');
+        const watchLinkFormType = watchLinkForm.querySelector('#watch_link_form_crud_type');
+        const watchLinkFormId = watchLinkForm.querySelector('#watch_link_form_crud_id');
+        const watchLinkFormCancel = watchLinkForm.querySelector('button[type="button"]');
+        const watchLinkFormSubmit = watchLinkForm.querySelector('button[type="submit"]');
 
         addWatchLink.addEventListener('click', function () {
             watchLinkFormType.value = 'create';
@@ -60,7 +75,7 @@ export class WatchLinkCrud {
             watchLinkFormName.value = "";
             watchLinkFormUrl.value = "";
             watchLinkFormSaisonNumber.value = "-1";
-            gThis.displayForm(watchLinkForm);
+            gThis.displayForm(watchLinkFormContainer);
         });
 
         watchLinks.forEach(function (watchLink) {
@@ -83,7 +98,7 @@ export class WatchLinkCrud {
                 watchLinkFormName.value = name;
                 watchLinkFormUrl.value = href;
                 watchLinkFormSaisonNumber.value = seasonNumber;
-                gThis.displayForm(watchLinkForm);
+                gThis.displayForm(watchLinkFormContainer);
             });
 
             copy.addEventListener('click', function () {
@@ -103,19 +118,31 @@ export class WatchLinkCrud {
                 watchLinkFormProvider.value = provider;
                 watchLinkFormName.value = name;
                 watchLinkFormUrl.value = href;
-                gThis.displayForm(watchLinkForm);
+                gThis.displayForm(watchLinkFormContainer);
             });
         });
 
-        seasonSelect.addEventListener('change', function () {
-            watchLinkFormName.value = gThis.buildWatchLabel(gThis.selectValue(providerSelect), gThis.selectValue(seasonSelect));
+        watchLinkFormUrl.addEventListener('input', function () {
+            // Parcourir le tableau associations pour trouver le providerId correspondant à l'URL collée. Needle contient la chaine à rechercher dans l'URL.
+            let needle = watchLinkFormUrl.value;
+            for (let i = 0; i < gThis.associations.length; i++) {
+                if (needle.includes(gThis.associations[i].needle)) {
+                    watchLinkFormProvider.value = gThis.associations[i].providerId;
+                    watchLinkFormName.value = gThis.buildWatchLabel(gThis.selectValue(watchLinkFormProvider), gThis.selectValue(watchLinkFormSaisonNumber));
+                    break;
+                }
+            }
         });
 
-        providerSelect.addEventListener('change', function () {
-            watchLinkFormName.value = gThis.buildWatchLabel(gThis.selectValue(providerSelect), gThis.selectValue(seasonSelect));
+        watchLinkFormSaisonNumber.addEventListener('change', function () {
+            watchLinkFormName.value = gThis.buildWatchLabel(gThis.selectValue(watchLinkFormProvider), gThis.selectValue(watchLinkFormSaisonNumber));
+        });
+
+        watchLinkFormProvider.addEventListener('change', function () {
+            watchLinkFormName.value = gThis.buildWatchLabel(gThis.selectValue(watchLinkFormProvider), gThis.selectValue(watchLinkFormSaisonNumber));
         });
         watchLinkFormCancel.addEventListener('click', function () {
-            gThis.hideForm(watchLinkForm);
+            gThis.hideForm(watchLinkFormContainer);
         });
         watchLinkFormSubmit.addEventListener('click', function (event) {
             event.preventDefault();
@@ -164,7 +191,7 @@ export class WatchLinkCrud {
                 if (response.ok) {
                     const data = await response.json();
                     // console.log({data});
-                    gThis.hideForm(watchLinkForm);
+                    gThis.hideForm(watchLinkFormContainer);
                     const watchLinksDiv = document.querySelector('.watch-links');
                     if (type.value === 'create') {
                         /** @var {Link} link */
@@ -223,7 +250,7 @@ export class WatchLinkCrud {
                             watchLinkFormProvider.value = link.provider.id;
                             watchLinkFormName.value = link.name;
                             watchLinkFormUrl.value = link.url;
-                            gThis.displayForm(watchLinkForm);
+                            gThis.displayForm(watchLinkFormContainer);
                         });
                         edit.appendChild(editIcon);
                         watchLinkTools.appendChild(edit);
@@ -263,7 +290,7 @@ export class WatchLinkCrud {
                             watchLinkFormProvider.value = link.provider.id;
                             watchLinkFormName.value = link.name;
                             watchLinkFormUrl.value = link.url;
-                            gThis.displayForm(watchLinkForm);
+                            gThis.displayForm(watchLinkFormContainer);
                         });
                         watchLinkTools.appendChild(del);
                         gThis.toolTips.init(watchLinkTools);
@@ -374,7 +401,7 @@ export class WatchLinkCrud {
             }, 0);
         }
         /** @type HTMLInputElement */
-        const url = form.querySelector("#url");
+        const url = form.querySelector("#watch_link_form_url");
         url.focus();
         url.select();
     }

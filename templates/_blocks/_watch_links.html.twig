@@ -44,42 +44,38 @@
 <div class="watch-link-form" popover id="watch-link-popover">
     <div class="close" data-title="{{ 'Close'|trans }}">{{ ux_icon('mdi:close') }}</div>
     <h3>{{ 'Add a watch link'|trans }}</h3>
-    <form class="form" action="" id="watch-link-form">
+    <form class="form" action="" id="watch_link_form">
         <div class="form-row">
             <div class="form-field">
-                <label for="url">{{ 'URL'|trans }}
-                    <input type="url" name="url" id="url" required>
+                <label for="watch_link_form_url">{{ 'URL'|trans }}
+                    <input type="url" name="watch_link_form[url]" id="watch_link_form_url" required>
                     <span class="error"></span>
                 </label>
             </div>
         </div>
-        {% if type == 'series' %}
-            {% set numberOfSeason = tv.seasons|length %}
-            {% if numberOfSeason > 1 %}
-                <div class="form-row">
-                    <div class="form-field">
-                        <label for="season-number">{{ 'Season'|trans }}
-                            <select id="season-number" name="season-number">
-                                <option value="-1">{{ 'All seasons'|trans }}</option>
-                                {% for i in 1..numberOfSeason %}
-                                    {% set seasonNumber = tv.seasons[i-1].season_number %}
-                                    <option value="{{ seasonNumber }}">{{ seasonNumber ? ('Season x'|trans({'x': seasonNumber})):('Special episodes'|trans) }}</option>
-                                {% endfor %}
-                            </select>
-                            <span class="error"></span>
-                        </label>
-                    </div>
+        {% set numberOfSeason = type == 'series' ? tv.seasons|length : 0 %}
+        {% if type == 'series' and numberOfSeason > 1 %}
+            <div class="form-row">
+                <div class="form-field">
+                    <label for="watch_link_form_season_number">{{ 'Season'|trans }}
+                        <select id="watch_link_form_season_number" name="watch_link_form[season_number]">
+                            <option value="-1">{{ 'All seasons'|trans }}</option>
+                            {% for i in 1..numberOfSeason %}
+                                {% set seasonNumber = tv.seasons[i-1].season_number %}
+                                <option value="{{ seasonNumber }}">{{ seasonNumber ? ('Season x'|trans({'x': seasonNumber})):('Special episodes'|trans) }}</option>
+                            {% endfor %}
+                        </select>
+                        <span class="error"></span>
+                    </label>
                 </div>
-            {% else %}
-                <input type="hidden" name="season-number" id="season-number" value="{{ tv.seasons[0].season_number }}">
-            {% endif %}
+            </div>
         {% else %}
-            <input type="hidden" name="season-number" id="season-number" value="{{ -1 }}">
+            <input type="hidden" id="watch_link_form_season_number" name="watch_link_form[season_number]" value="{{ tv.seasons[0].season_number }}">
         {% endif %}
         <div class="form-row">
             <div class="form-field">
-                <label for="provider">{{ 'Provider'|trans }}
-                    <select name="provider" id="provider">
+                <label for="watch_link_form_provider">{{ 'Provider'|trans }}
+                    <select id="watch_link_form_provider" name="watch_link_form[provider]">
                         <option value="-1">{{ 'Select a provider'|trans }}</option>
                         {% for name, id in providers.select %}
                             <option value="{{ id }}">{{ name }}</option>
@@ -90,8 +86,8 @@
         </div>
         <div class="form-row">
             <div class="form-field">
-                <label for="name">{{ 'Name'|trans }}
-                    <input type="text" name="name" id="name" required autocomplete="false">
+                <label for="watch_link_form_name">{{ 'Name'|trans }}
+                    <input type="text" id="watch_link_form_name" name="watch_link_form[name]" required autocomplete="false">
                     <span class="error"></span>
                 </label>
             </div>
@@ -102,7 +98,7 @@
                 <button type="submit">{{ 'Add'|trans }}</button>
             </div>
         </div>
-        <input type="hidden" name="crud-type" id="crud-type" value="">{# create (new) | update (edit) | delete (remove) #}
-        <input type="hidden" name="crud-id" id="crud-id" value="">{# id of updated watch link #}
+        <input type="hidden" id="watch_link_form_crud_type" name="watch_link_form[crud_type]" value="">{# create (new) | update (edit) | delete (remove) #}
+        <input type="hidden" id="watch_link_form_crud_id" name="watch_link_form[crud_id]" value="">{# id of updated watch link #}
     </form>
 </div>
