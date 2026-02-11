@@ -7,6 +7,7 @@ use App\Entity\ContactMessage;
 use App\Entity\User;
 use App\Form\ContactType;
 use App\Repository\ContactMessageRepository;
+use App\Service\ImageService;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -21,8 +22,9 @@ class ContactController extends AbstractController
 {
     public function __construct(
         private readonly ContactMessageRepository $contactMessageRepository,
-        private readonly MailerInterface     $mailer,
-        private readonly TranslatorInterface $translator,
+        private readonly ImageService             $imageService,
+        private readonly MailerInterface          $mailer,
+        private readonly TranslatorInterface      $translator,
     )
     {
     }
@@ -64,6 +66,7 @@ class ContactController extends AbstractController
         }
         return $this->render('contact/index.html.twig', [
             'form' => $form->createView(),
+            'bgImage' => $this->imageService->getRandomBlurredPosters(),
         ]);
     }
 }
