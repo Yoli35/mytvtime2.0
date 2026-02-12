@@ -9,7 +9,7 @@ import {ToolTips} from 'ToolTips';
 import {TranslationsForms} from "TranslationsForms";
 import {UserList} from "UserList";
 
-let gThis;
+let self;
 
 /**
  * @typedef Provider
@@ -126,7 +126,7 @@ let gThis;
 export class Season {
 
     constructor(menu) {
-        gThis = this;
+        self = this;
 
         /** @var {Globs} globs */
         const globs = JSON.parse(document.querySelector('div#globs').textContent);
@@ -188,7 +188,7 @@ export class Season {
                 copy.addEventListener('click', function () {
                     navigator.clipboard.writeText(href).then(function () {
                         copy.classList.add('copied');
-                        linkNameDiv.innerText = gThis.translations['copied'];
+                        linkNameDiv.innerText = self.translations['copied'];
                         setTimeout(function () {
                             copy.classList.remove('copied');
                             linkNameDiv.innerText = name;
@@ -339,26 +339,26 @@ export class Season {
             customStillsTextDiv.addEventListener('click', (e) => {
                 e.preventDefault();
                 const customStillsDiv = customStillsTextDiv.parentElement.querySelector('.custom-stills');
-                customStillsTextDiv.innerText = gThis.translations['paste'] + ' - 4';
+                customStillsTextDiv.innerText = self.translations['paste'] + ' - 4';
                 customStillsDiv.classList.add('active');
                 customStillsTextDiv.classList.add('active');
                 customStillsTextDiv.setAttribute('contenteditable', 'true');
                 customStillsTextDiv.focus();
-                customStillsTextDiv.addEventListener('paste', gThis.pasteStill);
+                customStillsTextDiv.addEventListener('paste', self.pasteStill);
                 let countDown = 4;
                 let intervalId = setInterval(() => {
-                    customStillsTextDiv.innerText = gThis.translations['paste'] + ' - ' + --countDown;
+                    customStillsTextDiv.innerText = self.translations['paste'] + ' - ' + --countDown;
                     console.log(countDown);
                     if (countDown === 1) {
                         clearInterval(intervalId);
                     }
                 }, 1000);
                 setTimeout(() => {
-                    customStillsTextDiv.innerText = gThis.translations['click'];
+                    customStillsTextDiv.innerText = self.translations['click'];
                     customStillsDiv.classList.remove('active');
                     customStillsTextDiv.classList.remove('active');
                     customStillsTextDiv.removeAttribute('contenteditable');
-                    customStillsTextDiv.removeEventListener('paste', gThis.pasteStill);
+                    customStillsTextDiv.removeEventListener('paste', self.pasteStill);
                 }, 4000);
             });
         });
@@ -407,7 +407,7 @@ export class Season {
                         numberDiv.innerText = (index + 1).toString()
                         posterDiv.appendChild(numberDiv);
                     });
-                    new UserList(gThis.flashMessage, gThis.toolTips);
+                    new UserList(self.flashMessage, self.toolTips);
                     whatToWatchNextButton.classList.remove('disabled');
                 });
         });
@@ -415,7 +415,7 @@ export class Season {
         const getFilmingLocationsDiv = document.querySelector('.get-filming-locations');
         const getFilmingLocationsButton = document.querySelector('.get-filming-locations-button');
         getFilmingLocationsButton?.addEventListener('click', () => {
-            getFilmingLocationsButton.innerHTML = gThis.translations['loading'];
+            getFilmingLocationsButton.innerHTML = self.translations['loading'];
             getFilmingLocationsButton.classList.add('disabled');
             const id = getFilmingLocationsButton.getAttribute('data-id');
             fetch('/api/series/get/filming/locations/' + id,
@@ -433,18 +433,11 @@ export class Season {
                     const globsMapDiv = document.createElement('div');
                     globsMapDiv.setAttribute('id', 'globs-map');
                     globsMapDiv.style.display = 'none';
-                    globsMapDiv.innerText = '{';
-                    globsMapDiv.innerText += '"locations": ' + JSON.stringify(data["locations"]) + ', ';
-                    globsMapDiv.innerText += '"bounds": ' + JSON.stringify(data["locationsBounds"]) + ', ';
-                    globsMapDiv.innerText += '"emptyLocation": ' + JSON.stringify(data["emptyLocation"]) + ', ';
-                    globsMapDiv.innerText += '"fieldList": ' + JSON.stringify(data["fieldList"]) + ', ';
-                    globsMapDiv.innerText += '"locationImagePath": "' + data["locationImagePath"] + '", ';
-                    globsMapDiv.innerText += '"poiImagePath": "' + data["poiImagePath"] + '"';
-                    globsMapDiv.innerText += '}';
+                    globsMapDiv.innerText = data['data'];
                     body.insertBefore(globsMapDiv, svgsDiv);
                     getFilmingLocationsDiv.innerHTML = data["mapBlock"];
                     getFilmingLocationsButton.remove();
-                    gThis.map = new Map({cooperativeGesturesOption: true});
+                    self.map = new Map({cooperativeGesturesOption: false}, self.toolTips);
                 })
         });
 
@@ -539,10 +532,10 @@ export class Season {
                     tempDiv.innerHTML = block;
                     /*episodeInfosContentDiv.insertAdjacentHTML('beforeend', block);*/
                     const filmingLocationsDiv = tempDiv.querySelector(".season-filming-locations");
-                    gThis.toolTips.init(filmingLocationsDiv);
+                    self.toolTips.init(filmingLocationsDiv);
                     episodeInfosContentDiv.appendChild(filmingLocationsDiv);
                 });
-                gThis.initScrollInfosButtons();
+                self.initScrollInfosButtons();
             })
             .catch(err => console.log(err));
     }
@@ -550,14 +543,14 @@ export class Season {
     initScrollInfosButtons() {
         const scrollButtons = document.querySelectorAll(".episodes .episode-wrapper .scroll-infos-button");
         scrollButtons.forEach(button => {
-            button.addEventListener("click", gThis.buttonScrollAction)
+            button.addEventListener("click", self.buttonScrollAction)
         });
         // Mettre à jour la visibilité au chargement, redimensionnement et scroll
-        window.addEventListener('load', gThis.updateButtonVisibility);
-        window.addEventListener('resize', gThis.updateButtonVisibility);
-        window.addEventListener('scroll', gThis.updateButtonVisibility, true); // true pour capter le scroll des conteneurs
+        window.addEventListener('load', self.updateButtonVisibility);
+        window.addEventListener('resize', self.updateButtonVisibility);
+        window.addEventListener('scroll', self.updateButtonVisibility, true); // true pour capter le scroll des conteneurs
         // et observer dynamiquement les changements dans la zone episodes
-        const observer = new MutationObserver(gThis.updateButtonVisibility);
+        const observer = new MutationObserver(self.updateButtonVisibility);
         observer.observe(document.body, {childList: true, subtree: true});
     }
 
@@ -572,7 +565,7 @@ export class Season {
         const targets = infosDiv.querySelectorAll('.infos .season-filming-location');
         for (const t of targets) {
             // si l'élément n'est pas entièrement visible dans son conteneur
-            if (!gThis.isVisibleInContainer(t, infosDiv)) return {target: t, container: infosDiv};
+            if (!self.isVisibleInContainer(t, infosDiv)) return {target: t, container: infosDiv};
         }
         return null;
     }
@@ -583,14 +576,14 @@ export class Season {
             const infosContentDiv = infosDiv.querySelector(".infos-content");
             const btn = infosDiv.querySelector(".scroll-infos-button");
             if (!btn) return;
-            const found = gThis.findFirstHiddenTarget(infosContentDiv);
+            const found = self.findFirstHiddenTarget(infosContentDiv);
             btn.style.display = found ? 'flex' : 'none';
         });
     }
 
     buttonScrollAction(evt) {
         const infosContentDiv = evt.currentTarget.closest(".infos").querySelector(".infos-content");
-        const found = gThis.findFirstHiddenTarget(infosContentDiv);
+        const found = self.findFirstHiddenTarget(infosContentDiv);
         if (!found) return;
         const {target, container} = found;
 
@@ -613,11 +606,11 @@ export class Season {
                 stillDiv.classList.add('paste');
                 stillDiv.setAttribute('contenteditable', 'true');
                 stillDiv.focus();
-                stillDiv.addEventListener('paste', gThis.pasteStill);
+                stillDiv.addEventListener('paste', self.pasteStill);
                 setTimeout(() => {
                     stillDiv.classList.remove('paste');
                     stillDiv.removeAttribute('contenteditable');
-                    stillDiv.removeEventListener('paste', gThis.pasteStill);
+                    stillDiv.removeEventListener('paste', self.pasteStill);
                 }, 4000);
             });
         });
@@ -636,13 +629,13 @@ export class Season {
         });
         const submitRow = editEpisodeInfosForm.querySelector('.form-row.submit-row');
         const copySwitch = editEpisodeInfosForm.querySelector('input[id="edit-episode-infos-copy-all"]');
-        copySwitch.addEventListener('click', gThis.editEpisodeInfosCopySwitch);
+        copySwitch.addEventListener('click', self.editEpisodeInfosCopySwitch);
         const copyButton = submitRow.querySelector('button[id="edit-episode-infos-copy"]');
-        copyButton.addEventListener('click', gThis.editEpisodeInfosCopy);
+        copyButton.addEventListener('click', self.editEpisodeInfosCopy);
         const cancelButton = submitRow.querySelector('button[id="edit-episode-infos-cancel"]');
-        cancelButton.addEventListener('click', gThis.editEpisodeInfosCancel);
+        cancelButton.addEventListener('click', self.editEpisodeInfosCancel);
         const submitButton = submitRow.querySelector('button[id="edit-episode-infos-save"]');
-        submitButton.addEventListener('click', gThis.editEpisodeInfosSubmit);
+        submitButton.addEventListener('click', self.editEpisodeInfosSubmit);
 
         editEpisodeInfosDialog.classList.add('open');
     }
@@ -782,7 +775,7 @@ export class Season {
                         if (type === 'name') {
                             substituteDiv.remove();
                         } else {
-                            substituteDiv.innerText = gThis.translations['additional'];
+                            substituteDiv.innerText = self.translations['additional'];
                         }
                     }
                 }

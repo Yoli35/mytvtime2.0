@@ -35,14 +35,18 @@ class SeriesFilmingLocations extends AbstractController
         $mapSettingsData = $mapSettings ? $mapSettings->getData() : ['styles' => []];
         $block = $this->render('_blocks/map/_map_container.html.twig', ['type' => 'series', 'styleSettings' => $mapSettingsData['styles']]);
 
-        return new JsonResponse([
-            'mapBlock' => $block->getContent(),
+        $data = json_encode([
             'locations' => $filmingLocationsWithBounds['filmingLocations'],
-            'locationsBounds' => $filmingLocationsWithBounds['bounds'],
+            'bounds' => $filmingLocationsWithBounds['bounds'],
             'emptyLocation' => $filmingLocationsWithBounds['emptyLocation'],
             'fieldList' => ['series-id', 'tmdb-id', 'crud-type', 'crud-id', 'title', 'location', 'season-number', 'episode-number', 'description', 'latitude', 'longitude', 'radius', "source-name", "source-url"],
             "locationImagePath" => "/images/map",
             "poiImagePath" => "/images/poi",
+        ]);
+
+        return new JsonResponse([
+            'mapBlock' => $block->getContent(),
+            'data' => $data,
         ]);
     }
 
