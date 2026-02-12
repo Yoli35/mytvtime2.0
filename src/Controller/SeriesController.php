@@ -938,6 +938,7 @@ class SeriesController extends AbstractController
         } else {
             $season['poster_path'] = $series->getPosterPath();
         }
+        $season['backdrop_path'] = $series->getBackdropPath();
         $season['blurred_poster_path'] = $this->imageService->blurPoster($season['poster_path'], 'series', 8);
 
         $season['deepl'] = null;//$this->seasonLocalizedOverview($series, $season, $seasonNumber, $request);
@@ -2297,7 +2298,8 @@ class SeriesController extends AbstractController
         }
     }
 
-    public function localizeSeries(array $tv): array{
+    public function localizeSeries(array $tv): array
+    {
         $localizedName = null;
         $localizedSlug = null;
         $localizedOverview = null;
@@ -2318,6 +2320,7 @@ class SeriesController extends AbstractController
             'localizedSlug' => $localizedSlug,
         ];
     }
+
     public function checkSeasons(UserSeries $userSeries, array $userEpisodes, array $tv): array
     {
         $user = $userSeries->getUser();

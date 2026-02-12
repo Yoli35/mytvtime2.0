@@ -126,16 +126,16 @@
                             </div>
                         {% endif %}
                     </div>
-                    {% if series.backdropPath and series.posterPath %}
+                    {% if season.backdrop_path and season.poster_path %}
                         <div class="backdrop">
                             <picture>
-                                <source media="(orientation: portrait)" srcset="/series/posters{{ series.posterPath }}">
-                                <img src="/series/backdrops{{ series.backdropPath }}" alt="{{ series.name }} backdrop">
+                                <source media="(orientation: portrait)" srcset="/series/posters{{ season.poster_path }}">
+                                <img src="/series/backdrops{{ season.backdrop_path }}" alt="{{ season.name }} backdrop">
                             </picture>
                         </div>
-                    {% elseif series.backdropPath %}
+                    {% elseif season.backdrop_path %}
                         <div class="backdrop">
-                            <img src="/series/backdrops{{ series.backdropPath }}" alt="{{ series.name }}">
+                            <img src="/series/backdrops{{ season.backdrop_path }}" alt="{{ season.name }}">
                         </div>
                     {% endif %}
                 </div>
@@ -146,20 +146,15 @@
                         <div class="progress-bar"></div>
                     </div>
                 {% endif %}
-                {% if season.poster_path %}
+                {% if series.posterPath %}
                     <div class="poster" id="top">
                         <a href="{{ path('app_series_show', {id: series.id, slug: season.series_localized_name.slug ?? series.slug}) }}">
-                            <img src="/series/posters{{ season.poster_path }}" alt="{{ series.name }} {{ season.season_number }}">
+                            <img src="/series/posters{{ series.posterPath }}" alt="{{ series.name }}">
                         </a>
                     </div>
                 {% else %}
                     <div class="series-back">
                         <a href="{{ path('app_series_show', {id: series.id, slug: season.series_localized_name.slug ?? series.slug}) }}">
-                            {% if series.posterPath %}
-                                <div class="poster-back">
-                                    <img src="/series/posters{{ series.posterPath }}" alt="{{ series.name }} {{ season.season_number }}">
-                                </div>
-                            {% endif %}
                             <div class="series-back-link">
                                 {{ ux_icon('mdi:arrow-left') }}
                                 <span>{{ 'Back to series'|trans }}</span>
