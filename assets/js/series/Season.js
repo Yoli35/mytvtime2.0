@@ -178,8 +178,8 @@ export class Season {
         const watchLinks = document.querySelectorAll('.watch-link');
         watchLinks.forEach(function (watchLink) {
             const tools = watchLink.querySelector('.watch-link-tools');
-            const a = watchLink.querySelector('a');
-            if (a) {
+            if (tools) {
+                const a = watchLink.querySelector('a');
                 const href = a.getAttribute('href');
                 const copy = tools.querySelector('.watch-link-tool.copy');
                 const linkNameDiv = tools.querySelector('.watch-link-name');
