@@ -174,13 +174,20 @@
 
                 {% if episodeCount %}
                     <div class="user-actions" data-user-series-id="{{ userSeries.id }}">
-                        <div class="size-item{% if episodeDiv.height == '15rem' %} active{% endif %}" data-size="15rem" data-type="size">
+                        {# Sizes change from 15, 20 and 25rem to 18, 24 and 30 rem #}
+                        {# Code to reset episode size #}
+                        {% set height = episodeDiv.height %}
+                        {% if height not in ['18rem','24rem','30rem'] %}
+                            {% set height = '18rem' %}
+                        {% endif %}
+                        {# End of code to reset #}
+                        <div class="size-item{% if height == '18rem' %} active{% endif %}" data-size="18rem" data-type="size">
                             {{ ux_icon('mdi:size-s') }}
                         </div>
-                        <div class="size-item{% if episodeDiv.height == '20rem' %} active{% endif %}" data-size="20rem" data-type="size">
+                        <div class="size-item{% if height == '24rem' %} active{% endif %}" data-size="24rem" data-type="size">
                             {{ ux_icon('mdi:size-m') }}
                         </div>
-                        <div class="size-item{% if episodeDiv.height == '25rem' %} active{% endif %}" data-size="25rem" data-type="size">
+                        <div class="size-item{% if height == '30rem' %} active{% endif %}" data-size="30rem" data-type="size">
                             {{ ux_icon('mdi:size-l') }}
                         </div>
                         {#                </div> #}

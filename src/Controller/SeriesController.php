@@ -2139,9 +2139,9 @@ class SeriesController extends AbstractController
             $episodeDivSize = $value['height'];
             $aspectRatio = $value['aspect-ratio'] ?? '16 / 9';
         } else {
-            $episodeSizeSettings = new Settings($userSeries->getUser(), 'episode_div_size_' . $userSeries->getId(), ['height' => '15rem', 'aspect-ratio' => '16 / 9']);
+            $episodeSizeSettings = new Settings($userSeries->getUser(), 'episode_div_size_' . $userSeries->getId(), ['height' => '18rem', 'aspect-ratio' => '16 / 9']);
             $this->settingsRepository->save($episodeSizeSettings, true);
-            $episodeDivSize = '15rem';
+            $episodeDivSize = '18rem';
             $aspectRatio = '16 / 9';
         }
         return [
