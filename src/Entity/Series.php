@@ -136,6 +136,12 @@ class Series
     #[ORM\OneToMany(targetEntity: EpisodeComment::class, mappedBy: 'series', orphanRemoval: true)]
     private Collection $episodeComments;
 
+    /**
+     * @var Collection<int, Keyword>
+     */
+    #[ORM\ManyToMany(targetEntity: Keyword::class, inversedBy: 'series')]
+    private Collection $keywords;
+
     public function __construct()
     {
         $this->networks = new ArrayCollection();
@@ -152,6 +158,7 @@ class Series
         $this->seriesCasts = new ArrayCollection();
         $this->userLists = new ArrayCollection();
         $this->episodeComments = new ArrayCollection();
+        $this->keywords = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -815,6 +822,30 @@ class Series
                 $episodeComment->setSeries(null);
             }
         }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Keyword>
+     */
+    public function getKeywords(): Collection
+    {
+        return $this->keywords;
+    }
+
+    public function addKeyword(Keyword $keyword): static
+    {
+        if (!$this->keywords->contains($keyword)) {
+            $this->keywords->add($keyword);
+        }
+
+        return $this;
+    }
+
+    public function removeKeyword(Keyword $keyword): static
+    {
+        $this->keywords->removeElement($keyword);
 
         return $this;
     }

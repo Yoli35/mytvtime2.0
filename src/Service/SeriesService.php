@@ -94,7 +94,7 @@ class SeriesService extends AbstractController
         $tv['translations'] = $this->getTranslations($tv['translations']['translations'], $country, $locale);
         $tv['localized_name'] = $this->getTvLocalizedName($tv, $series, $locale);
         $tv['localized_overviews'] = $series->getLocalizedOverviews($locale);
-        $tv['keywords']['results'] = $this->keywordService->keywordsCleaning($tv['keywords']['results']);
+        $tv['keywords']['results'] = $this->keywordService->saveKeywords($tv['keywords']['results'], 'controller');;
         $tv['missing_translations'] = $this->keywordService->keywordsTranslation($tv['keywords']['results'], $locale);
         $tv['networks'] = $this->networks($tv);
         $tv['sources'] = $this->sourceRepository->findBy([], ['name' => 'ASC']);
@@ -109,6 +109,8 @@ class SeriesService extends AbstractController
         } else {
             $tv['display_name'] = $tv['name'];
         }
+
+        $this->keywordService->addKeywords($series, $tv['keywords']['results']);
 
         return $tv;
     }

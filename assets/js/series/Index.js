@@ -54,6 +54,7 @@ export class Index {
         }).then((data) => {
             console.log(data);
             const updates = data['updates'];
+            const messages = data['messages'];
             const checkCount = data['dbSeriesCount'];
             const tmdbCalls = data['tmdbCalls'];
             // this.flashMessage.add('success', 'Check count: ' + tmdbCalls + ' / ' + checkCount);
@@ -81,6 +82,9 @@ export class Index {
                         content: content,
                     });
                 }
+            });
+            messages.forEach((message) => {
+                this.flashMessage.add('success', message);
             });
         }).catch((error) => {
             console.error("Fetch error:", error);

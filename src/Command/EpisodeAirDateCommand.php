@@ -15,6 +15,7 @@ use App\Repository\UserEpisodeNotificationRepository;
 use App\Repository\UserEpisodeRepository;
 use App\Repository\UserSeriesRepository;
 use App\Service\DateService;
+use App\Service\KeywordService;
 use App\Service\TMDBService;
 use DateTimeImmutable;
 use Symfony\Component\Console\Attribute\AsCommand;
@@ -40,6 +41,7 @@ class EpisodeAirDateCommand
     public function __construct(
         private readonly DateService                       $dateService,
         private readonly EpisodeNotificationRepository     $episodeNotificationRepository,
+        private readonly KeywordService                    $keywordService,
         private readonly SeriesRepository                  $seriesRepository,
         private readonly UserEpisodeNotificationRepository $userEpisodeNotificationRepository,
         private readonly UserEpisodeRepository             $userEpisodeRepository,
@@ -49,7 +51,7 @@ class EpisodeAirDateCommand
     {
     }
 
-    public function __invoke(SymfonyStyle $io, #[Option(shortcut: 's')] ?int $seriesId = null, #[Option(shortcut: 'l')] bool $list = false, #[Option(shortcut: 'f')] bool $force = false): int
+    public function __invoke(SymfonyStyle $io, #[Option(shortcut: 's')] ?int $seriesId = null, #[Option(shortcut: 'o')] ?int $offset = null, #[Option(shortcut: 'l')] bool $list = false, #[Option(shortcut: 'f')] bool $force = false): int
     {
         // "Ended"
         // "Canceled"
@@ -78,6 +80,9 @@ class EpisodeAirDateCommand
         $notifications = [];
 
         foreach ($allUserSeries as $userSeries) {
+            if ($offset && $userSeries->getId() < $offset) {
+                continue;
+            }
             $series = $userSeries->getSeries();
             $seriesId = $series->getId();
             $user = $userSeries->getUser();
@@ -107,9 +112,9 @@ class EpisodeAirDateCommand
             }
             $this->io->write($line);
 
-            $tv = json_decode($this->tmdbService->getTv($series->getTmdbId(), $language), true);
-            if ($tv === null) {
-                $this->io->writeln(' 🚫📺 Error while fetching TV show');
+            $tv = json_decode($this->tmdbService->getTv($series->getTmdbId(), $language, ['keywords']), true);
+            if (key_exists('error', $tv)) {
+                $this->io->writeln(' 🚫📺 Error while fetching TV show: ' . $tv['message']);
                 continue;
             }
             if ($tv['first_air_date']) {
@@ -200,6 +205,11 @@ class EpisodeAirDateCommand
             }
             if (!$writeln) {
                 $this->io->writeln(' ✅');
+            }
+            $results = $this->keywordService->saveKeywords($tv['keywords']['results'], 'command');;
+            $newKeywords = $this->keywordService->addKeywords($series, $results);
+            if (strlen($newKeywords) > 0) {
+                $this->io->writeln(' 🔑 Serie keywords updated: ' . $newKeywords);
             }
 
             $totalEpisodeUpdates += $episodeUpdates;

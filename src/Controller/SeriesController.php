@@ -6,13 +6,11 @@ use App\Api\ApiWatchLink;
 use App\DTO\SeriesAdvancedSearchDTO;
 use App\DTO\SeriesSearchDTO;
 use App\Entity\ContactMessage;
-use App\Entity\FilmingLocation;
 use App\Entity\Series;
 use App\Entity\SeriesBroadcastDate;
 use App\Entity\SeriesBroadcastSchedule;
 use App\Entity\SeriesExternal;
 use App\Entity\SeriesImage;
-use App\Entity\SeriesLocalizedName;
 use App\Entity\SeriesVideo;
 use App\Entity\Settings;
 use App\Entity\User;
@@ -46,6 +44,7 @@ use App\Repository\WatchProviderRepository;
 use App\Service\DateService;
 use App\Service\ImageConfiguration;
 use App\Service\ImageService;
+use App\Service\KeywordService;
 use App\Service\SeriesService;
 use App\Service\TMDBService;
 use DateInvalidTimeZoneException;
@@ -68,7 +67,6 @@ use Symfony\Component\Routing\Requirement\Requirement;
 use Symfony\Component\Security\Http\Attribute\CurrentUser;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\String\Slugger\AsciiSlugger;
-use Symfony\Component\Uid\Uuid;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Twig\Extra\Intl\IntlExtension;
 
@@ -87,6 +85,7 @@ class SeriesController extends AbstractController
         private readonly ImageConfiguration                $imageConfiguration,
         private readonly ImageService                      $imageService,
         private readonly KeywordRepository                 $keywordRepository,
+        private readonly KeywordService                    $keywordService,
         private readonly MonologLogger                     $logger,
         private readonly NetworkRepository                 $networkRepository,
         private readonly PeopleUserPreferredNameRepository $peopleUserPreferredNameRepository,
@@ -1500,6 +1499,7 @@ class SeriesController extends AbstractController
         $now = $this->now();
         $tmdbCalls = 0;
         $updates = [];
+        $messages = [];
 
         $t0 = microtime(true);
         foreach ($dbSeries as $series) {
@@ -1516,7 +1516,7 @@ class SeriesController extends AbstractController
                 ];
                 continue;
             }
-            $tv = json_decode($this->tmdbService->getTv($series->getTmdbId(), $locale, ['images']), true);
+            $tv = json_decode($this->tmdbService->getTv($series->getTmdbId(), $locale, ['images', 'keywords']), true);
             $tmdbCalls++;
             if ($tv == null || isset($tv['error'])) {
                 $updates[] = [
@@ -1530,6 +1530,7 @@ class SeriesController extends AbstractController
                 $this->seriesRepository->save($series);
                 continue;
             }
+            $messages = array_merge($messages, $this->keywordService->saveKeywords($tv['keywords']['results'], 'api'));
             $updateSeries = $this->updateSeries($series, $tv, []);
             $update = $updateSeries->getUpdates();
             $updates[] = [
@@ -1552,6 +1553,7 @@ class SeriesController extends AbstractController
         return $this->json([
             'ok' => true,
             'updates' => $updates,
+            'messages' => $messages,
             'dbSeriesCount' => $dbSeriesCount,
             'tmdbCalls' => $tmdbCalls,
         ]);
