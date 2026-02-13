@@ -162,7 +162,7 @@ window.addEventListener("DOMContentLoaded", () => {
                         div.classList.add("dark");
                     });
                 }
-                if (commentDiv) commentDiv.style.backgroundColor = "hsl(0 0 90% /.25)";
+                /*if (commentDiv) commentDiv.style.backgroundColor = "hsl(0 0 90% /.25)";*/
                 if (seasonInfosDivs) seasonInfosDivs.forEach(seasonInfosDiv => {
                     seasonInfosDiv.style.color = "hsl(202, 18%, 10%)";
                 });
@@ -173,7 +173,7 @@ window.addEventListener("DOMContentLoaded", () => {
                         div.classList.add("light");
                     });
                 }
-                if (commentDiv) commentDiv.style.backgroundColor = "hsl(0 0 10% /.25)";
+                /*if (commentDiv) commentDiv.style.backgroundColor = "hsl(0 0 10% /.25)";*/
                 if (seasonInfosDivs) seasonInfosDivs.forEach(seasonInfosDiv => {
                     seasonInfosDiv.style.color = "hsl(202, 18%, 90%)";
                 });
