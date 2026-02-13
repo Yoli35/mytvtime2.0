@@ -2,14 +2,8 @@
 
 namespace App\Api;
 
-use App\Entity\Settings;
 use App\Entity\User;
-use App\Repository\FilmingLocationRepository;
-use App\Repository\SettingsRepository;
-use App\Repository\UserEpisodeRepository;
-use App\Repository\UserListRepository;
 use App\Service\MapService;
-use App\Service\SeriesSchedule;
 use Closure;
 use Symfony\Bundle\FrameworkBundle\Controller\ControllerHelper;
 use Symfony\Component\DependencyInjection\Attribute\AutowireMethodOf;
@@ -23,10 +17,10 @@ readonly class ApiMap
 {
     public function __construct(
         #[AutowireMethodOf(ControllerHelper::class)]
-        private Closure               $json,
+        private Closure    $json,
         #[AutowireMethodOf(ControllerHelper::class)]
-        private Closure               $renderView,
-        private MapService            $mapService,
+        private Closure    $renderView,
+        private MapService $mapService,
     )
     {
     }
@@ -60,9 +54,18 @@ readonly class ApiMap
         return ($this->json)([
             'ok' => true,
             'update' => true,
-            'seriesCount' =>$this->mapService->seriesCount(),
+            'seriesCount' => $this->mapService->seriesCount(),
             'locations' => $latest,
             'blocks' => $blocks,
+        ]);
+    }
+
+    #[Route('/access', name: 'access', methods: ['GET'])]
+    public function getAccessToken(): Response
+    {
+        return ($this->json)([
+            'ok' => true,
+            'token' => $_ENV['MAPBOX_TOKEN'],
         ]);
     }
 }

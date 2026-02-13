@@ -1,15 +1,16 @@
 import mapboxgl from 'mapbox-gl';
 import {MapboxSearchBox} from '@mapbox/search-js-web'
 
-let gThis = null;
+let self = null;
 
 export class Map {
     constructor(options, toolTips) {
         console.log('Map starting');
-        gThis = this;
+        self = this;
         this.toolTips = toolTips;
         const globsData = document.querySelector('#globs-map');
         this.data = JSON.parse(globsData.textContent);
+        this.accessToken = this.data.accessToken || null;
         this.locations = this.data.locations || [];
         this.bounds = this.data.bounds;
         this.id = this.data.id || null;
@@ -19,6 +20,9 @@ export class Map {
         this.map = null;
         this.circles = [];
         this.lastId = -1;
+        this.controlsInitialized = false;
+        this.markersInitialized = false;
+        this.handleDiv = null;
 
         this.initImageList = this.initImageList.bind(this);
         this.initTargetMap = this.initTargetMap.bind(this);
@@ -29,10 +33,12 @@ export class Map {
     init(options) {
         console.log('Map init');
         console.log('Mapbox GL JS v' + mapboxgl.version);
-        mapboxgl.accessToken = 'pk.eyJ1IjoiaWJveTQ0IiwiYSI6ImNtNTZqcXo4ZjAxYzIyaXM3cWZ5dnNheWkifQ.yY-zdieRm3Dhlrj3vYh9hg';
-        mapboxgl.setRTLTextPlugin('https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-rtl-text/v0.2.3/mapbox-gl-rtl-text.js');
 
         const initializeControls = () => {
+            if (this.controlsInitialized) {
+                return;
+            }
+            this.controlsInitialized = true;
             const searchBox = new MapboxSearchBox();
             // set the mapbox access token, search box API options
             searchBox.accessToken = mapboxgl.accessToken;
@@ -59,7 +65,10 @@ export class Map {
         }
 
         const initializeMarkers = () => {
-
+            if (this.markersInitialized) {
+                return;
+            }
+            this.markersInitialized = true;
             /************************************************************************
              * Fetch pois[, locations, photos ]                                     *
              ************************************************************************/
@@ -100,9 +109,16 @@ export class Map {
                 }
             });
             if (firstMarker) {
+                const el = firstMarker.getElement();
+                const lat = parseFloat(el.getAttribute('data-latitude'));
+                const lng = parseFloat(el.getAttribute('data-longitude'));
                 setTimeout(() => {
-                    firstMarker.togglePopup();
-                }, 5000);
+                    this.map.flyTo({center: [lng, lat], duration: 8000, zoom: 15, curve: 2, easing: (n) => n, essential: true});
+                    setTimeout(() => {
+                        firstMarker.togglePopup();
+                    }, 9000);
+                }, 3000);
+
             }
 
             if (this.circles.length) {
@@ -146,9 +162,12 @@ export class Map {
         }
 
         const initializeMapHandle = () => {
+            if (this.handleDiv) {
+                return;
+            }
             const mapDiv = document.getElementById('map');
             const mapboxglControlContainerDiv = mapDiv.querySelector('.mapboxgl-control-container');
-            const handleDiv = document.createElement('div');
+            this.handleDiv = document.createElement('div');
             const heightHandle = (e) => {
                 e.preventDefault();
                 let startY = e.clientY;
@@ -160,20 +179,23 @@ export class Map {
                 document.addEventListener('mousemove', moveHandler);
                 document.addEventListener('mouseup', () => {
                     document.removeEventListener('mousemove', moveHandler);
-                    handleDiv.removeEventListener('mousedown', heightHandle);
+                    self.handleDiv.removeEventListener('mousedown', heightHandle);
 
-                    if (gThis.map) gThis.map.remove();
+                    if (self.map) self.map.remove();
                     initializeMap();
                     initializeMapHandle();
                 });
             }
-            handleDiv.classList.add('height-handle');
-            mapboxglControlContainerDiv.appendChild(handleDiv);
+            this.handleDiv.classList.add('height-handle');
+            mapboxglControlContainerDiv.appendChild(this.handleDiv);
             // Use this handler to modify the map height
-            handleDiv.addEventListener('mousedown', heightHandle);
+            this.handleDiv.addEventListener('mousedown', heightHandle);
         };
 
         const initializeMap = () => {
+            if (this.map) {
+                return;
+            }
             this.map = new mapboxgl.Map({
                 container: 'map',
                 cooperativeGestures: options.cooperativeGesturesOption,
@@ -187,6 +209,9 @@ export class Map {
             });
             console.log('Map initialized', this.map);
             this.map.on('style.load', () => {
+                if (this.controlsInitialized) {
+                    return;
+                }
                 this.map.setFog({
                     "range": [0.8, 1.2],
                     "color": "#E0861F",
@@ -407,7 +432,7 @@ export class Map {
                 const toggleCooperativeGesturesButton = document.querySelector('.toggle-cooperative-gestures');
                 if (toggleCooperativeGesturesButton) {
                     toggleCooperativeGesturesButton.addEventListener('click', () => {
-                        const state = gThis.toggleCooperativeGestures();
+                        const state = self.toggleCooperativeGestures();
                         if (state) {
                             toggleCooperativeGesturesButton.classList.add('active');
                         } else {
@@ -429,14 +454,20 @@ export class Map {
             });
         }
 
-        initializeMap();
+        fetch('/api/map/access')
+            .then(res => res.json())
+            .then(data => {
+                mapboxgl.accessToken = data.token;
+                mapboxgl.setRTLTextPlugin('https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-rtl-text/v0.2.3/mapbox-gl-rtl-text.js');
+                initializeMap();
 
-        const mapLastPage = document.querySelector('#map-last');
-        if (mapLastPage) {
-            this.lastId = this.locations[0].id;
-            console.log(this.lastId);
-            document.addEventListener("visibilitychange", this.checkForNewLocations.bind(this));
-        }
+                const mapLastPage = document.querySelector('#map-last');
+                if (mapLastPage) {
+                    this.lastId = this.locations[0].id;
+                    console.log(this.lastId);
+                    document.addEventListener("visibilitychange", this.checkForNewLocations.bind(this));
+                }
+            });
     }
 
     checkForNewLocations() {
@@ -514,7 +545,10 @@ export class Map {
     addLocationMarker(location) {
         let marker = new mapboxgl.Marker({color: "#B46B18FF"})
             .setLngLat([location.longitude, location.latitude])
-            .setPopup(new mapboxgl.Popup({closeOnMove: true, focusAfterOpen: false}).setMaxWidth("24rem").setHTML('<div class="leaflet-popup-content-title">' + location.title + '</div><div class="leaflet-popup-content-description"><div class="location">' + location.location + '</div>' + location.description + '</div><div class="leaflet-popup-content-image"><img src="/images/map' + location['still_path'] + '" alt="' + location['title'] + '" style="height: auto; width: 100%"></div>'))
+            .setPopup(new mapboxgl.Popup({
+                closeOnMove: true,
+                focusAfterOpen: false
+            }).setMaxWidth("24rem").setHTML('<div class="leaflet-popup-content-title">' + location.title + '</div><div class="leaflet-popup-content-description"><div class="location">' + location.location + '</div>' + location.description + '</div><div class="leaflet-popup-content-image"><img src="/images/map' + location['still_path'] + '" alt="' + location['title'] + '" style="height: auto; width: 100%"></div>'))
             .addTo(this.map);
         let markerIcon = marker.getElement();
         markerIcon.setAttribute('data-target-id', location.id);
@@ -568,10 +602,10 @@ export class Map {
         const stillId = imageList.getAttribute('data-still-id');
 
         image.addEventListener('mouseenter', () => {
-            image.addEventListener('mousemove', gThis.getPosition);
+            image.addEventListener('mousemove', self.getPosition);
         });
         image.addEventListener('mouseleave', () => {
-            image.removeEventListener('mousemove', gThis.getPosition);
+            image.removeEventListener('mousemove', self.getPosition);
             image.setAttribute('data-position', "0");
             const imageSrc = imageList.querySelector('img[data-id="' + stillId + '"]').getAttribute('src');
             image.querySelector('img').setAttribute('src', imageSrc);
@@ -652,6 +686,7 @@ export class Map {
     }
 
     setMapStyle(event) {
+        event.preventDefault();
         const thumbnails = document.querySelectorAll('.thumbnail');
         thumbnails.forEach(thumbnail => {
             thumbnail.classList.remove('selected');
@@ -659,7 +694,7 @@ export class Map {
         const thumbnail = event.currentTarget;
         thumbnail.classList.add('selected');
         const style = thumbnail.getAttribute('data-style');
-        gThis.map.setStyle(style);
+        self.map.setStyle(style);
     }
 
     toggleCooperativeGestures() {

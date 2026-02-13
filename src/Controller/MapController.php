@@ -85,7 +85,7 @@ class MapController extends AbstractController
                         'lat' => $location['latitude'],
                         'lng' => $location['longitude'],
                     ];
-                    $countryLocationIds[$country][] = $location['tmdb_id'];
+                    $countryLocationIds[$country][] = $tmdbId;
                 }
             }
         }
