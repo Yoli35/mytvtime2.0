@@ -2,6 +2,7 @@
 
 namespace App\Service;
 
+use App\Entity\FilmingLocation;
 use App\Entity\Network;
 use App\Entity\Series;
 use App\Entity\SeriesBroadcastSchedule;
@@ -10,6 +11,7 @@ use App\Entity\SeriesLocalizedName;
 use App\Entity\Settings;
 use App\Entity\User;
 use App\Entity\UserEpisode;
+use App\Repository\FilmingLocationRepository;
 use App\Repository\NetworkRepository;
 use App\Repository\SeriesLocalizedNameRepository;
 //use App\Repository\SeriesLocalizedOverviewRepository;
@@ -21,6 +23,7 @@ use DateTimeImmutable;
 use Psr\Log\LoggerInterface as MonologLogger;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\String\Slugger\AsciiSlugger;
+use Symfony\Component\Uid\Uuid;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 /** @method User|null getUser() */
@@ -28,6 +31,7 @@ class SeriesService extends AbstractController
 {
     public function __construct(
         private readonly DateService                       $dateService,
+        private readonly FilmingLocationRepository         $filmingLocationRepository,
         private readonly ImageConfiguration                $imageConfiguration,
         private readonly ImageService                      $imageService,
         private readonly KeywordService                    $keywordService,
@@ -906,6 +910,92 @@ class SeriesService extends AbstractController
             'tvNextEpisode' => null,
             'toBeContinued' => null,
             'tmdbStatus' => null,
+        ];
+    }
+
+    public function getFilmingLocations(Series $series, ?SeriesLocalizedName $sln, ?int $seasonNumber = null, ?int $episodeNumber = null): array
+    {
+        $tmdbId = $series->getTmdbId();
+        $filmingLocations = $this->filmingLocationRepository->locations($tmdbId, $seasonNumber, $episodeNumber);
+        $emptyLocation = $this->newLocation($series, $sln);
+        if (count($filmingLocations) == 0) {
+            return [
+                'filmingLocations' => [],
+                'emptyLocation' => $emptyLocation,
+                'bounds' => []
+            ];
+        }
+        $filmingLocationIds = array_column($filmingLocations, 'id');
+        $filmingLocationImages = $this->filmingLocationRepository->locationImages($filmingLocationIds);
+        $flImages = [];
+        foreach ($filmingLocationImages as $image) {
+            $flImages[$image['filming_location_id']][] = $image;
+        }
+        foreach ($filmingLocations as &$location) {
+            $location['filmingLocationImages'] = $flImages[$location['id']] ?? [];
+        }
+        // Bounding box → center
+        if (count($filmingLocations) == 1) {
+            $loc = $filmingLocations[0];
+            $bounds = [[$loc['longitude'] + .1, $loc['latitude'] + .1], [$loc['longitude'] - .1, $loc['latitude'] - .1]];
+        } else {
+            $minLat = min(array_column($filmingLocations, 'latitude'));
+            $maxLat = max(array_column($filmingLocations, 'latitude'));
+            $minLng = min(array_column($filmingLocations, 'longitude'));
+            $maxLng = max(array_column($filmingLocations, 'longitude'));
+            $bounds = [[$maxLng + .1, $maxLat + .1], [$minLng - .1, $minLat - .1]];
+        }
+
+        return [
+            'filmingLocations' => $filmingLocations,
+            'emptyLocation' => $emptyLocation,
+            'bounds' => $bounds
+        ];
+    }
+
+    private function newLocation(Series $series, ?SeriesLocalizedName $sln): array
+    {
+        $uuid = Uuid::v4()->toString();
+        $now = $this->now();
+        $tmdbId = $series->getTmdbId();
+        $title = $sln ? $sln->getName() : $series->getName();
+        $emptyLocation = new FilmingLocation($uuid, $tmdbId, $title, "", "", 0, 0, null, 0, 0, "", "", $now, true);
+        $emptyLocation->setOriginCountry($series->getOriginCountry());
+        return $emptyLocation->toArray();
+    }
+
+    public function getLocationFormData(int $tvId, int $seriesId):array
+    {
+        $list = array_column($this->filmingLocationRepository->getSourceList(), "source_name");
+        return [
+            'hiddenFields' => [
+                ['item' => 'hidden', 'name' => 'series-id', 'value' => $seriesId],
+                ['item' => 'hidden', 'name' => 'tmdb-id', 'value' => $tvId],
+                ['item' => 'hidden', 'name' => 'crud-type', 'value' => 'create'],
+                ['item' => 'hidden', 'name' => 'crud-id', 'value' => 0],
+            ],
+            'rows' => [
+                [
+                    ['item' => 'input', 'name' => 'title', 'label' => 'Title', 'type' => 'text', 'required' => true],
+                ],
+                [
+                    ['item' => 'input', 'name' => 'location', 'label' => 'Location', 'type' => 'text', 'required' => false],
+                    [
+                        'item' => 'row',
+                        'fields' => [
+                            ['item' => 'input', 'name' => 'season-number', 'label' => 'Season number', 'type' => 'text', 'required' => false],
+                            ['item' => 'input', 'name' => 'episode-number', 'label' => 'Episode number', 'type' => 'text', 'required' => false],
+                        ]
+                    ],
+                ],
+                [
+                    ['item' => 'textarea', 'name' => 'description', 'label' => 'Description', 'rows' => '5', 'required' => false],
+                ],
+                [
+                    ['item' => 'input_list', 'name' => 'source-name', 'label' => 'Source', 'type' => 'text', 'class' => 'flex-1', 'list' => $list, 'required' => false],
+                    ['item' => 'input', 'name' => 'source-url', 'label' => 'Url', 'type' => 'text', 'class' => 'flex-2', 'required' => false],
+                ]
+            ],
         ];
     }
 
