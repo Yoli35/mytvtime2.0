@@ -418,7 +418,7 @@ export class Season {
             getFilmingLocationsButton.innerHTML = self.translations['loading'];
             getFilmingLocationsButton.classList.add('disabled');
             const id = getFilmingLocationsButton.getAttribute('data-id');
-            fetch('/api/series/get/filming/locations/' + id,
+            fetch('/api/series/get/filming/locations/' + this.lang + '/' + id,
                 {
                     method: 'GET',
                     headers: {
