@@ -98,7 +98,7 @@ export class AlbumShow {
          ******************************************************************************/
         const mapDiv = document.querySelector('.map-controller');
         if (mapDiv) {
-            this.map = new Map({cooperativeGesturesOption: false});
+            this.map = new Map({cooperativeGesturesOption: false}, this.toolTips, 'last');
         }
 
         /******************************************************************************

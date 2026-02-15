@@ -4,7 +4,7 @@ import {MapboxSearchBox} from '@mapbox/search-js-web'
 let self = null;
 
 export class Map {
-    constructor(options, toolTips) {
+    constructor(options, toolTips, whichMarker = 'first') {
         console.log('Map starting');
         self = this;
         this.toolTips = toolTips;
@@ -27,10 +27,10 @@ export class Map {
         this.initImageList = this.initImageList.bind(this);
         this.initTargetMap = this.initTargetMap.bind(this);
 
-        this.init(options);
+        this.init(options, whichMarker);
     }
 
-    init(options) {
+    init(options, whichMarker) {
         console.log('Map init');
         console.log('Mapbox GL JS v' + mapboxgl.version);
 
@@ -98,17 +98,18 @@ export class Map {
                     }, 5000);
                 });
 
-            let firstMarker = null;
+            let firstMarker = null, lastMarker = null;
             this.locations.forEach((location, index) => {
                 let marker = this.addLocationMarker(location);
 
                 if (!index) firstMarker = marker;
+                lastMarker = marker;
 
                 if (location.radius) {
                     this.circles.push(this.createCircle([location.longitude, location.latitude], location.radius / 1000));
                 }
             });
-            if (firstMarker) {
+            if (whichMarker ==='first' && firstMarker) {
                 const el = firstMarker.getElement();
                 const lat = parseFloat(el.getAttribute('data-latitude'));
                 const lng = parseFloat(el.getAttribute('data-longitude'));
@@ -118,7 +119,17 @@ export class Map {
                         firstMarker.togglePopup();
                     }, 9000);
                 }, 3000);
-
+            }
+            if (whichMarker ==='last' && lastMarker) {
+                const el = lastMarker.getElement();
+                const lat = parseFloat(el.getAttribute('data-latitude'));
+                const lng = parseFloat(el.getAttribute('data-longitude'));
+                setTimeout(() => {
+                    this.map.flyTo({center: [lng, lat], duration: 4000, zoom: 15, curve: 2, easing: (n) => n, essential: true});
+                    setTimeout(() => {
+                        lastMarker.togglePopup();
+                    }, 5000);
+                }, 3000);
             }
 
             if (this.circles.length) {

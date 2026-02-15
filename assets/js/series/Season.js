@@ -437,7 +437,7 @@ export class Season {
                     body.insertBefore(globsMapDiv, svgsDiv);
                     getFilmingLocationsDiv.innerHTML = data["mapBlock"];
                     getFilmingLocationsButton.remove();
-                    self.map = new Map({cooperativeGesturesOption: false}, self.toolTips);
+                    self.map = new Map({cooperativeGesturesOption: false}, self.toolTips, 'last');
                 })
         });
 

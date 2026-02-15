@@ -1,4 +1,5 @@
 import {Map} from "Map";
+import {ToolTips} from "ToolTips";
 
 let gThis = null;
 
@@ -31,7 +32,7 @@ export class Location {
         /******************************************************************************
          * mapbox gl                                                                  *
          ******************************************************************************/
-        if (this.mapDiv) this.map = new Map({cooperativeGesturesOption: false});
+        if (this.mapDiv) this.map = new Map({cooperativeGesturesOption: false}, new ToolTips(), 'last');
 
         /******************************************************************************
          * Filming location / point of interest form                                  *
