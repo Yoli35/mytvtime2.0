@@ -1,6 +1,6 @@
 import {ToolTips} from "ToolTips";
 
-let gThis;
+let self;
 
 export class WatchLinkCrud {
     constructor(options) {
@@ -20,7 +20,7 @@ export class WatchLinkCrud {
          * @property {number} seasonNumber
          * @property {string} url
          */
-        gThis = this;
+        self = this;
         // {'mediaType': 'series', 'mediaId': seriesId, 'api': api, 'providers': providers, 'translations': translations}
         this.mediaType = options.mediaType;
         this.mediaId = options.mediaId;
@@ -69,13 +69,13 @@ export class WatchLinkCrud {
         addWatchLink.addEventListener('click', function () {
             watchLinkFormType.value = 'create';
             watchLinkFormSubmit.classList.remove('delete');
-            watchLinkFormSubmit.textContent = gThis.translations['Add'];
+            watchLinkFormSubmit.textContent = self.translations['Add'];
             watchLinkFormId.value = "";
             watchLinkFormProvider.value = "";
             watchLinkFormName.value = "";
             watchLinkFormUrl.value = "";
             watchLinkFormSaisonNumber.value = "-1";
-            gThis.displayForm(watchLinkFormContainer);
+            self.displayForm(watchLinkFormContainer);
         });
 
         watchLinks.forEach(function (watchLink) {
@@ -92,13 +92,13 @@ export class WatchLinkCrud {
             edit.addEventListener('click', function () {
                 watchLinkFormType.value = 'update';
                 watchLinkFormSubmit.classList.remove('delete');
-                watchLinkFormSubmit.textContent = gThis.translations['Edit'];
+                watchLinkFormSubmit.textContent = self.translations['Edit'];
                 watchLinkFormId.value = id;
                 watchLinkFormProvider.value = provider;
                 watchLinkFormName.value = name;
                 watchLinkFormUrl.value = href;
                 watchLinkFormSaisonNumber.value = seasonNumber;
-                gThis.displayForm(watchLinkFormContainer);
+                self.displayForm(watchLinkFormContainer);
             });
 
             copy.addEventListener('click', function () {
@@ -113,46 +113,46 @@ export class WatchLinkCrud {
             del.addEventListener('click', function () {
                 watchLinkFormType.value = 'delete';
                 watchLinkFormSubmit.classList.add('delete');
-                watchLinkFormSubmit.textContent = gThis.translations['Delete'];
+                watchLinkFormSubmit.textContent = self.translations['Delete'];
                 watchLinkFormId.value = id;
                 watchLinkFormProvider.value = provider;
                 watchLinkFormName.value = name;
                 watchLinkFormUrl.value = href;
-                gThis.displayForm(watchLinkFormContainer);
+                self.displayForm(watchLinkFormContainer);
             });
         });
 
         watchLinkFormUrl.addEventListener('input', function () {
             // Parcourir le tableau associations pour trouver le providerId correspondant à l'URL collée. Needle contient la chaine à rechercher dans l'URL.
             let needle = watchLinkFormUrl.value;
-            for (let i = 0; i < gThis.associations.length; i++) {
-                if (needle.includes(gThis.associations[i].needle)) {
-                    watchLinkFormProvider.value = gThis.associations[i].providerId;
-                    watchLinkFormName.value = gThis.buildWatchLabel(gThis.selectValue(watchLinkFormProvider), gThis.selectValue(watchLinkFormSaisonNumber));
+            for (let i = 0; i < self.associations.length; i++) {
+                if (needle.includes(self.associations[i].needle)) {
+                    watchLinkFormProvider.value = self.associations[i].providerId;
+                    watchLinkFormName.value = self.buildWatchLabel(self.selectValue(watchLinkFormProvider), self.selectValue(watchLinkFormSaisonNumber));
                     break;
                 }
             }
         });
 
         watchLinkFormSaisonNumber.addEventListener('change', function () {
-            watchLinkFormName.value = gThis.buildWatchLabel(gThis.selectValue(watchLinkFormProvider), gThis.selectValue(watchLinkFormSaisonNumber));
+            watchLinkFormName.value = self.buildWatchLabel(self.selectValue(watchLinkFormProvider), self.selectValue(watchLinkFormSaisonNumber));
         });
 
         watchLinkFormProvider.addEventListener('change', function () {
-            watchLinkFormName.value = gThis.buildWatchLabel(gThis.selectValue(watchLinkFormProvider), gThis.selectValue(watchLinkFormSaisonNumber));
+            watchLinkFormName.value = self.buildWatchLabel(self.selectValue(watchLinkFormProvider), self.selectValue(watchLinkFormSaisonNumber));
         });
         watchLinkFormCancel.addEventListener('click', function () {
-            gThis.hideForm(watchLinkFormContainer);
+            self.hideForm(watchLinkFormContainer);
         });
         watchLinkFormSubmit.addEventListener('click', function (event) {
             event.preventDefault();
 
-            const provider = form.querySelector('#provider');
-            const name = form.querySelector('#name');
-            const url = form.querySelector('#url');
-            const seasonNumber = form.querySelector('#season-number');
-            const type = form.querySelector('#crud-type');
-            const errors = form.querySelectorAll('.error');
+            const provider = watchLinkFormProvider;
+            const name = watchLinkFormName;
+            const url = watchLinkFormUrl;
+            const seasonNumber = watchLinkFormSaisonNumber;
+            const type = watchLinkFormType;
+            const errors = watchLinkForm.querySelectorAll('.error');
             let apiUrl;
             errors.forEach(function (error) {
                 error.textContent = '';
@@ -162,36 +162,36 @@ export class WatchLinkCrud {
                     provider.value = null;
                 }
                 if (!name.value) {
-                    name.nextElementSibling.textContent = gThis.translations['This field is required'];
+                    name.nextElementSibling.textContent = self.translations['This field is required'];
                     return;
                 }
                 if (!url.value) {
-                    url.nextElementSibling.textContent = gThis.translations['This field is required'];
+                    url.nextElementSibling.textContent = self.translations['This field is required'];
                     return;
                 }
                 if (name.value && url.value) {
                     if (type.value === 'create') {
-                        apiUrl = gThis.api.directLinkCrud.create;
+                        apiUrl = self.api.directLinkCrud.create;
                     }
                     if (type.value === 'update') {
-                        apiUrl = gThis.api.directLinkCrud.update + watchLinkFormId.value;
+                        apiUrl = self.api.directLinkCrud.update + watchLinkFormId.value;
                     }
                 }
             } else {
-                apiUrl = gThis.api.directLinkCrud.delete + watchLinkFormId.value;
+                apiUrl = self.api.directLinkCrud.delete + watchLinkFormId.value;
             }
             fetch(apiUrl, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify({mediaId: gThis.mediaId, provider: provider.value, name: name.value, url: url.value, seasonNumber: seasonNumber?.value})
+                    body: JSON.stringify({mediaId: self.mediaId, provider: provider.value, name: name.value, url: url.value, seasonNumber: seasonNumber?.value})
                 }
             ).then(async function (response) {
                 if (response.ok) {
                     const data = await response.json();
                     // console.log({data});
-                    gThis.hideForm(watchLinkFormContainer);
+                    self.hideForm(watchLinkFormContainer);
                     const watchLinksDiv = document.querySelector('.watch-links');
                     if (type.value === 'create') {
                         /** @var {Link} link */
@@ -240,17 +240,17 @@ export class WatchLinkCrud {
                         const edit = document.createElement('div');
                         edit.classList.add('watch-link-tool');
                         edit.classList.add('edit');
-                        edit.setAttribute('data-title', gThis.translations['Edit this watch link']);
-                        const editIcon = gThis.svgs.querySelector('.svg#pen').querySelector('svg').cloneNode(true);
+                        edit.setAttribute('data-title', self.translations['Edit this watch link']);
+                        const editIcon = self.svgs.querySelector('.svg#pen').querySelector('svg').cloneNode(true);
                         edit.addEventListener('click', function () {
                             watchLinkFormType.value = 'update';
                             watchLinkFormSubmit.classList.remove('delete');
-                            watchLinkFormSubmit.textContent = gThis.translations['Edit'];
+                            watchLinkFormSubmit.textContent = self.translations['Edit'];
                             watchLinkFormId.value = link.id;
                             watchLinkFormProvider.value = link.provider.id;
                             watchLinkFormName.value = link.name;
                             watchLinkFormUrl.value = link.url;
-                            gThis.displayForm(watchLinkFormContainer);
+                            self.displayForm(watchLinkFormContainer);
                         });
                         edit.appendChild(editIcon);
                         watchLinkTools.appendChild(edit);
@@ -260,8 +260,8 @@ export class WatchLinkCrud {
                         const copy = document.createElement('div');
                         copy.classList.add('watch-link-tool');
                         copy.classList.add('copy');
-                        copy.setAttribute('data-title', gThis.translations['Copy this watch link']);
-                        const copyIcon = gThis.svgs.querySelector('.svg#copy').querySelector('svg').cloneNode(true);
+                        copy.setAttribute('data-title', self.translations['Copy this watch link']);
+                        const copyIcon = self.svgs.querySelector('.svg#copy').querySelector('svg').cloneNode(true);
                         copyIcon.addEventListener('click', function () {
                             navigator.clipboard.writeText(link.url).then(function () {
                                 copy.classList.add('copied');
@@ -279,21 +279,21 @@ export class WatchLinkCrud {
                         const del = document.createElement('div');
                         del.classList.add('watch-link-tool');
                         del.classList.add('delete');
-                        del.setAttribute('data-title', gThis.translations['Delete this watch link']);
-                        const delIcon = gThis.svgs.querySelector('.svg#trash').querySelector('svg').cloneNode(true);
+                        del.setAttribute('data-title', self.translations['Delete this watch link']);
+                        const delIcon = self.svgs.querySelector('.svg#trash').querySelector('svg').cloneNode(true);
                         del.appendChild(delIcon);
                         del.addEventListener('click', function () {
                             watchLinkFormType.value = 'delete';
                             watchLinkFormSubmit.classList.add('delete');
-                            watchLinkFormSubmit.textContent = gThis.translations['Delete'];
+                            watchLinkFormSubmit.textContent = self.translations['Delete'];
                             watchLinkFormId.value = link.id;
                             watchLinkFormProvider.value = link.provider.id;
                             watchLinkFormName.value = link.name;
                             watchLinkFormUrl.value = link.url;
-                            gThis.displayForm(watchLinkFormContainer);
+                            self.displayForm(watchLinkFormContainer);
                         });
                         watchLinkTools.appendChild(del);
-                        gThis.toolTips.init(watchLinkTools);
+                        self.toolTips.init(watchLinkTools);
 
                         newWatchLinkDiv.appendChild(newLink);
                         newWatchLinkDiv.appendChild(watchLinkTools);
@@ -306,14 +306,14 @@ export class WatchLinkCrud {
                         if (provider.value) {
                             if (hasImg) {
                                 const img = watchLink.querySelector('img');
-                                img.src = gThis.providers.logos[provider.value];
-                                img.alt = gThis.providers.names[provider.value];
+                                img.src = self.providers.logos[provider.value];
+                                img.alt = self.providers.names[provider.value];
                                 img.setAttribute('data-title', name.value);
                             }
                             if (hasSpan) {
                                 const img = document.createElement('img');
-                                img.src = gThis.providers.logos[provider.value];
-                                img.alt = gThis.providers.names[provider.value];
+                                img.src = self.providers.logos[provider.value];
+                                img.alt = self.providers.names[provider.value];
                                 img.setAttribute('data-title', name.value);
                                 watchLink.appendChild(img);
                                 if (hasSpan) {
@@ -343,8 +343,8 @@ export class WatchLinkCrud {
     }
 
     buildWatchLabel(providerIndex, seasonNumber) {
-        const providersNames = gThis.providers.names;
-        const translations = gThis.translations;
+        const providersNames = self.providers.names;
+        const translations = self.translations;
         const noProvider = providerIndex === -1 || providerIndex === null || typeof providerIndex === 'undefined';
         const noSeason = seasonNumber === -1 || seasonNumber === null || typeof seasonNumber === 'undefined';
 
@@ -382,7 +382,7 @@ export class WatchLinkCrud {
     //     const watchLinkDivs = watchLinksDiv.querySelectorAll(".watch-link");
     //     watchLinkDivs.forEach(function (item) {
     //         const id = item.getAttribute("data-id")
-    //         fetch(gThis.api.directLinkCrud.read + id)
+    //         fetch(self.api.directLinkCrud.read + id)
     //             .then(response => response.json())
     //             .then(data => {
     //                 const link = data.link;
