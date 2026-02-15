@@ -147,7 +147,7 @@ window.addEventListener("DOMContentLoaded", () => {
             const averageColor = new AverageColor();
             const color = averageColor.getColor(img);
             const seasonInfosDivs = document.querySelectorAll(".seasons .season .infos");
-            const commentDiv = document.querySelector(".episodes-comments");
+            /*const commentDiv = document.querySelector(".episodes-comments");*/
             const keywordDivs = document.querySelectorAll(".series-show .block-infos .keywords .keyword");
             const hasPoster = seriesShow.querySelector(".poster")?.querySelector("img");
             if (!hasPoster) {
