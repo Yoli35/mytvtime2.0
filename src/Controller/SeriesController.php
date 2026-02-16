@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Api\ApiWatchLink;
+use App\DTO\SeriesAdvancedDbSearchDTO;
 use App\DTO\SeriesAdvancedSearchDTO;
 use App\DTO\SeriesSearchDTO;
 use App\Entity\ContactMessage;
@@ -18,6 +19,7 @@ use App\Entity\UserEpisode;
 use App\Entity\UserList;
 use App\Entity\UserSeries;
 use App\Form\AddBackdropType;
+use App\Form\SeriesAdvancedDbSearchType;
 use App\Form\SeriesAdvancedSearchType;
 use App\Form\SeriesSearchType;
 use App\Form\SeriesVideoType;
@@ -47,6 +49,7 @@ use App\Service\ImageService;
 use App\Service\KeywordService;
 use App\Service\SeriesService;
 use App\Service\TMDBService;
+use Collator;
 use DateInvalidTimeZoneException;
 use DateMalformedStringException;
 use DateTime;
@@ -60,6 +63,7 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Intl\Countries;
 use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Routing\Attribute\Route;
@@ -556,9 +560,7 @@ class SeriesController extends AbstractController
     public function searchDB(#[CurrentUser] User $user, Request $request): Response
     {
         $series = [];
-        $searchResult['total_results'] = 0;
-        $searchResult['total_pages'] = 0;
-        $searchResult['page'] = 0;
+        $searchResult = ['total_results' => 0, 'total_pages' => 0, 'page' => 0];
         $simpleSeriesSearch = new SeriesSearchDTO($request->getLocale(), 1);
         $simpleForm = $this->createForm(SeriesSearchType::class, $simpleSeriesSearch);
 
@@ -586,6 +588,82 @@ class SeriesController extends AbstractController
             'action' => 'app_series_search_db',
             'title' => 'Search among your series',
             'seriesList' => $series,
+            'results' => [
+                'total_results' => $searchResult['total_results'],
+                'total_pages' => $searchResult['total_pages'],
+                'page' => $searchResult['page'],
+            ],
+        ]);
+    }
+
+    #[IsGranted('ROLE_USER')]
+    #[Route('/db/advanced/search', name: 'advanced_search_db')]
+    public function advancedDbSearch(#[CurrentUser] User $user, Request $request): Response
+    {
+        $searchResult = ['page' => 1];
+//        $watchProviders = $this->watchLinkApi->getWatchProviders($user->getCountry() ?: 'FR');
+        $keywords = $this->getKeywords();
+        $userSeriesIds = array_column($this->userSeriesRepository->userSeriesTMDBIds($user), 'id');
+
+        $countries = $this->getAdvancedSearchCountries($user, $request->getLocale());
+        dump($countries);
+
+        $seriesSearch = new SeriesAdvancedDbSearchDTO(1);
+//        $seriesSearch->setWatchProviders($watchProviders['select']);
+        $seriesSearch->setKeywords($keywords);
+        $slugger = new AsciiSlugger();
+
+        $advancedDisplaySettings = $this->settingsRepository->findOneBy(['user' => $user, 'name' => 'advanced db search display']);
+        if (!$advancedDisplaySettings) {
+            $advancedDisplaySettings = new Settings($user, 'advanced db search display', ['dates' => true, 'origin' => false, 'provider' => true, 'keywords' => true, 'status' => true]);
+            $this->settingsRepository->save($advancedDisplaySettings, true);
+        }
+        $displaySettings = $advancedDisplaySettings->getData();
+
+        $advancedSettings = $this->settingsRepository->findOneBy(['user' => $user, 'name' => 'advanced db search']);
+        if ($advancedSettings) {
+            $settings = $advancedSettings->getData();
+            $seriesSearch->setPage($settings['page']);
+            $seriesSearch->setFirstAirDateYear($settings['first air date year']);
+            $seriesSearch->setFirstAirDateGTE($settings['first air date  GTE'] ? $this->dateService->newDateImmutable($settings['first air date  GTE'], 'Europe/Paris', true) : null);
+            $seriesSearch->setFirstAirDateLTE($settings['first air date LTE'] ? $this->dateService->newDateImmutable($settings['first air date LTE'], 'Europe/Paris', true) : null);
+            $seriesSearch->setWithOriginCountry($settings['with origin country']);
+            $seriesSearch->setWithOriginalLanguage($settings['with origin language']);
+//            $seriesSearch->setWithWatchProviders($settings['with watch providers']);
+            $seriesSearch->setWithKeywords($settings['with keywords']);
+            $seriesSearch->setWithStatus($settings['with status']);
+            $seriesSearch->setSortBy($settings['sort by']);
+        }
+        $form = $this->createForm(SeriesAdvancedDbSearchType::class, $seriesSearch, ['countries' => $countries]);
+
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $seriesSearch = $form->getData();
+            dump($seriesSearch);
+            $searchResult['results'] = $this->seriesRepository->advancedDbSearch($user, $seriesSearch);
+            $searchResult['total_results'] = $t = $this->seriesRepository->advancedDbSearchCount($user, $seriesSearch);
+            $searchResult['total_pages'] = ceil($t / 20);
+            dump($searchResult);
+
+            if ($searchResult['total_results'] == 1) {
+                return $this->getOneResult($searchResult['results'][0], $slugger);
+            }
+            $series = $this->getAdvancedDbSearchResult($searchResult, $slugger);
+        } else {
+            $searchResult['results'] = $this->seriesRepository->advancedDbSearch($user, $seriesSearch);
+            $searchResult['total_results'] = $t = $this->seriesRepository->advancedDbSearchCount($user, $seriesSearch);
+            dump($t);
+            $searchResult['total_pages'] = ceil($t / 20);
+            dump($searchResult);
+            $series = $this->getAdvancedDbSearchResult($searchResult, $slugger);
+        }
+        dump($searchResult);
+
+        return $this->render('series/advanced_db_search.html.twig', [
+            'form' => $form->createView(),
+            'displaySettings' => ['id' => $advancedDisplaySettings->getId(), 'data' => $displaySettings],
+            'seriesList' => $series,
+            'userSeriesIds' => $userSeriesIds,
             'results' => [
                 'total_results' => $searchResult['total_results'],
                 'total_pages' => $searchResult['total_pages'],
@@ -661,7 +739,7 @@ class SeriesController extends AbstractController
             $series = $this->getSearchResult($searchResult, $slugger);
         }
 
-        return $this->render('series/search_advanced.html.twig', [
+        return $this->render('series/advanced_search.html.twig', [
             'form' => $form->createView(),
             'displaySettings' => ['id' => $advancedDisplaySettings->getId(), 'data' => $displaySettings],
             'seriesList' => $series,
@@ -2957,6 +3035,62 @@ class SeriesController extends AbstractController
                 'poster_path' => $tv['poster_path'],
             ];
         }, $searchResult['results'] ?? []);
+    }
+
+    public function getAdvancedDbSearchResult(array $searchResult, AsciiSlugger $slugger): array
+    {
+        return array_map(function ($tv) use ($slugger) {
+            $this->imageService->saveImage("posters", $tv['poster_path'], $this->imageConfiguration->getUrl('poster_sizes', 5));
+            $tv['poster_path'] = $tv['poster_path'] ? '/series/posters' . $tv['poster_path'] : null;
+
+            $name = $tv['name'];
+            $display_name = $tv['display_name'];
+            $slug = $slugger->slug($display_name ?: $name)->lower()->toString();
+
+            return [
+                'tmdb' => true,
+                'id' => $tv['id'],
+                'name' => $name,
+                'display_name' => $display_name,
+                'air_date' => $tv['first_air_date'],
+                'slug' => $slug,
+                'poster_path' => $tv['poster_path'],
+            ];
+        }, $searchResult['results'] ?? []);
+    }
+
+    public function getAdvancedSearchCountries(User $user, string $locale): array
+    {
+        $codes = $this->seriesRepository->advancedSearchCountries($user); // ex: ['FR','TH',...]
+        $choices = [];
+
+        foreach ($codes as $code) {
+            $choices[Countries::getName($code)] = $code; // 'France' => 'FR'
+        }
+
+        $userLocale = strtolower($user->getPreferredLanguage() ?? $locale);
+        $userRegion = strtoupper($user->getCountry() ?? $this->getDefaultRegion($locale));
+        $collator = new Collator($userLocale . '_' . $userRegion);
+        if (!$collator) {
+            $collator = new Collator('en_US'); // fallback
+        }
+        $collator->setStrength(Collator::PRIMARY); // ignore accents + casse
+
+        uksort($choices, function (string $a, string $b) use ($collator): int {
+            return $collator->compare($a, $b);
+        });
+
+        // Optionnel : ajouter un choix "vide" en haut
+        return ['' => ''] + $choices;
+    }
+
+    private function getDefaultRegion(string $locale): string{
+        // $locale: 'fr|en|ko'
+        return match ($locale) {
+            'en' => 'US',
+            'ko' => 'KR',
+            default => 'FR',
+        };
     }
 
     public function getOneResult(array $tv, AsciiSlugger $slugger): Response

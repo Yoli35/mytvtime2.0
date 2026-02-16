@@ -1,0 +1,386 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}my Tv Time → {{ 'Search'|trans }}{% endblock %}
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('styles/contact.scss') }}">
+    <link rel="stylesheet" href="{{ asset('styles/home.scss') }}">
+    <link rel="stylesheet" href="{{ asset('styles/series.scss') }}">
+    <link rel="stylesheet" href="{{ asset('styles/series_search.scss') }}">
+{% endblock %}
+{% block body %}
+    {% include '_blocks/_menu.html.twig' %}
+    <div class="container-fluid">
+        <div class="series-search">
+            <h1>{{ 'Advanced search'|trans }}</h1>
+            {{ form_start(form, {'attr': {'class': 'form'}}) }}
+            <div class="magnify">{{ ux_icon('mdi:search') }}</div>
+            <div class="folder folded">
+                <div class="hide-search">{{ ux_icon('mdi:close') }}</div>
+                <div class="form-row{% if displaySettings.data.dates %} dismissed{% endif %}">
+                    <div class="form-row-name">
+                        {{ 'Dates'|trans }}
+                        <div class="toggler">
+                            {{ ux_icon('mdi:ellipsis-vertical') }}
+                            <div class="toggler-menu" data-menu="dates">
+                                <div class="toggler-menu-item" data-item="toggler">{% if displaySettings.data.dates %}{{ 'Show'|trans }}{% else %}{{ 'Hide'|trans }}{% endif %}</div>
+                                <div class="toggler-menu-item" data-item="reset">{{ 'Reset'|trans }}</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-field">
+                        <label for="{{ form.firstAirDateYear.vars.id }}">
+                            {{ form.firstAirDateYear.vars.label|trans }}
+                            {{ form_widget(form.firstAirDateYear) }}
+                            {{ form_errors(form.firstAirDateYear) }}
+                        </label>
+                    </div>
+                    <div class="form-field">
+                        <label for="{{ form.firstAirDateGTE.vars.id }}">
+                            {{ form.firstAirDateGTE.vars.label|trans }}
+                            {{ form_widget(form.firstAirDateGTE) }}
+                            {{ form_errors(form.firstAirDateGTE) }}
+                        </label>
+                    </div>
+                    <div class="form-field">
+                        <label for="{{ form.firstAirDateLTE.vars.id }}">
+                            {{ form.firstAirDateLTE.vars.label|trans }}
+                            {{ form_widget(form.firstAirDateLTE) }}
+                            {{ form_errors(form.firstAirDateLTE) }}
+                        </label>
+                    </div>
+                </div>
+                <div class="form-row{% if displaySettings.data.origin %} dismissed{% endif %}">
+                    <div class="form-row-name">
+                        {{ 'Origin'|trans }}
+                        <div class="toggler">
+                            {{ ux_icon('mdi:ellipsis-vertical') }}
+                            <div class="toggler-menu" data-menu="origin">
+                                <div class="toggler-menu-item" data-item="toggler">{% if displaySettings.data.origin %}{{ 'Show'|trans }}{% else %}{{ 'Hide'|trans }}{% endif %}</div>
+                                <div class="toggler-menu-item" data-item="reset">{{ 'Reset'|trans }}</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-field">
+                        <label for="{{ form.withOriginCountry.vars.id }}">
+                            {{ form.withOriginCountry.vars.label|trans }}
+                            {{ form_widget(form.withOriginCountry) }}
+                            {{ form_errors(form.withOriginCountry) }}
+                        </label>
+                        <script>
+                            document.addEventListener('DOMContentLoaded', function () {
+                                const originCountry = document.querySelector('#{{ form.withOriginCountry.vars.id }}');
+                                const options = originCountry.querySelectorAll('option');
+                                options.forEach(function (option) {
+                                    if (option.value) {
+                                        option.textContent = getFlagEmoji(option.value) + ' ' + option.textContent;
+                                    }
+                                });
+
+                                function getFlagEmoji(countryCode) {
+                                    const codePoints = countryCode.toUpperCase().split("").map((char) => 127397 + char.charCodeAt(0));
+                                    return String.fromCodePoint(...codePoints);
+                                }
+                            });
+                        </script>
+                    </div>
+                    <div class="form-field">
+                        <label for="{{ form.withOriginalLanguage.vars.id }}">
+                            {{ form.withOriginalLanguage.vars.label|trans }}
+                            {{ form_widget(form.withOriginalLanguage) }}
+                            {{ form_errors(form.withOriginalLanguage) }}
+                        </label>
+                    </div>
+                </div>
+{#                <div class="form-row{% if displaySettings.data.provider %} dismissed{% endif %}">#}
+{#                    <div class="form-row-name">#}
+{#                        {{ 'Provider'|trans }}#}
+{#                        <div class="toggler">#}
+{#                            {{ ux_icon('mdi:ellipsis-vertical') }}#}
+{#                            <div class="toggler-menu" data-menu="provider">#}
+{#                                <div class="toggler-menu-item" data-item="toggler">{% if displaySettings.data.provider %}{{ 'Show'|trans }}{% else %}{{ 'Hide'|trans }}{% endif %}</div>#}
+{#                                <div class="toggler-menu-item" data-item="reset">{{ 'Reset'|trans }}</div>#}
+{#                            </div>#}
+{#                        </div>#}
+{#                    </div>#}
+{#                    <div class="form-field">#}
+{#                        <label for="{{ form.withWatchMonetizationTypes.vars.id }}">#}
+{#                            {{ form.withWatchMonetizationTypes.vars.label|trans }}#}
+{#                            {{ form_widget(form.withWatchMonetizationTypes) }}#}
+{#                            {{ form_errors(form.withWatchMonetizationTypes) }}#}
+{#                        </label>#}
+{#                    </div>#}
+{#                    <div class="form-field">#}
+{#                        <label for="{{ form.withWatchProviders.vars.id }}">#}
+{#                            {{ form.withWatchProviders.vars.label|trans }}#}
+{#                            {{ form_widget(form.withWatchProviders) }}#}
+{#                            {{ form_errors(form.withWatchProviders) }}#}
+{#                        </label>#}
+{#                    </div>#}
+{#                </div>#}
+                <div class="form-row{% if displaySettings.data.keywords %} dismissed{% endif %}">
+                    <div class="form-row-name">
+                        {{ 'Keywords'|trans }}
+                        <div class="toggler">
+                            {{ ux_icon('mdi:ellipsis-vertical') }}
+                            <div class="toggler-menu" data-menu="keywords">
+                                <div class="toggler-menu-item" data-item="toggler">{% if displaySettings.data.keywords %}{{ 'Show'|trans }}{% else %}{{ 'Hide'|trans }}{% endif %}</div>
+                                <div class="toggler-menu-item" data-item="reset">{{ 'Reset'|trans }}</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-field full-width">
+                        <label for="{{ form.withKeywords.vars.id }}">
+                            {{ 'Refine your search'|trans }}
+                            <div class="input-group">
+                                <input type="search" class="keyword-input" placeholder="{{ 'Start typing to search'|trans }}">
+                                <div class="and-or">
+                                    <div class="and{% if form.keywordSeparator.vars.value==',' %} active{% endif %}" data-value="," data-title="{{ 'All keywords'|trans }}">{{ 'And'|trans }}</div>
+                                    <div class="or{% if form.keywordSeparator.vars.value=='|' %} active{% endif %}" data-value="|" data-title="{{ 'Any keywords'|trans }}">{{ 'Or'|trans }}</div>
+                                </div>
+                            </div>
+                            <div class="keyword-list" id="keywords-list">
+                                {% for label, value in form.vars.value.keywords %}
+                                    <div data-value="{{ value }}" class="keyword-item d-none" data-label="{{ label }}" data-title="{{ label|trans([], 'keywords') }}">{{ label }}</div>
+                                {% endfor %}
+                            </div>
+                            <div class="form-keywords"></div>
+                        </label>
+                        <input type="hidden" id="{{ form.withKeywords.vars.id }}" name="{{ field_name(form.withKeywords) }}" value="{{ form.withKeywords.vars.value }}"/>
+                    </div>
+                </div>
+                <div class="form-row{% if displaySettings.data.status %} dismissed{% endif %}">
+                    <div class="form-row-name">
+                        {{ 'Status and type'|trans }}
+                        <div class="toggler">
+                            {{ ux_icon('mdi:ellipsis-vertical') }}
+                            <div class="toggler-menu" data-menu="status">
+                                <div class="toggler-menu-item" data-item="toggler">{% if displaySettings.data.status %}{{ 'Show'|trans }}{% else %}{{ 'Hide'|trans }}{% endif %}</div>
+                                <div class="toggler-menu-item" data-item="reset">{{ 'Reset'|trans }}</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-field">
+                        <label for="{{ form.withStatus.vars.id }}">
+                            {{ form.withStatus.vars.label|trans }}
+                            {{ form_widget(form.withStatus) }}
+                            {{ form_errors(form.withStatus) }}
+                        </label>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-field">
+                        <label for="{{ form.sortBy.vars.id }}">
+                            {{ form.sortBy.vars.label|trans }}
+                            {{ form_widget(form.sortBy) }}
+                            {{ form_errors(form.sortBy) }}
+                        </label>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <button type="submit">{{ 'Send'|trans }}</button>
+                </div>
+            </div>
+            <script>
+                const seriesSearchDiv = document.querySelector('.series-search');
+                const hideSearchDiv = seriesSearchDiv.querySelector('.hide-search');
+                const magnifyDiv = seriesSearchDiv.querySelector('.magnify');
+                const folder = seriesSearchDiv.querySelector('.folder');
+                hideSearchDiv.addEventListener('click', function () {
+                    folder.classList.add('folded');
+                });
+                magnifyDiv.addEventListener('click', function () {
+                    folder.classList.remove('folded');
+                });
+            </script>
+            {{ include('_blocks/series/_search_result_infos.html.twig') }}
+            {{ form_end(form) }}
+            <div class="series-search-result">
+                <div class="wrapper">
+                    {% for series in seriesList %}
+                        {{ include('_blocks/series/_card.html.twig', {target: '_blank', dataTitle: series.name, ids: userSeriesIds}) }}
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+    {% include '_blocks/_footer.html.twig' %}
+    <div id="global-data" style="display: none">
+        {
+            "displaySettings": {
+                "id": {{ displaySettings.id }},
+                "data": {
+                    "dates": {{ displaySettings.data.dates ? 1:0 }},
+                    "origin": {{ displaySettings.data.origin ? 1:0 }},
+                    "provider": {{ displaySettings.data.provider ? 1:0 }},
+                    "keywords": {{ displaySettings.data.keywords ? 1:0 }},
+                    "status": {{ displaySettings.data.status ? 1:0 }}
+                }
+            }
+        }
+    </div>
+{% endblock %}
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const togglers = document.querySelectorAll('.toggler');
+            const globalData = JSON.parse(document.querySelector('#global-data').textContent);
+            const displaySettings = globalData['displaySettings'];
+
+            togglers.forEach(function (item) {
+                const lang = document.documentElement.lang;
+                const formRow = item.closest('.form-row');
+                const menu = item.querySelector('.toggler-menu');
+                const menuKey = menu.dataset.menu;
+                const hide = item.querySelector('.toggler-menu-item[data-item="toggler"]');
+                hide.addEventListener('click', function () {
+                    formRow.classList.toggle('dismissed');
+                    if (formRow.classList.contains('dismissed')) {
+                        hide.innerText = '{{ 'Show'|trans }}';
+                        displaySettings['data'][menuKey] = 1;
+                    } else {
+                        hide.innerText = '{{ 'Hide'|trans }}';
+                        displaySettings['data'][menuKey] = 0;
+                    }
+                    fetch('/api/user/settings/series/advanced/search', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-Requested-With': 'XMLHttpRequest'
+                        },
+                        body: JSON.stringify(displaySettings)
+                    }).then(response => response.json()).then(data => {
+                        if (data.ok) {
+                            console.log('Display settings updated successfully');
+                        }
+                    }).catch(error => {
+                        console.error('Fetch error:', error);
+                    });
+                });
+            });
+
+            const input = document.querySelector('.keyword-input');
+            {#const andOr = document.querySelectorAll('.and-or div');#}
+            const hiddenSeparator = document.querySelector('#{{ form.keywordSeparator.vars.id }}');
+            let separatorValue = hiddenSeparator.value;
+            const hiddenInput = document.querySelector('#{{ form.withKeywords.vars.id }}');
+            const hiddenInputValue = hiddenInput.value.split(separatorValue);
+            {#andOr.forEach(function (item) {#}
+            {#    item.addEventListener('click', function () {#}
+            {#        let value = hiddenInput.value.split(separator);#}
+            {#        andOr.forEach(function (item) {#}
+            {#            item.classList.remove('active');#}
+            {#        });#}
+            {#        item.classList.add('active');#}
+            {#        separator = item.dataset.value;#}
+            {#        hiddenSeparator.value = separator;#}
+            {#        hiddenInput.value = value.join(separator);#}
+            {#    });#}
+            {#});#}
+            const withKeywords = document.querySelector('#series_advanced_db_search_withKeywords');
+            const separator = document.querySelector('#series_advanced_db_search_keywordSeparator');
+            const andBtn = document.querySelector('.and-or .and');
+            const orBtn = document.querySelector('.and-or .or');
+            const picked = document.querySelector('.form-keywords');
+
+            if (!withKeywords || !separator || !andBtn || !orBtn || !picked) return;
+
+            const sync = () => {
+                const sep = separator.value || ',';
+                const ids = Array.from(picked.querySelectorAll('.keyword[data-value]'))
+                    .map(el => el.dataset.value)
+                    .filter(Boolean);
+                withKeywords.value = ids.join(sep);
+            };
+
+            const setSep = (sep) => {
+                separator.value = sep;
+                andBtn.classList.toggle('active', sep === ',');
+                orBtn.classList.toggle('active', sep === '|');
+                sync();
+            };
+
+            andBtn.addEventListener('click', () => setSep(','));
+            orBtn.addEventListener('click', () => setSep('|'));
+
+            new MutationObserver(sync).observe(picked, { childList: true, subtree: true });
+            sync();
+
+            const list = document.querySelector('#keywords-list');
+            const keywords = document.querySelector('.form-keywords');
+            const keywordItems = list.querySelectorAll('.keyword-item');
+            const keywordList = [];
+            keywordItems.forEach(function (item) {
+                keywordList.push(item);
+            });
+            keywordList.forEach(function (item) {
+                if (hiddenInputValue.includes(item.dataset.value)) {
+                    const keyword = document.createElement('div');
+                    const close = document.createElement('div');
+                    keyword.classList.add('keyword');
+                    keyword.dataset.value = item.dataset.value;
+                    keyword.innerHTML = item.dataset.label;
+                    close.classList.add('close');
+                    close.innerHTML = '×';
+                    close.addEventListener('click', function () {
+                        keyword.remove();
+                        item.removeAttribute('data-added');
+                        hiddenInput.value = Array.from(keywords.querySelectorAll('.keyword')).map(function (keyword) {
+                            return keyword.dataset.value;
+                        }).join('|');
+                    });
+                    keyword.appendChild(close);
+                    keywords.appendChild(keyword);
+                    item.dataset.added = "1";
+                }
+            });
+            input.addEventListener('input', function () {
+                const value = input.value;
+                if (value.length)
+                    list.classList.add('show');
+                else
+                    list.classList.remove('show');
+                keywordList.forEach(function (item) {
+                    if (!item.dataset.added && item.dataset.label.toLowerCase().includes(value.toLowerCase())) {
+                        item.classList.remove('d-none');
+                    } else {
+                        item.classList.add('d-none');
+                    }
+                });
+            });
+            list.addEventListener('click', function (e) {
+                if (e.target.classList.contains('keyword-item')) {
+                    const value = e.target.dataset.value;
+                    const label = e.target.dataset.label;
+                    const keyword = document.createElement('div');
+                    const close = document.createElement('div');
+                    keyword.classList.add('keyword');
+                    keyword.dataset.value = value;
+                    keyword.innerHTML = label;
+                    close.classList.add('close');
+                    close.innerHTML = '×';
+                    close.addEventListener('click', function () {
+                        keyword.remove();
+                        e.target.removeAttribute('data-added');
+                        hiddenInput.value = Array.from(keywords.querySelectorAll('.keyword')).map(function (keyword) {
+                            return keyword.dataset.value;
+                        }).join(separator);
+                    });
+                    keyword.appendChild(close);
+                    keywords.appendChild(keyword);
+                    e.target.dataset.added = "1";
+                    input.value = '';
+                    list.classList.remove('show');
+                    keywordList.forEach(function (item) {
+                        item.classList.add('d-none');
+                    });
+                    hiddenInput.value = Array.from(keywords.querySelectorAll('.keyword')).map(function (keyword) {
+                        return keyword.dataset.value;
+                    }).join(separator);
+                }
+            });
+        });
+    </script>
+{% endblock %}
+

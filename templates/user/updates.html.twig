@@ -18,6 +18,112 @@
                 </div>
             </div>
             <div class="site-update glowing-border">
+                <h2>69ᵉ mise à jour : 16/02/2026</h2>
+                <ul>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:code') }}→ Disable unused episodes comments div</div>
+                        <div class="details">Comments div for episodes is no longer used and has been disabled in the front-end. Simplifies the interface and removes unused elements for a cleaner layout.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:map-outline') }}→ Add marker fly-to logic based on selection</div>
+                        <div class="details">Enhances the map by allowing fly-to animations for either the first or last marker based on user interactions. Improves navigation and visibility of key locations, creating a smoother, more intuitive map experience.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:code') }}→ Refactor WatchLinkCrud for consistency</div>
+                        <div class="details">Replaces `gThis` with `self` for improved readability and consistency across the codebase. Simplifies understanding of the code and aligns with modern JavaScript best practices. Also fixes an oversight in the code (undefined variable form).</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:map-outline') }}→ Improve map initialization and user interactions</div>
+                        <div class="details">Enhances the map by optimizing initialization processes and ensuring controls, markers, and styles load efficiently. Introduces Mapbox token fetching for secure access and refines user interactions for a smoother and more intuitive experience.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:tv') }}→ Add keyword management and synchronization</div>
+                        <div class="details">Introduces keyword management, allowing keywords to be associated with series and synchronized from external sources. Enhances data accuracy and improves the keyword handling experience across the app.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:map-outline') }}→ Move filming location form data generation to SeriesService</div>
+                        <div class="details">Shifts responsibility for generating filming location form data to SeriesService, improving code organization and maintainability. Ensures consistent and centralized handling of form data across the application.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:map-outline') }}→ Move filming location logic to SeriesService</div>
+                        <div class="details">Streamlines filming location processing by centralizing logic in SeriesService. Improves code maintainability and reusability while preserving the features and functionality of filming location management.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:map-outline') }}→ Add locale support for series filming locations API</div>
+                        <div class="details">Allows fetching filming locations based on specific locales, enhancing user experience by providing localized series data. Improves flexibility and usability for multilingual audiences.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:code') }}→ Remove unused styles and comment out redundant color changes</div>
+                        <div class="details">Simplifies visual elements by removing an unused style and commenting out redundant background color adjustments. Improves code readability and prepares for potential future updates without impacting the current user interface.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:tv') }}→ Update default episode size values and reset logic</div>
+                        <div class="details">Adjusts default episode size values to provide better visual consistency. Introduces logic to reset invalid episode sizes, ensuring a more reliable and user-friendly display across the interface.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:map-outline') }}→ Refactor map rendering and event handling in season view</div>
+                        <div class="details">Improves map rendering response and event handling consistency across the season view. Enhances code clarity and maintainability by replacing ambiguous references with clearer self-references.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:tv') }}→ Update season backdrop and poster handling</div>
+                        <div class="details">Ensures proper display of season-specific backdrops and posters throughout the interface. Improves consistency and user experience by accurately reflecting season-level visuals.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:tv') }}→ Fix watch link tool visibility condition</div>
+                        <div class="details">Fixes an issue where the watch link tools were not shown correctly. Ensures the tools are only processed when they exist, improving robustness and user experience.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:code') }}→ Remove unused switcher styles and update flash message hover</div>
+                        <div class="details">Cleans up unnecessary switcher-related styles, reducing CSS clutter. Improves flash message hover effect for a more polished and responsive user interaction.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:tv') }}→ Add explicit copy badge to watch links</div>
+                        <div class="details">Enables users to copy watch link URLs directly to their clipboard via a new button for improved convenience. Enhances usability by providing direct access to links without needing to open them first.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:email') }}→ Add background image and styling to contact page</div>
+                        <div class="details">Introduces a dynamic blurred background image and updated styling for the contact page, enhancing its visual appeal. This improvement creates a more modern and engaging user experience.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:tv') }}→ Enhance watch link form usability and provider auto-detection</div>
+                        <div class="details">Improves the watch link form with automatic provider selection based on URL input and updated form interactions. This simplifies the process of adding watch links and ensures better accuracy and user efficiency.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:server-network') }}→ Improve deployment script clarity and feedback</div>
+                        <div class="details">Adds clearer logging and feedback during deployment steps to enhance the user experience. This ensures better understanding of progress and actions taken, reducing potential confusion during the process.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:tv') }}{{ ux_icon('mdi:email') }}→ Add localized overview to series emails</div>
+                        <div class="details">Includes localized overview text in series notification emails, enhancing clarity and user experience for non-native speakers. This improves communication by ensuring content is accessible in users' preferred language where available.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:tv') }}→ Add support for localized series overview text</div>
+                        <div class="details">Displays localized overview text for series when available, improving accessibility for non-Latin script users. Introduces better handling of series names with mixed or non-Latin characters for enhanced user experience.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:tv') }}→ Update episode links and improve date input interaction</div>
+                        <div class="details">Refines episode links for better coherence and navigation within the series context. Enhances date input usability by improving the element selection logic for a smoother user experience.</div>
+                    </li>
+                </ul>
+            </div>
+            <div class="site-update glowing-border">
+                <h2>68ᵉ mise à jour : 11/02/2026</h2>
+                <ul>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:language-javascript') }}→ Refactor localization forms for translations</div>
+                        <div class="details">Streamlines the structure and behavior of localization forms, improving code readability and maintainability. Enhances form interactions with better event handling, clearer logic, and more user-friendly functionality.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:language-css3') }}→ CSS fixes</div>
+                        <div class="details">Improves visual separation between episode titles and their surrounding elements for better readability and layout consistency. / Improves visual separation between episode titles and their surrounding elements for better readability and layout consistency. / Css fix in view history menu.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:map-outline') }}→ Add dynamic badges for series, locations and images</div>
+                        <div class="details">Displays real-time counters for series, locations and images within the map interface. Enhances user engagement by highlighting new additions or updates with visually distinctive badges.</div>
+                    </li>
+                </ul>
+            </div>
+            <div class="site-update glowing-border">
                 <h2>67ᵉ mise à jour : 08/02/2026</h2>
                 <ul>
                     <li>
@@ -272,7 +378,9 @@
                     </li>
                     <li>
                         <div class="change">{{ ux_icon('mdi:tv') }}{{ ux_icon('mdi:comment-text') }}→ Enhance episode comment badge functionality and UI</div>
-                        <div class="details">Improved the comment badge for episodes by updating its SVG icon, adding click event handling to reveal and scroll to the comment section, and adjusting its placement in the UI. Updated styles to hide episode groups without comments unless forced to show, and added a new translation for the comment badge tooltip. Also fixed a potential null dereference in ApiSeasonComments.php when retrieving the localized series name.</div>
+                        <div class="details">Improved the comment badge for episodes by updating its SVG icon, adding click event handling to reveal and scroll to the comment section, and adjusting its placement in the UI. Updated styles to hide episode groups without comments unless forced to show, and added a new translation for the comment badge tooltip.
+                            Also fixed a potential null dereference in ApiSeasonComments.php when retrieving the localized series name.
+                        </div>
                     </li>
                     <li>
                         <div class="change">{{ ux_icon('mdi:tv') }}{{ ux_icon('mdi:comment-text') }}→ Add image support to season comment creation</div>
@@ -284,7 +392,9 @@
                     </li>
                     <li>
                         <div class="change">{{ ux_icon('mdi:tv') }}{{ ux_icon('mdi:comment-text') }}→ Add support for images in episode comments</div>
-                        <div class="details">Introduces the ability to upload and display images with episode comments. Adds new EpisodeCommentImage entity and repository, updates the API to handle image uploads, and modifies the frontend to support image selection, preview, and display. Updates styles and translations to accommodate the new feature, and includes a dialog for image selection in the UI.</div>
+                        <div class="details">Introduces the ability to upload and display images with episode comments. Adds new EpisodeCommentImage entity and repository, updates the API to handle image uploads, and modifies the frontend to support image selection, preview, and display. Updates styles and translations to accommodate the new feature, and
+                            includes a dialog for image selection in the UI.
+                        </div>
                     </li>
                     <li>
                         <div class="change">{{ ux_icon('mdi:tv') }}{{ ux_icon('mdi:comment-text') }}→ Add comment badge to user episode actions</div>
@@ -292,7 +402,9 @@
                     </li>
                     <li>
                         <div class="change">{{ ux_icon('mdi:tv') }}{{ ux_icon('mdi:comment-text') }}→ Add episode comment posting for seasons</div>
-                        <div class="details">Implemented frontend and backend support for users to post comments on individual episodes within a season. Added new API endpoint for comment creation, updated JS to handle comment submission and rendering, refactored comment display, and enhanced styles for the comment UI. Also updated translations and template to support the new feature.</div>
+                        <div class="details">Implemented frontend and backend support for users to post comments on individual episodes within a season. Added new API endpoint for comment creation, updated JS to handle comment submission and rendering, refactored comment display, and enhanced styles for the comment UI. Also updated translations and template
+                            to support the new feature.
+                        </div>
                     </li>
                     <li>
                         <div class="change">{{ ux_icon('mdi:tv') }}{{ ux_icon('mdi:comment-text') }}→ Refactor season comments to separate module</div>
@@ -300,7 +412,9 @@
                     </li>
                     <li>
                         <div class="change">{{ ux_icon('mdi:tv') }}{{ ux_icon('mdi:comment-text') }}→ Add per-episode comment groups and UI enhancements</div>
-                        <div class="details">Refactored episode comments to group by episode, added UI for 'Add a comment' per episode, and improved episode group rendering in Season.js. Updated styles for episode group headers and comment buttons. Extended backend to return episode arrays with comment counts, and added translation for 'Add a comment' in both PHP and French translation files.</div>
+                        <div class="details">Refactored episode comments to group by episode, added UI for 'Add a comment' per episode, and improved episode group rendering in Season.js. Updated styles for episode group headers and comment buttons. Extended backend to return episode arrays with comment counts, and added translation for 'Add a comment' in
+                            both PHP and French translation files.
+                        </div>
                     </li>
                 </ul>
             </div>
@@ -313,7 +427,9 @@
                     </li>
                     <li>
                         <div class="change">{{ ux_icon('mdi:menu') }}{{ ux_icon('mdi:clipboard-text-history') }}→ Refactor user history menu layout and styling</div>
-                        <div class="details">Grouped vote, device, and provider elements into a new 'user-part' container in both JS and Twig templates, and updated SCSS for improved styling and layout. Commented out options to toggle visibility for these elements, making them always visible if data is present. Also fixed the SQL query to use only the localized name if available.</div>
+                        <div class="details">Grouped vote, device, and provider elements into a new 'user-part' container in both JS and Twig templates, and updated SCSS for improved styling and layout. Commented out options to toggle visibility for these elements, making them always visible if data is present. Also fixed the SQL query to use only the
+                            localized name if available.
+                        </div>
                     </li>
                     <li>
                         <div class="change">{{ ux_icon('mdi:tv') }}→ Fix season badge rendering for season 0</div>
@@ -325,7 +441,9 @@
                     </li>
                     <li>
                         <div class="change">{{ ux_icon('mdi:tv') }}→ Improve season display and update episode flash messages</div>
-                        <div class="details">Wrapped the season display in show.html.twig to only render if the series has a first air date, preventing display for incomplete data. Updated flash messages in SeriesController to use 'Next episode to watch is %episode%' for clarity and added the corresponding translation. Fixed a potential bug in Show.js by returning early if no episode cards are present. Added max-width to card titles in card.scss for better layout.</div>
+                        <div class="details">Wrapped the season display in show.html.twig to only render if the series has a first air date, preventing display for incomplete data. Updated flash messages in SeriesController to use 'Next episode to watch is %episode%' for clarity and added the corresponding translation. Fixed a potential bug in Show.js by
+                            returning early if no episode cards are present. Added max-width to card titles in card.scss for better layout.
+                        </div>
                     </li>
                     <li>
                         <div class="change">{{ ux_icon('mdi:tv') }}→ Improve background color handling without poster image</div>
@@ -362,15 +480,21 @@
                     </li>
                     <li>
                         <div class="change">{{ ux_icon('mdi:tv') }}→ Improve watch link label and season badge handling</div>
-                        <div class="details">Refactored JS to centralize watch link label generation and update on both provider and season changes. Updated SeriesService to provide new translation keys for 'Watch season' and 'Watch specials'. Modified Twig template to display 'SP' badge for specials and use -1 as the default provider value. Added corresponding French translations.</div>
+                        <div class="details">Refactored JS to centralize watch link label generation and update on both provider and season changes. Updated SeriesService to provide new translation keys for 'Watch season' and 'Watch specials'. Modified Twig template to display 'SP' badge for specials and use -1 as the default provider value. Added
+                            corresponding French translations.
+                        </div>
                     </li>
                     <li>
                         <div class="change">{{ ux_icon('mdi:menu') }}{{ ux_icon('mdi:tv') }}→ Add user list suggestions to main menu</div>
-                        <div class="details">Introduces a new suggestions section in the main menu, displaying items from the user's list marked for the main menu. Adds a nullable 'mainMenu' property to UserList, updates the API (renamed to ApiMainMenu) to provide suggestions, and implements corresponding frontend logic and styles for displaying suggestions in the menu.</div>
+                        <div class="details">Introduces a new suggestions section in the main menu, displaying items from the user's list marked for the main menu. Adds a nullable 'mainMenu' property to UserList, updates the API (renamed to ApiMainMenu) to provide suggestions, and implements corresponding frontend logic and styles for displaying suggestions
+                            in the menu.
+                        </div>
                     </li>
                     <li>
                         <div class="change">{{ ux_icon('mdi:search') }}→ Fix 'Open in new tab' option to multi-search results</div>
-                        <div class="details">Correct the toggle in the multi-search options menu to open search result links in a new tab. Refactors link creation logic in Menu.js to use the 'target' attribute instead of custom click handlers, and removes the addAuxClickListener method. Also updates the menu template to reflect the new toggle and cleans up commented code.</div>
+                        <div class="details">Correct the toggle in the multi-search options menu to open search result links in a new tab. Refactors link creation logic in Menu.js to use the 'target' attribute instead of custom click handlers, and removes the addAuxClickListener method. Also updates the menu template to reflect the new toggle and cleans up
+                            commented code.
+                        </div>
                     </li>
                     <li>
                         <div class="change">{{ ux_icon('mdi:code') }}→ Bug fix. Add lch property to defaultRGB in AverageColor</div>
@@ -382,7 +506,8 @@
                     </li>
                     <li>
                         <div class="change">{{ ux_icon('mdi:list-box') }}→ Add edit and create functionality for user lists</div>
-                        <div class="details">Implemented the ability to create and edit user lists from the UI, including dialog validation and error display. Added new API endpoint for updating lists, updated styles for list management, and improved the user experience for managing lists. Also updated translations and templates to support these features.</div>
+                        <div class="details">Implemented the ability to create and edit user lists from the UI, including dialog validation and error display. Added new API endpoint for updating lists, updated styles for list management, and improved the user experience for managing lists. Also updated translations and templates to support these features.
+                        </div>
                     </li>
                 </ul>
             </div>
@@ -403,11 +528,14 @@
                     </li>
                     <li>
                         <div class="change">{{ ux_icon('mdi:calendar') }}{{ ux_icon('mdi:tv') }}→ Improve episode filtering and broadcast date handling</div>
-                        <div class="details">Updated episode queries to filter by 'previousOccurrence' and improved logic for creating or updating SeriesBroadcastDate entities. Error may occurs when new episodes are added to an existing schedule with override option checked. Also increased the height of the .show class in series.scss for better UI display.</div>
+                        <div class="details">Updated episode queries to filter by 'previousOccurrence' and improved logic for creating or updating SeriesBroadcastDate entities. Error may occurs when new episodes are added to an existing schedule with override option checked. Also increased the height of the .show class in series.scss for better UI display.
+                        </div>
                     </li>
                     <li>
                         <div class="change">{{ ux_icon('mdi:tv') }}→ Refactor quick episode links and update styles</div>
-                        <div class="details">Refactored the quick episode links to support multiple quick-episodes containers and improved their event handling in Season.js. Moved and enhanced the quick-episodes SCSS for better modularity and visual consistency. Updated the season.html.twig template to optionally display a floating quick-episodes panel in the header when multiple quick links are present.</div>
+                        <div class="details">Refactored the quick episode links to support multiple quick-episodes containers and improved their event handling in Season.js. Moved and enhanced the quick-episodes SCSS for better modularity and visual consistency. Updated the season.html.twig template to optionally display a floating quick-episodes panel in
+                            the header when multiple quick links are present.
+                        </div>
                     </li>
                     <li>
                         <div class="change">{{ ux_icon('mdi:language-css3') }}→ Update episode info and user-episode styles</div>
@@ -428,7 +556,9 @@
                     </li>
                     <li>
                         <div class="change">{{ ux_icon('mdi:tv') }}{{ ux_icon('mdi:language-javascript') }}→ Add LCH color calculation and dynamic keyword styling</div>
-                        <div class="details">Introduced RgbToLch utility for converting RGB to LCH color space and integrated it into AverageColor. Updated app.js to use LCH lightness for determining text and keyword color themes, and adjusted series.scss to support dynamic background colors for keywords based on light/dark mode. Registered RgbToLch in importmap.php for module loading.</div>
+                        <div class="details">Introduced RgbToLch utility for converting RGB to LCH color space and integrated it into AverageColor. Updated app.js to use LCH lightness for determining text and keyword color themes, and adjusted series.scss to support dynamic background colors for keywords based on light/dark mode. Registered RgbToLch in
+                            importmap.php for module loading.
+                        </div>
                     </li>
                     <li>
                         <div class="change">{{ ux_icon('mdi:tv') }}{{ ux_icon('mdi:language-css3') }}→ Update series styles for improved layout and UI</div>
@@ -448,7 +578,9 @@
                     </li>
                     <li>
                         <div class="change">{{ ux_icon('mdi:api') }}→ Refactor and unify user settings API endpoints</div>
-                        <div class="details">Renamed API classes for consistency (e.g., SeriesWhatNext to ApiSeriesWhatNext, WatchLink to ApiWatchLink). Removed the old UserSettings controller and replaced it with ApiUserSettings, consolidating user network, provider, and advanced search settings endpoints under a unified API route. Updated MovieController and frontend template to use the new API class and endpoint paths.</div>
+                        <div class="details">Renamed API classes for consistency (e.g., SeriesWhatNext to ApiSeriesWhatNext, WatchLink to ApiWatchLink). Removed the old UserSettings controller and replaced it with ApiUserSettings, consolidating user network, provider, and advanced search settings endpoints under a unified API route. Updated MovieController
+                            and frontend template to use the new API class and endpoint paths.
+                        </div>
                     </li>
                     <li>
                         <div class="change">{{ ux_icon('mdi:tv') }}{{ ux_icon('mdi:code') }}→ Add separate deprecation log channel to Monolog config</div>
@@ -485,7 +617,9 @@
                     </li>
                     <li>
                         <div class="change">{{ ux_icon('mdi:code') }}→ Refactor cast addition to use AJAX and add close button</div>
-                        <div class="details">The cast addition form now submits via AJAX instead of a page redirect, providing a smoother user experience and instant UI updates. A close button was added to the cast search block for better usability. The SeriesController's addCast route was updated to accept POST requests and return JSON, and related JS and template code was updated accordingly. Minor style adjustments were made to support the new close button.</div>
+                        <div class="details">The cast addition form now submits via AJAX instead of a page redirect, providing a smoother user experience and instant UI updates. A close button was added to the cast search block for better usability. The SeriesController's addCast route was updated to accept POST requests and return JSON, and related JS and
+                            template code was updated accordingly. Minor style adjustments were made to support the new close button.
+                        </div>
                     </li>
                     <li>
                         <div class="change">{{ ux_icon('mdi:tooltip-text') }}→ Fix tooltip positioning and update tooltip styles</div>
@@ -497,11 +631,15 @@
                     </li>
                     <li>
                         <div class="change">{{ ux_icon('mdi:tv') }}{{ ux_icon('mdi:settings-outline') }}→ Add 'What Next to Watch' user setting</div>
-                        <div class="details">Introduces a new user setting for customizing the 'What Next to Watch' feature, including backend API endpoints, frontend dialog, and menu integration. Refactors accent color and schedule range settings into a unified ApiAppSettings controller, updates related styles and translations, and removes obsolete API controllers.</div>
+                        <div class="details">Introduces a new user setting for customizing the 'What Next to Watch' feature, including backend API endpoints, frontend dialog, and menu integration. Refactors accent color and schedule range settings into a unified ApiAppSettings controller, updates related styles and translations, and removes obsolete API
+                            controllers.
+                        </div>
                     </li>
                     <li>
                         <div class="change">{{ ux_icon('mdi:tv') }}→ Refactor episode info layout and improve styling</div>
-                        <div class="details">Episode info sections are now wrapped in a new .infos-content div for better structure and scrolling. JavaScript and CSS were updated to target this new structure, improving scroll behavior and button visibility. The season filming locations API and rendering were adjusted for consistency. Minor template and style tweaks enhance layout and maintainability.</div>
+                        <div class="details">Episode info sections are now wrapped in a new .infos-content div for better structure and scrolling. JavaScript and CSS were updated to target this new structure, improving scroll behavior and button visibility. The season filming locations API and rendering were adjusted for consistency. Minor template and style
+                            tweaks enhance layout and maintainability.
+                        </div>
                     </li>
                     <li>
                         <div class="change">{{ ux_icon('mdi:tv') }}→ Add scroll button for episode info sections</div>
@@ -514,11 +652,15 @@
                 <ul>
                     <li>
                         <div class="change">{{ ux_icon('mdi:map-outline') }}→ Enhance fileToWebp to support season and episode numbers</div>
-                        <div class="details">Updated the ImageService::fileToWebp method to accept optional season and episode numbers, appending them to the generated image filename. Adjusted SeriesController to pass the image path explicitly. This allows for more descriptive and organized image naming, especially for series with multiple seasons and episodes.</div>
+                        <div class="details">Updated the ImageService::fileToWebp method to accept optional season and episode numbers, appending them to the generated image filename. Adjusted SeriesController to pass the image path explicitly. This allows for more descriptive and organized image naming, especially for series with multiple seasons and
+                            episodes.
+                        </div>
                     </li>
                     <li>
                         <div class="change">{{ ux_icon('mdi:email') }}→ Refactor contact messages to entity with admin UI</div>
-                        <div class="details">Replaces ContactDTO with a ContactMessage entity, adds repository and admin interface for viewing, marking as read, and deleting contact messages. Updates form, controllers, and templates to support message management. Adds unread message indicator in admin menu and user menu, with related styles and translations.</div>
+                        <div class="details">Replaces ContactDTO with a ContactMessage entity, adds repository and admin interface for viewing, marking as read, and deleting contact messages. Updates form, controllers, and templates to support message management. Adds unread message indicator in admin menu and user menu, with related styles and
+                            translations.
+                        </div>
                     </li>
                     <li>
                         <div class="change">{{ ux_icon('mdi:menu') }}{{ ux_icon('mdi:calendar') }}→ Add formatted date to schedule menu display</div>
@@ -570,11 +712,15 @@
                     </li>
                     <li>
                         <div class="change">{{ ux_icon('mdi:list-box') }}{{ ux_icon('mdi:tv') }}→ Improve user list card layout and mobile responsiveness</div>
-                        <div class="details">Refactored styles and markup for user list cards to enhance layout consistency and mobile responsiveness. Updated count display to include a label wrapped in a span for better styling and accessibility. Adjusted JavaScript and PHP to support the new count markup, and improved SCSS for both desktop and mobile views.</div>
+                        <div class="details">Refactored styles and markup for user list cards to enhance layout consistency and mobile responsiveness. Updated count display to include a label wrapped in a span for better styling and accessibility. Adjusted JavaScript and PHP to support the new count markup, and improved SCSS for both desktop and mobile
+                            views.
+                        </div>
                     </li>
                     <li>
                         <div class="change">{{ ux_icon('mdi:tv') }}→ Refactor series list tools and add bookmark action</div>
-                        <div class="details">Refactored the series tools menu into a separate Twig partial for reuse and maintainability. Updated UserList JS to support bookmark actions and improved handling of tool containers. Added bookmark action to the series show page, updated styles for bookmark state, and enhanced SeriesController and SeriesService to provide user list data and display names. Updated French translations for bookmark actions.</div>
+                        <div class="details">Refactored the series tools menu into a separate Twig partial for reuse and maintainability. Updated UserList JS to support bookmark actions and improved handling of tool containers. Added bookmark action to the series show page, updated styles for bookmark state, and enhanced SeriesController and SeriesService to
+                            provide user list data and display names. Updated French translations for bookmark actions.
+                        </div>
                     </li>
                 </ul>
             </div>
@@ -611,7 +757,9 @@
                     </li>
                     <li>
                         <div class="change">{{ ux_icon('mdi:bookmark') }}→ Add year filter to user series lists</div>
-                        <div class="details">Introduced a year filter for user series lists, allowing users to filter series by their air year. Refactored list data handling into a new UserListService, updated repository and API to provide year data, and adjusted frontend JS, SCSS, and Twig templates to support the new filter UI. Also added translation for 'Years'.</div>
+                        <div class="details">Introduced a year filter for user series lists, allowing users to filter series by their air year. Refactored list data handling into a new UserListService, updated repository and API to provide year data, and adjusted frontend JS, SCSS, and Twig templates to support the new filter UI. Also added translation for
+                            'Years'.
+                        </div>
                     </li>
                     <li>
                         <div class="change">{{ ux_icon('mdi:tv') }}→ Group episodes by season in schedule and update ordering</div>
@@ -636,7 +784,9 @@
                     </li>
                     <li>
                         <div class="change">{{ ux_icon('mdi:list-box') }}→ Add user lists page with API and UI integration</div>
-                        <div class="details">Introduces a user lists page accessible from the menu, with backend API endpoints and repository methods for fetching user lists and their contents. Adds frontend logic and styles for displaying and switching between lists, updates templates to use new blocks, and provides translations for user lists. Refactors series tools templates for reuse in list context.</div>
+                        <div class="details">Introduces a user lists page accessible from the menu, with backend API endpoints and repository methods for fetching user lists and their contents. Adds frontend logic and styles for displaying and switching between lists, updates templates to use new blocks, and provides translations for user lists. Refactors
+                            series tools templates for reuse in list context.
+                        </div>
                     </li>
                     <li>
                         <div class="change">{{ ux_icon('mdi:list-box') }}→ Fix list creation and update UI for multiple containers</div>
@@ -648,7 +798,9 @@
                     </li>
                     <li>
                         <div class="change">{{ ux_icon('mdi:list-box') }}→ Add series list status and tools to series cards</div>
-                        <div class="details">Introduces the 'is_series_in_list' property to series and episode queries, allowing UI to indicate if a series is in any user list. Updates series and episode card templates to display new tools (bookmark, favorite, share) and visual indicators, and adjusts styles for improved layout. Also refactors some naming for consistency and adds SVG icons to relevant pages for UI actions.</div>
+                        <div class="details">Introduces the 'is_series_in_list' property to series and episode queries, allowing UI to indicate if a series is in any user list. Updates series and episode card templates to display new tools (bookmark, favorite, share) and visual indicators, and adjusts styles for improved layout. Also refactors some naming
+                            for consistency and adds SVG icons to relevant pages for UI actions.
+                        </div>
                     </li>
                     <li>
                         <div class="change">{{ ux_icon('mdi:tv') }}→ Improve styling for season filming location section</div>
@@ -656,11 +808,14 @@
                     </li>
                     <li>
                         <div class="change">{{ ux_icon('mdi:list-box') }}→ Refactor and enhance user series list management</div>
-                        <div class="details">Extracted user list logic to a new UserList.js module and integrated it into the series index. Updated backend API endpoints for fetching and toggling series in user lists, and improved repository methods. Enhanced UI to indicate when a series is in a user list, updated styles, and improved translations for list-related actions.</div>
+                        <div class="details">Extracted user list logic to a new UserList.js module and integrated it into the series index. Updated backend API endpoints for fetching and toggling series in user lists, and improved repository methods. Enhanced UI to indicate when a series is in a user list, updated styles, and improved translations for
+                            list-related actions.
+                        </div>
                     </li>
                     <li>
                         <div class="change">{{ ux_icon('mdi:list-box') }}→ Add user list dialog for series and update UI integration</div>
-                        <div class="details">Introduces a new user list dialog for creating and managing user lists, including relevant styles and markup. Updates JavaScript to handle dialog interactions and passes series name data for context. Adjusts templates to support the new dialog and ensure proper data flow, and refines SCSS for dialog consistency.</div>
+                        <div class="details">Introduces a new user list dialog for creating and managing user lists, including relevant styles and markup. Updates JavaScript to handle dialog interactions and passes series name data for context. Adjusts templates to support the new dialog and ensure proper data flow, and refines SCSS for dialog consistency.
+                        </div>
                     </li>
                     <li>
                         <div class="change">{{ ux_icon('mdi:list-box') }}→ Improve series list menu UI and API data</div>
@@ -668,7 +823,9 @@
                     </li>
                     <li>
                         <div class="change">{{ ux_icon('mdi:code') }}→ Refactor request parameter access and improve date handling</div>
-                        <div class="details">Replaces deprecated Request::get() with Request::query->get() for query parameters throughout SeriesController. Updates user property access to avoid null safe operator where not needed. Improves convertDateTime to handle invalid dates and timezones gracefully, returning null and providing error responses when necessary.</div>
+                        <div class="details">Replaces deprecated Request::get() with Request::query->get() for query parameters throughout SeriesController. Updates user property access to avoid null safe operator where not needed. Improves convertDateTime to handle invalid dates and timezones gracefully, returning null and providing error responses when
+                            necessary.
+                        </div>
                     </li>
                     <li>
                         <div class="change">{{ ux_icon('mdi:list-box') }}→ Add user series list API and bookmark UI integration</div>
@@ -676,11 +833,15 @@
                     </li>
                     <li>
                         <div class="change">{{ ux_icon('mdi:list-box') }}→ Add user lists feature and series tools menu</div>
-                        <div class="details">Introduces the UserList entity and repository, enabling users to create and manage custom lists of series. Updates Series and User entities to support relationships with UserList. Adds a tools menu to series cards for actions like adding to lists, marking as favorite, and sharing, with corresponding UI and style changes. Also includes new translations for these features.</div>
+                        <div class="details">Introduces the UserList entity and repository, enabling users to create and manage custom lists of series. Updates Series and User entities to support relationships with UserList. Adds a tools menu to series cards for actions like adding to lists, marking as favorite, and sharing, with corresponding UI and style
+                            changes. Also includes new translations for these features.
+                        </div>
                     </li>
                     <li>
                         <div class="change">{{ ux_icon('mdi:search') }}→ Refactor movie and series search forms and styles</div>
-                        <div class="details">Unified and simplified the handling of search forms in MovieController and SeriesController by relying on Symfony form handling. Improved MovieSearchType with autofocus and placeholder. Updated movie and series search templates to streamline form layout and result display. Enhanced responsive styles for search pages in SCSS files.</div>
+                        <div class="details">Unified and simplified the handling of search forms in MovieController and SeriesController by relying on Symfony form handling. Improved MovieSearchType with autofocus and placeholder. Updated movie and series search templates to streamline form layout and result display. Enhanced responsive styles for search
+                            pages in SCSS files.
+                        </div>
                     </li>
                     <li>
                         <div class="change">{{ ux_icon('mdi:tv') }}→ Show location description in filming locations block</div>
@@ -688,7 +849,9 @@
                     </li>
                     <li>
                         <div class="change">{{ ux_icon('mdi:search') }}→ Refactor and enhance series search UI and backend</div>
-                        <div class="details">Extracted series search styles to a new SCSS file and improved form and result display for both simple and advanced search. Added a reusable Twig block for search result info and pagination. Updated SeriesController and SeriesRepository to support result counts and pagination, and improved form field attributes for better UX. Also updated translations and fixed minor UI/UX issues.</div>
+                        <div class="details">Extracted series search styles to a new SCSS file and improved form and result display for both simple and advanced search. Added a reusable Twig block for search result info and pagination. Updated SeriesController and SeriesRepository to support result counts and pagination, and improved form field attributes
+                            for better UX. Also updated translations and fixed minor UI/UX issues.
+                        </div>
                     </li>
                     <li>
                         <div class="change">{{ ux_icon('mdi:tv') }}→ Add season filming locations feature</div>
@@ -737,15 +900,21 @@
                     </li>
                     <li>
                         <div class="change">{{ ux_icon('mdi:tv') }}→ Display localized series names in series cards</div>
-                        <div class="details">Updated series card templates to show the localized name (sln_name) as a subtitle when available, and adjusted styles for better presentation. Modified SQL queries in UserSeriesRepository to return the localized name separately. Also improved image handling in SeriesController to ensure images are processed only when available.</div>
+                        <div class="details">Updated series card templates to show the localized name (sln_name) as a subtitle when available, and adjusted styles for better presentation. Modified SQL queries in UserSeriesRepository to return the localized name separately. Also improved image handling in SeriesController to ensure images are processed only
+                            when available.
+                        </div>
                     </li>
                     <li>
                         <div class="change">{{ ux_icon('mdi:menu') }}→ Comment out notifications and update menu templates</div>
-                        <div class="details">Reduce query count from 54 to 41 on series page. Commented out notification-related code in Menu.js and the menu Twig template, effectively disabling notification features. Added a new empty schedule menu block and updated the main menu to include it instead of the previous schedule menu. Also made minor formatting adjustments to improve code readability.</div>
+                        <div class="details">Reduce query count from 54 to 41 on series page. Commented out notification-related code in Menu.js and the menu Twig template, effectively disabling notification features. Added a new empty schedule menu block and updated the main menu to include it instead of the previous schedule menu. Also made minor
+                            formatting adjustments to improve code readability.
+                        </div>
                     </li>
                     <li>
                         <div class="change">{{ ux_icon('mdi:tv') }}→ Refactor series image and provider handling</div>
-                        <div class="details">Reduce query count from 54 to 41 on series page. Refactored SeriesController to pass series images as arrays instead of fetching from the repository, and updated related methods to use object properties. Improved provider lookup in schedules by using a new getNameAndLogo method in WatchProviderRepository. Cleaned up and clarified code, including parameter type hints and minor formatting fixes.</div>
+                        <div class="details">Reduce query count from 54 to 41 on series page. Refactored SeriesController to pass series images as arrays instead of fetching from the repository, and updated related methods to use object properties. Improved provider lookup in schedules by using a new getNameAndLogo method in WatchProviderRepository. Cleaned
+                            up and clarified code, including parameter type hints and minor formatting fixes.
+                        </div>
                     </li>
                     <li>
                         <div class="change">{{ ux_icon('mdi:tv') }}→ Improve trash button alignment and size in series list</div>
@@ -773,11 +942,16 @@
                     </li>
                     <li>
                         <div class="change">{{ ux_icon('mdi:code') }}→ Improve TMDB error handling and overview fallback</div>
-                        <div class="details">Enhanced error handling for TMDB API responses in SeriesService and SeriesController, logging errors and checking for 'error' keys. Added a buildOverview method to provide a fallback overview from translations if the main overview is missing. Updated template and controller to reflect these changes and fixed a template name typo.</div>
+                        <div class="details">Enhanced error handling for TMDB API responses in SeriesService and SeriesController, logging errors and checking for 'error' keys. Added a buildOverview method to provide a fallback overview from translations if the main overview is missing. Updated template and controller to reflect these changes and fixed a
+                            template name typo.
+                        </div>
                     </li>
                     <li>
                         <div class="change">{{ ux_icon('mdi:filmstrip-box') }}→ Improve movie page responsiveness and image handling</div>
-                        <div class="details">Updated movie.scss to enhance responsive design, including new portrait orientation styles and improved scaling for various breakpoints. Modified show.html.twig to use a <picture></picture> element for the movie backdrop, displaying the poster image in portrait orientation and providing better fallbacks when images are missing.</div>
+                        <div class="details">Updated movie.scss to enhance responsive design, including new portrait orientation styles and improved scaling for various breakpoints. Modified show.html.twig to use a
+                            <picture></picture>
+                            element for the movie backdrop, displaying the poster image in portrait orientation and providing better fallbacks when images are missing.
+                        </div>
                     </li>
                     <li>
                         <div class="change">{{ ux_icon('mdi:language-css3') }}→ Fix flash message vanishing animation and styles</div>
@@ -789,11 +963,15 @@
                     </li>
                     <li>
                         <div class="change">{{ ux_icon('mdi:menu') }}{{ ux_icon('mdi:search') }}→ Refactor menu preview and multi-search logic</div>
-                        <div class="details">Moved multi-search initialization to a dedicated method and improved preview handling for pinned and in-progress menu items. Added dynamic preview positioning based on mouse Y coordinate. Cleaned up unused code and improved event handling for search and navigation. Enhanced preview restoration and cookie management for multi-search options.</div>
+                        <div class="details">Moved multi-search initialization to a dedicated method and improved preview handling for pinned and in-progress menu items. Added dynamic preview positioning based on mouse Y coordinate. Cleaned up unused code and improved event handling for search and navigation. Enhanced preview restoration and cookie
+                            management for multi-search options.
+                        </div>
                     </li>
                     <li>
                         <div class="change">{{ ux_icon('mdi:tv') }}→ Add edit location images panel and UI integration</div>
-                        <div class="details">Introduces a side panel and form for editing location images, including new UI controls and event handlers for opening/closing the panel. Updates styles and markup to support the new edit-images button, image badges, and improved image list handling in both JS and SCSS. Refactors image event logic for robustness and updates template to include the new form and SVG icon.</div>
+                        <div class="details">Introduces a side panel and form for editing location images, including new UI controls and event handlers for opening/closing the panel. Updates styles and markup to support the new edit-images button, image badges, and improved image list handling in both JS and SCSS. Refactors image event logic for robustness
+                            and updates template to include the new form and SVG icon.
+                        </div>
                     </li>
                     <li>
                         <div class="change">{{ ux_icon('mdi:tv') }}→ Refactor location image markup and styles</div>
@@ -805,7 +983,9 @@
                     </li>
                     <li>
                         <div class="change">{{ ux_icon('mdi:code') }}→ Refactor SeriesController to use #[CurrentUser] and type hints</div>
-                        <div class="details">Replaces $this->getUser() with the #[CurrentUser] attribute for dependency injection of the User object in controller actions. Updates method signatures to use explicit type hints for parameters and return types, and improves request query parameter access. Cleans up unused code and comments, and adjusts some internal method signatures for better type safety.</div>
+                        <div class="details">Replaces $this->getUser() with the #[CurrentUser] attribute for dependency injection of the User object in controller actions. Updates method signatures to use explicit type hints for parameters and return types, and improves request query parameter access. Cleans up unused code and comments, and adjusts some
+                            internal method signatures for better type safety.
+                        </div>
                     </li>
                     <li>
                         <div class="change">{{ ux_icon('mdi:calendar') }}→ Add dynamic provider logo display to schedules form</div>
@@ -822,7 +1002,9 @@
                 <ul>
                     <li>
                         <div class="change">{{ ux_icon('mdi:tv') }}{{ ux_icon('mdi:mobile-devices') }}→ Improve episode UI responsiveness and quick-episode logic</div>
-                        <div class="details">Refactored Season.js to handle episode sizing and aspect ratio based on window width, improving responsiveness. Updated quick-episode selection logic to use the 'enabled' class for clickable episodes. Adjusted series.scss for better mobile layout and removed container queries in favor of media queries. SeriesController.php now assigns 'enabled' class to quick-episodes that are available for interaction.</div>
+                        <div class="details">Refactored Season.js to handle episode sizing and aspect ratio based on window width, improving responsiveness. Updated quick-episode selection logic to use the 'enabled' class for clickable episodes. Adjusted series.scss for better mobile layout and removed container queries in favor of media queries.
+                            SeriesController.php now assigns 'enabled' class to quick-episodes that are available for interaction.
+                        </div>
                     </li>
                 </ul>
             </div>
@@ -839,7 +1021,9 @@
                     </li>
                     <li>
                         <div class="change">{{ ux_icon('mdi:settings') }}{{ ux_icon('mdi:menu') }}{{ ux_icon('mdi:tv') }}→ Add customizable schedule range to series menu and option to search menu</div>
-                        <div class="details">Introduces a user setting for the series schedule menu range, allowing users to select the number of days before and after today to display. Adds backend API endpoints, frontend dialog, translations, and updates related JS, SCSS, Twig templates, and PHP logic to support this feature. Introduce a new option to force or prohibit the display of search results posters.</div>
+                        <div class="details">Introduces a user setting for the series schedule menu range, allowing users to select the number of days before and after today to display. Adds backend API endpoints, frontend dialog, translations, and updates related JS, SCSS, Twig templates, and PHP logic to support this feature. Introduce a new option to
+                            force or prohibit the display of search results posters.
+                        </div>
                     </li>
                     <li>
                         <div class="change">{{ ux_icon('mdi:tv') }}→ Improve dialog styles and fix vote assignment logic</div>
@@ -880,7 +1064,9 @@
                     </li>
                     <li>
                         <div class="change">{{ ux_icon('mdi:calendar') }}{{ ux_icon('mdi:tv') }}→ Improve schedule form UI and toggle behavior</div>
-                        <div class="details">Refactored the schedule form styles for better layout, transitions, and button alignment. Updated the form markup to include a 'Close' button and improved button grouping. Changed the JavaScript toggle logic to use a CSS class instead of inline display styles for smoother transitions. Also fixed Twig whitespace in conditional attributes.</div>
+                        <div class="details">Refactored the schedule form styles for better layout, transitions, and button alignment. Updated the form markup to include a 'Close' button and improved button grouping. Changed the JavaScript toggle logic to use a CSS class instead of inline display styles for smoother transitions. Also fixed Twig whitespace in
+                            conditional attributes.
+                        </div>
                     </li>
                     <li>
                         <div class="change">{{ ux_icon('mdi:calendar') }}{{ ux_icon('mdi:tv') }}→ Handle invalid user and timezone in menu and schedule</div>
@@ -892,7 +1078,9 @@
                     </li>
                     <li>
                         <div class="change">{{ ux_icon('mdi:calendar') }}{{ ux_icon('mdi:tv') }}→ Refactor and add dynamic schedule menu update</div>
-                        <div class="details">Extracted schedule interval logic to a new SeriesSchedule service and API endpoint for main menu updates. Refactored Twig and JS to use a new _schedule_menu.html.twig partial, enabling dynamic updates of the schedule menu via AJAX. Added periodic refresh and manual update triggers in Menu.js, and improved styling for the schedule menu. Also added a repository method to fetch the last viewed episode ID.</div>
+                        <div class="details">Extracted schedule interval logic to a new SeriesSchedule service and API endpoint for main menu updates. Refactored Twig and JS to use a new _schedule_menu.html.twig partial, enabling dynamic updates of the schedule menu via AJAX. Added periodic refresh and manual update triggers in Menu.js, and improved styling
+                            for the schedule menu. Also added a repository method to fetch the last viewed episode ID.
+                        </div>
                     </li>
                     <li>
                         <div class="change">{{ ux_icon('mdi:code') }}→ Handle missing image dimensions in AverageColor</div>
@@ -904,7 +1092,9 @@
                     </li>
                     <li>
                         <div class="change">{{ ux_icon('mdi:tv') }}→ Enhance watch link handling for seasons and translations</div>
-                        <div class="details">Improves the WatchLink CRUD UI and backend to better support season-specific watch links, including badges for season numbers and more dynamic link naming based on season and provider. Updates translation keys and usage for consistency, adjusts API endpoints to use GET, and refines styles for watch link display. Also updates French translations and tooltip texts for clarity.</div>
+                        <div class="details">Improves the WatchLink CRUD UI and backend to better support season-specific watch links, including badges for season numbers and more dynamic link naming based on season and provider. Updates translation keys and usage for consistency, adjusts API endpoints to use GET, and refines styles for watch link display.
+                            Also updates French translations and tooltip texts for clarity.
+                        </div>
                     </li>
                     <li>
                         <div class="change">{{ ux_icon('mdi:code') }}→ Fix network update check for missing updatedAt</div>
@@ -912,11 +1102,15 @@
                     </li>
                     <li>
                         <div class="change">{{ ux_icon('mdi:tv') }}→ Refactor series slugs and episode card styles</div>
-                        <div class="details">Standardizes the generation of series slugs by using the lowercased slugified display name throughout templates, improving URL consistency. Refactors episode and history card templates to use a new displayName variable and updates links for better navigation. Enhances card and episode-related SCSS for improved layout, hover effects, and border radius handling.</div>
+                        <div class="details">Standardizes the generation of series slugs by using the lowercased slugified display name throughout templates, improving URL consistency. Refactors episode and history card templates to use a new displayName variable and updates links for better navigation. Enhances card and episode-related SCSS for improved
+                            layout, hover effects, and border radius handling.
+                        </div>
                     </li>
                     <li>
                         <div class="change">{{ ux_icon('mdi:language-css3') }}→ Refine dialog and button styles, update back-to-series markup</div>
-                        <div class="details">Improves the appearance of modal dialogs and buttons by increasing border radii, padding, and blur effects, and adjusts layout for better consistency. Updates the 'back-to-series' element in the season template to use an anchor tag with appropriate classes and data attributes, improving accessibility and markup clarity.</div>
+                        <div class="details">Improves the appearance of modal dialogs and buttons by increasing border radii, padding, and blur effects, and adjusts layout for better consistency. Updates the 'back-to-series' element in the season template to use an anchor tag with appropriate classes and data attributes, improving accessibility and markup
+                            clarity.
+                        </div>
                     </li>
                     <li>
                         <div class="change">{{ ux_icon('mdi:bug-outline') }}→ Handle missing year and date in series highlights</div>
@@ -928,7 +1122,9 @@
                     </li>
                     <li>
                         <div class="change">{{ ux_icon('mdi:menu') }}{{ ux_icon('mdi:search') }}→ Add multi-search options menu to main search bar</div>
-                        <div class="details">Introduces a dropdown menu in the multi-search bar allowing users to select between searching all, movies, series, people, or their own series. Updates JavaScript to handle option selection, persist choice in a cookie, and update search behavior accordingly. Styles and markup are updated to support the new menu, and French translations are added for new UI elements. Old individual search bars in the menu are commented out.</div>
+                        <div class="details">Introduces a dropdown menu in the multi-search bar allowing users to select between searching all, movies, series, people, or their own series. Updates JavaScript to handle option selection, persist choice in a cookie, and update search behavior accordingly. Styles and markup are updated to support the new menu,
+                            and French translations are added for new UI elements. Old individual search bars in the menu are commented out.
+                        </div>
                     </li>
                     <li>
                         <div class="change">{{ ux_icon('mdi:tv') }}→ Add copy-to-clipboard feature for series names</div>
@@ -981,7 +1177,9 @@
                     </li>
                     <li>
                         <div class="change">{{ ux_icon('mdi:tv') }}{{ ux_icon('mdi:map-outline') }}→ Improve map UI and add help text for locations</div>
-                        <div class="details">Extended map flyTo animation duration and added 'essential' flag in Map.js. Refactored map.scss to clean up height variables and styles, and introduced new styles for help-text UI elements. Updated show.html.twig to add a help-text row explaining map controls above the locations list, and improved markup structure for season and location displays.</div>
+                        <div class="details">Extended map flyTo animation duration and added 'essential' flag in Map.js. Refactored map.scss to clean up height variables and styles, and introduced new styles for help-text UI elements. Updated show.html.twig to add a help-text row explaining map controls above the locations list, and improved markup structure
+                            for season and location displays.
+                        </div>
                     </li>
                     <li>
                         <div class="change">{{ ux_icon('mdi:tv') }}→ Add alternating border colors to .content elements</div>
@@ -1014,7 +1212,9 @@
                 <ul>
                     <li>
                         <div class="change">{{ ux_icon('mdi:tv') }}→ Refactor series card layout and data handling</div>
-                        <div class="details">Improves the series card layout in SCSS and Twig for better alignment and display of poster, watch links, and series info. Refactors SeriesController and UserSeriesRepository to provide more explicit series data, including URLs and localized names. Adds card.scss stylesheet to series-related templates for consistent styling. Also updates ranking card to cap average vote display at 10+.</div>
+                        <div class="details">Improves the series card layout in SCSS and Twig for better alignment and display of poster, watch links, and series info. Refactors SeriesController and UserSeriesRepository to provide more explicit series data, including URLs and localized names. Adds card.scss stylesheet to series-related templates for
+                            consistent styling. Also updates ranking card to cap average vote display at 10+.
+                        </div>
                     </li>
                     <li>
                         <div class="change">{{ ux_icon('mdi:tv') }}→ Refactor and enhance cast addition UI for series</div>
@@ -1030,7 +1230,9 @@
                     </li>
                     <li>
                         <div class="change">{{ ux_icon('mdi:filmstrip-box') }}→ Refactor movie show page layout and styles</div>
-                        <div class="details">Reorganized sections in the movie show template for improved structure and clarity, including moving cast, crew, and not-found blocks. Updated image section placement and responsive behavior for view dates. Enhanced SCSS for better transitions, responsive layouts, and visibility toggling of elements based on screen size.</div>
+                        <div class="details">Reorganized sections in the movie show template for improved structure and clarity, including moving cast, crew, and not-found blocks. Updated image section placement and responsive behavior for view dates. Enhanced SCSS for better transitions, responsive layouts, and visibility toggling of elements based on
+                            screen size.
+                        </div>
                     </li>
                     <li>
                         <div class="change">{{ ux_icon('mdi:tv') }}→ Update episode card rendering and data mapping</div>
@@ -1067,7 +1269,9 @@
                     </li>
                     <li>
                         <div class="change">{{ ux_icon('mdi:tv') }}→ Add season localized overview API and refactor forms</div>
-                        <div class="details">Introduces ApiSeasonOverview for managing season localized overviews via API. Refactors JS and Twig templates to support season-specific translation forms, updates entity constructors for stricter typing, and centralizes translation strings for season pages. Improves handling of SVG icons and conditional UI logic for translation tools and forms.</div>
+                        <div class="details">Introduces ApiSeasonOverview for managing season localized overviews via API. Refactors JS and Twig templates to support season-specific translation forms, updates entity constructors for stricter typing, and centralizes translation strings for season pages. Improves handling of SVG icons and conditional UI logic
+                            for translation tools and forms.
+                        </div>
                     </li>
                     <li>
                         <div class="change">{{ ux_icon('mdi:tv') }}→ Show added date in series details</div>
@@ -1095,7 +1299,8 @@
                     </li>
                     <li>
                         <div class="change">{{ ux_icon('mdi:tv') }}→ Add bulk copy feature to episode info form</div>
-                        <div class="details">Introduces checkboxes to select episodes for copying their title and overview, a 'Copy all' switch, and a button to copy selected data to the clipboard. Updates related JavaScript, SCSS for styling, and French translations. Also refines dialog and form button selectors and improves vote average display logic.</div>
+                        <div class="details">Introduces checkboxes to select episodes for copying their title and overview, a 'Copy all' switch, and a button to copy selected data to the clipboard. Updates related JavaScript, SCSS for styling, and French translations. Also refines dialog and form button selectors and improves vote average display logic.
+                        </div>
                     </li>
                     <li>
                         <div class="change">{{ ux_icon('mdi:tv') }}→ Cap vote average display at 10+ in series view</div>
@@ -1103,7 +1308,9 @@
                     </li>
                     <li>
                         <div class="change">{{ ux_icon('mdi:tv') }}→ Refactor cast display and improve cast UI</div>
-                        <div class="details">Renamed _people.html.twig to _cast.html.twig and updated all references to use the new template for cast display. Enhanced cast card styling with larger border radii and a new 'added' state. Changed focus behavior in Show.js to target the character name input. Updated SeriesController to set order to -1 for added cast. Added a new blurred poster image.</div>
+                        <div class="details">Renamed _people.html.twig to _cast.html.twig and updated all references to use the new template for cast display. Enhanced cast card styling with larger border radii and a new 'added' state. Changed focus behavior in Show.js to target the character name input. Updated SeriesController to set order to -1 for added
+                            cast. Added a new blurred poster image.
+                        </div>
                     </li>
                     <li>
                         <div class="change">{{ ux_icon('mdi:bug-outline') }}→ Update Doctrine config and fix datetime format in admin tools</div>
@@ -1111,7 +1318,9 @@
                     </li>
                     <li>
                         <div class="change">{{ ux_icon('mdi:filmstrip-box') }}→ Refactor movie card styles and improve movie page layout</div>
-                        <div class="details">Extracted card styles into a new card.scss file and removed duplicate card styles from home.scss. Enhanced movie.scss with improved layout, hover effects, and visual refinements for movie details, posters, and backdrops. Updated movie card Twig templates to use new data attributes and structure. Refactored movie show and tmdb pages to improve backdrop handling, user actions, and overall layout consistency.</div>
+                        <div class="details">Extracted card styles into a new card.scss file and removed duplicate card styles from home.scss. Enhanced movie.scss with improved layout, hover effects, and visual refinements for movie details, posters, and backdrops. Updated movie card Twig templates to use new data attributes and structure. Refactored movie
+                            show and tmdb pages to improve backdrop handling, user actions, and overall layout consistency.
+                        </div>
                     </li>
                     <li>
                         <div class="change">{{ ux_icon('mdi:tv') }}→ Comment out PosterHover imports and usage</div>
@@ -1120,7 +1329,8 @@
                     <li>
                         <div class="change">{{ ux_icon('mdi:bug-outline') }}→ Update twig/intl-extra version constraint</div>
                         <div class="details">Changed the version constraint for twig/intl-extra from ~3.8.0 to ^3.0 in composer.json to allow for a wider range of compatible versions.
-                            version: 3.8.x → 3.22.0</div>
+                            version: 3.8.x → 3.22.0
+                        </div>
                     </li>
                     <li>
                         <div class="change">{{ ux_icon('mdi:tv') }}→ Update episode card layout and styles</div>
@@ -1181,7 +1391,9 @@
                     </li>
                     <li>
                         <div class="change">{{ ux_icon('mdi:api') }}→ Update episode API, UI behaviors, and translations</div>
-                        <div class="details">Refactored episode height API endpoint in Season.js and improved scrollIntoView behavior. Adjusted event handler and removed unused variable. Increased max-width for modal without images in app.scss. Standardized date formatting for episode queries and updated method signatures for type safety. Improved timezone handling in SeriesService. Added new French translations for missing image and crew roles.</div>
+                        <div class="details">Refactored episode height API endpoint in Season.js and improved scrollIntoView behavior. Adjusted event handler and removed unused variable. Increased max-width for modal without images in app.scss. Standardized date formatting for episode queries and updated method signatures for type safety. Improved timezone
+                            handling in SeriesService. Added new French translations for missing image and crew roles.
+                        </div>
                     </li>
                     <li>
                         <div class="change">{{ ux_icon('mdi:tv') }}→ Add fallback to series poster if season poster missing</div>
@@ -1193,7 +1405,9 @@
                     </li>
                     <li>
                         <div class="change">{{ ux_icon('mdi:tv') }}→ Add dynamic episode cards with stills to series seasons</div>
-                        <div class="details">Introduces an API endpoint and supporting frontend logic to fetch and display episode cards with still images for each season in a series. Adds new styles for episode cards, updates the series show template to include the episode cards container, and fixes typos in DateService method parameters. Also adds a Twig partial for rendering individual episode cards.</div>
+                        <div class="details">Introduces an API endpoint and supporting frontend logic to fetch and display episode cards with still images for each season in a series. Adds new styles for episode cards, updates the series show template to include the episode cards container, and fixes typos in DateService method parameters. Also adds a Twig
+                            partial for rendering individual episode cards.
+                        </div>
                     </li>
                     <li>
                         <div class="change">{{ ux_icon('mdi:tv') }}→ Update season and info card styles for responsiveness</div>
@@ -1201,7 +1415,9 @@
                     </li>
                     <li>
                         <div class="change">{{ ux_icon('mdi:home') }}→ Refactor home page series status and TMDB movie display</div>
-                        <div class="details">Improves the layout and structure of the series status section on the home page for better clarity and visual hierarchy. Updates HomeController to adjust provider selection and refines TMDB movie selection logic, removing unused video and provider data. Enhances SCSS for new status and TMDB card layouts, and disables the home page video background block.</div>
+                        <div class="details">Improves the layout and structure of the series status section on the home page for better clarity and visual hierarchy. Updates HomeController to adjust provider selection and refines TMDB movie selection logic, removing unused video and provider data. Enhances SCSS for new status and TMDB card layouts, and
+                            disables the home page video background block.
+                        </div>
                     </li>
                     <li>
                         <div class="change">{{ ux_icon('mdi:home') }}→ Add series status summary with percentages on home page</div>
@@ -1230,19 +1446,27 @@
                     </li>
                     <li>
                         <div class="change">{{ ux_icon('mdi:tv') }}→ Improve series status display and season layout</div>
-                        <div class="details">Refactored the series status badge to a more prominent position in the user actions block and updated its styling for better visibility. Enhanced season poster layout with aspect ratio, larger card height, and improved font sizing. Added French translation for 'New schedule' and included a data-title attribute for accessibility. Cleaned up redundant status display in key facts.</div>
+                        <div class="details">Refactored the series status badge to a more prominent position in the user actions block and updated its styling for better visibility. Enhanced season poster layout with aspect ratio, larger card height, and improved font sizing. Added French translation for 'New schedule' and included a data-title attribute for
+                            accessibility. Cleaned up redundant status display in key facts.
+                        </div>
                     </li>
                     <li>
                         <div class="change">{{ ux_icon('mdi:tv') }}→ Refactor series page layout and update styles</div>
-                        <div class="details">Reorganizes the series detail page by introducing 'block-infos' containers for better structure and modularity, moving posters, backdrops, logos, keywords, and user actions into their own blocks. Updates SCSS to support the new layout, adds improved styling for keywords and posters, and adjusts selectors for user actions. This refactor enhances maintainability and visual consistency across the series page.</div>
+                        <div class="details">Reorganizes the series detail page by introducing 'block-infos' containers for better structure and modularity, moving posters, backdrops, logos, keywords, and user actions into their own blocks. Updates SCSS to support the new layout, adds improved styling for keywords and posters, and adjusts selectors for user
+                            actions. This refactor enhances maintainability and visual consistency across the series page.
+                        </div>
                     </li>
                     <li>
                         <div class="change">{{ ux_icon('mdi:tv') }}→ Show season air date if not yet released</div>
-                        <div class="details">Added logic to display the season air date in a styled element when the season has not yet aired, instead of showing the votes block. Introduced helper methods in SeriesController to determine and format the season air date, updated the template to conditionally render the air date or votes, and added corresponding styles.</div>
+                        <div class="details">Added logic to display the season air date in a styled element when the season has not yet aired, instead of showing the votes block. Introduced helper methods in SeriesController to determine and format the season air date, updated the template to conditionally render the air date or votes, and added
+                            corresponding styles.
+                        </div>
                     </li>
                     <li>
                         <div class="change">{{ ux_icon('mdi:tv') }}→ Improve episode handling and cleanup in SeriesController</div>
-                        <div class="details">Refactored logic to better handle 'finale' episodes, ensuring episodes after a finale are skipped when syncing user episodes. Removed unused imports and commented code, and improved the logic for updating series overviews and episode counts. Also adjusted the 'up_to_date' calculation to account for series with zero aired episodes.</div>
+                        <div class="details">Refactored logic to better handle 'finale' episodes, ensuring episodes after a finale are skipped when syncing user episodes. Removed unused imports and commented code, and improved the logic for updating series overviews and episode counts. Also adjusted the 'up_to_date' calculation to account for series with
+                            zero aired episodes.
+                        </div>
                     </li>
                     <li>
                         <div class="change">{{ ux_icon('mdi:user-outline') }}→ Add access control to PeopleController</div>
@@ -1295,7 +1519,9 @@
                     </li>
                     <li>
                         <div class="change">{{ ux_icon('mdi:tv') }}{{ ux_icon('mdi:filmstrip-box') }}→ Refactor translation and overview endpoints to API routes</div>
-                        <div class="details">Moved movie and series name/overview add/remove logic from controllers to new API controllers under /api endpoints. Updated JavaScript to use new API routes. Added remove methods to MovieAdditionalOverviewRepository and MovieLocalizedOverviewRepository. This improves code organization and separates API logic from web controllers.</div>
+                        <div class="details">Moved movie and series name/overview add/remove logic from controllers to new API controllers under /api endpoints. Updated JavaScript to use new API routes. Added remove methods to MovieAdditionalOverviewRepository and MovieLocalizedOverviewRepository. This improves code organization and separates API logic from
+                            web controllers.
+                        </div>
                     </li>
                     <li>
                         <div class="change">{{ ux_icon('mdi:tv') }}→ Refactor episode API endpoints to /api and move logic</div>
@@ -1307,7 +1533,9 @@
                     </li>
                     <li>
                         <div class="change">{{ ux_icon('mdi:user-outline') }}{{ ux_icon('mdi:tv') }}→ Add SeriesCast entity and integrate cast management</div>
-                        <div class="details">Introduces the SeriesCast entity and repository to manage series and season cast members. Updates Series and People entities with SeriesCast relations. Modifies SeriesController to support adding cast members, updating flash messages, and merging custom cast data with TMDB data. Updates styles and templates for cast addition UI, and adds relevant French translations.</div>
+                        <div class="details">Introduces the SeriesCast entity and repository to manage series and season cast members. Updates Series and People entities with SeriesCast relations. Modifies SeriesController to support adding cast members, updating flash messages, and merging custom cast data with TMDB data. Updates styles and templates for
+                            cast addition UI, and adds relevant French translations.
+                        </div>
                     </li>
                     <li>
                         <div class="change">{{ ux_icon('mdi:user-outline') }}→ Fallback to English biography if local one is missing</div>
@@ -1319,7 +1547,9 @@
                     </li>
                     <li>
                         <div class="change">{{ ux_icon('mdi:user-outline') }}{{ ux_icon('mdi:tv') }}→ Add UI and backend for adding cast members to a season</div>
-                        <div class="details">Introduces a new UI component for searching and adding people to a series season's cast, including new Twig partials, updated styles, and JavaScript integration. Adds a backend route and controller action for handling cast addition (currently not fully implemented, shows a flash message). Updates translations and refactors season page templates to use the new cast button block.</div>
+                        <div class="details">Introduces a new UI component for searching and adding people to a series season's cast, including new Twig partials, updated styles, and JavaScript integration. Adds a backend route and controller action for handling cast addition (currently not fully implemented, shows a flash message). Updates translations and
+                            refactors season page templates to use the new cast button block.
+                        </div>
                     </li>
                     <li>
                         <div class="change">{{ ux_icon('mdi:tv') }}→ Add backdrop and overview to favorite series cards</div>
@@ -1335,7 +1565,9 @@
                     </li>
                     <li>
                         <div class="change">{{ ux_icon('mdi:image-album') }}→ Adjust album layout and improve responsiveness</div>
-                        <div class="details">Updated height calculations for main and album containers to use 10rem instead of 13rem. Added flex-shrink and max-height properties to .photos and .last-days for better layout control. Refactored .album and .name styles for improved appearance and accessibility. Enhanced responsive design for .photos-page at smaller screen widths.</div>
+                        <div class="details">Updated height calculations for main and album containers to use 10rem instead of 13rem. Added flex-shrink and max-height properties to .photos and .last-days for better layout control. Refactored .album and .name styles for improved appearance and accessibility. Enhanced responsive design for .photos-page at
+                            smaller screen widths.
+                        </div>
                     </li>
                     <li>
                         <div class="change">{{ ux_icon('mdi:photo-library') }}→ Refactor diaporama to use fullscreen div</div>
@@ -1348,7 +1580,9 @@
                 <ul>
                     <li>
                         <div class="change">{{ ux_icon('mdi:tv') }}{{ ux_icon('mdi:heart') }}→ Add user favorites series page and menu link</div>
-                        <div class="details">Introduces a new route and controller action to display a user's favorite series, adds a repository method to fetch favorite series, and creates corresponding Twig templates for the favorites page and series cards. Updates the menu to include a link to the favorites page and adds a translation key for 'Series.favorites'.</div>
+                        <div class="details">Introduces a new route and controller action to display a user's favorite series, adds a repository method to fetch favorite series, and creates corresponding Twig templates for the favorites page and series cards. Updates the menu to include a link to the favorites page and adds a translation key for
+                            'Series.favorites'.
+                        </div>
                     </li>
                     <li>
                         <div class="change">{{ ux_icon('mdi:tv') }}→ Update logic for displaying season finale label</div>
@@ -1368,7 +1602,8 @@
                     </li>
                     <li>
                         <div class="change">{{ ux_icon('mdi:api') }}→ Add admin API explorer tool with UI and translations</div>
-                        <div class="details">Introduces a new admin API explorer accessible from the admin panel, including a new route, controller logic, Twig block, JavaScript for UI interactivity, and related SCSS updates. Adds French translations for API-related terms and endpoints, and updates the admin navigation and layout to support the new tool.</div>
+                        <div class="details">Introduces a new admin API explorer accessible from the admin panel, including a new route, controller logic, Twig block, JavaScript for UI interactivity, and related SCSS updates. Adds French translations for API-related terms and endpoints, and updates the admin navigation and layout to support the new tool.
+                        </div>
                     </li>
                     <li>
                         <div class="change">{{ ux_icon('mdi:tv') }}→ Skip episodes after finale in season processing</div>
@@ -1388,7 +1623,9 @@
                     </li>
                     <li>
                         <div class="change">{{ ux_icon('mdi:api') }}→ Refactor TMDBService to remove api_key from requests</div>
-                        <div class="details">Updated TMDBService to stop appending the api_key parameter to TMDB API requests, centralizing request construction in a new getResults() method. Adjusted controllers to build query strings without leading ampersands and updated getMovieExtras/getSeriesExtras to accept a single params string. Also commented out unused TV keywords/external IDs code in SeriesController.</div>
+                        <div class="details">Updated TMDBService to stop appending the api_key parameter to TMDB API requests, centralizing request construction in a new getResults() method. Adjusted controllers to build query strings without leading ampersands and updated getMovieExtras/getSeriesExtras to accept a single params string. Also commented out
+                            unused TV keywords/external IDs code in SeriesController.
+                        </div>
                     </li>
                     <li>
                         <div class="change">{{ ux_icon('mdi:menu') }}{{ ux_icon('mdi:map-outline') }}→ Fix menu block and update map stylesheets inclusion</div>
@@ -1396,11 +1633,15 @@
                     </li>
                     <li>
                         <div class="change">{{ ux_icon('mdi:tv') }}→ Improve series page styles and status display</div>
-                        <div class="details">Adjusted JS to update text color for season info blocks based on image color lightness. Tweaked SCSS for lighter background on fact and info blocks, enhanced styling for 'status-returning', and removed explicit color from .infos. Commented out 'watched' status CSS in SeriesController and simplified status display in the series show template.</div>
+                        <div class="details">Adjusted JS to update text color for season info blocks based on image color lightness. Tweaked SCSS for lighter background on fact and info blocks, enhanced styling for 'status-returning', and removed explicit color from .infos. Commented out 'watched' status CSS in SeriesController and simplified status display
+                            in the series show template.
+                        </div>
                     </li>
                     <li>
                         <div class="change">{{ ux_icon('mdi:map-outline') }}→ Refactor map style selection and rendering logic</div>
-                        <div class="details">Moved map style toggler logic from Twig template to Map.js for better separation of concerns. SeriesFilmingLocations API now renders the map block server-side and returns it in the response, which is injected client-side. Cleaned up Season.js to use the new mapBlock and removed redundant DOM manipulation. Twig template now conditionally renders map style list only if styles are present.</div>
+                        <div class="details">Moved map style toggler logic from Twig template to Map.js for better separation of concerns. SeriesFilmingLocations API now renders the map block server-side and returns it in the response, which is injected client-side. Cleaned up Season.js to use the new mapBlock and removed redundant DOM manipulation. Twig
+                            template now conditionally renders map style list only if styles are present.
+                        </div>
                     </li>
                     <li>
                         <div class="change">{{ ux_icon('mdi:map-outline') }}→ Refactor map initialization and add padding to gallery</div>
@@ -1469,7 +1710,9 @@
                     </li>
                     <li>
                         <div class="change">{{ ux_icon('mdi:filmstrip-box') }}→ Add movie search bar and improve UI handling</div>
-                        <div class="details">Introduces a new movie search bar for users with fewer than 20 movies or no movies, including related template and style updates. Refactors JS to support search input and event handling, improves fallback handling for missing posters, and ensures blurred poster and backdrop images are only rendered when available. Also updates French translations for search placeholder.</div>
+                        <div class="details">Introduces a new movie search bar for users with fewer than 20 movies or no movies, including related template and style updates. Refactors JS to support search input and event handling, improves fallback handling for missing posters, and ensures blurred poster and backdrop images are only rendered when available.
+                            Also updates French translations for search placeholder.
+                        </div>
                     </li>
                     <li>
                         <div class="change">{{ ux_icon('mdi:youtube-tv') }}→ Improve video page empty state UI and pagination logic</div>
@@ -1481,7 +1724,9 @@
                     </li>
                     <li>
                         <div class="change">{{ ux_icon('mdi:tv') }}→ Refactor date handling and improve UI in series pages</div>
-                        <div class="details">Replaced direct usage of dateService with new helper methods in SeriesController for consistent timezone handling. Updated UserEpisodeRepository to support pagination in episodesToWatch. Improved series.scss with better text alignment and button sizing. Enhanced tmdb.html.twig to conditionally render background and backdrop images for robustness.</div>
+                        <div class="details">Replaced direct usage of dateService with new helper methods in SeriesController for consistent timezone handling. Updated UserEpisodeRepository to support pagination in episodesToWatch. Improved series.scss with better text alignment and button sizing. Enhanced tmdb.html.twig to conditionally render background
+                            and backdrop images for robustness.
+                        </div>
                     </li>
                     <li>
                         <div class="change">{{ ux_icon('mdi:user-outline') }}→ Refactor profile UI and restrict translation settings</div>
@@ -1502,7 +1747,9 @@
                 <ul>
                     <li>
                         <div class="change">{{ ux_icon('mdi:tv') }}→ Refactor quick episode links rendering for seasons</div>
-                        <div class="details">Moved quick episode link layout logic from Twig to SeriesController for better separation of concerns and maintainability. Added new getQuickLinks() method to generate episode link data and classes, updated season.html.twig to use this data, and adjusted SCSS for new 'first' and 'last' classes. Minor code cleanup and formatting fixes.</div>
+                        <div class="details">Moved quick episode link layout logic from Twig to SeriesController for better separation of concerns and maintainability. Added new getQuickLinks() method to generate episode link data and classes, updated season.html.twig to use this data, and adjusted SCSS for new 'first' and 'last' classes. Minor code cleanup
+                            and formatting fixes.
+                        </div>
                     </li>
                     <li>
                         <div class="change">{{ ux_icon('mdi:menu') }}→ Navbar AND menus now have blurred background</div>
@@ -1534,12 +1781,15 @@
                     </li>
                     <li>
                         <div class="change">{{ ux_icon('mdi:tv') }}→ Refactor SeriesController and update app.scss styles</div>
-                        <div class="details">Refactored SeriesController by extracting logic into private helper methods for improved readability and maintainability, and streamlined the handling of series data, votes, schedules, and translations. Updated app.scss to hide horizontal overflow, adjusted transitions, and removed unused media queries and commented code for cleaner styles.</div>
+                        <div class="details">Refactored SeriesController by extracting logic into private helper methods for improved readability and maintainability, and streamlined the handling of series data, votes, schedules, and translations. Updated app.scss to hide horizontal overflow, adjusted transitions, and removed unused media queries and
+                            commented code for cleaner styles.
+                        </div>
                     </li>
                     <li>
                         <div class="change">{{ ux_icon('mdi:youtube-tv') }}→ Refactor video modules and improve pagination UI</div>
                         <div class="details">Split Videos.js into Video.js and VideoList.js for better separation of concerns. Updated app.js and importmap.php to use the new modules. Enhanced pagination in VideoController.php to wrap page buttons in a scrollable container, and updated video.scss for improved pagination styling.
-                            The active page button is now always centered.</div>
+                            The active page button is now always centered.
+                        </div>
                     </li>
                     <li>
                         <div class="change">{{ ux_icon('mdi:tv') }}→ Refactor TV data fetching in SeriesController</div>
@@ -1551,7 +1801,9 @@
                     </li>
                     <li>
                         <div class="change">{{ ux_icon('mdi:tv') }}→ Refactor SeriesController and update not-found view</div>
-                        <div class="details">Refactored SeriesController to extract form handling logic into private methods and improved separation of concerns. Updated the not-found series view to use blurred poster backgrounds and display backdrops more consistently. Adjusted Series entity to ensure 'updates' is always an array. Minor style changes to progress bar color in series.scss.</div>
+                        <div class="details">Refactored SeriesController to extract form handling logic into private methods and improved separation of concerns. Updated the not-found series view to use blurred poster backgrounds and display backdrops more consistently. Adjusted Series entity to ensure 'updates' is always an array. Minor style changes to
+                            progress bar color in series.scss.
+                        </div>
                     </li>
                     <li>
                         <div class="change">{{ ux_icon('mdi:language-css3') }}{{ ux_icon('mdi:tv') }}→ Update series.scss for improved UI styling</div>
@@ -1559,7 +1811,9 @@
                     </li>
                     <li>
                         <div class="change">{{ ux_icon('mdi:tv') }}→ Refactor series navigation and improve UI</div>
-                        <div class="details">Moved logic for finding previous and next series into a dedicated method in SeriesController and UserSeriesRepository, improving code clarity and maintainability. Updated the series navigation UI in show.html.twig for better structure and icon consistency. Enhanced series.scss styles for navigation elements and cleaned up unused or commented code.</div>
+                        <div class="details">Moved logic for finding previous and next series into a dedicated method in SeriesController and UserSeriesRepository, improving code clarity and maintainability. Updated the series navigation UI in show.html.twig for better structure and icon consistency. Enhanced series.scss styles for navigation elements and
+                            cleaned up unused or commented code.
+                        </div>
                     </li>
                     <li>
                         <div class="change">{{ ux_icon('mdi:filmstrip-box') }}→ Refactor movie index JS to external module</div>
@@ -1579,7 +1833,9 @@
                     </li>
                     <li>
                         <div class="change">{{ ux_icon('mdi:filmstrip-box') }}→ Refactor movie info layout and styles</div>
-                        <div class="details">Reorganized the movie details section by wrapping related elements in a new .infos-content container and updating the associated SCSS for improved structure and maintainability. Adjusted background colors, spacing, and hover effects for better visual clarity. Minor formatting fixes and indentation improvements were also applied to the Twig template.</div>
+                        <div class="details">Reorganized the movie details section by wrapping related elements in a new .infos-content container and updating the associated SCSS for improved structure and maintainability. Adjusted background colors, spacing, and hover effects for better visual clarity. Minor formatting fixes and indentation improvements
+                            were also applied to the Twig template.
+                        </div>
                     </li>
                 </ul>
             </div>
@@ -1597,11 +1853,15 @@
                 <ul>
                     <li>
                         <div class="change">{{ ux_icon('mdi:tv') }}→ Add option to include all series in 'What Next' API</div>
-                        <div class="details">Updated the SeriesWhatNext API and UserSeriesRepository to allow including series where the user hasn't watched any episodes yet, by adding an $includeFirstEpisode parameter. Adjusted SQL joins accordingly and updated method signatures and usages. This enables the 'What Next' endpoint to show all series, not just those already started by the user.</div>
+                        <div class="details">Updated the SeriesWhatNext API and UserSeriesRepository to allow including series where the user hasn't watched any episodes yet, by adding an $includeFirstEpisode parameter. Adjusted SQL joins accordingly and updated method signatures and usages. This enables the 'What Next' endpoint to show all series, not just
+                            those already started by the user.
+                        </div>
                     </li>
                     <li>
                         <div class="change">{{ ux_icon('mdi:tv') }}→ Refactor series show layout and keyword styling</div>
-                        <div class="details">Reworked the series show page to move the backdrop image outside the .infos block and improved the layout for facts, networks, and keywords. Updated keyword block styles for better wrapping and appearance, and added a script to dynamically adjust keyword container width. Adjusted color schemes in SCSS for better contrast and readability.</div>
+                        <div class="details">Reworked the series show page to move the backdrop image outside the .infos block and improved the layout for facts, networks, and keywords. Updated keyword block styles for better wrapping and appearance, and added a script to dynamically adjust keyword container width. Adjusted color schemes in SCSS for better
+                            contrast and readability.
+                        </div>
                     </li>
                     <li>
                         <div class="change">{{ ux_icon('mdi:tv') }}→ Add user preferred names for guest stars in season view</div>
@@ -1609,7 +1869,9 @@
                     </li>
                     <li>
                         <div class="change">{{ ux_icon('mdi:tv') }}→ Refactor series index to simplify episode queries</div>
-                        <div class="details">This page now displays the episodes of the day and for the 7 next days. Simplifies the logic for fetching and displaying episodes of the day and week by consolidating queries and removing unused code. Removes the 'series to start', 'series airing this week', and 'episode history' sections from the index view. Updates SQL queries and variable naming for consistency and future maintainability.</div>
+                        <div class="details">This page now displays the episodes of the day and for the 7 next days. Simplifies the logic for fetching and displaying episodes of the day and week by consolidating queries and removing unused code. Removes the 'series to start', 'series airing this week', and 'episode history' sections from the index view.
+                            Updates SQL queries and variable naming for consistency and future maintainability.
+                        </div>
                     </li>
                     <li>
                         <div class="change">{{ ux_icon('mdi:user-outline') }}→ Improve slug generation for non-Latin names</div>
@@ -1667,7 +1929,9 @@
                 <ul>
                     <li>
                         <div class="change">{{ ux_icon('mdi:image-album') }}→ Update album photo count and animation logic</div>
-                        <div class="details">Synchronizes the displayed album photo count with uploads by updating the count in the DOM. Adds logic to initialize album animation when the first two photos are added, and improves image resolution selection for background animation. Refactors AlbumController to redirect after new album creation and updates the album count rendering in the template.</div>
+                        <div class="details">Synchronizes the displayed album photo count with uploads by updating the count in the DOM. Adds logic to initialize album animation when the first two photos are added, and improves image resolution selection for background animation. Refactors AlbumController to redirect after new album creation and updates the
+                            album count rendering in the template.
+                        </div>
                     </li>
                     <li>
                         <div class="change">{{ ux_icon('mdi:tv') }}→ Improve responsive layout for series posters</div>
@@ -1675,7 +1939,9 @@
                     </li>
                     <li>
                         <div class="change">{{ ux_icon('mdi:tv') }}→ Improve episode grid styling and navigation</div>
-                        <div class="details">Refines the border radius and background color for episode and user action elements in series.scss, adds contextual border radius for episode corners, and updates the season template to wrap posters in links and assign corner classes to episode items for better visual distinction. Also adjusts quick-episodes grid width calculation for improved layout.</div>
+                        <div class="details">Refines the border radius and background color for episode and user action elements in series.scss, adds contextual border radius for episode corners, and updates the season template to wrap posters in links and assign corner classes to episode items for better visual distinction. Also adjusts quick-episodes grid
+                            width calculation for improved layout.
+                        </div>
                     </li>
                 </ul>
             </div>
@@ -1737,7 +2003,9 @@
                     </li>
                     <li>
                         <div class="change">{{ ux_icon('mdi:tv') }}{{ ux_icon('mdi:filmstrip-box') }}→ Refactor watch link CRUD and keyword translation APIs</div>
-                        <div class="details">Extracted watch link CRUD logic into a reusable WatchLinkCrud JS class and unified its usage in both movie and series views. Moved keyword translation save API to a dedicated controller and updated frontend to use the new endpoint. Updated styles and templates to support new form layouts and popover handling. Cleaned up MovieController by delegating provider logic to WatchLink API and removed legacy keyword translation code.</div>
+                        <div class="details">Extracted watch link CRUD logic into a reusable WatchLinkCrud JS class and unified its usage in both movie and series views. Moved keyword translation save API to a dedicated controller and updated frontend to use the new endpoint. Updated styles and templates to support new form layouts and popover handling.
+                            Cleaned up MovieController by delegating provider logic to WatchLink API and removed legacy keyword translation code.
+                        </div>
                     </li>
                     <li>
                         <div class="change">{{ ux_icon('mdi:map-outline') }}→ Add Mapbox SearchBox and related dependencies</div>
@@ -1745,11 +2013,15 @@
                     </li>
                     <li>
                         <div class="change">{{ ux_icon('mdi:filmstrip-box') }}→ Enhance movie image display and language filtering</div>
-                        <div class="details">Improves the movie page by adding dynamic filtering of posters, backdrops, and logos by language, updating image counts, and adjusting text color based on backdrop brightness. Refactors Movie.js for better modularity, updates MovieController to provide image counts, and enhances the template and styles for conditional image section rendering and improved UI responsiveness.</div>
+                        <div class="details">Improves the movie page by adding dynamic filtering of posters, backdrops, and logos by language, updating image counts, and adjusting text color based on backdrop brightness. Refactors Movie.js for better modularity, updates MovieController to provide image counts, and enhances the template and styles for
+                            conditional image section rendering and improved UI responsiveness.
+                        </div>
                     </li>
                     <li>
                         <div class="change">{{ ux_icon('mdi:filmstrip-box') }}→ Add multi-language movie images display</div>
-                        <div class="details">Introduces support for displaying posters, backdrops, and logos filtered by language on the movie page. Adds a language selector, updates MovieController to fetch and process images from TMDB, and enhances frontend JS and SCSS for diaporama and tooltips. Also updates French translations for new image-related terms.</div>
+                        <div class="details">Introduces support for displaying posters, backdrops, and logos filtered by language on the movie page. Adds a language selector, updates MovieController to fetch and process images from TMDB, and enhances frontend JS and SCSS for diaporama and tooltips. Also updates French translations for new image-related
+                            terms.
+                        </div>
                     </li>
                 </ul>
             </div>
@@ -1770,11 +2042,15 @@
                     </li>
                     <li>
                         <div class="change">{{ ux_icon('mdi:tv') }}{{ ux_icon('mdi:filmstrip-box') }}→ Refactor overview forms to use popover and improve UX</div>
-                        <div class="details">Converted overview, delete-overview, and localized-name forms to use the popover attribute for better modal handling. Updated JavaScript logic to support popover API, improved form show/hide logic, and refactored source display code. Adjusted styles for popover forms and updated button markup in Twig templates for accessibility and consistency. Fixed API response keys and repository method signature for consistency.</div>
+                        <div class="details">Converted overview, delete-overview, and localized-name forms to use the popover attribute for better modal handling. Updated JavaScript logic to support popover API, improved form show/hide logic, and refactored source display code. Adjusted styles for popover forms and updated button markup in Twig templates for
+                            accessibility and consistency. Fixed API response keys and repository method signature for consistency.
+                        </div>
                     </li>
                     <li>
                         <div class="change">{{ ux_icon('mdi:image-album') }}→ Add Photos page with diaporama support</div>
-                        <div class="details">Introduces Photos.js to handle the album photos page and initializes Diaporama for image viewing. Updates Diaporama.js to support srcset for responsive images and refactors image navigation logic. Adjusts album.scss for improved styling, updates importmap.php for new module, and refines photos.html.twig for correct image paths and SVG controls.</div>
+                        <div class="details">Introduces Photos.js to handle the album photos page and initializes Diaporama for image viewing. Updates Diaporama.js to support srcset for responsive images and refactors image navigation logic. Adjusts album.scss for improved styling, updates importmap.php for new module, and refines photos.html.twig for
+                            correct image paths and SVG controls.
+                        </div>
                     </li>
                     <li>
                         <div class="change">{{ ux_icon('mdi:tv') }}→ Add blurred poster backgrounds for series and seasons</div>
@@ -1782,7 +2058,9 @@
                     </li>
                     <li>
                         <div class="change">{{ ux_icon('mdi:language-css3') }}→ Refactor color variables and alpha usage in stylesheets</div>
-                        <div class="details">Replaces custom alpha color variables with direct use of the CSS hsla() function and the 'from' syntax for dynamic color manipulation across all SCSS files. Simplifies color variable definitions in _variables.scss and updates all references to use hsla(from ...) for alpha transparency, improving maintainability and consistency of color usage throughout the styles.</div>
+                        <div class="details">Replaces custom alpha color variables with direct use of the CSS hsla() function and the 'from' syntax for dynamic color manipulation across all SCSS files. Simplifies color variable definitions in _variables.scss and updates all references to use hsla(from ...) for alpha transparency, improving maintainability
+                            and consistency of color usage throughout the styles.
+                        </div>
                     </li>
                     <li>
                         <div class="change">{{ ux_icon('mdi:language-css3') }}→ Refactor and update styles for overlays and votes</div>
@@ -1790,7 +2068,9 @@
                     </li>
                     <li>
                         <div class="change">{{ ux_icon('mdi:tv') }}{{ ux_icon('mdi:filmstrip-box') }}→ Refactor overview sections and JS event handling</div>
-                        <div class="details">Moved overview section headers inside their respective containers in movie and series templates for better structure. Updated TranslationsForms.js to use dedicated editOverview and deleteOverview methods for event handling, and improved DOM selection logic. Adjusted SCSS to ensure overview containers are hidden when empty and moved header styles inside .overviews for consistency.</div>
+                        <div class="details">Moved overview section headers inside their respective containers in movie and series templates for better structure. Updated TranslationsForms.js to use dedicated editOverview and deleteOverview methods for event handling, and improved DOM selection logic. Adjusted SCSS to ensure overview containers are hidden
+                            when empty and moved header styles inside .overviews for consistency.
+                        </div>
                     </li>
                     <li>
                         <div class="change">{{ ux_icon('mdi:home') }}→ Update home route and redirects to app_home_index</div>
@@ -1806,7 +2086,9 @@
                     </li>
                     <li>
                         <div class="change">{{ ux_icon('mdi:language-css3') }}→ Refactor theme and color variables for CSS and JS</div>
-                        <div class="details">Updated theme management in Menu.js to use data-theme on :root and removed legacy body class logic. Refactored SCSS variables to use light-dark() and consolidated color variables, replacing many "--grey" and --ardoise references with new variables. Updated all stylesheets to use the new color variables and gradients, improving consistency and maintainability for light/dark themes.</div>
+                        <div class="details">Updated theme management in Menu.js to use data-theme on :root and removed legacy body class logic. Refactored SCSS variables to use light-dark() and consolidated color variables, replacing many "--grey" and --ardoise references with new variables. Updated all stylesheets to use the new color variables and
+                            gradients, improving consistency and maintainability for light/dark themes.
+                        </div>
                     </li>
                 </ul>
             </div>
@@ -1827,7 +2109,9 @@
                     </li>
                     <li>
                         <div class="change">{{ ux_icon('mdi:map-outline') }} → Refactor marker handling and album photo logic</div>
-                        <div class="details">Commented out debug console logs in Map.js and improved marker handling by adding a 'photo-marker' class to photo markers. The adjustBounds method now accepts a marker type for more precise bounds adjustment. In AlbumShow.js, removed redundant addPhotosButton logic and updated photo marker addition to use the new marker type, also ensuring image paths are tracked.</div>
+                        <div class="details">Commented out debug console logs in Map.js and improved marker handling by adding a 'photo-marker' class to photo markers. The adjustBounds method now accepts a marker type for more precise bounds adjustment. In AlbumShow.js, removed redundant addPhotosButton logic and updated photo marker addition to use the new
+                            marker type, also ensuring image paths are tracked.
+                        </div>
                     </li>
                     <li>
                         <div class="change">{{ ux_icon('mdi:image-album') }}→ Add photos overview page and update album features</div>
@@ -1855,11 +2139,15 @@
                     </li>
                     <li>
                         <div class="change">{{ ux_icon('mdi:map-outline') }} → Move map logic from template JS to Map.js</div>
-                        <div class="details">Refactored map interaction logic from inline JavaScript in index.html.twig to the Map.js module for better maintainability and separation of concerns. Updated template to remove redundant scripts and ensure map initialization and controls are handled in Map.js. Also added missing map container IDs for consistency.</div>
+                        <div class="details">Refactored map interaction logic from inline JavaScript in index.html.twig to the Map.js module for better maintainability and separation of concerns. Updated template to remove redundant scripts and ensure map initialization and controls are handled in Map.js. Also added missing map container IDs for
+                            consistency.
+                        </div>
                     </li>
                     <li>
                         <div class="change">{{ ux_icon('mdi:map-outline') }} → Refactor POI loading and map marker rendering</div>
-                        <div class="details">Points of Interest (POIs) are now fetched via a dedicated API endpoint and rendered dynamically on the map, removing POI data from series and season endpoints. Updated Map.js to fetch and display POIs, added src/Api/PointOfInterest.php for POI API, and adjusted templates and styles for improved marker appearance and separation of POI logic.</div>
+                        <div class="details">Points of Interest (POIs) are now fetched via a dedicated API endpoint and rendered dynamically on the map, removing POI data from series and season endpoints. Updated Map.js to fetch and display POIs, added src/Api/PointOfInterest.php for POI API, and adjusted templates and styles for improved marker appearance
+                            and separation of POI logic.
+                        </div>
                     </li>
                     <li>
                         <div class="change">{{ ux_icon('mdi:map-outline') }} → Enhance POI markers and popup behavior on map</div>
@@ -1896,11 +2184,15 @@
                     </li>
                     <li>
                         <div class="change">{{ ux_icon('mdi:image-album') }}→ Refactor photo storage to support per-user album paths</div>
-                        <div class="details">Photo image paths now include the user ID in the directory structure for better separation and organization. Updated backend logic, entity, repository, and service methods to handle per-user paths and prevent duplicate photo uploads. Frontend and templates were adjusted to use the new path format for displaying images and handling uploads, and map bounds adjustment was added for improved UX.</div>
+                        <div class="details">Photo image paths now include the user ID in the directory structure for better separation and organization. Updated backend logic, entity, repository, and service methods to handle per-user paths and prevent duplicate photo uploads. Frontend and templates were adjusted to use the new path format for displaying
+                            images and handling uploads, and map bounds adjustment was added for improved UX.
+                        </div>
                     </li>
                     <li>
                         <div class="change">{{ ux_icon('mdi:image-album') }}→ Refactor album and photo entities to support many-to-many</div>
-                        <div class="details">Updated Album and Photo entities to use a many-to-many relationship, allowing photos to belong to multiple albums. Added a 'userCreated' flag to albums to distinguish between user-created and auto-generated albums. Refactored controller logic and templates to accommodate these changes, including album creation, display, and navigation. Adjusted repository and styling as needed.</div>
+                        <div class="details">Updated Album and Photo entities to use a many-to-many relationship, allowing photos to belong to multiple albums. Added a 'userCreated' flag to albums to distinguish between user-created and auto-generated albums. Refactored controller logic and templates to accommodate these changes, including album creation,
+                            display, and navigation. Adjusted repository and styling as needed.
+                        </div>
                     </li>
                     <li>
                         <div class="change">{{ ux_icon('mdi:comment-flash') }}→ Fix event listener binding in FlashMessage closeAll</div>
@@ -1912,7 +2204,9 @@
                     </li>
                     <li>
                         <div class="change">{{ ux_icon('mdi:search') }}→ Refactor search endpoints and menu search logic</div>
-                        <div class="details">Unified and renamed search API endpoints in controllers for movies, series, and people. Refactored Menu.js to use new endpoints and improved search result handling, including multi-search and menu closing logic. Updated SCSS for search input and results styling, and adjusted menu template to include &lt;ul&gt; elements for search results. Also fixed SQL alias in UserSeriesRepository.</div>
+                        <div class="details">Unified and renamed search API endpoints in controllers for movies, series, and people. Refactored Menu.js to use new endpoints and improved search result handling, including multi-search and menu closing logic. Updated SCSS for search input and results styling, and adjusted menu template to include &lt;ul&gt;
+                            elements for search results. Also fixed SQL alias in UserSeriesRepository.
+                        </div>
                     </li>
                 </ul>
             </div>
@@ -1925,7 +2219,9 @@
                     </li>
                     <li>
                         <div class="change">{{ ux_icon('mdi:home') }}→ Add dynamic provider series loading on home page</div>
-                        <div class="details">Implemented AJAX-based loading of series by provider on the home page. Added a new endpoint and controller method for fetching provider-specific series, updated JavaScript to handle provider selection and update the UI dynamically, and refactored Twig templates to support the new functionality. Also standardized route and path names for home page references across templates.</div>
+                        <div class="details">Implemented AJAX-based loading of series by provider on the home page. Added a new endpoint and controller method for fetching provider-specific series, updated JavaScript to handle provider selection and update the UI dynamically, and refactored Twig templates to support the new functionality. Also standardized
+                            route and path names for home page references across templates.
+                        </div>
                     </li>
                     <li>
                         <div class="change">{{ ux_icon('mdi:menu') }}→ Simplify menu by merging videos and albums sections</div>
@@ -1933,7 +2229,9 @@
                     </li>
                     <li>
                         <div class="change">{{ ux_icon('mdi:image-album') }}→ Refactor album photo layout and container structure</div>
-                        <div class="details">Reorganized the album photo section by introducing an 'album-container' wrapper and moving background elements for improved layout control. Updated SCSS to support the new structure, enhance grid/list switching, and adjust background overlays. The number badge is now commented out in the template, and the edit button remains. These changes improve maintainability and visual consistency for album photo displays.</div>
+                        <div class="details">Reorganized the album photo section by introducing an 'album-container' wrapper and moving background elements for improved layout control. Updated SCSS to support the new structure, enhance grid/list switching, and adjust background overlays. The number badge is now commented out in the template, and the edit
+                            button remains. These changes improve maintainability and visual consistency for album photo displays.
+                        </div>
                     </li>
                 </ul>
             </div>
@@ -1966,7 +2264,9 @@
                     </li>
                     <li>
                         <div class="change">{{ ux_icon('mdi:filmstrip-box') }} {{ ux_icon('mdi:tv') }}→ Refactor translation tools to shared TranslationsForms module</div>
-                        <div class="details">Extracted and unified translation-related UI logic for movies and series into a new TranslationsForms JavaScript module. Updated Movie.js and Show.js to use this shared component, simplifying their code. Updated styles to use new .localization-* classes and moved translation tool styles to a dedicated translations.scss file. Adjusted markup and selectors for consistency, and updated importmap.php to register the new module.</div>
+                        <div class="details">Extracted and unified translation-related UI logic for movies and series into a new TranslationsForms JavaScript module. Updated Movie.js and Show.js to use this shared component, simplifying their code. Updated styles to use new .localization-* classes and moved translation tool styles to a dedicated
+                            translations.scss file. Adjusted markup and selectors for consistency, and updated importmap.php to register the new module.
+                        </div>
                     </li>
                 </ul>
             </div>
@@ -1983,7 +2283,9 @@
                     </li>
                     <li>
                         <div class="change">{{ ux_icon('mdi:filmstrip-box') }}→ Improve movie page layout and update date formats</div>
-                        <div class="details">Refactored movie index layout to use CSS grid for better responsiveness and adjusted breakpoints from 50rem to 52rem across multiple SCSS files. Updated movie card date displays to use 'relative_medium' format for improved readability. Also added movie count to the main page heading and made minor style enhancements for filter buttons and responsive design.</div>
+                        <div class="details">Refactored movie index layout to use CSS grid for better responsiveness and adjusted breakpoints from 50rem to 52rem across multiple SCSS files. Updated movie card date displays to use 'relative_medium' format for improved readability. Also added movie count to the main page heading and made minor style
+                            enhancements for filter buttons and responsive design.
+                        </div>
                     </li>
                     <li>
                         <div class="change">{{ ux_icon('mdi:tv') }}→ Attempt to resolve an error that does not occur in development mode</div>
@@ -2036,7 +2338,9 @@
                     </li>
                     <li>
                         <div class="change">{{ ux_icon('mdi:image-album') }}→ Refactor album grid cell class logic and UI checks</div>
-                        <div class="details">Moved the album grid cell class calculation to a dedicated getCellClasses() method in AlbumController for better maintainability and reuse. Updated AlbumShow.js to add null checks for DOM elements and event listeners, improving robustness. The album edit button in the template is now only shown for albums with a valid ID. Minor CSS adjustment to grid row sizing.</div>
+                        <div class="details">Moved the album grid cell class calculation to a dedicated getCellClasses() method in AlbumController for better maintainability and reuse. Updated AlbumShow.js to add null checks for DOM elements and event listeners, improving robustness. The album edit button in the template is now only shown for albums with a
+                            valid ID. Minor CSS adjustment to grid row sizing.
+                        </div>
                     </li>
                 </ul>
             </div>
@@ -2045,23 +2349,33 @@
                 <ul>
                     <li>
                         <div class="change">{{ ux_icon('mdi:image-album') }}→ Improve album grid layout and photo styling</div>
-                        <div class="details">Enhanced the album grid by adding new CSS classes for various grid spans and adjusted the logic in AlbumController to better handle cell class assignment for different photo counts. Updated photo and SVG styling for better appearance and responsiveness. Also removed or commented out debug dump statements in AlbumController and ImageService for cleaner logs.</div>
+                        <div class="details">Enhanced the album grid by adding new CSS classes for various grid spans and adjusted the logic in AlbumController to better handle cell class assignment for different photo counts. Updated photo and SVG styling for better appearance and responsiveness. Also removed or commented out debug dump statements in
+                            AlbumController and ImageService for cleaner logs.
+                        </div>
                     </li>
                     <li>
                         <div class="change">{{ ux_icon('mdi:image-album') }}→ Refactor album photo grid and add photo button UI</div>
-                        <div class="details">Updated the album photo grid to use a 4-column layout with improved grid spanning logic for photos, both in the backend (cellClasses) and frontend (JS and Twig). The add photo button is now positioned absolutely and always visible for albums, and a number badge is shown on each photo. Improved handling for albums with no photos, and removed unused/obsolete CSS and logic.</div>
+                        <div class="details">Updated the album photo grid to use a 4-column layout with improved grid spanning logic for photos, both in the backend (cellClasses) and frontend (JS and Twig). The add photo button is now positioned absolutely and always visible for albums, and a number badge is shown on each photo. Improved handling for albums
+                            with no photos, and removed unused/obsolete CSS and logic.
+                        </div>
                     </li>
                     <li>
                         <div class="change">{{ ux_icon('mdi:image-album') }}→ Add daily photo albums and improve album handling</div>
-                        <div class="details">Introduces support for grouping photos by day as virtual albums, adds a new route and controller logic for date-based albums, and updates templates to handle both standard and date-based albums. Refactors album and photo array conversion, improves album form and photo addition UI, and fixes minor issues with date handling and EXIF extraction. Also updates translations and album entity to support new features.</div>
+                        <div class="details">Introduces support for grouping photos by day as virtual albums, adds a new route and controller logic for date-based albums, and updates templates to handle both standard and date-based albums. Refactors album and photo array conversion, improves album form and photo addition UI, and fixes minor issues with date
+                            handling and EXIF extraction. Also updates translations and album entity to support new features.
+                        </div>
                     </li>
                     <li>
                         <div class="change">{{ ux_icon('mdi:image-album') }}→ Add EXIF extraction and display photo metadata in album</div>
-                        <div class="details">This update extracts EXIF data (date, latitude, longitude) from uploaded photos and stores them in the database. The frontend now displays photo metadata (date, created/updated at) in the album view, and the UI for adding photos and empty album states has been improved. Various code and style adjustments were made to support these features.</div>
+                        <div class="details">This update extracts EXIF data (date, latitude, longitude) from uploaded photos and stores them in the database. The frontend now displays photo metadata (date, created/updated at) in the album view, and the UI for adding photos and empty album states has been improved. Various code and style adjustments were made
+                            to support these features.
+                        </div>
                     </li>
                     <li>
                         <div class="change">{{ ux_icon('mdi:image-album') }}→ Refactor album background animation and layout</div>
-                        <div class="details">Replaces the single background image with a dual-layer background for smoother transitions in the album view. Updates AlbumShow.js to handle two background images and animate transitions. Refactors related SCSS for new background structure and improves layout responsiveness. Updates the album show template to use the new background markup.</div>
+                        <div class="details">Replaces the single background image with a dual-layer background for smoother transitions in the album view. Updates AlbumShow.js to handle two background images and animate transitions. Refactors related SCSS for new background structure and improves layout responsiveness. Updates the album show template to use
+                            the new background markup.
+                        </div>
                     </li>
                     <li>
                         <div class="change">{{ ux_icon('mdi:tv') }}→ Order filming locations by season and episode</div>
@@ -2128,7 +2442,9 @@
                     </li>
                     <li>
                         <div class="change">{{ ux_icon('mdi:image-album') }}→ Refactor album page layout and improve responsiveness</div>
-                        <div class="details">Reorganized the album page structure in show.html.twig for better separation of controls and improved accessibility. Updated SCSS styles for .album-page, layout buttons, and responsive breakpoints to enhance mobile and desktop experiences. Moved map height CSS variables to :root in map.scss for consistency. Adjusted layout controls to use icon buttons and improved their styling and grouping.</div>
+                        <div class="details">Reorganized the album page structure in show.html.twig for better separation of controls and improved accessibility. Updated SCSS styles for .album-page, layout buttons, and responsive breakpoints to enhance mobile and desktop experiences. Moved map height CSS variables to :root in map.scss for consistency.
+                            Adjusted layout controls to use icon buttons and improved their styling and grouping.
+                        </div>
                     </li>
                     <li>
                         <div class="change">{{ ux_icon('mdi:tv') }}→ Improve edit button visibility on episode hover</div>
@@ -2136,7 +2452,9 @@
                     </li>
                     <li>
                         <div class="change">{{ ux_icon('mdi:image-album') }}→ Refactor album view with animated background and layout logic</div>
-                        <div class="details">Moved album layout switching and settings persistence from inline Twig script to AlbumShow.js, centralizing logic and improving maintainability. Added animated background image for grid layout, updated SCSS for new layout structure and responsive design, and restructured the album page HTML to use semantic elements and support the new background/protection overlays. Minor string formatting improvements and animation logic refactor in AlbumShow.js.</div>
+                        <div class="details">Moved album layout switching and settings persistence from inline Twig script to AlbumShow.js, centralizing logic and improving maintainability. Added animated background image for grid layout, updated SCSS for new layout structure and responsive design, and restructured the album page HTML to use semantic
+                            elements and support the new background/protection overlays. Minor string formatting improvements and animation logic refactor in AlbumShow.js.
+                        </div>
                     </li>
                     <li>
                         <div class="change">→ Refactor user episode addition to prevent duplicates</div>
@@ -2144,7 +2462,9 @@
                     </li>
                     <li>
                         <div class="change">→ Refactor map UI into reusable map-container component</div>
-                        <div class="details">Introduced a new map.scss stylesheet and a reusable _map_container.html.twig partial to unify and modernize the map UI across album, series, and map pages. Updated all relevant templates to use the new component, removed redundant map-related styles from album.scss and series.scss, and improved toggler and thumbnail logic. This change centralizes map styling and markup, making future maintenance and enhancements easier.</div>
+                        <div class="details">Introduced a new map.scss stylesheet and a reusable _map_container.html.twig partial to unify and modernize the map UI across album, series, and map pages. Updated all relevant templates to use the new component, removed redundant map-related styles from album.scss and series.scss, and improved toggler and
+                            thumbnail logic. This change centralizes map styling and markup, making future maintenance and enhancements easier.
+                        </div>
                     </li>
                     <li>
                         <div class="change">→ Set navbar opacity to always be 1</div>
@@ -2168,7 +2488,9 @@
                     </li>
                     <li>
                         <div class="change">→ Add progress bar for bulk image addition in series</div>
-                        <div class="details">Enhanced the 'Add all available images' dialog for series to display poster and backdrop counts and a progress bar when adding many images. Updated the JavaScript to handle bulk image uploads with progress feedback, adjusted the controller to support per-image addition, improved dialog layout and styles, and updated French translations for new UI elements.</div>
+                        <div class="details">Enhanced the 'Add all available images' dialog for series to display poster and backdrop counts and a progress bar when adding many images. Updated the JavaScript to handle bulk image uploads with progress feedback, adjusted the controller to support per-image addition, improved dialog layout and styles, and
+                            updated French translations for new UI elements.
+                        </div>
                     </li>
                     <li>
                         <div class="change">→ Refactor movie viewed status and display view dates</div>
@@ -2192,15 +2514,21 @@
                     </li>
                     <li>
                         <div class="change">→ Add navigation and improve video category handling</div>
-                        <div class="details">Introduces 'Back to my videos' and 'Back to my videos by category' navigation buttons on the video show page, with corresponding styles and translations. Refactors category sorting logic into a private method in VideoController and ensures category/page context is preserved in navigation. Enhances JS to manage video category selection and option disabling more robustly.</div>
+                        <div class="details">Introduces 'Back to my videos' and 'Back to my videos by category' navigation buttons on the video show page, with corresponding styles and translations. Refactors category sorting logic into a private method in VideoController and ensures category/page context is preserved in navigation. Enhances JS to manage
+                            video category selection and option disabling more robustly.
+                        </div>
                     </li>
                     <li>
                         <div class="change">→ Update Mapbox GL JS and related dependencies to v3.14.0</div>
-                        <div class="details">Upgraded Mapbox GL JS and Mapbox GL Geocoder to v3.14.0 and v5.1.0 respectively across JS, PHP importmap, and Twig templates. Adjusted map initialization to support new features (pitch, bearing, show3dObjects) and improved SCSS selectors for pagination. Updated other JS and PHP dependencies to latest versions for compatibility.</div>
+                        <div class="details">Upgraded Mapbox GL JS and Mapbox GL Geocoder to v3.14.0 and v5.1.0 respectively across JS, PHP importmap, and Twig templates. Adjusted map initialization to support new features (pitch, bearing, show3dObjects) and improved SCSS selectors for pagination. Updated other JS and PHP dependencies to latest versions for
+                            compatibility.
+                        </div>
                     </li>
                     <li>
                         <div class="change">→ Enhance 'What to Watch Next' with TMDB similar series</div>
-                        <div class="details">The 'What to Watch Next' feature now fetches similar series from TMDB if fewer than 20 recommendations are available, using the current series' TMDB ID and language. Frontend and backend were updated to pass and handle these parameters, and the UI was improved for better display. TMDBService now supports language selection for similar series queries.</div>
+                        <div class="details">The 'What to Watch Next' feature now fetches similar series from TMDB if fewer than 20 recommendations are available, using the current series' TMDB ID and language. Frontend and backend were updated to pass and handle these parameters, and the UI was improved for better display. TMDBService now supports language
+                            selection for similar series queries.
+                        </div>
                     </li>
                     <li>
                         <div class="change">→ Add 'What to watch next' feature for series</div>

@@ -92,7 +92,7 @@
         </div>
         <div class="infos">
             <div class="name{% if ids is defined and series.id in ids %} added{% endif %}">
-                {{ series.localized_name ?? series.sln_name ?? series.name }}
+                {{ series.localized_name ?? series.sln_name ?? series.display_name ?? series.name }}
                 {% if allFiltered is defined %}
                     <div class="">{% if series.remainingEpisodes > 1 %}{{ series.remainingEpisodes }} {{ 'remaining episodes'|trans }}{% else %}{{ 'Last episode'|trans }}{% endif %}</div>
                 {% endif %}
