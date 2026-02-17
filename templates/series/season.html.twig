@@ -287,7 +287,6 @@
                                                         {% if episode.vote_average %}
                                                             <div class="vote-average">{{ episode.vote_average }} / 10 - {{ episode.vote_count }} {{ (episode.vote_count > 1 ? 'votes':'vote')|trans }}</div>
                                                         {% endif %}
-                                                        <div class="light-dark-toggler">{{ ux_icon('mdi:theme-light-dark') }}</div>
                                                     </div>
                                                 {% endif %}
                                                 <div class="episode-overview" data-id="{{ episode.id }}">
@@ -315,6 +314,7 @@
                                                 {{ include('_blocks/series/_guest_stars.html.twig', {guest_stars: episode.guest_stars}) }}
                                             </div>
                                             <div class="scroll-infos-button">{{ ux_icon('mdi:video-film', {style: "--size: 2rem;"}) }}</div>
+                                            <div class="light-dark-toggler">{{ ux_icon('mdi:theme-light-dark') }}</div>
                                         </div>
                                         {{ include('_blocks/series/_user_episode.html.twig', {ue: episode.user_episode, episode: episode, series: series, season: season}) }}
                                     </div>

@@ -448,7 +448,7 @@ export class Season {
         lightDarkTogglers.forEach(el => {
             el.addEventListener('click', (e) => {
                 const toggler = e.currentTarget;
-                const infosContentDiv = toggler.closest('.infos-content');
+                const infosContentDiv = toggler.closest('.infos').querySelector('.infos-content');
                 if (!infosContentDiv.classList.contains('dark')) {
                     infosContentDiv.classList.add('dark');
                     infosContentDiv.classList.remove('light');
