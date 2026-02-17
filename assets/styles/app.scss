@@ -2437,8 +2437,7 @@ section:has(.pages) {
                 background-color: var(--green);
                 border-radius: 5em;
                 color: var(--ardoise-10);
-                font-size: clamp(1rem, 1.5dvw, 2rem);
-                line-height: 1.1em;
+                font-size: 1rem;
                 margin: .25em;
                 padding: .25em .5em;
                 text-align: center;
@@ -2449,6 +2448,7 @@ section:has(.pages) {
                     display: flex;
                     flex-wrap: wrap;
                     gap: .5em;
+                    justify-content: space-between;
                     padding-inline-end: .25rem;
                 }
 
@@ -2456,7 +2456,7 @@ section:has(.pages) {
                     background-color: var(--orange-40);
                     border-radius: 5em;
                     color: var(--orange-90);
-                    font-size: clamp(.875rem, 1.25dvw, 1.75rem);
+                    font-size: .875rem;
                     font-weight: 500;
                     padding: .125em .75em;
                 }
