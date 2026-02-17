@@ -619,11 +619,9 @@ class SeriesController extends AbstractController
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             $seriesSearch = $this->settingsAdvancedDbSearchService->update($user, $form->getData());
-            dump($seriesSearch);
             $searchResult['results'] = $this->seriesRepository->advancedDbSearch($user, $seriesSearch);
             $searchResult['total_results'] = $t = $this->seriesRepository->advancedDbSearchCount($user, $seriesSearch);
             $searchResult['total_pages'] = ceil($t / 20);
-            dump($searchResult);
 
             if ($searchResult['total_results'] == 1) {
                 return $this->getOneResult($searchResult['results'][0], $slugger);
@@ -632,23 +630,16 @@ class SeriesController extends AbstractController
         } else {
             $searchResult['results'] = $this->seriesRepository->advancedDbSearch($user, $seriesSearch);
             $searchResult['total_results'] = $t = $this->seriesRepository->advancedDbSearchCount($user, $seriesSearch);
-            dump($t);
             $searchResult['total_pages'] = ceil($t / 20);
-            dump($searchResult);
             $series = $this->getAdvancedDbSearchResult($searchResult, $slugger);
         }
-        dump($searchResult);
 
         return $this->render('series/advanced_db_search.html.twig', [
             'form' => $form->createView(),
             'displaySettings' => ['id' => $advancedDisplaySettings->getId(), 'data' => $displaySettings],
             'seriesList' => $series,
             'userSeriesIds' => $userSeriesIds,
-            'results' => [
-                'total_results' => $searchResult['total_results'],
-                'total_pages' => $searchResult['total_pages'],
-                'page' => $searchResult['page'],
-            ],
+            'results' => $searchResult,
         ]);
     }
 
