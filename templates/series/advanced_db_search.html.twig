@@ -14,7 +14,7 @@
         <div class="series-search">
             <h1>{{ 'Advanced search'|trans }}</h1>
             {{ form_start(form, {'attr': {'class': 'form'}}) }}
-            <div class="magnify">{{ ux_icon('mdi:search') }}</div>
+            <div class="magnify" data-title="{{ 'Adjust search'|trans }} {{ searchDetails }}">{{ ux_icon('mdi:search') }}</div>
             <div class="folder folded">
                 <div class="hide-search">{{ ux_icon('mdi:close') }}</div>
                 <div class="form-row{% if displaySettings.data.dates %} dismissed{% endif %}">

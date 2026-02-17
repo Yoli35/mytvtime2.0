@@ -40,6 +40,9 @@ class SeriesAdvancedDbSearchDTO
     #[Assert\LessThanOrEqual(500)]
     private int $page;
 
+    private string $language;
+    private string $timezone;
+
     public function __construct($page = 1)
     {
         $this->page = $page;
@@ -203,5 +206,25 @@ class SeriesAdvancedDbSearchDTO
     public function setKeywordSeparator(string $keywordSeparator): void
     {
         $this->keywordSeparator = $keywordSeparator;
+    }
+
+    public function getLanguage(): string
+    {
+        return $this->language;
+    }
+
+    public function setLanguage(string $language): void
+    {
+        $this->language = $language;
+    }
+
+    public function getTimezone(): string
+    {
+        return $this->timezone;
+    }
+
+    public function setTimezone(string $timezone): void
+    {
+        $this->timezone = $timezone;
     }
 }

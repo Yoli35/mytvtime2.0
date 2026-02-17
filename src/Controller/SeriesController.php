@@ -640,6 +640,7 @@ class SeriesController extends AbstractController
             'seriesList' => $series,
             'userSeriesIds' => $userSeriesIds,
             'results' => $searchResult,
+            'searchDetails' => $this->settingsAdvancedDbSearchService->getSearchDetails($seriesSearch),
         ]);
     }
 
