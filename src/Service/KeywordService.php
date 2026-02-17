@@ -132,4 +132,15 @@ readonly class KeywordService
 
         return implode(', ', $newKeywords);
     }
+
+    public function getKeywords(): array
+    {
+        $keywords = $this->keywordRepository->findby([], ['name' => 'ASC']);
+
+        $keywordArray = [];
+        foreach ($keywords as $keyword) {
+            $keywordArray[$keyword->getName()] = $keyword->getKeywordId();
+        }
+        return $keywordArray;
+    }
 }

@@ -601,8 +601,6 @@ class SeriesController extends AbstractController
     public function advancedDbSearch(#[CurrentUser] User $user, Request $request): Response
     {
         $searchResult = ['page' => 1];
-//        $watchProviders = $this->watchLinkApi->getWatchProviders($user->getCountry() ?: 'FR');
-        $keywords = $this->getKeywords();
         $userSeriesIds = array_column($this->userSeriesRepository->userSeriesTMDBIds($user), 'id');
 
         $countries = $this->getAdvancedSearchCountries($user, $request->getLocale());
@@ -686,7 +684,7 @@ class SeriesController extends AbstractController
     {
         $series = [];
         $watchProviders = $this->watchLinkApi->getWatchProviders($user->getCountry() ?: 'FR');
-        $keywords = $this->getKeywords();
+        $keywords = $this->keywordService->getKeywords();
         $userSeriesIds = array_column($this->userSeriesRepository->userSeriesTMDBIds($user), 'id');
 
         $seriesSearch = new SeriesAdvancedSearchDTO($user->getPreferredLanguage() ?: $request->getLocale(), $user->getCountry() ?: 'FR', $user->getTimezone() ?: 'Europe/Paris', 1);
@@ -2948,17 +2946,6 @@ class SeriesController extends AbstractController
             return $tmdbUrl . $path;
         }
         return '/images/providers' . substr($path, 1);
-    }
-
-    public function getKeywords(): array
-    {
-        $keywords = $this->keywordRepository->findby([], ['name' => 'ASC']);
-
-        $keywordArray = [];
-        foreach ($keywords as $keyword) {
-            $keywordArray[$keyword->getName()] = $keyword->getKeywordId();
-        }
-        return $keywordArray;
     }
 
     public function getSearchString(?User $user, SeriesAdvancedSearchDTO $data): string
