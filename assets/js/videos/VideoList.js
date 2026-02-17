@@ -1,9 +1,9 @@
 import {ToolTips} from "ToolTips";
 
-let gThis = null;
+let self = null;
 export class VideoList {
     constructor() {
-        gThis = this;
+        self = this;
         this.tooltips = new ToolTips();
         this.init = this.init.bind(this);
     }

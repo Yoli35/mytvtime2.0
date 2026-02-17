@@ -1,6 +1,6 @@
 import {ToolTips} from "ToolTips";
 
-let gThis = null;
+let self = null;
 export class Video {
 
     /**
@@ -14,7 +14,7 @@ export class Video {
      */
 
     constructor() {
-        gThis = this;
+        self = this;
         const globs = JSON.parse(document.querySelector("#global-data").textContent);
         this.app_video_details = globs['app_video_details'];
         this.app_video_comments = globs['app_video_comments'];
@@ -85,7 +85,7 @@ export class Video {
             })
             .then(data => {
                 console.log('Category added:', data);
-                gThis.videoCategories.push(parseInt(categoryId));
+                self.videoCategories.push(parseInt(categoryId));
                 let categoriesDiv = document.querySelector('.categories');
                 if (!categoriesDiv) {
                     categoriesDiv = document.createElement('div');
@@ -109,7 +109,7 @@ export class Video {
                 categoryDiv.appendChild(deleteDiv);
                 categoriesDiv.appendChild(categoryDiv);
                 // disable the select option that was just added
-                gThis.updateSelect();
+                self.updateSelect();
                 /*const categorySelect = document.querySelector('select[id="categories"]');
                 if (categorySelect) {
                     const option = categorySelect.querySelector(`option[value="${categoryId}"]`);
@@ -149,8 +149,8 @@ export class Video {
                 console.log('Category deleted:', data);
                 categoryDiv.remove();
                 const deletedId = parseInt(categoryId);
-                gThis.videoCategories = gThis.videoCategories.filter(id => id !== deletedId);
-                gThis.updateSelect();
+                self.videoCategories = self.videoCategories.filter(id => id !== deletedId);
+                self.updateSelect();
 
                 // enable the select option that was just deleted
                 /*const categorySelect = document.querySelector('select[id="categories"]');
@@ -172,7 +172,7 @@ export class Video {
 
     updateSelect() {
         const categorySelect = document.querySelector('select[id="categories"]');
-        const videoCats = gThis.videoCategories;
+        const videoCats = self.videoCategories;
         if (categorySelect) {
             const options = categorySelect.querySelectorAll('option');
             console.log(options);

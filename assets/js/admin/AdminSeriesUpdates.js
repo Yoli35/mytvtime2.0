@@ -1,6 +1,6 @@
 import {ToolTips} from "ToolTips";
 
-let gThis;
+let self;
 
 export class AdminSeriesUpdates {
 
@@ -15,7 +15,7 @@ export class AdminSeriesUpdates {
      */
 
     constructor() {
-        gThis = this;
+        self = this;
         this.toolTip = new ToolTips();
         const globs = document.querySelector("#globs");
         this.globs = JSON.parse(globs.textContent);
@@ -35,16 +35,16 @@ export class AdminSeriesUpdates {
         const goToBottomButton = document.querySelector('.go-to-bottom');
 
         updatesButton.addEventListener("click", () => {
-            const updateDiv1 = gThis.newUpdateDiv("updates header");
-            gThis.newLine([{'className': 'header', 'label': 'Starting updates...'}], updateDiv1);
-            /*const updateDiv2 = gThis.newUpdateDiv("updates after header");
-            gThis.newLine([], updateDiv2);*/
+            const updateDiv1 = self.newUpdateDiv("updates header");
+            self.newLine([{'className': 'header', 'label': 'Starting updates...'}], updateDiv1);
+            /*const updateDiv2 = self.newUpdateDiv("updates after header");
+            self.newLine([], updateDiv2);*/
             updatesButton.setAttribute("disabled", "");
 
-            gThis.forceUpdate = forceUpdateSwitch.checked;
-            gThis.startIndex = 0;
-            gThis.startDate = new Date();
-            gThis.updates();
+            self.forceUpdate = forceUpdateSwitch.checked;
+            self.startIndex = 0;
+            self.startDate = new Date();
+            self.updates();
         });
 
         goToBottomButton.addEventListener("click", () => {
@@ -61,20 +61,20 @@ export class AdminSeriesUpdates {
     }
 
     updates() {
-        const count = gThis.ids.length;
+        const count = self.ids.length;
         const limit = 5;
-        let arr = gThis.ids.slice(gThis.startIndex, gThis.startIndex + limit);
-        let blockStart = 100 * gThis.startIndex / count;
-        let blockEnd = 100 * (gThis.startIndex + limit) / count;
+        let arr = self.ids.slice(self.startIndex, self.startIndex + limit);
+        let blockStart = 100 * self.startIndex / count;
+        let blockEnd = 100 * (self.startIndex + limit) / count;
         if (blockEnd > 100) blockEnd = 100;
         const data = {
             ids: arr,
-            force: gThis.forceUpdate,
-            units: gThis.units,
+            force: self.forceUpdate,
+            units: self.units,
             blockStart: blockStart,
             blockEnd: blockEnd
         };
-        fetch(gThis.api_series_update_series,
+        fetch(self.api_series_update_series,
             {
                 method: 'POST',
                 body: JSON.stringify(data)
@@ -85,9 +85,9 @@ export class AdminSeriesUpdates {
             if (data.status === 'success') {
                 data['results'].forEach(item => {
                     const hasUpdates = item['updates'].length > 0;
-                    const updateDiv = gThis.newUpdateDiv(item.id);
-                    const  displayedLine = gThis.newLine([
-                            {'className': gThis.kebabCase(item['check']), 'label': item['check']},
+                    const updateDiv = self.newUpdateDiv(item.id);
+                    const  displayedLine = self.newLine([
+                            {'className': self.kebabCase(item['check']), 'label': item['check']},
                             {'className': 'id', 'label': item['id']},
                             {'className': 'name', 'label': item['name']},
                             {'className': 'localized-name', 'label': item['localizedName']},
@@ -95,23 +95,23 @@ export class AdminSeriesUpdates {
                         ],
                         updateDiv, hasUpdates);
                     if (hasUpdates) {
-                        const displayedUpdates = gThis.displayUpdates(item['updates'], updateDiv);
-                        gThis.summariseUpdates(item.id, displayedLine, displayedUpdates);
+                        const displayedUpdates = self.displayUpdates(item['updates'], updateDiv);
+                        self.summariseUpdates(item.id, displayedLine, displayedUpdates);
                     }
-                    gThis.displayInfos(data['progressInfos']);
+                    self.displayInfos(data['progressInfos']);
                 });
-                if (data['results'].length + gThis.startIndex >= count) {
-                    /*const updateDiv1 = gThis.newUpdateDiv("updates before footer");
-                    gThis.newLine([], updateDiv1);*/
-                    gThis.endDate = new Date();
-                    const elapsed = (gThis.endDate.getTime() - gThis.startDate.getTime()) / 1000;
-                    const updateDiv2 = gThis.newUpdateDiv("updates footer");
-                    gThis.newLine([{'className': 'footer', 'label': 'Updates completed in ' + elapsed + ' seconds.'}], updateDiv2);
+                if (data['results'].length + self.startIndex >= count) {
+                    /*const updateDiv1 = self.newUpdateDiv("updates before footer");
+                    self.newLine([], updateDiv1);*/
+                    self.endDate = new Date();
+                    const elapsed = (self.endDate.getTime() - self.startDate.getTime()) / 1000;
+                    const updateDiv2 = self.newUpdateDiv("updates footer");
+                    self.newLine([{'className': 'footer', 'label': 'Updates completed in ' + elapsed + ' seconds.'}], updateDiv2);
                     const updatesButton = document.querySelector("#admin-series-updates");
                     updatesButton.removeAttribute("disabled");
                 } else {
-                    gThis.startIndex += limit;
-                    gThis.updates();
+                    self.startIndex += limit;
+                    self.updates();
                 }
             }
         });
@@ -151,8 +151,8 @@ export class AdminSeriesUpdates {
     }
 
     displayUpdates(updates, div) {
-        const posterUrls = gThis.urls['posterUrl'];
-        const backdropUrls = gThis.urls['backdropUrl'];
+        const posterUrls = self.urls['posterUrl'];
+        const backdropUrls = self.urls['backdropUrl'];
         const detailsDiv = document.createElement('div');
         detailsDiv.classList.add("admin__series__updates__details");
 
@@ -160,14 +160,14 @@ export class AdminSeriesUpdates {
         updates.forEach((item) => {
             const detailDiv = document.createElement('div');
             detailDiv.classList.add("admin__series__updates__detail");
-            const className = gThis.kebabCase(item.field);
+            const className = self.kebabCase(item.field);
             const fieldDiv = document.createElement("div");
             fieldDiv.classList.add("admin__update__field");
             fieldDiv.classList.add(className);
             const beforeDiv = document.createElement("div");
             beforeDiv.classList.add("admin__update__before");
             beforeDiv.classList.add(className);
-            const rightArrowSvg = gThis.rightArrow.cloneNode(true);
+            const rightArrowSvg = self.rightArrow.cloneNode(true);
             rightArrowSvg.removeAttribute("id");
             rightArrowSvg.classList.add("admin__update__arrow");
             const afterDiv = document.createElement("div");
@@ -264,7 +264,7 @@ export class AdminSeriesUpdates {
 
     summariseUpdates(id, lineDiv, updateDiv) {
         const updatesSummary = document.querySelector('.admin__series__updates__summary');
-        const summaryDiv = gThis.newSummaryDiv(id);
+        const summaryDiv = self.newSummaryDiv(id);
         lineDiv.firstChild.remove();
         lineDiv.querySelector('.date').remove();
         summaryDiv.appendChild(lineDiv);

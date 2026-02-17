@@ -1,8 +1,8 @@
-let gThis;
+let self;
 
 export class NavBar {
     constructor() {
-        gThis = this;
+        self = this;
         this.root = document.documentElement;
         // this.debugDiv = null;
         this.navBarColor = this.navBarColor.bind(this);

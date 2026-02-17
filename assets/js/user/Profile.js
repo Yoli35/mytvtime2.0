@@ -1,4 +1,4 @@
-let gThis;
+let self;
 
 export class Profile {
     /**
@@ -15,7 +15,7 @@ export class Profile {
      */
 
     constructor() {
-        gThis = this;
+        self = this;
         const jsonGlobsObject = JSON.parse(document.querySelector('div#globs').textContent);
         this.translations = jsonGlobsObject.translations;
         this.targetedLanguages = jsonGlobsObject.targetedLanguages;
@@ -27,10 +27,10 @@ export class Profile {
     init() {
         console.log("User profile init");
         const avatarFile = document.querySelector('#user_avatarFile');
-        avatarFile.addEventListener("change", gThis.updateImageDisplay);
+        avatarFile.addEventListener("change", self.updateImageDisplay);
 
         const bannerFile = document.querySelector('#user_bannerFile');
-        bannerFile.addEventListener("change", gThis.updateImageDisplay);
+        bannerFile.addEventListener("change", self.updateImageDisplay);
 
         const previewAvatar = document.querySelector('.preview-avatar-file');
         const previewBanner = document.querySelector('.preview-banner-file');
@@ -98,14 +98,14 @@ export class Profile {
 
         const file = curFiles[0];
 
-        if (gThis.validFileType(file)) {
+        if (self.validFileType(file)) {
             preview.textContent = `${file.name}`;
             const image = document.createElement("img");
             image.src = URL.createObjectURL(file);
             image.alt = image.title = file.name;
             preview.appendChild(image);
         } else {
-            preview.innerHTML = `${file.name}<span class="error">${gThis.translations['Not a valid file type. Update your selection']}.</span>`;
+            preview.innerHTML = `${file.name}<span class="error">${self.translations['Not a valid file type. Update your selection']}.</span>`;
         }
 
     }
@@ -131,12 +131,12 @@ export class Profile {
         svgTrash.setAttribute("id", "delete-" + language);
         svgTrash.setAttribute("data-id", language);
         svgTrash.classList.add("delete-language");
-        svgTrash.addEventListener("click", gThis.deleteLanguage);
+        svgTrash.addEventListener("click", self.deleteLanguage);
         li.appendChild(svgTrash);
         svgBurger.setAttribute("id", "drag-" + language);
         svgBurger.setAttribute("data-id", language);
         svgBurger.classList.add("drag-language");
-        svgBurger.addEventListener("click", gThis.dragLanguage);
+        svgBurger.addEventListener("click", self.dragLanguage);
         li.appendChild(svgBurger);
         listElement.appendChild(li);
     }
@@ -154,13 +154,13 @@ export class Profile {
             listItem.remove();
             // Also remove from targetedLanguages or preferredLanguages arrays
             if (listId === 'targeted-language-list') {
-                gThis.targetedLanguages = gThis.targetedLanguages.filter(lang => lang !== languageId);
-                console.log("Updated targeted languages: " + gThis.targetedLanguages);
-                gThis.fetchLanguageSettings('targeted', 'delete', languageId);
+                self.targetedLanguages = self.targetedLanguages.filter(lang => lang !== languageId);
+                console.log("Updated targeted languages: " + self.targetedLanguages);
+                self.fetchLanguageSettings('targeted', 'delete', languageId);
             } else if (listId === 'preferred-language-list') {
-                gThis.preferredLanguages = gThis.preferredLanguages.filter(lang => lang !== languageId);
-                console.log("Updated preferred languages: " + gThis.preferredLanguages);
-                gThis.fetchLanguageSettings('preferred', 'delete', languageId);
+                self.preferredLanguages = self.preferredLanguages.filter(lang => lang !== languageId);
+                console.log("Updated preferred languages: " + self.preferredLanguages);
+                self.fetchLanguageSettings('preferred', 'delete', languageId);
             }
         }
     }

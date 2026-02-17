@@ -8,7 +8,7 @@ import {ToolTips} from 'ToolTips';
 import {TranslationsForms} from "TranslationsForms";
 import {WatchLinkCrud} from "WatchLinkCrud";
 
-let gThis = null;
+let self = null;
 
 export class Show {
     /**
@@ -99,7 +99,7 @@ export class Show {
      */
 
     constructor() {
-        gThis = this;
+        self = this;
         this.lang = document.documentElement.lang;
         this.toolTips = new ToolTips();
         this.flashMessage = new FlashMessage();
@@ -544,7 +544,7 @@ export class Show {
             addAllBackdropsDialog.close();
         });
         addAllBackdropsAddButton.addEventListener('click', () => {
-            gThis.fetchSeriesImages(addAllBackdropsDialog, tmdbId, addAllBackdrops, addAllPosters);
+            self.fetchSeriesImages(addAllBackdropsDialog, tmdbId, addAllBackdrops, addAllPosters);
         });
 
         addBackdropButton.addEventListener('click', () => {
@@ -592,7 +592,7 @@ export class Show {
                 infosDiv.insertBefore(overviewDiv, seasonEpisodesDiv);
             }
             index++;
-            if (index<length) gThis.fetchSeasonOverviews(seriesId, seasonDivs, index, length);
+            if (index<length) self.fetchSeasonOverviews(seriesId, seasonDivs, index, length);
         })
     }
 
@@ -609,9 +609,9 @@ export class Show {
             })
             .then(function (data) {
                 episodeCardDiv.innerHTML = data['episodeCards'];
-                gThis.toolTips.init(episodeCardDiv);
+                self.toolTips.init(episodeCardDiv);
                 index++;
-                if (index < length) gThis.fetchEpisodeCards(cards, index, length);
+                if (index < length) self.fetchEpisodeCards(cards, index, length);
             })
             .catch(err => console.log(err));
     }
@@ -624,7 +624,7 @@ export class Show {
                 backdrops: backdrops,
                 posters: posters
             };
-            fetch('/' + gThis.lang + '/series/backdrops/add', {
+            fetch('/' + self.lang + '/series/backdrops/add', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -653,8 +653,8 @@ export class Show {
             posters.forEach(poster => {
                 images.push({type: 'poster', image: poster});
             });
-            gThis.totalFetches = images.length;
-            gThis.fetchSeriesImage(tmdbId, dialog, images, progressDiv, progressSpan);
+            self.totalFetches = images.length;
+            self.fetchSeriesImage(tmdbId, dialog, images, progressDiv, progressSpan);
 
         }
     }
@@ -674,7 +674,7 @@ export class Show {
             image: image,
             type: type
         };
-        fetch('/' + gThis.lang + '/series/backdrops/add', {
+        fetch('/' + self.lang + '/series/backdrops/add', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -685,10 +685,10 @@ export class Show {
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    const progress = 100 * (gThis.totalFetches - images.length) / gThis.totalFetches;
+                    const progress = 100 * (self.totalFetches - images.length) / self.totalFetches;
                     progressDiv.style.width = progress + '%';
                     progressSpan.innerText = Math.ceil(progress) + '%';
-                    gThis.fetchSeriesImage(tmdbId, dialog, images, progressDiv, progressSpan);
+                    self.fetchSeriesImage(tmdbId, dialog, images, progressDiv, progressSpan);
                 }
             });
     }

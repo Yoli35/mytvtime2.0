@@ -1,8 +1,8 @@
-let gThis = null;
+let self = null;
 
 export class SeriesStatistics {
     constructor() {
-        gThis = this;
+        self = this;
         this.inlinePaddingWidth = 64;
         this.gapWidth = 16;
     }
@@ -31,7 +31,7 @@ export class SeriesStatistics {
         const statusItemDivWidths = [];
         const line1Array = [];
         const line2Array = [];
-        let statusItemDivsWidth = (gapCount * gThis.gapWidth) + gThis.inlinePaddingWidth;
+        let statusItemDivsWidth = (gapCount * self.gapWidth) + self.inlinePaddingWidth;
         statusItemDivs.forEach((statusItemDiv, index) => {
             const width = statusItemDiv.getBoundingClientRect().width;
             statusItemDivWidths[index] = width;

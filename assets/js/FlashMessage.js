@@ -1,16 +1,16 @@
-let gThis
+let self
 export class FlashMessage {
     constructor() {
         this.closeAll = this.closeAll.bind(this);
         this.dismisses = ['hide-scale', 'hide-to-left', 'hide-to-right', 'hide-to-top', 'hide-to-bottom'];
         this.dismissesCount = this.dismisses.length;
-        if (!gThis) {
+        if (!self) {
             this.start();
         }
     }
 
     start() {
-        gThis = this;
+        self = this;
         console.log('FlashMessage init');
         const flashMessagesDiv = document.querySelector('.flash-messages');
         flashMessagesDiv.addEventListener('click', this.closeAll);
@@ -22,7 +22,7 @@ export class FlashMessage {
         });
     }
 
-    closeAll(e) {
+    closeAll() {
         const flashMessagesDiv = document.querySelector('.flash-messages');
         flashMessagesDiv.removeEventListener('click', this.closeAll);
         const flashMessageDivs = document.querySelectorAll('.flash-message');

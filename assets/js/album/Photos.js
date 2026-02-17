@@ -1,10 +1,10 @@
 import {Diaporama} from "Diaporama";
 
-let gThis = null;
+let self = null;
 
 export class Photos {
     constructor() {
-        gThis = this;
+        self = this;
         this.diaporama = new Diaporama()
 
         this.init();

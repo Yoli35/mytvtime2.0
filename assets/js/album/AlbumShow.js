@@ -3,7 +3,7 @@ import {FlashMessage} from "FlashMessage";
 import {Map} from "Map";
 import {ToolTips} from 'ToolTips';
 
-let gThis = null;
+let self = null;
 
 export class AlbumShow {
     /**
@@ -52,7 +52,7 @@ export class AlbumShow {
      */
 
     constructor() {
-        gThis = this;
+        self = this;
         this.lang = document.querySelector('html').getAttribute('lang');
         this.toolTips = new ToolTips();
         this.flashMessage = new FlashMessage();
@@ -63,7 +63,7 @@ export class AlbumShow {
         this.album = globs.album;
         this.imagePaths = globs.imagePaths;
         this.initialCount = this.imagePaths.length;
-        console.log(gThis.imagePaths);
+        console.log(self.imagePaths);
         this.texts = globs.texts;
         this.srcsetPaths = globs.srcsetPaths;
         this.settings = globs.settings;
@@ -135,14 +135,14 @@ export class AlbumShow {
         document.querySelector('.layout-grid').addEventListener('click', () => {
             albumPhotosDiv.classList.remove('list');
             albumPhotosDiv.classList.add('grid');
-            gThis.initAnimation();
-            gThis.saveLayout(gThis.album.id, 'grid');
+            self.initAnimation();
+            self.saveLayout(self.album.id, 'grid');
         });
         document.querySelector('.layout-list').addEventListener('click', () => {
             albumPhotosDiv.classList.remove('grid');
             albumPhotosDiv.classList.add('list');
-            gThis.stopAnimation();
-            gThis.saveLayout(gThis.album.id, 'list');
+            self.stopAnimation();
+            self.saveLayout(self.album.id, 'list');
         });
     }
 
@@ -150,13 +150,13 @@ export class AlbumShow {
         const lang = document.querySelector('html').getAttribute('lang');
         const settings = {
             layout: layout,
-            photosPerPage: gThis.settings.photosPerPage,
+            photosPerPage: self.settings.photosPerPage,
         };
         fetch('/' + lang + '/album/settings/' + id, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'X-CSRF-Token': gThis.settings.token
+                'X-CSRF-Token': self.settings.token
             },
             body: JSON.stringify(settings)
         })
@@ -203,16 +203,16 @@ export class AlbumShow {
         }
 
         addPhotos?.addEventListener('click', function () {
-            gThis.openAlbumPanel(modifyAlbumDialog);
+            self.openAlbumPanel(modifyAlbumDialog);
         });
 
         if (modifyAlbumForm) {
             // https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/file
             const imageFiles = modifyAlbumForm.querySelector('input[name="image-files"]');
-            imageFiles.addEventListener("change", gThis.updateImageDisplay);
+            imageFiles.addEventListener("change", self.updateImageDisplay);
 
             modifyAlbumCancel.addEventListener('click', function () {
-                gThis.closeAlbumPanel();
+                self.closeAlbumPanel();
             });
             modifyAlbumSubmit.addEventListener('click', function (event) {
                 event.preventDefault();
@@ -232,12 +232,12 @@ export class AlbumShow {
                 summaryDiv.classList.add('album-summary');
                 modifyAlbumForm.appendChild(summaryDiv);
 
-                const formData = gThis.getAlbumFormData(modifyAlbumForm);
-                const formFiles = gThis.getAlbumFormFiles(modifyAlbumForm);
-                gThis.fileCount = formFiles.length;
+                const formData = self.getAlbumFormData(modifyAlbumForm);
+                const formFiles = self.getAlbumFormFiles(modifyAlbumForm);
+                self.fileCount = formFiles.length;
 
                 summaryDiv.innerText = 'Saving album infos…'
-                fetch('/' + gThis.lang + '/album/modify/' + gThis.album.id,
+                fetch('/' + self.lang + '/album/modify/' + self.album.id,
                     {
                         method: 'POST',
                         body: formData
@@ -247,11 +247,11 @@ export class AlbumShow {
                     /*console.log({data});*/
                     if (response.ok) {
                         data['messages'].forEach(msg => {
-                            gThis.flashMessage.add('success', msg);
-                            gThis.fetchFile(formFiles, summaryDiv);
+                            self.flashMessage.add('success', msg);
+                            self.fetchFile(formFiles, summaryDiv);
                         })
                     } else {
-                        gThis.flashMessage.add('error', data.message);
+                        self.flashMessage.add('error', data.message);
                     }
                 });
             });
@@ -275,9 +275,9 @@ export class AlbumShow {
 
         editPhotoButtons.forEach((btn) => {
             const id = parseInt(btn.getAttribute('data-id'));
-            const photo = gThis.album.photos.find(photo => photo.id === id);
+            const photo = self.album.photos.find(photo => photo.id === id);
             btn.addEventListener('click', function () {
-                photoThumbnail.src = "/albums/" + gThis.userId + "/576p" + photo['image_path'];
+                photoThumbnail.src = "/albums/" + self.userId + "/576p" + photo['image_path'];
                 albumIdInput.value = photo['album_id'];
                 photoIdInput.value = id;
                 captionInput.value = photo['caption'];
@@ -297,12 +297,12 @@ export class AlbumShow {
                     latitudeInput.value = parseFloat(urlParts[0].trim());
                     longitudeInput.value = parseFloat(urlParts[1].trim());
                 });
-                gThis.openPhotoPanel(editPhotoDialog);
+                self.openPhotoPanel(editPhotoDialog);
             });
         });
 
         editPhotoCancel.addEventListener('click', function () {
-            gThis.closePhotoPanel();
+            self.closePhotoPanel();
         });
         editPhotoSubmit.addEventListener('click', function (event) {
             event.preventDefault();
@@ -323,9 +323,9 @@ export class AlbumShow {
             editPhotoCancel.setAttribute('disabled', '');
             editPhotoSubmit.setAttribute('disabled', '');
 
-            const formData = gThis.getPhotoFormData(editPhotoForm);
+            const formData = self.getPhotoFormData(editPhotoForm);
 
-            fetch('/' + gThis.lang + '/album/photo/edit',
+            fetch('/' + self.lang + '/album/photo/edit',
                 {
                     method: 'POST',
                     body: formData
@@ -344,10 +344,10 @@ export class AlbumShow {
                     const dateDiv = albumPhotoDiv.querySelector('.date');
                     const dateSpan = dateDiv.parentElement.querySelector('span');
                     dateSpan.innerText = photo['date_string'];
-                    gThis.map.addPhotoMarker(photo);
-                    gThis.closePhotoPanel();
+                    self.map.addPhotoMarker(photo);
+                    self.closePhotoPanel();
                 } else {
-                    gThis.flashMessage.add('error', data.message);
+                    self.flashMessage.add('error', data.message);
                 }
             });
         });
@@ -358,9 +358,9 @@ export class AlbumShow {
         if (count) {
             const formFile = formFiles.shift(); // Tableau de FormData contenant un objet file dont la clé est 'additional-image'
             const filename = formFile.get('additional-image').name;
-            const progress = Math.round(100 * (gThis.fileCount - count + 1) / gThis.fileCount);
-            summaryDiv.innerText = 'Saving ' + filename + ' file' + ' - ' + (gThis.fileCount - count) + ' / ' + gThis.fileCount;
-            fetch('/' + gThis.lang + '/album/add/' + gThis.album.id,
+            const progress = Math.round(100 * (self.fileCount - count + 1) / self.fileCount);
+            summaryDiv.innerText = 'Saving ' + filename + ' file' + ' - ' + (self.fileCount - count) + ' / ' + self.fileCount;
+            fetch('/' + self.lang + '/album/add/' + self.album.id,
                 {
                     method: 'POST',
                     body: formFile
@@ -371,33 +371,33 @@ export class AlbumShow {
                 if (response.ok) {
                     const results = data['results'];
                     data['messages'].forEach(msg => {
-                        gThis.flashMessage.add('success', msg);
+                        self.flashMessage.add('success', msg);
                     });
                     if (results.length) {
                         const albumPhotosDiv = document.querySelector('.album-photos');
                         results.forEach(result => {
                             const imagePath = result['image_path'];
                             // Add marker to the map
-                            gThis.map.addPhotoMarker(result);
-                            gThis.map.adjustBounds('photo-marker');
-                            // Add imagePath to gThis.imagePaths
-                            gThis.imagePaths.push(imagePath);
+                            self.map.addPhotoMarker(result);
+                            self.map.adjustBounds('photo-marker');
+                            // Add imagePath to self.imagePaths
+                            self.imagePaths.push(imagePath);
                             const albumCountSpan = document.querySelector('.album-count');
-                            albumCountSpan.innerText = gThis.imagePaths.length.toString();
+                            albumCountSpan.innerText = self.imagePaths.length.toString();
                             const albumPhotoDiv = document.createElement('div');
                             albumPhotoDiv.classList.add('album-photo');
                             albumPhotoDiv.setAttribute('data-id', result.id);
                             const img = document.createElement('img');
                             img.setAttribute('data-title', result['date_string']);
-                            img.src = gThis.srcsetPaths['highRes'] + imagePath;
+                            img.src = self.srcsetPaths['highRes'] + imagePath;
                             img.alt = imagePath;
                             img.loading = "lazy";
-                            img.srcset = gThis.srcsetPaths['lowRes'] + imagePath + ' 576w,'
-                                + gThis.srcsetPaths['mediumRes'] + imagePath + ' 720w,'
-                                + gThis.srcsetPaths['highRes'] + imagePath + ' 1080w,'
-                                + gThis.srcsetPaths['original'] + imagePath + ' 1600w';
+                            img.srcset = self.srcsetPaths['lowRes'] + imagePath + ' 576w,'
+                                + self.srcsetPaths['mediumRes'] + imagePath + ' 720w,'
+                                + self.srcsetPaths['highRes'] + imagePath + ' 1080w,'
+                                + self.srcsetPaths['original'] + imagePath + ' 1600w';
                             albumPhotoDiv.appendChild(img);
-                            gThis.diaporama.start(albumPhotoDiv.querySelectorAll('img'));
+                            self.diaporama.start(albumPhotoDiv.querySelectorAll('img'));
                             const albumPhotoInfos = document.createElement('div');
                             albumPhotoInfos.classList.add('album-photo-infos');
                             const nameDiv = document.createElement('div');
@@ -441,12 +441,12 @@ export class AlbumShow {
                         });
                     }
                 } else {
-                    gThis.flashMessage.add('error', data.message);
+                    self.flashMessage.add('error', data.message);
                 }
-                if (gThis.initialCount === 0 && gThis.imagePaths.length === 2) {
-                    gThis.initAnimation();
+                if (self.initialCount === 0 && self.imagePaths.length === 2) {
+                    self.initAnimation();
                 }
-                gThis.fetchFile(formFiles, summaryDiv);
+                self.fetchFile(formFiles, summaryDiv);
             }).catch((error) => {
                 console.error('Error fetching file:', error);
             });
@@ -457,8 +457,8 @@ export class AlbumShow {
             modifyAlbumCancel.removeAttribute('disabled');
             modifyAlbumSubmit.removeAttribute('disabled');
             summaryDiv.remove();
-            gThis.closeAlbumPanel();
-            /*if (gThis.initialCount === 0) {
+            self.closeAlbumPanel();
+            /*if (self.initialCount === 0) {
                 setTimeout(function () {
                     window.location.reload();
                 }, 1000);
@@ -474,7 +474,7 @@ export class AlbumShow {
     updateImageDisplay(e) {
         const input = e.target;
         const inputName = input.name;
-        const preview = gThis.getForm().querySelector('.preview-' + inputName);
+        const preview = self.getForm().querySelector('.preview-' + inputName);
         while (preview.firstChild) {
             preview.removeChild(preview.firstChild);
         }
@@ -492,8 +492,8 @@ export class AlbumShow {
         for (const file of curFiles) {
             const listItem = document.createElement("li");
             const div = document.createElement("div");
-            if (gThis.validFileType(file)) {
-                div.textContent = file.name + ' ' + gThis.returnFileSize(file.size);
+            if (self.validFileType(file)) {
+                div.textContent = file.name + ' ' + self.returnFileSize(file.size);
                 const image = document.createElement("img");
                 image.src = URL.createObjectURL(file);
                 image.alt = image.title = file.name;
@@ -509,7 +509,7 @@ export class AlbumShow {
     }
 
     validFileType(file) {
-        return gThis.fileTypes.includes(file.type);
+        return self.fileTypes.includes(file.type);
     }
 
     returnFileSize(number) {
@@ -612,15 +612,15 @@ export class AlbumShow {
     }
 
     initAnimation() {
-        if (!gThis.imagePaths.length) {
+        if (!self.imagePaths.length) {
             return;
         }
         const albumPhotosDiv = document.querySelector('.album-photos');
-        gThis.pathArr = gThis.imagePaths.slice();
+        self.pathArr = self.imagePaths.slice();
         if (albumPhotosDiv.classList.contains('list')) {
             return;
         }
-        if (gThis.initialCount === 0) {
+        if (self.initialCount === 0) {
             const albumPageDiv = document.querySelector('.album-page');
             const headerTag = albumPageDiv.querySelector('header');
             const protectionDiv = document.createElement('div');
@@ -632,14 +632,14 @@ export class AlbumShow {
             const background1Div = document.createElement('div');
             background1Div.classList.add('background-1');
             const img1 = document.createElement('img');
-            img1.src = gThis.srcsetPaths.highRes +  gThis.imagePaths[0];
-            img1.alt = gThis.album.name;
+            img1.src = self.srcsetPaths.highRes +  self.imagePaths[0];
+            img1.alt = self.album.name;
             background1Div.appendChild(img1);
             const background2Div = document.createElement('div');
             background2Div.classList.add('background-2');
             const img2 = document.createElement('img');
-            img2.src = gThis.srcsetPaths.highRes +  gThis.imagePaths[0];
-            img2.alt = gThis.album.name;
+            img2.src = self.srcsetPaths.highRes +  self.imagePaths[0];
+            img2.alt = self.album.name;
             background2Div.appendChild(img2);
             backgroundsDiv.appendChild(background1Div);
             backgroundsDiv.appendChild(background2Div);
@@ -647,32 +647,32 @@ export class AlbumShow {
             protectionDiv.appendChild(layersDiv);
             const nameDiv = document.createElement('div');
             nameDiv.classList.add('name');
-            nameDiv.innerText = gThis.album.name;
+            nameDiv.innerText = self.album.name;
             protectionDiv.appendChild(nameDiv);
             albumPageDiv.insertBefore(protectionDiv, headerTag);
         }
         const imgElement1 = document.querySelector(".background-1").querySelector('img');
         const imgElement2 = document.querySelector(".background-2").querySelector('img');
         const viewPortWidth = window.innerWidth;
-        let srcsetPath = gThis.srcsetPaths.lowRes;
+        let srcsetPath = self.srcsetPaths.lowRes;
         if (viewPortWidth >= 1280) {
-            srcsetPath = gThis.srcsetPaths.original;
+            srcsetPath = self.srcsetPaths.original;
         } else if (viewPortWidth >= 960) {
-            srcsetPath = gThis.srcsetPaths.highRes;
+            srcsetPath = self.srcsetPaths.highRes;
         } else if (viewPortWidth >= 640) {
-            srcsetPath = gThis.srcsetPaths.mediumRes;
+            srcsetPath = self.srcsetPaths.mediumRes;
         }
-        gThis.effect({img1: imgElement1, img2: imgElement2, path: srcsetPath});
-        gThis.interval = setInterval(gThis.effect, 4000, {img1: imgElement1, img2: imgElement2, path: srcsetPath});
+        self.effect({img1: imgElement1, img2: imgElement2, path: srcsetPath});
+        self.interval = setInterval(self.effect, 4000, {img1: imgElement1, img2: imgElement2, path: srcsetPath});
     }
 
     stopAnimation() {
-        if (gThis.interval) {
+        if (self.interval) {
             const albumPhotosDiv = document.querySelector('.album-photos');
-            clearInterval(gThis.interval);
+            clearInterval(self.interval);
             albumPhotosDiv.classList.remove('play');
             albumPhotosDiv.removeAttribute('style');
-            gThis.interval = null;
+            self.interval = null;
         }
     }
 
@@ -681,12 +681,12 @@ export class AlbumShow {
         const imgElement2 = arg.img2;
         const path = arg.path
 
-        const arrLength = gThis.pathArr.length;
+        const arrLength = self.pathArr.length;
         const imageIndex = Math.floor(Math.random() * (arrLength - 1));
-        const imageFilename = gThis.pathArr[imageIndex];
-        gThis.pathArr.splice(imageIndex, 1);
-        if (gThis.pathArr.length === 0) {
-            gThis.pathArr = gThis.imagePaths.slice();
+        const imageFilename = self.pathArr[imageIndex];
+        self.pathArr.splice(imageIndex, 1);
+        if (self.pathArr.length === 0) {
+            self.pathArr = self.imagePaths.slice();
         }
         imgElement2.src = path + imageFilename;
         setTimeout(() => {

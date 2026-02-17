@@ -1,8 +1,8 @@
-let gThis;
+let self;
 
 export class MovieIndex {
     constructor(globs, menu) {
-        gThis = this;
+        self = this;
         this.app_series_settings_save = globs.app_series_settings_save;
         this.txt_no_poster = globs.txt_no_poster;
         this.menu = menu;
@@ -161,7 +161,7 @@ export class MovieIndex {
                     'value': open
                 }
             };
-            fetch(gThis.app_series_settings_save, {
+            fetch(self.app_series_settings_save, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -188,7 +188,7 @@ export class MovieIndex {
                 poster.appendChild(img);
             } else {
                 const div = document.createElement('div');
-                div.textContent = gThis.txt_no_poster;
+                div.textContent = self.txt_no_poster;
                 poster.appendChild(div);
             }
             if (movie.favorite) {

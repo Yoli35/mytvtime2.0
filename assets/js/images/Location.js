@@ -1,12 +1,12 @@
 import {Map} from "Map";
 import {ToolTips} from "ToolTips";
 
-let gThis = null;
+let self = null;
 
 export class Location {
 
     constructor(type, data, fieldList) {
-        gThis = this;
+        self = this;
         this.mapDiv = document.querySelector('.map-controller');
         this.map = null;
         this.lang = document.documentElement.lang;
@@ -18,8 +18,8 @@ export class Location {
         this.imagePath = data.imagePath || '';
         this.seriesId = data.seriesId || null;
         this.seriesName = data.seriesName || '';
-        this.urlAdd = this.seriesId ? '/api/location/add/' + this.seriesId : '/' + gThis.lang + '/admin/point-of-interest/add';
-        this.urlDelete = this.seriesId ? '/api/location/delete' : '/' + gThis.lang + '/admin/point-of-interest/delete';
+        this.urlAdd = this.seriesId ? '/api/location/add/' + this.seriesId : '/' + self.lang + '/admin/point-of-interest/add';
+        this.urlDelete = this.seriesId ? '/api/location/delete' : '/' + self.lang + '/admin/point-of-interest/delete';
         this.fieldList = fieldList || [];
 
         this.openLocationPanel = this.openLocationPanel.bind(this);
@@ -111,21 +111,21 @@ export class Location {
                     const editButton = imageDiv.querySelector('.edit');
                     editButton.addEventListener('click', function () {
                         const locationId = this.getAttribute('data-loc-id');
-                        const location = gThis.filmingLocations.find(location => location.id === parseInt(locationId));
-                        gThis.openLocationPanel('update', location, gThis.translations['Update']);
+                        const location = self.filmingLocations.find(location => location.id === parseInt(locationId));
+                        self.openLocationPanel('update', location, self.translations['Update']);
                     });
                     const editImagesButton = imageDiv.querySelector('.edit-images');
                     editImagesButton?.addEventListener('click', function () {
                         const locationId = this.getAttribute('data-loc-id');
-                        const location = gThis.filmingLocations.find(location => location.id === parseInt(locationId));
-                        gThis.openLocationImagesPanel('update', location, gThis.translations['Update']);
+                        const location = self.filmingLocations.find(location => location.id === parseInt(locationId));
+                        self.openLocationImagesPanel('update', location, self.translations['Update']);
                     });
                 }
             });
         }
 
         addLocationButton.addEventListener('click', function () {
-            gThis.openLocationPanel('create', gThis.emptyLocation, gThis.translations['Add']);
+            self.openLocationPanel('create', self.emptyLocation, self.translations['Add']);
         });
         inputGoogleMapsUrl.addEventListener('paste', function (e) {
             const url = e.clipboardData.getData('text');
@@ -140,12 +140,12 @@ export class Location {
             inputLongitude.value = parseFloat(urlParts[1].trim());
         });
         addLocationCancel.addEventListener('click', function () {
-            gThis.closeLocationPanel();
+            self.closeLocationPanel();
         });
         addLocationDelete.addEventListener('click', function () {
             const formData = new FormData();
             formData.append('id', addLocationForm.querySelector('input[name="crud-id"]').value);
-            fetch(gThis.urlDelete,
+            fetch(self.urlDelete,
                 {
                     method: 'DELETE',
                     body: formData
@@ -156,9 +156,9 @@ export class Location {
                 if (response.ok) {
                     window.location.reload();
                 } else {
-                    gThis.flashMessage.add('error', data.message);
+                    self.flashMessage.add('error', data.message);
                 }
-                gThis.closeLocationPanel();
+                self.closeLocationPanel();
             });
         });
         addLocationSubmit.addEventListener('click', function (event) {
@@ -173,14 +173,14 @@ export class Location {
                     // en mode création
                     if (input.name === 'image-url') {
                         if (!input.value && !input.closest('.form-row').querySelector('input[name="image-file"]').value) {
-                            input.nextElementSibling.textContent = gThis.translations['This field is required'];
+                            input.nextElementSibling.textContent = self.translations['This field is required'];
                             emptyInput = true;
                         } else {
                             input.nextElementSibling.textContent = '';
                         }
                     } else {
                         if (!input.value) {
-                            input.nextElementSibling.textContent = gThis.translations['This field is required'];
+                            input.nextElementSibling.textContent = self.translations['This field is required'];
                             emptyInput = true;
                         } else {
                             input.nextElementSibling.textContent = '';
@@ -189,8 +189,8 @@ export class Location {
                 });
             }
             if (!emptyInput) {
-                const formData = gThis.getFormData(addLocationForm, gThis.fieldList);
-                fetch(gThis.urlAdd,
+                const formData = self.getFormData(addLocationForm, self.fieldList);
+                fetch(self.urlAdd,
                     {
                         method: 'POST',
                         body: formData
@@ -201,19 +201,19 @@ export class Location {
                     if (response.ok) {
                         window.location.reload();
                     } else {
-                        gThis.flashMessage.add('error', data.message);
+                        self.flashMessage.add('error', data.message);
                     }
-                    gThis.closeLocationPanel();
+                    self.closeLocationPanel();
                 });
             }
         });
 
         addLocationImagesCancel.addEventListener('click', function () {
-            gThis.closeLocationImagesPanel();
+            self.closeLocationImagesPanel();
         });
         addLocationImagesSubmit.addEventListener('click', function (event) {
             event.preventDefault();
-            gThis.closeLocationImagesPanel();
+            self.closeLocationImagesPanel();
         });
 
         imageInputs.forEach(function (imageInput) {
@@ -292,7 +292,7 @@ export class Location {
                     listItem.appendChild(div);
                     listItem.appendChild(image);
                 } else {
-                    div.innerHTML = `${file.name}<span class="error">${gThis.translations['Not a valid file type. Update your selection']}.</span>`;
+                    div.innerHTML = `${file.name}<span class="error">${self.translations['Not a valid file type. Update your selection']}.</span>`;
                     listItem.appendChild(div);
                 }
 

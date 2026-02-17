@@ -1,4 +1,4 @@
-let gThis;
+let self;
 
 export class ToolTips {
     tooltipsElement = null;
@@ -6,7 +6,7 @@ export class ToolTips {
     tailElement = null;
 
     constructor(element = null, className = null) {
-        gThis = this;
+        self = this;
 
         let tooltipsDiv = document.querySelector(".tool-tips");
         if (!tooltipsDiv) {
@@ -71,13 +71,13 @@ export class ToolTips {
         evt.preventDefault();
         evt.stopPropagation();
         const previewImage = localStorage.getItem("mytvtime_2_preview");
-        const tooltips = gThis.tooltipsElement;
+        const tooltips = self.tooltipsElement;
         if (tooltips.classList.contains("show")) {
             return;
         }
         const currentTarget = evt.currentTarget;
         if (currentTarget.parentElement.classList.contains("open")) {
-            gThis.hide();
+            self.hide();
             return;
         }
         const text = currentTarget.getAttribute("data-title");
@@ -101,13 +101,13 @@ export class ToolTips {
             p.innerHTML = text;
             body.appendChild(p);
         }
-        gThis.move(evt);
+        self.move(evt);
 
         tooltips.classList.add("show");
     }
 
     hide() {
-        const tooltips = gThis.tooltipsElement;/*document.querySelector(".tool-tips");*/
+        const tooltips = self.tooltipsElement;/*document.querySelector(".tool-tips");*/
         if (!tooltips) {
             return;
         }
@@ -119,10 +119,10 @@ export class ToolTips {
         evt.stopPropagation();
         const currentTarget = evt.currentTarget;
         if (currentTarget.parentElement.classList.contains("open")) {
-            gThis.hide();
+            self.hide();
             return;
         }
-        const tooltips = gThis.tooltipsElement;
+        const tooltips = self.tooltipsElement;
         const tail = this.tailElement;
         const body = this.bodyElement;
         const bg = "background-color: " + tooltips.getAttribute("bg") + ";";
@@ -153,8 +153,8 @@ export class ToolTips {
         const left = evt.pageX - (width / 2);
         if (left < 0) {
             let style = "transform: translate(" + (evt.pageX - (width / 2) + (left * -1)) + "px, " + toolTipsTranslateY + "px);";
-            if (style !== gThis.style) {
-                gThis.style = style;
+            if (style !== self.style) {
+                self.style = style;
                 // console.log(style);
                 tooltips.setAttribute("style", style);
                 tail.setAttribute("style", "translate: " + left + "px -" + tailTranslateY + "px;" + bg);
@@ -165,8 +165,8 @@ export class ToolTips {
         const right = evt.pageX + (width / 2);
         if (right > windowWidth * visualViewport.scale) {
             let style = "transform: translate(" + (evt.pageX - (width / 2) - (right - (windowWidth * visualViewport.scale))) + "px, " + toolTipsTranslateY + "px);";
-            if (style !== gThis.style) {
-                gThis.style = style;
+            if (style !== self.style) {
+                self.style = style;
                 // console.log(style);
                 tooltips.setAttribute("style", style);
                 tail.setAttribute("style", "translate: " + (right - (windowWidth * visualViewport.scale)) + "px -" + tailTranslateY + "px;" + bg);
@@ -175,8 +175,8 @@ export class ToolTips {
         }
 
         let style = "transform: translate(" + (evt.pageX - (width / 2)) + "px, " + toolTipsTranslateY + "px);";
-        if (style !== gThis.style) {
-            gThis.style = style;
+        if (style !== self.style) {
+            self.style = style;
             // console.log(style);
             tooltips.setAttribute("style", style);
             tail.setAttribute("style", "translate: 0 -" + tailTranslateY + "px;" + bg);

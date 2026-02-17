@@ -82,7 +82,7 @@ export class EpisodeActions {
         const userEpisodeVotes = document.querySelectorAll('.select-vote');
         userEpisodeVotes.forEach(vote => {
             vote.addEventListener('click', this.selectVote);
-            // vote.addEventListener('wheel', gThis.wheelVote);
+            // vote.addEventListener('wheel', self.wheelVote);
         });
     }
 

@@ -57,12 +57,12 @@ import {SeasonComments} from "SeasonComments";
  * @property {string} logoPath
  */
 
-let gThis = null;
+let self = null;
 
 export class Episode {
 
     constructor(flashMessage, toolTips, menu) {
-        gThis = this;
+        self = this;
         /** @var {Globs} */
         this.globs = JSON.parse(document.querySelector('div#globs').textContent);
         /** @var {GlobsMap} */
@@ -81,7 +81,6 @@ export class Episode {
         const seriesId = this.globs.seriesId;
         const seriesName = this.globs.seriesName;
         const seasonNumber = this.globs.seasonNumber;
-        const episodeNumber = this.globs.episodeNumber;
         const translations = this.globs.translations;
 
         const fieldList = this.globsMap.fieldList;

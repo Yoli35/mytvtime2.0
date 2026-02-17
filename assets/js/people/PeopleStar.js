@@ -1,11 +1,11 @@
 import {AverageColor} from "AverageColor";
 import {ToolTips} from "ToolTips";
 
-let gThis = null;
+let self = null;
 
 export class PeopleStar {
     constructor() {
-        gThis = this;
+        self = this;
         this.lang = document.querySelector("html").getAttribute("lang");
         this.averageColor = new AverageColor();
         this.toolTips = new ToolTips();
@@ -17,10 +17,10 @@ export class PeopleStar {
     start() {
         this.setColorPersonCards();
 
-        document.addEventListener("theme-changed", (e) => {
-            gThis.theme = gThis.getTheme();
-            console.log("Theme changed : " + gThis.theme);
-            gThis.setColorPersonCards();
+        document.addEventListener("theme-changed", () => {
+            self.theme = self.getTheme();
+            console.log("Theme changed : " + self.theme);
+            self.setColorPersonCards();
         });
     }
 

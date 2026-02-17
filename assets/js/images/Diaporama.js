@@ -1,9 +1,9 @@
-let gThis;
+let self;
 
 export class Diaporama {
 
     constructor() {
-        gThis = this;
+        self = this;
         this.locale = document.querySelector("html").getAttribute("lang");
         this.diaporamaImages = null;
     }
@@ -31,7 +31,7 @@ export class Diaporama {
     }
 
     openDiaporama(e) {
-        const images = gThis.diaporamaImages;
+        const images = self.diaporamaImages;
         const count = images.length;
         let prevDiv, nextDiv;
         const srcArray = Array.from(images, image => {
@@ -45,10 +45,10 @@ export class Diaporama {
         const arrowLeft = svgs.querySelector("#arrow-left").querySelector("svg").cloneNode(true);
         const arrowRight = svgs.querySelector("#arrow-right").querySelector("svg").cloneNode(true);
 
-        gThis.diaporamaIndex = 0;
-        gThis.diaporamaCount = count;
-        gThis.diaporamaSrc = srcArray;
-        gThis.diaporamaSrcset = srcsetArray;
+        self.diaporamaIndex = 0;
+        self.diaporamaCount = count;
+        self.diaporamaSrc = srcArray;
+        self.diaporamaSrcset = srcsetArray;
 
         const diaporamaDiv = document.querySelector(".diaporama");
 
@@ -71,7 +71,7 @@ export class Diaporama {
         closeDiv.classList.add("close");
         const crossDiv = document.createElement("div");
         closeDiv.appendChild(crossDiv);
-        closeDiv.addEventListener("click", gThis.closeDiaporama);
+        closeDiv.addEventListener("click", self.closeDiaporama);
         crossDiv.appendChild(xmark);
         if (count > 1) {
             prevDiv = document.createElement("div");
@@ -97,21 +97,21 @@ export class Diaporama {
                 thumbnail.setAttribute("data-index", index.toString());
                 if (src === imageSrc) {
                     thumbnail.classList.add("active");
-                    gThis.diaporamaIndex = index;
+                    self.diaporamaIndex = index;
                 }
                 const img = document.createElement("img");
                 img.setAttribute("src", src);
                 if (srcsetArray[index])
                     img.setAttribute("srcset", srcsetArray[index]);
                 thumbnail.appendChild(img);
-                thumbnail.addEventListener("click", gThis.gotoImage);
+                thumbnail.addEventListener("click", self.gotoImage);
                 thumbnails.appendChild(thumbnail);
             });
-            prevDiv.addEventListener("click", gThis.prevImage);
-            nextDiv.addEventListener("click", gThis.nextImage);
+            prevDiv.addEventListener("click", self.prevImage);
+            nextDiv.addEventListener("click", self.nextImage);
         }
 
-        document.addEventListener("keydown", gThis.getKey);
+        document.addEventListener("keydown", self.getKey);
 
         backDiapo.appendChild(closeDiv);
         if (count > 1) imageDiv.appendChild(prevDiv);
@@ -130,29 +130,29 @@ export class Diaporama {
     }
 
     nextImage() {
-        gThis.thumbnailDeactivate(gThis.diaporamaIndex);
-        gThis.diaporamaIndex = (gThis.diaporamaIndex + 1) % gThis.diaporamaCount;
-        gThis.setImage();
+        self.thumbnailDeactivate(self.diaporamaIndex);
+        self.diaporamaIndex = (self.diaporamaIndex + 1) % self.diaporamaCount;
+        self.setImage();
     }
 
     prevImage() {
-        gThis.thumbnailDeactivate(gThis.diaporamaIndex);
-        gThis.diaporamaIndex = (gThis.diaporamaIndex + (gThis.diaporamaCount - 1)) % gThis.diaporamaCount;
-        gThis.setImage();
+        self.thumbnailDeactivate(self.diaporamaIndex);
+        self.diaporamaIndex = (self.diaporamaIndex + (self.diaporamaCount - 1)) % self.diaporamaCount;
+        self.setImage();
     }
 
     gotoImage(e) {
-        gThis.thumbnailDeactivate(gThis.diaporamaIndex);
-        gThis.diaporamaIndex = parseInt(e.currentTarget.getAttribute("data-index"));
-        gThis.setImage();
+        self.thumbnailDeactivate(self.diaporamaIndex);
+        self.diaporamaIndex = parseInt(e.currentTarget.getAttribute("data-index"));
+        self.setImage();
     }
 
     setImage() {
-        gThis.thumbnailActivate(gThis.diaporamaIndex);
+        self.thumbnailActivate(self.diaporamaIndex);
         const img = document.querySelector(".back-diapo").querySelector(".image").querySelector("img");
-        img.setAttribute("src", gThis.diaporamaSrc[gThis.diaporamaIndex]);
-        if (gThis.diaporamaSrcset[gThis.diaporamaIndex]) {
-            img.setAttribute("srcset", gThis.diaporamaSrcset[gThis.diaporamaIndex]);
+        img.setAttribute("src", self.diaporamaSrc[self.diaporamaIndex]);
+        if (self.diaporamaSrcset[self.diaporamaIndex]) {
+            img.setAttribute("srcset", self.diaporamaSrcset[self.diaporamaIndex]);
         } else {
             img.removeAttribute("srcset");
         }
@@ -176,7 +176,7 @@ export class Diaporama {
         const backDiapo = document.querySelector(".back-diapo");
         const imgDiv = backDiapo.querySelector("img");
 
-        document.removeEventListener("keydown", gThis.getKey);
+        document.removeEventListener("keydown", self.getKey);
         document.body.classList.remove("frozen");
         setTimeout(() => {
             imgDiv.classList.remove("fade");
@@ -189,11 +189,11 @@ export class Diaporama {
 
     getKey(e) {
         if (e.key === "ArrowLeft") {
-            if (gThis.diaporamaCount > 1) gThis.prevImage();
+            if (self.diaporamaCount > 1) self.prevImage();
         } else if (e.key === "ArrowRight") {
-            if (gThis.diaporamaCount > 1) gThis.nextImage();
+            if (self.diaporamaCount > 1) self.nextImage();
         } else if (e.key === "Escape") {
-            gThis.closeDiaporama();
+            self.closeDiaporama();
         }
     }
 }

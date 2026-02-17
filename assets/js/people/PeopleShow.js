@@ -2,11 +2,11 @@ import {Diaporama} from "Diaporama";
 import {ToolTips} from "ToolTips";
 import {TranslationsForms} from "TranslationsForms";
 
-let gThis = null;
+let self = null;
 
 export class PeopleShow {
     constructor() {
-        gThis = this;
+        self = this;
         this.lang = document.querySelector("html").getAttribute("lang");
         this.globs = JSON.parse(document.querySelector(".global-data").textContent);
 
@@ -60,14 +60,14 @@ export class PeopleShow {
         const popInfos = document.querySelector(".pop-infos");
         const close = popInfos.querySelector(".close");
 
-        close.addEventListener("click", gThis.hideInfos);
+        close.addEventListener("click", self.hideInfos);
     }
 
     showInfos(evt) {
         const popInfos = document.querySelector(".pop-infos");
         let wasOpen = false;
         if (popInfos.classList.contains("show")) {
-            gThis.hideInfos(evt);
+            self.hideInfos(evt);
             wasOpen = true;
         }
 
@@ -82,7 +82,7 @@ export class PeopleShow {
 
             let img = document.createElement("img");
             if (poster.length) {
-                img.setAttribute("src", gThis.imgUrl + poster);
+                img.setAttribute("src", self.imgUrl + poster);
             } else {
                 img.setAttribute("src", '/images/default/no_poster_dark.png');
             }
@@ -108,7 +108,7 @@ export class PeopleShow {
                 popInfos.querySelector(".overview").appendChild(document.createTextNode(result.overview));
                 popInfos.querySelector(".spinner").setAttribute("style", "display: none;");
             }
-            xhr.open("GET", gThis.app_series_get_overview + id + "?type=" + type);
+            xhr.open("GET", self.app_series_get_overview + id + "?type=" + type);
             xhr.send();
         }, wasOpen ? 200 : 0);
     }
@@ -172,7 +172,7 @@ export class PeopleShow {
             "id": id,
             "rating": rating
         };
-        fetch(gThis.app_people_rating,
+        fetch(self.app_people_rating,
             {
                 method: 'POST',
                 headers: {
@@ -193,9 +193,9 @@ export class PeopleShow {
                 newBlockDiv.remove();
                 const stars = leftColumn.querySelector(".rating.user").querySelectorAll(".star");
                 stars.forEach(star => {
-                    star.addEventListener("click", gThis.rate);
+                    star.addEventListener("click", self.rate);
                 });
-                gThis.toolTips.init(ratingInfos);
+                self.toolTips.init(ratingInfos);
             });
     }
 
@@ -211,7 +211,7 @@ export class PeopleShow {
             "name": preferredName,
             "new": newName
         };
-        fetch(gThis.globs.app_people_preferred_name,
+        fetch(self.globs.app_people_preferred_name,
             {
                 method: 'POST',
                 headers: {
@@ -233,7 +233,7 @@ export class PeopleShow {
                 // form and submit button have been replaced
                 const preferredNameForm = document.querySelector(".preferred-name");
                 const preferredNameSubmit = preferredNameForm.querySelector("button[type=submit]");
-                preferredNameSubmit.addEventListener("click", gThis.preferredName);
+                preferredNameSubmit.addEventListener("click", self.preferredName);
 
                 // display the new preferred name in the h1
                 const h1 = document.querySelector("h1");

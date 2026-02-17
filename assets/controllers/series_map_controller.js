@@ -1,10 +1,10 @@
 import {Controller} from '@hotwired/stimulus';
-let gThis;
+let self;
 export default class extends Controller {
 
     connect() {
-        gThis = this;
-        console.log(gThis)
+        self = this;
+        console.log(self)
         this.markers = [];
         this.element.addEventListener('ux:map:pre-connect', this._onPreConnect);
         this.element.addEventListener('ux:map:connect', this._onConnect);
@@ -33,7 +33,7 @@ export default class extends Controller {
     _onConnect(event) {
         // The map, markers and infoWindows are created
         // The instances depend on the renderer you are using
-        // console.log(event.detail.map);
+         console.log(event.detail.map);
         // console.log(event.detail.markers);
         // console.log(event.detail.infoWindows);
 
@@ -43,16 +43,16 @@ export default class extends Controller {
 
         // const firstInfoWindow = event.detail.infoWindows[0];
         // firstInfoWindow.options.opened = true;
-        console.log(gThis.markers);
+        // console.log(self.markers);
     }
 
     _onMarkerBeforeCreate(event) {
         // The marker is not created, yet
         // You can use this event to configure the marker before it is created
-        console.log(event.detail);
         const { definition, L } = event.detail;
+        console.log(definition, L);
         const id = definition['extra']['id'];
-        gThis.markers[id] = event.detail.definition;
+        self.markers[id] = event.detail.definition;
     }
 
     _onMarkerAfterCreate(event) {

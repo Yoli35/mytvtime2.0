@@ -1,6 +1,6 @@
 import {ToolTips} from "ToolTips";
 
-let gThis = null;
+let self = null;
 
 export class Menu {
 
@@ -108,7 +108,7 @@ export class Menu {
      *  @property {string} dateKey
      */
     constructor() {
-        gThis = this;
+        self = this;
         this.root = document.documentElement;
         this.userMenu = document.querySelector(".menu.user");
         this.userConnected = this.userMenu.getAttribute("data-user-connected") === "true";
@@ -232,23 +232,23 @@ export class Menu {
                 }
                 const menu = item.querySelector(".menu");
                 if (item.classList.contains("open")) {
-                    gThis.closeMenu(item, menu);
+                    self.closeMenu(item, menu);
                     return;
                 }
                 navbarItems.forEach((i) => {
                     const m = i.querySelector(".menu");
-                    gThis.closeMenu(i, m);
+                    self.closeMenu(i, m);
                 });
-                gThis.openMenu(item, menu);
-                gThis.tooltips.hide()
+                self.openMenu(item, menu);
+                self.tooltips.hide()
                 if (menu.classList.contains("history")) {
-                    gThis.checkHistory();
+                    self.checkHistory();
                 }
                 if (menu.classList.contains("log")) {
-                    gThis.checkLog();
+                    self.checkLog();
                 }
                 if (menu.classList.contains("main")) {
-                    gThis.updateMainMenu();
+                    self.updateMainMenu();
                 }
             });
         });
@@ -282,17 +282,17 @@ export class Menu {
             multiSearchDiv.classList.toggle("active");
             if (multiSearchDiv.classList.contains("active")) {
                 multiSearch.focus();
-                gThis.initialPreviewSetting = gThis.getPreview();
-                gThis.forcePreview(displayPosterToggler.checked);
+                self.initialPreviewSetting = self.getPreview();
+                self.forcePreview(displayPosterToggler.checked);
             } else {
-                gThis.forcePreview(gThis.initialPreviewSetting);
+                self.forcePreview(self.initialPreviewSetting);
                 multiSearchOptionsMenu.classList.remove("active");
                 multiSearch.value = "";
-                gThis.closeMultiSearchMenu(multiSearch);
+                self.closeMultiSearchMenu(multiSearch);
             }
         });
         displayPosterToggler.addEventListener("change", () => {
-            gThis.forcePreview(displayPosterToggler.checked);
+            self.forcePreview(displayPosterToggler.checked);
         });
         openInNewTabToggler.addEventListener("change", () => {
             const as = multiSearchDiv.querySelectorAll(".search-results ul li a");
@@ -333,9 +333,9 @@ export class Menu {
                 // On met le focus sur le champ de recherche
                 multiSearch.focus();
                 // On sauve l'option dans un cookie
-                gThis.setMultiSearchOptionCookie(newValue);
+                self.setMultiSearchOptionCookie(newValue);
                 // On relance la recherche
-                gThis.searchFetch({currentTarget: multiSearch});
+                self.searchFetch({currentTarget: multiSearch});
             });
         });
 
@@ -361,8 +361,8 @@ export class Menu {
             option.classList.add("active");
         }
 
-        multiSearch.addEventListener("input", gThis.searchFetch);
-        multiSearch.addEventListener("keydown", gThis.searchMenuNavigate);
+        multiSearch.addEventListener("input", self.searchFetch);
+        multiSearch.addEventListener("keydown", self.searchMenuNavigate);
     }
 
     setMultiSearchOptionCookie(multiSearchSubType) {
@@ -381,7 +381,7 @@ export class Menu {
             const id = item.id.split("-")[4];
             const eotdPreview = document.querySelector(`#eotd-preview-${group}-${id}`);
             item.addEventListener("mouseenter", (e) => {
-                if (e.clientY > gThis.clientHeight / 2)
+                if (e.clientY > self.clientHeight / 2)
                     eotdPreview.classList.add("up");
                 else
                     eotdPreview.classList.remove("up");
@@ -410,7 +410,7 @@ export class Menu {
             const id = item.id.split("-")[3];
             const preview = document.querySelector(`div[id$="preview-${id}"]`);
             item.addEventListener("mouseenter", (e) => {
-                if (e.clientY > gThis.clientHeight / 2)
+                if (e.clientY > self.clientHeight / 2)
                     preview.classList.add("up");
                 else
                     preview.classList.remove("up");
@@ -506,7 +506,7 @@ export class Menu {
                 blockDiv.innerHTML = block;
                 const newScheduleMenuDiv = blockDiv.querySelector(".schedule-menu");
                 scheduleMenuDiv.replaceWith(newScheduleMenuDiv);
-                gThis.posterPreview();
+                self.posterPreview();
             })
             .catch(err => {
                 console.log(err);
@@ -550,7 +550,7 @@ export class Menu {
                     mainMenu.appendChild(suggestionsDiv);
                 }
                 wrapperDiv.classList.add("ready");
-                gThis.tooltips.init(suggestionsDiv);
+                self.tooltips.init(suggestionsDiv);
             })
             .catch(err => {
                 console.log(err);
@@ -577,11 +577,11 @@ export class Menu {
         }
         const searchType = ul.getAttribute("data-type");
         const searchSubType = ul.getAttribute("data-sub-type");
-        const baseHref = "/" + gThis.lang + "/";
+        const baseHref = "/" + self.lang + "/";
         let url, options;
 
         if (searchSubType === 'tv_id' || searchSubType === 'movie_id') {
-            url = gThis.apiEndPoints[searchSubType] + value;
+            url = self.apiEndPoints[searchSubType] + value;
             options = {
                 method: 'GET',
                 headers: {
@@ -589,7 +589,7 @@ export class Menu {
                 }
             };
         } else {
-            url = gThis.apiEndPoints[searchSubType || searchType];
+            url = self.apiEndPoints[searchSubType || searchType];
             options = {
                 method: 'POST',
                 headers: {
@@ -627,8 +627,8 @@ export class Menu {
                     if (isAddCastInput) {
                         url = null;
                     } else {
-                        url = baseHref + gThis.hRefs[type] + result['id'];
-                        if (type !== 'movie' && type !== 'dbmovie' && type !== 'collection') url += '-' + gThis.toSlug(result[gThis.resultNames[type]]);
+                        url = baseHref + self.hRefs[type] + result['id'];
+                        if (type !== 'movie' && type !== 'dbmovie' && type !== 'collection') url += '-' + self.toSlug(result[self.resultNames[type]]);
                     }
                     const aDiv = document.createElement(url ? "a" : "div");
                     if (url) {
@@ -640,9 +640,9 @@ export class Menu {
                         aDiv.setAttribute("person-id", result['id'].toString());
                         aDiv.setAttribute("name", result['name'].toString());
                         aDiv.addEventListener("click", e => {
-                            castNameInput.removeEventListener("input", gThis.searchFetch);
+                            castNameInput.removeEventListener("input", self.searchFetch);
                             castNameInput.addEventListener("input", () => {
-                                castNameInput.addEventListener("input", gThis.searchFetch); // The same type & listener do not add event listener
+                                castNameInput.addEventListener("input", self.searchFetch); // The same type & listener do not add event listener
                             });
                             hiddenInputPersonId.value = aDiv.getAttribute("person-id");
                             castNameInput.value = aDiv.getAttribute("name");
@@ -654,15 +654,15 @@ export class Menu {
                         })
                     }
                     const li = document.createElement("li");
-                    li.setAttribute('data-title', result[gThis.resultNames[type]]);
+                    li.setAttribute('data-title', result[self.resultNames[type]]);
                     if (!index) li.classList.add("active");
                     const posterDiv = document.createElement("div");
                     posterDiv.classList.add("poster");
-                    const imageResult = gThis.resultPaths[type];
+                    const imageResult = self.resultPaths[type];
                     if (result[imageResult]) {
                         const img = document.createElement("img");
-                        img.src = gThis.imagePaths[type] + result[imageResult];
-                        img.alt = result[gThis.resultNames[type]];
+                        img.src = self.imagePaths[type] + result[imageResult];
+                        img.alt = result[self.resultNames[type]];
                         posterDiv.appendChild(img);
                     } else {
                         posterDiv.innerHTML = '<div>No poster</div>';
@@ -670,12 +670,12 @@ export class Menu {
                     aDiv.appendChild(posterDiv);
                     const titleDiv = document.createElement("div");
                     titleDiv.classList.add("title");
-                    titleDiv.innerHTML = result[gThis.resultNames[type]];
+                    titleDiv.innerHTML = result[self.resultNames[type]];
                     aDiv.appendChild(titleDiv);
                     li.appendChild(aDiv);
                     ul.appendChild(li);
                 });
-                gThis.tooltips.init(ul);
+                self.tooltips.init(ul);
                 searchResults.appendChild(ul);
             })
             .catch(err => console.error('error:' + err));
@@ -711,13 +711,13 @@ export class Menu {
 
                 if (!li) {
                     if (type === 'movie') {
-                        window.location.href = '/' + gThis.lang + '/movie/search/all?q=' + value;
+                        window.location.href = '/' + self.lang + '/movie/search/all?q=' + value;
                     }
                     if (type === 'tv') {
-                        window.location.href = '/' + gThis.lang + '/series/search/all?q=' + value;
+                        window.location.href = '/' + self.lang + '/series/search/all?q=' + value;
                     }
                     if (type === 'dbtv') {
-                        window.location.href = '/' + gThis.lang + '/series/db/search/?name=' + value;
+                        window.location.href = '/' + self.lang + '/series/db/search/?name=' + value;
                     }
                     return;
                 }
@@ -733,7 +733,7 @@ export class Menu {
                 searchResults.classList.remove("showing-something");
                 const menuDiv = searchResults.closest(".menu");
                 const navbarItem = menuDiv.closest(".navbar-item");
-                gThis.closeMenu(navbarItem, menuDiv);
+                self.closeMenu(navbarItem, menuDiv);
                 /* << */
                 a.click();
             }
@@ -788,17 +788,17 @@ export class Menu {
              */
             .then(data => {
                 /*console.log(data);*/
-                gThis.posterUrl = data.posterUrl;
-                gThis.profileUrl = data.profileUrl;
-                gThis.imagePaths = {
-                    'movie': gThis.posterUrl,
-                    'movie_id': gThis.posterUrl,
+                self.posterUrl = data.posterUrl;
+                self.profileUrl = data.profileUrl;
+                self.imagePaths = {
+                    'movie': self.posterUrl,
+                    'movie_id': self.posterUrl,
                     'dbmovie': '/movies/posters',
-                    'collection': gThis.posterUrl,
-                    'tv': gThis.posterUrl,
-                    'tv_id': gThis.posterUrl,
+                    'collection': self.posterUrl,
+                    'tv': self.posterUrl,
+                    'tv_id': self.posterUrl,
                     'dbtv': '/series/posters',
-                    'people': gThis.profileUrl
+                    'people': self.profileUrl
                 };
             })
             .catch((error) => {
@@ -819,23 +819,23 @@ export class Menu {
         const cancelButton = accentColorDialog.querySelector("button[type=button]");
         const accentColorInput = accentColorDialog.querySelector("input[type=color]");
 
-        accentColorInput.value = gThis.accentColorValue;
+        accentColorInput.value = self.accentColorValue;
         cancelButton.addEventListener("click", () => {
-            gThis.root.style.setProperty("--accent-color", gThis.accentColorValue);
+            self.root.style.setProperty("--accent-color", self.accentColorValue);
             accentColorDialog.close();
         });
         resetButton.addEventListener("click", () => {
-            accentColorInput.value = gThis.defaultColorValue;
-            gThis.root.style.setProperty("--accent-color", gThis.defaultColorValue);
-            gThis.updateAccentColor(gThis.defaultColorValue);
+            accentColorInput.value = self.defaultColorValue;
+            self.root.style.setProperty("--accent-color", self.defaultColorValue);
+            self.updateAccentColor(self.defaultColorValue);
         });
         submitButton.addEventListener("click", () => {
-            gThis.updateAccentColor(accentColorInput.value);
+            self.updateAccentColor(accentColorInput.value);
             accentColorDialog.close();
         });
         accentColorInput.addEventListener("input", () => {
             console.log(accentColorInput.value);
-            gThis.root.style.setProperty("--accent-color", accentColorInput.value);
+            self.root.style.setProperty("--accent-color", accentColorInput.value);
         });
         accentColorDialog.showModal();
     }
@@ -881,17 +881,17 @@ export class Menu {
         const startInput = scheduleRangeDialog.querySelector("input[id=schedule-menu-range-start]");
         const endInput = scheduleRangeDialog.querySelector("input[id=schedule-menu-range-end]");
 
-        gThis.getScheduleRange('values');
+        self.getScheduleRange('values');
 
         cancelButton.addEventListener("click", () => {
             scheduleRangeDialog.close();
         });
         resetButton.addEventListener("click", () => {
-            gThis.getScheduleRange('default');
+            self.getScheduleRange('default');
             localStorage.setItem("schedule_range_updated", "true")
         });
         submitButton.addEventListener("click", () => {
-            gThis.updateScheduleRange(startInput.value, endInput.value);
+            self.updateScheduleRange(startInput.value, endInput.value);
             localStorage.setItem("schedule_range_updated", "true")
             scheduleRangeDialog.close();
         });
@@ -940,15 +940,15 @@ export class Menu {
         const resetButton = whatNextDialog.querySelector("button[type=reset]");
         const cancelButton = whatNextDialog.querySelector("button[type=button]");
 
-        gThis.getWhatNextSettings('values');
+        self.getWhatNextSettings('values');
 
         cancelButton.addEventListener("click", () => {
             whatNextDialog.close();
         });
         resetButton.addEventListener("click", () => {
-            gThis.getWhatNextSettings('defaut');
+            self.getWhatNextSettings('defaut');
         });
-        submitButton.addEventListener("click", gThis.updateWhatNextSettings);
+        submitButton.addEventListener("click", self.updateWhatNextSettings);
         whatNextDialog.showModal();
     }
 
@@ -1052,10 +1052,10 @@ export class Menu {
         const theme = e.currentTarget.getAttribute("data-theme");
 
         // if (!document.startViewTransition) {
-        gThis.updateTheme(theme);
+        self.updateTheme(theme);
         // } else {
         //     document.startViewTransition(() => {
-        //         gThis.updateTheme(theme);
+        //         self.updateTheme(theme);
         //     });
         // }
 
@@ -1102,7 +1102,7 @@ export class Menu {
                 /*console.log(lastWatchedEpisode, lastEpisodeInHistory);*/
                 if (lastEpisodeInHistory !== lastWatchedEpisode) {
                     loadingDiv.innerHTML = 'Reloading...';
-                    gThis.reloadHistory({currentTarget: historyOptions[0]});
+                    self.reloadHistory({currentTarget: historyOptions[0]});
                 }
                 loadingDiv.remove();
             });
@@ -1200,7 +1200,7 @@ export class Menu {
                     const device = document.createElement("div");
                     device.classList.add("device");
                     /*if (options.device === false) device.classList.add('hidden');*/
-                    if (item.deviceSvg) device.innerHTML = gThis.svgs[item.deviceSvg];
+                    if (item.deviceSvg) device.innerHTML = self.svgs[item.deviceSvg];
 
                     const provider = document.createElement("div");
                     provider.classList.add("provider");
@@ -1231,7 +1231,7 @@ export class Menu {
                     li.appendChild(a);
                     ul.appendChild(li);
                 });
-                gThis.adjustHistoryList();
+                self.adjustHistoryList();
             })
             .catch((error) => {
                 console.error('Error:', error);
@@ -1275,7 +1275,7 @@ export class Menu {
                 /*console.log(lastId, data);*/
                 if (parseInt(lastId) !== data.last) {
                     loadingDiv.querySelector('div').innerHTML = 'Reloading...';
-                    gThis.reloadLog(lastId);
+                    self.reloadLog(lastId);
                 } else {
                     loadingDiv.remove();
                 }

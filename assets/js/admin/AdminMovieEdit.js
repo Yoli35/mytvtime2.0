@@ -1,9 +1,9 @@
 import {ToolTips} from "ToolTips";
 
-let gThis;
+let self;
 export class AdminMovieEdit {
     constructor() {
-        gThis = this;
+        self = this;
         this.toolTip = new ToolTips();
         this.atrForm = document.querySelector('.admin__append_to_response__form');
         const globs = document.querySelector("#globs");
@@ -25,10 +25,10 @@ export class AdminMovieEdit {
         this.atrForm.addEventListener('submit', (event) => {
             const atrSelect = document.querySelector('#append_to_response');
             const atrValue = atrSelect.value;
-            const atrUrl = gThis.atrUrl;
-            const atrData = new FormData(gThis.atrForm);
+            const atrUrl = self.atrUrl;
+            const atrData = new FormData(self.atrForm);
             atrData.append('append_to_response', atrValue);
-            atrData.append('id', gThis.movieId);
+            atrData.append('id', self.movieId);
             event.preventDefault();
             fetch(atrUrl, {
                 method: 'POST',
@@ -44,9 +44,9 @@ export class AdminMovieEdit {
                     return response.text();
                 })
                 .then(data => {
-                    gThis.atrResultsDiv.innerHTML = data;
-                    gThis.toolTip.init(gThis.atrResultsDiv);
-                    gThis.valueSwitchesInit();
+                    self.atrResultsDiv.innerHTML = data;
+                    self.toolTip.init(self.atrResultsDiv);
+                    self.valueSwitchesInit();
                 })
                 .catch(error => {
                     console.error('There was a problem with the fetch operation:', error);
@@ -59,27 +59,27 @@ export class AdminMovieEdit {
         let language = null, page = null, include_image_language = null, ends = null, starts = null;
         switch (newValue) {
             case 'changes':
-                page = gThis.appendToResponseArray['Changes']['extra_fields']['page'];
-                ends = gThis.appendToResponseArray['Changes']['extra_fields']['end_date'];
-                starts = gThis.appendToResponseArray['Changes']['extra_fields']['start_date'];
+                page = self.appendToResponseArray['Changes']['extra_fields']['page'];
+                ends = self.appendToResponseArray['Changes']['extra_fields']['end_date'];
+                starts = self.appendToResponseArray['Changes']['extra_fields']['start_date'];
                 break;
             case 'credits':
-                language = gThis.appendToResponseArray['Credits']['extra_fields']['language'];
+                language = self.appendToResponseArray['Credits']['extra_fields']['language'];
                 break;
             case 'images':
-                language = gThis.appendToResponseArray['Images']['extra_fields']['language'];
-                include_image_language = gThis.appendToResponseArray['Images']['extra_fields']['include_image_language'];
+                language = self.appendToResponseArray['Images']['extra_fields']['language'];
+                include_image_language = self.appendToResponseArray['Images']['extra_fields']['include_image_language'];
                 break;
             case 'lists':
-                language = gThis.appendToResponseArray['Lists']['extra_fields']['language'];
-                page = gThis.appendToResponseArray['Lists']['extra_fields']['page'];
+                language = self.appendToResponseArray['Lists']['extra_fields']['language'];
+                page = self.appendToResponseArray['Lists']['extra_fields']['page'];
                 break;
             case 'reviews':
-                language = gThis.appendToResponseArray['Reviews']['extra_fields']['language'];
-                page = gThis.appendToResponseArray['Reviews']['extra_fields']['page'];
+                language = self.appendToResponseArray['Reviews']['extra_fields']['language'];
+                page = self.appendToResponseArray['Reviews']['extra_fields']['page'];
                 break;
             case 'videos':
-                language = gThis.appendToResponseArray['Videos']['extra_fields']['language'];
+                language = self.appendToResponseArray['Videos']['extra_fields']['language'];
                 break;
         }
 
@@ -132,7 +132,7 @@ export class AdminMovieEdit {
             includeImageLanguageSelect.value = 'null';
             includeImageLanguageLabel.style.display = 'none';
         }
-        gThis.atrResultsDiv.innerHTML = '';
+        self.atrResultsDiv.innerHTML = '';
     }
 
     valueSwitchesInit(){

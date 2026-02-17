@@ -30,7 +30,7 @@
                     </li>
                     <li>
                         <div class="change">{{ ux_icon('mdi:code') }}→ Refactor WatchLinkCrud for consistency</div>
-                        <div class="details">Replaces `gThis` with `self` for improved readability and consistency across the codebase. Simplifies understanding of the code and aligns with modern JavaScript best practices. Also fixes an oversight in the code (undefined variable form).</div>
+                        <div class="details">Replaces `self` with `self` for improved readability and consistency across the codebase. Simplifies understanding of the code and aligns with modern JavaScript best practices. Also fixes an oversight in the code (undefined variable form).</div>
                     </li>
                     <li>
                         <div class="change">{{ ux_icon('mdi:map-outline') }}→ Improve map initialization and user interactions</div>
@@ -1261,7 +1261,7 @@
                 <ul>
                     <li>
                         <div class="change">{{ ux_icon('mdi:language-javascript') }}→ Replace text references with translations in Season.js</div>
-                        <div class="details">Updated all occurrences of "gThis.text" to "gThis.translations" for setting data-title and placeholder attributes. This change improves internationalization support by ensuring UI strings are sourced from the translations object.</div>
+                        <div class="details">Updated all occurrences of "self.text" to "self.translations" for setting data-title and placeholder attributes. This change improves internationalization support by ensuring UI strings are sourced from the translations object.</div>
                     </li>
                     <li>
                         <div class="change">{{ ux_icon('mdi:tv') }}→ Add outline styling to series and user components</div>

@@ -1,8 +1,8 @@
-let gThis;
+let self;
 
 export class NetworkAndProvider {
     constructor(isNetwork) {
-        gThis = this;
+        self = this;
         const locale = document.querySelector('html').lang;
         if (isNetwork) {
             this.url = `/${locale}/user/network/toggle/`;
@@ -70,7 +70,7 @@ export class NetworkAndProvider {
         checkboxes.forEach(checkbox => {
             checkbox.addEventListener('change', () => {
                 const providerId = checkbox.id.split('-')[1];
-                fetch(gThis.url + providerId, {
+                fetch(self.url + providerId, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',

@@ -1,19 +1,18 @@
 import {ToolTips} from 'ToolTips';
 
-let gThis;
+let self;
 
 export class Keyword {
     maxLength;
 
     constructor(type) {
-        gThis = this;
+        self = this;
         this.toolTips = new ToolTips();
         this.maxLength = 0;
         this.init(type);
     }
 
     init(type) {
-        const lang = document.querySelector("html").getAttribute("lang");
         const keywordFormContainer = document.querySelector('.keyword-translation-form');
         const keywordForm = document.querySelector('#keyword-translation-form');
         if (!keywordForm) {
@@ -29,8 +28,8 @@ export class Keyword {
                 if (keywordForm.classList.contains('active')) {
                     return;
                 }
-                gThis.displayForm(keywordFormContainer);
-                gThis.keywordInitFields(keywordForm, missingKeywords);
+                self.displayForm(keywordFormContainer);
+                self.keywordInitFields(keywordForm, missingKeywords);
             });
         });
         // Copier dans le presse-papiers le contenu du "data-title"
@@ -48,7 +47,7 @@ export class Keyword {
             });
         });
         keywordFormsCancel.addEventListener('click', function () {
-            gThis.hideForm(keywordFormContainer);
+            self.hideForm(keywordFormContainer);
         });
         keywordFormsSubmit.addEventListener('click', function (event) {
             event.preventDefault();
@@ -71,10 +70,10 @@ export class Keyword {
             })
                 .then((response) => response.json())
                 .then(data => {
-                    gThis.hideForm(keywordFormContainer);
+                    self.hideForm(keywordFormContainer);
                     const keywordsDiv = document.querySelector('.keywords');
                     keywordsDiv.innerHTML = data.keywords;
-                    gThis.toolTips.init(keywordsDiv);
+                    self.toolTips.init(keywordsDiv);
                 });
         });
     }
@@ -87,13 +86,13 @@ export class Keyword {
             row.remove();
         });
 
-        gThis.keywordTranslationSelect(buttons);
+        self.keywordTranslationSelect(buttons);
 
         missingKeywords.forEach((keyword) => {
             values.push(keyword.textContent);
-            gThis.maxLength = Math.max(gThis.maxLength, keyword.textContent.length);
+            self.maxLength = Math.max(self.maxLength, keyword.textContent.length);
         });
-        gThis.keywordTranslationFields(buttons, values);
+        self.keywordTranslationFields(buttons, values);
     }
 
     keywordTranslationFields(buttons, keywords) {
@@ -108,7 +107,7 @@ export class Keyword {
                         <div class="keyword-translation-label">' + keyword + '</div>\n \
                         <input id="translated-' + index + '" type="text" data-original="' + keyword + '" value="' + keyword + '">\n \
                     </label>\n \
-            </div>\n';/* style="width: ' + gThis.maxLength + 'ch"*/
+            </div>\n';/* style="width: ' + self.maxLength + 'ch"*/
             index++;
             row.innerHTML = field;
             buttons.parentNode.insertBefore(row, buttons);

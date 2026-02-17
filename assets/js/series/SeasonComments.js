@@ -1,10 +1,10 @@
 import {ToolTips} from 'ToolTips';
 
-let gThis;
+let self;
 
 export class SeasonComments {
     constructor(user, seriesId, seasonNumber, translations) {
-        gThis = this;
+        self = this;
         this.user = user;
         this.seriesId = seriesId;
         this.seasonNumber = seasonNumber;
@@ -25,7 +25,7 @@ export class SeasonComments {
     }
 
     getEpisodeComments() {
-        const episodeArr = gThis.getEpisodeArr();
+        const episodeArr = self.getEpisodeArr();
         fetch('/api/season/comments/' + this.seriesId, {
             method: 'POST',
             headers: {
@@ -50,27 +50,27 @@ export class SeasonComments {
                     const seasonNumber = comment['seasonNumber'];
                     let episodeGroup = episodesCommentsDiv.querySelector(".episode-group#episode-comments-" + episodeNumber);
                     if (!episodeGroup) {
-                        episodeGroup = gThis.createEpisodeGroup(seasonNumber, episodeNumber);
+                        episodeGroup = self.createEpisodeGroup(seasonNumber, episodeNumber);
                         episodesCommentsDiv.appendChild(episodeGroup);
                     }
                     const episodeGroupContent = episodeGroup.querySelector(".episode-group-content");
 
                     if (comment['replyTo'] === null) {
-                        episodeGroupContent.appendChild(gThis.createMessage(comment, commentImages));
+                        episodeGroupContent.appendChild(self.createMessage(comment, commentImages));
                     } else {
                         const replyToCommentDiv = episodeGroupContent.querySelector('.comment[data-id="' + comment['replyTo'] + '"]');
                         const messageDiv = replyToCommentDiv.querySelector(".message");
-                        messageDiv.appendChild(gThis.createMessage(comment, commentImages));
+                        messageDiv.appendChild(self.createMessage(comment, commentImages));
                     }
-                    gThis.adjustCommentBadge(comment['tmdbId']);
+                    self.adjustCommentBadge(comment['tmdbId']);
                 });
                 const episodeArr = data['episodeArr'];
                 episodeArr.forEach(ep => {
                     if (!ep['commentCount']) {
-                        episodesCommentsDiv.appendChild(gThis.createEpisodeGroup(ep['seasonNumber'], ep['episodeNumber']));
+                        episodesCommentsDiv.appendChild(self.createEpisodeGroup(ep['seasonNumber'], ep['episodeNumber']));
                     }
                 });
-                gThis.toolTips.init(episodesCommentsDiv);
+                self.toolTips.init(episodesCommentsDiv);
             })
             .catch(err => console.log(err));
     }
@@ -84,7 +84,7 @@ export class SeasonComments {
         const episodeNumber = button.getAttribute("data-ep-number");
         const episodeId = button.getAttribute("data-ep-id");
         const input = form.querySelector('textarea');
-        const formData = gThis.getFormData(imageFilesInput, input.value, episodeId, episodeNumber, replyToId);
+        const formData = self.getFormData(imageFilesInput, input.value, episodeId, episodeNumber, replyToId);
         fetch('/api/season/comment/add/' + this.seriesId, {
             method: 'POST',
             body: formData
@@ -98,9 +98,9 @@ export class SeasonComments {
                     return;
                 }
                 const comment = data['comment'];
-                const newMessage = gThis.createMessage(comment, data['images']);
-                gThis.adjustCommentBadge(comment['tmdbId']);
-                gThis.toolTips.init(newMessage);
+                const newMessage = self.createMessage(comment, data['images']);
+                self.adjustCommentBadge(comment['tmdbId']);
+                self.toolTips.init(newMessage);
                 if (replyToId === "0") {
                     input.value = '';
                     input.focus();
@@ -121,7 +121,7 @@ export class SeasonComments {
 
     getFormData(imageFilesInput, message, episodeId, episodeNumber, replyToId) {
         const formData = new FormData();
-        formData.append("seasonNumber", gThis.seasonNumber);
+        formData.append("seasonNumber", self.seasonNumber);
         formData.append("replyToId", replyToId);
         formData.append("episodeNumber", episodeNumber);
         formData.append("episodeId", episodeId);
@@ -154,12 +154,12 @@ export class SeasonComments {
         commentImageInput.addEventListener('change', this.displayFiles);
 
         cancelButton.addEventListener("click", () => {
-            document.removeEventListener("keydown", gThis.keyEventHandlerCommentImagesDialog);
+            document.removeEventListener("keydown", self.keyEventHandlerCommentImagesDialog);
             commentImagesDialog.close();
         });
         submitButton.addEventListener("click", () => {
             // Store files
-            gThis.closeCommentImagesDialog();
+            self.closeCommentImagesDialog();
         });
     }
 
@@ -180,7 +180,7 @@ export class SeasonComments {
                 }
                 const li = document.createElement('li');
                 const div = document.createElement('div');
-                div.innerText = file.name + ' (' + gThis.fileSize(file.size) + ')';
+                div.innerText = file.name + ' (' + self.fileSize(file.size) + ')';
                 const img = document.createElement('img');
                 img.src = result;
                 img.alt = file.name;
@@ -206,9 +206,9 @@ export class SeasonComments {
         episodeIdInput.value = episodeId;
         commentImageInput.files = filesInput.files;
 
-        gThis.displayFiles({currentTarget: commentImageInput});
+        self.displayFiles({currentTarget: commentImageInput});
 
-        document.addEventListener("keydown", gThis.keyEventHandlerCommentImagesDialog);
+        document.addEventListener("keydown", self.keyEventHandlerCommentImagesDialog);
         commentImagesDialog.showModal();
     }
 
@@ -239,7 +239,7 @@ export class SeasonComments {
             }
         }
 
-        document.removeEventListener("keydown", gThis.keyEventHandlerCommentImagesDialog);
+        document.removeEventListener("keydown", self.keyEventHandlerCommentImagesDialog);
         commentImagesDialog.close();
     }
 
@@ -292,7 +292,7 @@ export class SeasonComments {
     getEpisodeArr() {
         const availableEpisodes = document.querySelectorAll(".episodes .episode-wrapper .episode");
         const episodeArr = [];
-        const seasonNumber = parseInt(gThis.seasonNumber)
+        const seasonNumber = parseInt(self.seasonNumber)
         availableEpisodes.forEach(ep => {
             const episodeNumber = parseInt(ep.getAttribute("id").split("-")[2]);
             episodeArr[episodeNumber - 1] = {
@@ -323,7 +323,7 @@ export class SeasonComments {
         headerDiv.classList.add("episode-group-header");
         const titleDiv = document.createElement("div");
         titleDiv.classList.add("episode-group-title");
-        titleDiv.innerText = "Episode " + gThis.formatEpisode(seasonNumber, episodeNumber);
+        titleDiv.innerText = "Episode " + self.formatEpisode(seasonNumber, episodeNumber);
         headerDiv.appendChild(titleDiv);
         episodeGroup.appendChild(headerDiv);
 
@@ -335,7 +335,7 @@ export class SeasonComments {
         // Footer
         const footer = document.createElement("div");
         footer.classList.add("episode-group-footer");
-        footer.appendChild(gThis.createCommentForm(seasonNumber, episodeNumber, 0));
+        footer.appendChild(self.createCommentForm(seasonNumber, episodeNumber, 0));
         episodeGroup.appendChild(footer);
 
         // Add event click to the comment badge
@@ -357,7 +357,7 @@ export class SeasonComments {
         const form = document.createElement("form");
         form.classList.add("comment-form");
         form.classList.add(replyToId === 0 ? "to-episode" : "to-comment");
-        const userDiv = gThis.createUser(gThis.user);
+        const userDiv = self.createUser(self.user);
         const commentInput = document.createElement("textarea");
         commentInput.setAttribute("row", "1");
         const episode = document.querySelector('.episodes .episode-wrapper .episode#episode-' + seasonNumber + '-' + episodeNumber);
@@ -376,18 +376,18 @@ export class SeasonComments {
         imageButton.classList.add("add-image-button");
         imageButton.setAttribute("data-ep-number", episodeNumber);
         imageButton.setAttribute("data-ep-id", episodeId);
-        imageButton.setAttribute("data-title", gThis.translations['Add images'] + "…");
+        imageButton.setAttribute("data-title", self.translations['Add images'] + "…");
         const imgSvg = document.querySelector("#svgs #image-plus").cloneNode(true);
         imgSvg.removeAttribute("id");
         imageButton.appendChild(imgSvg);
-        imageButton.addEventListener("click", gThis.openCommentImagesDialog)
+        imageButton.addEventListener("click", self.openCommentImagesDialog)
 
         const sendButton = document.createElement("div");
         sendButton.classList.add("send-button");
         sendButton.setAttribute("data-ep-number", episodeNumber);
         sendButton.setAttribute("data-ep-id", episodeId);
-        sendButton.setAttribute("data-title", gThis.translations['Send your comment']);
-        sendButton.addEventListener("click", gThis.addEpisodeComment);
+        sendButton.setAttribute("data-title", self.translations['Send your comment']);
+        sendButton.addEventListener("click", self.addEpisodeComment);
         const sendSvg = document.querySelector("#svgs #send").cloneNode(true);
         sendSvg.removeAttribute("id");
         sendButton.appendChild(sendSvg);
@@ -413,7 +413,7 @@ export class SeasonComments {
         coreDiv.setAttribute("data-id", comment['id']);
         coreDiv.setAttribute("data-tmdb-id", comment['tmdbId']);
 
-        const userDiv = gThis.createUser(comment['user']);
+        const userDiv = self.createUser(comment['user']);
 
         const dateDiv = document.createElement("div");
         dateDiv.classList.add("date");
@@ -428,20 +428,20 @@ export class SeasonComments {
         messageDiv.appendChild(span);
         const answerDiv = document.createElement("div");
         answerDiv.classList.add("answer-button");
-        const svg = gThis.answerSVG.cloneNode(true);
+        const svg = self.answerSVG.cloneNode(true);
         answerDiv.appendChild(svg);
         answerDiv.setAttribute("data-ep-number", comment['episodeNumber'].toString());
-        answerDiv.setAttribute("data-title", gThis.translations['Add answer']);
+        answerDiv.setAttribute("data-title", self.translations['Add answer']);
         messageDiv.appendChild(answerDiv);
 
         coreDiv.appendChild(messageDiv);
-        answerDiv.addEventListener("click", gThis.answerEvent);
+        answerDiv.addEventListener("click", self.answerEvent);
 
         if (images.length) {
             const imagesDiv = document.createElement("div");
             imagesDiv.classList.add("comment-images");
             images.forEach(image => {
-                const imageName = 'Image ' + gThis.formatEpisode(comment['seasonNumber'], comment['episodeNumber']);
+                const imageName = 'Image ' + self.formatEpisode(comment['seasonNumber'], comment['episodeNumber']);
                 const imageDiv = document.createElement("div");
                 imageDiv.classList.add("comment-image");
                 imageDiv.setAttribute("data-title", imageName)
@@ -462,7 +462,7 @@ export class SeasonComments {
         const episodeNumber = answerButton.getAttribute("data-ep-number");
         const commentDiv = answerButton.closest(".comment");
         const replyToId = commentDiv.getAttribute("data-id");
-        const form = gThis.createCommentForm(gThis.seasonNumber, episodeNumber, replyToId);
+        const form = self.createCommentForm(self.seasonNumber, episodeNumber, replyToId);
 
         const dialog = document.createElement("dialog");
         dialog.classList.add("answer-dialog");
