@@ -3,7 +3,6 @@
 namespace App\Controller;
 
 use App\Api\ApiWatchLink;
-use App\DTO\SeriesAdvancedDbSearchDTO;
 use App\DTO\SeriesAdvancedSearchDTO;
 use App\DTO\SeriesSearchDTO;
 use App\Entity\ContactMessage;
@@ -27,7 +26,6 @@ use App\Repository\ContactMessageRepository;
 use App\Repository\DeviceRepository;
 use App\Repository\EpisodeStillRepository;
 use App\Repository\FilmingLocationRepository;
-use App\Repository\KeywordRepository;
 use App\Repository\NetworkRepository;
 use App\Repository\PeopleUserPreferredNameRepository;
 use App\Repository\SeasonLocalizedOverviewRepository;
@@ -48,6 +46,7 @@ use App\Service\ImageConfiguration;
 use App\Service\ImageService;
 use App\Service\KeywordService;
 use App\Service\SeriesService;
+use App\Service\SettingsAdvancedDbSearchService;
 use App\Service\TMDBService;
 use Collator;
 use DateInvalidTimeZoneException;
@@ -82,14 +81,15 @@ class SeriesController extends AbstractController
 
     public function __construct(
         private readonly ApiWatchLink                      $watchLinkApi,
+        private readonly ContactMessageRepository          $contactMessageRepository,
         private readonly DateService                       $dateService,
         private readonly DeviceRepository                  $deviceRepository,
         private readonly EpisodeStillRepository            $episodeStillRepository,
         private readonly FilmingLocationRepository         $filmingLocationRepository,
         private readonly ImageConfiguration                $imageConfiguration,
         private readonly ImageService                      $imageService,
-        private readonly KeywordRepository                 $keywordRepository,
         private readonly KeywordService                    $keywordService,
+        private readonly MailerInterface                   $mailer,
         private readonly MonologLogger                     $logger,
         private readonly NetworkRepository                 $networkRepository,
         private readonly PeopleUserPreferredNameRepository $peopleUserPreferredNameRepository,
@@ -102,6 +102,7 @@ class SeriesController extends AbstractController
         private readonly SeriesRepository                  $seriesRepository,
         private readonly SeriesService                     $seriesService,
         private readonly SeriesVideoRepository             $seriesVideoRepository,
+        private readonly SettingsAdvancedDbSearchService   $settingsAdvancedDbSearchService,
         private readonly SettingsRepository                $settingsRepository,
         private readonly SourceRepository                  $sourceRepository,
         private readonly TMDBService                       $tmdbService,
@@ -109,8 +110,6 @@ class SeriesController extends AbstractController
         private readonly UserEpisodeRepository             $userEpisodeRepository,
         private readonly UserSeriesRepository              $userSeriesRepository,
         private readonly WatchProviderRepository           $watchProviderRepository,
-        private readonly ContactMessageRepository          $contactMessageRepository,
-        private readonly MailerInterface                   $mailer,
     )
     {
     }
@@ -604,11 +603,7 @@ class SeriesController extends AbstractController
         $userSeriesIds = array_column($this->userSeriesRepository->userSeriesTMDBIds($user), 'id');
 
         $countries = $this->getAdvancedSearchCountries($user, $request->getLocale());
-        dump($countries);
 
-        $seriesSearch = new SeriesAdvancedDbSearchDTO(1);
-//        $seriesSearch->setWatchProviders($watchProviders['select']);
-        $seriesSearch->setKeywords($keywords);
         $slugger = new AsciiSlugger();
 
         $advancedDisplaySettings = $this->settingsRepository->findOneBy(['user' => $user, 'name' => 'advanced db search display']);
@@ -618,20 +613,6 @@ class SeriesController extends AbstractController
         }
         $displaySettings = $advancedDisplaySettings->getData();
 
-        $advancedSettings = $this->settingsRepository->findOneBy(['user' => $user, 'name' => 'advanced db search']);
-        if ($advancedSettings) {
-            $settings = $advancedSettings->getData();
-            $seriesSearch->setPage($settings['page']);
-            $seriesSearch->setFirstAirDateYear($settings['first air date year']);
-            $seriesSearch->setFirstAirDateGTE($settings['first air date  GTE'] ? $this->dateService->newDateImmutable($settings['first air date  GTE'], 'Europe/Paris', true) : null);
-            $seriesSearch->setFirstAirDateLTE($settings['first air date LTE'] ? $this->dateService->newDateImmutable($settings['first air date LTE'], 'Europe/Paris', true) : null);
-            $seriesSearch->setWithOriginCountry($settings['with origin country']);
-            $seriesSearch->setWithOriginalLanguage($settings['with origin language']);
-//            $seriesSearch->setWithWatchProviders($settings['with watch providers']);
-            $seriesSearch->setWithKeywords($settings['with keywords']);
-            $seriesSearch->setWithStatus($settings['with status']);
-            $seriesSearch->setSortBy($settings['sort by']);
-        }
         $seriesSearch = $this->settingsAdvancedDbSearchService->get($user);
         $form = $this->createForm(SeriesAdvancedDbSearchType::class, $seriesSearch, ['countries' => $countries]);
 
@@ -2309,7 +2290,7 @@ class SeriesController extends AbstractController
         try {
             $this->mailer->send($mail);
         } catch (TransportExceptionInterface) {
-            $this->logger->error("Error sending email (Serie {$userSeries->getSeries()->getTmdbId()}) new addition by {$userSeries->getUser()->getUsername()})");
+            $this->logger->error("Error sending email (serie {$userSeries->getSeries()->getTmdbId()}) new addition by {$userSeries->getUser()->getUsername()})");
         }
     }
 
@@ -3178,7 +3159,7 @@ class SeriesController extends AbstractController
 
 //    public function getWatchProviders($watchRegion): array
 //    {
-//        // May be unavailable - when Youtube was added for example
+//        // May be unavailable - when YouTube was added for example
 //        // TODO: make a command to regularly update db
 ////        $providers = json_decode($this->tmdbService->getTvWatchProviderList($language, $watchRegion), true);
 ////        $providers = $providers['results'];
