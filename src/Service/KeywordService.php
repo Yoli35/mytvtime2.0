@@ -16,7 +16,7 @@ readonly class KeywordService
     public function __construct(
         #[AutowireMethodOf(ControllerHelper::class)]
         private Closure           $addFlash,
-        private KeyWordRepository $keyWordRepository,
+        private KeywordRepository $keywordRepository,
         private SeriesRepository  $seriesRepository,
     )
     {
@@ -86,7 +86,7 @@ readonly class KeywordService
 
         $dbIds = array_map(function ($keyword) {
             return $keyword->getKeywordId();
-        }, $this->keyWordRepository->findBy(['keywordId' => $ids]));
+        }, $this->keywordRepository->findBy(['keywordId' => $ids]));
 
         $missingKeywords = array_map(function ($id) use ($results) {
             return array_find($results, function (array $value) use ($id) {
@@ -97,7 +97,7 @@ readonly class KeywordService
         if (count($missingKeywords) > 0) {
             foreach ($missingKeywords as $keyword) {
                 $newDbKeyword = new Keyword($keyword['name'], $keyword['id']);
-                $this->keyWordRepository->save($newDbKeyword);
+                $this->keywordRepository->save($newDbKeyword);
                 if ('controller' === $source) {
                     ($this->addFlash)('success', 'Keyword "' . $keyword['name'] . '" added');
                 }
@@ -105,7 +105,7 @@ readonly class KeywordService
                     $messages[] = 'Keyword "' . $keyword['name'] . '" added';
                 }
             }
-            $this->keyWordRepository->flush();
+            $this->keywordRepository->flush();
         }
         return in_array($source,  ['controller', 'command']) ? $results : $messages;
     }
@@ -121,7 +121,7 @@ readonly class KeywordService
         if (count($newIds) == 0) {
             return '';
         }
-        $dbKeywords = $this->keyWordRepository->findBy(['keywordId' => $newIds]);
+        $dbKeywords = $this->keywordRepository->findBy(['keywordId' => $newIds]);
         $newKeywords = [];
         foreach ($newIds as $newId) {
             $newKeyword = array_find($dbKeywords, function (Keyword $k) use ($newId) { return $k->getKeywordId() == $newId; });
