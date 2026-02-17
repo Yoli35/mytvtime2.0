@@ -634,11 +634,12 @@ class SeriesController extends AbstractController
             $seriesSearch->setWithStatus($settings['with status']);
             $seriesSearch->setSortBy($settings['sort by']);
         }
+        $seriesSearch = $this->settingsAdvancedDbSearchService->get($user);
         $form = $this->createForm(SeriesAdvancedDbSearchType::class, $seriesSearch, ['countries' => $countries]);
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            $seriesSearch = $form->getData();
+            $seriesSearch = $this->settingsAdvancedDbSearchService->update($user, $form->getData());
             dump($seriesSearch);
             $searchResult['results'] = $this->seriesRepository->advancedDbSearch($user, $seriesSearch);
             $searchResult['total_results'] = $t = $this->seriesRepository->advancedDbSearchCount($user, $seriesSearch);
