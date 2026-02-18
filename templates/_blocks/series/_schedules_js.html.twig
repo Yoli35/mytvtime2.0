@@ -2,14 +2,42 @@
     const nextEpisodeDiv = document.querySelector(".next.user.episode");
     if (nextEpisodeDiv) {
         const ref = nextEpisodeDiv.getAttribute('data-ref');
-        const alternateSchedulesDivs = document.querySelectorAll('.alternate-schedule');
-        alternateSchedulesDivs.forEach(div => {
-            const airDayCard = div.querySelector('a[id="' + ref + '"]');
-            if (airDayCard) {
-                airDayCard.classList.add('highlighted');
-                airDayCard.scrollIntoView({behavior: "smooth", inline: "center"});
+        const airDayCard = document.querySelector('.alternate-schedule a[id="' + ref + '"]');
+        if (airDayCard) {
+            airDayCard.classList.add('highlighted');
+
+            const alternateScheduleDiv = airDayCard.closest('.alternate-schedule');
+            if (alternateScheduleDiv) {
+                // Create an IntersectionObserver to detect when parent is visible
+                const observer = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            // Parent is now visible: scroll the child into view
+                            const parentWidth = alternateScheduleDiv.clientWidth;  // Largeur visible du parent
+                            const cardWidth = airDayCard.offsetWidth;  // Largeur de la carte (inclut margins si box-sizing: border-box)
+                            const cardOffset = airDayCard.offsetLeft;  // Position gauche de la carte relative au parent
+
+                            // Calcul pour centrer : scrollLeft = position carte - (moitié parent) + (moitié carte)
+                            const scrollLeft = cardOffset - (parentWidth / 2) + (cardWidth / 2);
+
+                            alternateScheduleDiv.scrollTo({
+                                left: scrollLeft,
+                                behavior: 'smooth'  // Animation fluide
+                            });
+                            observer.disconnect(); // Stop observing after scrolling
+                        }
+                    });
+                }, {
+                    threshold: 1 // Trigger when at least 10% of parent is visible (adjust as needed)
+                });
+
+                // Start observing the parent
+                observer.observe(alternateScheduleDiv);
+            } else {
+                // Fallback: If parent not found, scroll immediately
+                airDayCard.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "nearest" });
             }
-        });
+        }
     }
     const scheduledDayDivs = document.querySelectorAll('.scheduled-day');
     scheduledDayDivs.forEach(div => {
