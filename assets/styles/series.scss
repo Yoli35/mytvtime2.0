@@ -1696,15 +1696,17 @@ h2 {
                 scroll-snap-type: x mandatory;
 
                 a {
+                    flex-shrink: 0;
+                    scroll-snap-align: start;
+                    width: 6rem;
+
                     .air-day {
                         align-items: center;
                         border: 2px solid var(--orange-50);
                         border-radius: .625rem;
                         display: flex;
                         flex-direction: column;
-                        flex-shrink: 0;
-                        scroll-snap-align: start;
-                        width: 6rem;
+                        width: 100%;
 
                         &.watched {
                             .air-day-date {
