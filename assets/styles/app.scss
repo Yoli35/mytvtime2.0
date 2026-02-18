@@ -2376,7 +2376,7 @@ section:has(.pages) {
     &:has(.search-details) {
         .body, .tail {
             backdrop-filter: blur(1rem);
-            background-color: hsla(from var(--orange-30) h s l / .5);
+            background-color: hsla(from var(--green-70) h s l / .5);
         }
     }
 
@@ -2434,7 +2434,7 @@ section:has(.pages) {
             flex-direction: column;
 
             .search-details {
-                background-color: var(--green);
+                background-color: var(--green-60);
                 border-radius: 5em;
                 color: var(--ardoise-10);
                 font-size: 1rem;
@@ -2443,7 +2443,9 @@ section:has(.pages) {
                 text-align: center;
                 text-wrap: balance;
 
-                &:has(.keyword) {
+                &:has(.filter),
+                &:has(.keyword),
+                &:has(.sort-by){
                     align-items: center;
                     display: flex;
                     flex-wrap: wrap;
@@ -2452,7 +2454,7 @@ section:has(.pages) {
                     padding-inline-end: .25rem;
                 }
 
-                .keyword {
+                .filter, .keyword, .sort-by {
                     background-color: var(--orange-40);
                     border-radius: 5em;
                     color: var(--orange-90);

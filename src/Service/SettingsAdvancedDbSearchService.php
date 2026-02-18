@@ -106,7 +106,7 @@ readonly class SettingsAdvancedDbSearchService
         ];
 
         if ($seriesSearch->getFirstAirDateYear()) {
-            $details .= "<div class='search-details'>" . $this->translator->trans('Year') . ' ' . $seriesSearch->getFirstAirDateYear() . "</div>";
+            $details .= "<div class='search-details'>" . $this->translator->trans('Year') . '<div class="filter">' . $seriesSearch->getFirstAirDateYear() . "</div></div>";
         }
         if ($seriesSearch->getFirstAirDateGTE()) {
             $details .= "<div class='search-details'>" . $this->translator->trans('After') . ' ' . $this->dateService->formatDate($seriesSearch->getFirstAirDateGTE()->format('Y-m-d'), $seriesSearch->getTimezone(), $seriesSearch->getLanguage()) . "</div>";
@@ -116,21 +116,21 @@ readonly class SettingsAdvancedDbSearchService
         }
         if ($seriesSearch->getWithOriginCountry()) {
             $code = $seriesSearch->getWithOriginCountry();
-            $details .= "<div class='search-details'>" . $this->translator->trans('Country') . ' ' . $this->getEmojiFlag($code) . ' ' . Countries::getName($code) . '</div>';
+            $details .= "<div class='search-details'>" . $this->translator->trans('Country') . '<div class="filter">' . $this->getEmojiFlag($code) . ' ' . Countries::getName($code) . '</div></div>';
         }
         if ($seriesSearch->getWithOriginalLanguage()) {
             $code = $seriesSearch->getWithOriginalLanguage();
-            $details .= "<div class='search-details'>" . $this->translator->trans('Language') . ' ' . Languages::getName($code) . '</div>';
+            $details .= "<div class='search-details'>" . $this->translator->trans('Language') . '<div class="filter">' . Languages::getName($code) . '</div></div>';
         }
         if ($seriesSearch->getWithKeywords()) {
             $keywords = explode($seriesSearch->getKeywordSeparator(), $seriesSearch->getWithKeywords());
             $details .= "<div class='search-details'>" . $this->translator->trans('Keywords') . ' ' . $this->keywordList($keywords, $allKeywords) . '</div>';
         }
         if ($seriesSearch->getWithStatus()) {
-            $details .= "<div class='search-details'>" . $this->translator->trans('Status') . ' ' . $this->translator->trans($seriesSearch->getWithStatus()) . '</div>';
+            $details .= "<div class='search-details'>" . $this->translator->trans('Status') . '<div class="filter">' . $this->translator->trans($seriesSearch->getWithStatus()) . '</div></div>';
         }
         if ($seriesSearch->getSortBy()) {
-            $details .= "<div class='search-details'>" . $this->translator->trans('Sort by') . ' ' . lcfirst($this->translator->trans($sortStrings[$seriesSearch->getSortBy()])) . '</div>';
+            $details .= "<div class='search-details'>" . $this->translator->trans('Sort by') . '<div class="sort-by">' . $this->translator->trans($sortStrings[$seriesSearch->getSortBy()]) . '</div></div>';
         }
 
         return $details;
