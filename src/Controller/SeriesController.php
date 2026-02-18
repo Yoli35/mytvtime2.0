@@ -923,7 +923,8 @@ class SeriesController extends AbstractController
     public function showSeason(#[CurrentUser] User $user, Request $request, Series $series, int $seasonNumber, string $slug): Response
     {
         $locale = $user->getPreferredLanguage() ?? $request->getLocale();
-        $country = $user->getCountry() ?? 'FR';
+        $countries = ['fr' => 'FR', 'en' => 'US', 'ko' => 'KR'];
+        $country = $user->getCountry() ?? $countries[$locale] ?? 'FR';
         $this->logger->info('showSeason', ['series' => $series->getId(), 'season' => $seasonNumber, 'slug' => $slug]);
 
         $userSeries = $this->userSeriesRepository->findOneBy(['user' => $user, 'series' => $series]);
@@ -1037,7 +1038,8 @@ class SeriesController extends AbstractController
     public function showEpisode(#[CurrentUser] User $user, Request $request, Series $series, int $seasonNumber, int $episodeNumber, string $slug): Response
     {
         $locale = $user->getPreferredLanguage() ?? $request->getLocale();
-        $country = $user->getCountry() ?? 'FR';
+        $countries = ['fr' => 'FR', 'en' => 'US', 'ko' => 'KR'];
+        $country = $user->getCountry() ?? $countries[$locale] ?? 'FR';
 
         $this->logger->info('showEpisode', ['series' => $series->getId(), 'season' => $seasonNumber, 'episode' => $episodeNumber, 'slug' => $slug]);
 
@@ -1076,6 +1078,7 @@ class SeriesController extends AbstractController
             'season' => $season,
             'episode' => $episode,
             'slug' => $slug,
+            'language' => $locale . '-' . $country,
             'locations' => $filmingLocationsWithBounds['filmingLocations'],
             'locationsBounds' => $filmingLocationsWithBounds['bounds'],
             'emptyLocation' => $filmingLocationsWithBounds['emptyLocation'],
@@ -3045,7 +3048,8 @@ class SeriesController extends AbstractController
         return ['' => ''] + $choices;
     }
 
-    private function getDefaultRegion(string $locale): string{
+    private function getDefaultRegion(string $locale): string
+    {
         // $locale: 'fr|en|ko'
         return match ($locale) {
             'en' => 'US',

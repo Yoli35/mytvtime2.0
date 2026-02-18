@@ -68,7 +68,7 @@
                 width: fit-content;
             }
 
-            > a div {
+            > a div, .what-s-next {
                 align-items: center;
                 backdrop-filter: blur(1rem);
                 background-color: hsl(from var(--green) h s l / .5);
@@ -80,7 +80,17 @@
                 transition: all 150ms ease-in-out;
             }
 
-            > a div:hover {
+            .what-s-next {
+                justify-content: center;
+                width: 3.75rem;
+
+                svg {
+                    height: max(2vw, 2vh);
+                    width: max(2vw, 2vh);
+                }
+            }
+
+            > a div:hover, .what-s-next:hover {
                 background-color: var(--green);
                 box-shadow: 0 0 2rem hsl(0 0% 0% / .25);
                 outline: 4px solid hsl(from var(--orange-80) h s l / .5);

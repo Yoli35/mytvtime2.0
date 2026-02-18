@@ -41,11 +41,11 @@
                 <div class="navigation">
                     {% if episode.episode_number > 1 %}
                         <a href="{{ path("app_series_episode_show", {id: series.id, slug: slug, seasonNumber: season.season_number, episodeNumber: episode.episode_number - 1}) }}">
-                            <div class="previous-episode">{{ ux_icon('mdi:arrow-left') }}</div>
+                            <div class="previous-episode" data-title="{{ 'Previous episode'|trans }}">{{ ux_icon('mdi:arrow-left') }}</div>
                         </a>
                     {% endif %}
                     <a id="back-to-season" href="{{ path('app_series_season_show', {id: series.id, slug: season.series_localized_name.slug ?? series.slug, seasonNumber: season.season_number}) }}">
-                        <div class="back">
+                        <div class="back" data-title="{{ 'Back to season'|trans }}">
                             {% if season.season_number %}
                                 {{ 'Season'|trans }} {{ season.season_number }}
                             {% else %}
@@ -55,8 +55,11 @@
                     </a>
                     {% if episode.next_episode_is_available %}
                         <a href="{{ path("app_series_episode_show", {id: series.id, slug: slug, seasonNumber: season.season_number, episodeNumber: episode.episode_number + 1}) }}">
-                            <div class="next-episode">{{ ux_icon('mdi:arrow-right') }}</div>
+                            <div class="next-episode" data-title="{{ 'Next episode'|trans }}">{{ ux_icon('mdi:arrow-right') }}</div>
                         </a>
+                    {% else %}
+                        {% set addWatchNextDiv = true %}
+                        <div class="what-s-next" data-id="{{ series.tmdbId }}" data-language="{{ language }}" data-title="{{ 'What else to watch?'|trans }}">{{ ux_icon('mdi:eye-plus-outline') }}</div>
                     {% endif %}
                 </div>
                 {{ include('_blocks/series/_user_episode.html.twig', {ue: episode.user_episode, episode: episode, series: series, season: season}) }}
@@ -64,6 +67,9 @@
             </header>
             <main>
                 <div class="episodes-comments"></div>
+                {% if addWatchNextDiv is defined %}
+                    <div class="what-to-watch-next"></div>
+                {% endif %}
                 {{ include('_blocks/series/_map.html.twig', {locations: locations, mapSettings: mapSettings}) }}
                 {{ include('_blocks/series/_guest_stars.html.twig', {guest_stars: episode.guest_stars, episode_page: true}) }}
                 {{ include('_blocks/series/_credits.html.twig', {season: season, series: series}) }}

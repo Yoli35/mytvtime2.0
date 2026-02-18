@@ -130,6 +130,9 @@ return [
     'WatchLinkCrud' => [
         'path' => './assets/js/watch-link/WatchLinkCrud.js',
     ],
+    'WhatNext' => [
+        'path' => './assets/js/series/WhatNext.js',
+    ],
     '@symfony/stimulus-bundle' => [
         'path' => './vendor/symfony/stimulus-bundle/assets/dist/loader.js',
     ],

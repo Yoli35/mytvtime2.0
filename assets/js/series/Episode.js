@@ -2,6 +2,7 @@ import {AddCast} from 'AddCast';
 import {EpisodeActions} from "EpisodeActions";
 import {Location} from "Location";
 import {SeasonComments} from "SeasonComments";
+import {WhatNext} from "WhatNext";
 
 /**
  * @typedef FilmingLocationImage
@@ -112,6 +113,14 @@ export class Episode {
          ******************************************************************************/
         const seasonComments = new SeasonComments(user, seriesId, seasonNumber, translations);
         seasonComments.init();
+
+        /******************************************************************************
+         * What next to watch                                                         *
+         ******************************************************************************/
+        const whatToWatchNextButton = document.querySelector('.what-s-next');
+        if (whatToWatchNextButton) {
+            new WhatNext(whatToWatchNextButton, this.flashMessage, this.toolTips);
+        }
 
         /******************************************************************************
          * Add a person to the cast - Search input                                    *

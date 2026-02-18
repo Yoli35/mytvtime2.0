@@ -235,7 +235,11 @@
                                 {% if air_date and air_date <= now %}
                                     <div class="episode" id="episode-{{ season.season_number }}-{{ episode.episode_number }}" data-ue-id="{{ ue.id }}" data-episode-id="{{ episode.id }}">
                                         <a href="{{ path('app_series_episode_show', {id: series.id, slug: series.slug, seasonNumber: season.season_number, episodeNumber: episode.episode_number}) }}">
-                                        <div class="still" data-series-id="{{ series.tmdbId }}" data-season-id="{{ season.id }}" data-episode-id="{{ episode.id }}">
+                                        <div class="still"
+                                             data-title="{{ episode.name }}{% if ue.substitute_name %} - {{ ue.substitute_name }}{% endif %}"
+                                             data-series-id="{{ series.tmdbId }}"
+                                             data-season-id="{{ season.id }}"
+                                             data-episode-id="{{ episode.id }}">
                                             {% if episode.still_path %}
                                                 <img src="{{ episode.still_path }}" alt="{{ episode.name }}">
                                             {% elseif episode.stills|length %}{# is defined and ue.still #}
