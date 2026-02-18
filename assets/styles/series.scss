@@ -3122,10 +3122,12 @@ h2 {
                 gap: .5rem;
                 overflow-x: auto;
                 padding-block-end: 1rem;
+                scroll-snap-type: x mandatory;
                 width: 100%;
 
                 a {
                     height: 100%;
+                    scroll-snap-align: start;
 
                     .episode-card {
                         display: flex;
