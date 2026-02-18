@@ -206,7 +206,7 @@ export class Show {
         }
 
         /******************************************************************************
-         * Diaporama for posters, backdrops and logos                                 *
+         * Diaporama for posters, backdrops, logos                                    *
          ******************************************************************************/
         const diaporama = new Diaporama();
         const posters = document.querySelector('.posters')?.querySelectorAll('img');
