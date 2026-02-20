@@ -1042,7 +1042,7 @@ label:has(input[type="text"]) {
 
         .search-results {
             background-color: var(--navbar-bg);
-            border-radius: .25rem;
+            border-radius: 1rem;
             left: 0;
             max-height: calc(100dvh - 5.5rem);
             overflow-y: auto;
@@ -1269,7 +1269,7 @@ label:has(input[type="text"]) {
     .menu.user {
         backdrop-filter: blur(4rem);
         background-color: hsla(from var(--navbar-bg) h s l / 0.4);
-        border-radius: .25rem;
+        border-radius: 1rem;
         box-shadow: 0 0 1rem hsla(from var(--ardoise-90) h s l / .2);
         display: none;
         flex-direction: column;
@@ -1288,6 +1288,10 @@ label:has(input[type="text"]) {
         &.show {
             opacity: 1;
         }
+    }
+
+    .menu.history {
+        border-radius: 2rem;
     }
 
     .menu.main {
@@ -2480,7 +2484,7 @@ section:has(.pages) {
 .flash-messages {
     align-items: flex-end;
     border-radius: .5rem;
-    border: 1px dashed var(--orange-50);
+    /*border: 1px dashed var(--orange-50);*/
     display: flex;
     flex-wrap: wrap;
     flex-direction: column;
@@ -2497,6 +2501,7 @@ section:has(.pages) {
 
     &:hover {
         background-color: hsla(from var(--orange-50) h s l / .5);
+        box-shadow: 0 0 1rem 1.25rem hsla(from var(--orange-50) h s l / .5);
     }
 
     &.vanishing {
