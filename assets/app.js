@@ -64,6 +64,7 @@ window.addEventListener("DOMContentLoaded", () => {
     if (previewToggler) {
         previewToggler.addEventListener("click", (e) => {
             e.preventDefault();
+            e.stopPropagation();
             menu.togglePreview();
             toggler();
         });
