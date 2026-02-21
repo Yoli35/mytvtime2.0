@@ -7,8 +7,10 @@ use App\Entity\UserEpisode;
 use App\Entity\UserSeries;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\DBAL\Exception;
+use Doctrine\DBAL\ParameterType;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
+use Psr\Log\LoggerInterface as MonologLogger;
 
 /**
  * @extends ServiceEntityRepository<UserEpisode>
@@ -20,7 +22,11 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class UserEpisodeRepository extends ServiceEntityRepository
 {
-    public function __construct(ManagerRegistry $registry, private readonly EntityManagerInterface $em)
+    public function __construct(
+        ManagerRegistry                         $registry,
+        private readonly EntityManagerInterface $em,
+        private readonly MonologLogger          $logger,
+    )
     {
         parent::__construct($registry, UserEpisode::class);
     }
@@ -290,73 +296,130 @@ class UserEpisodeRepository extends ServiceEntityRepository
 
     public function episodesOfTheDay(User $user, string $locale = 'fr', bool $next7Days = true): array
     {
-        $userId = $user->getId();
+        $params = [
+            'userId' => $user->getId(),
+            'locale' => $locale,
+        ];
+        $types = [
+            'userId' => ParameterType::INTEGER,
+            'locale' => ParameterType::STRING,
+        ];
+
         if ($next7Days) {
-            $dayCondition = "IF(sbd.id IS NULL, ue.air_date >= CURDATE() AND ue.`air_date` <= ADDDATE(CURDATE(), INTERVAL 7 DAY), DATE(sbd.date) >= CURDATE() AND DATE(sbd.date) <= ADDDATE(CURDATE(), INTERVAL 7 DAY))";
+            $dayCondition = "IF(sbd.id IS NULL, ue.air_date >= CURDATE() AND ue.air_date <= ADDDATE(CURDATE(), INTERVAL 7 DAY), DATE(sbd.date) >= CURDATE() AND DATE(sbd.date) <= ADDDATE(CURDATE(), INTERVAL 7 DAY))";
         } else {
             $dayCondition = "IF(sbd.id IS NULL, ue.air_date = CURDATE(), DATE(sbd.date) = CURDATE())";
         }
-        $sql = "SELECT
-                       ue.id                                               as episode_id,
-                       s.id                                                as id,
-                       s.tmdb_id                                           as tmdb_id,
-                       IF(sbd.id IS NULL, ue.`air_date`, DATE(sbd.`date`)) as date,
-                       s.name                                              as name,
-                       s.slug                                              as slug,
-                       sln.name                                            as sln_name,
-                       sln.slug                                            as sln_slug,
-                       s.poster_path                                       as poster_path,
-                       s.status                                            as status,
-                       (s.first_air_date <= NOW())                         as released,
-                       us.favorite                                         as favorite,
-                       us.progress                                         as progress,
-                       ue.`episode_number`                                 as episode_number,
-                       ue.`season_number`                                  as season_number,
-                       ue.`watch_at`                                       as watch_at,
-                       sbs.`air_at`                                        as air_at,
-                       IF(sbs.`id`, sbs.provider_id, swl.`provider_id`)    as provider_id,
-                       wp.`provider_name`                                  as provider_name,
-                       wp.`logo_path`                                      as provider_logo_path,
-                       (SELECT count(*)
-                        FROM user_episode cue
-                            LEFT JOIN series_broadcast_schedule csbs ON s.id = csbs.series_id AND csbs.`season_number`=cue.`season_number` AND IF(csbs.multi_part, cue.episode_number BETWEEN csbs.season_part_first_episode AND (csbs.season_part_first_episode + csbs.season_part_episode_count - 1), 1)
-                            LEFT JOIN series_broadcast_date csbd ON csbd.series_broadcast_schedule_id = csbs.id AND csbd.episode_id = cue.episode_id
-                        WHERE cue.user_series_id = us.id
-                          AND cue.season_number > 0
-                          AND IF(csbd.id IS NULL, cue.air_date <= CURDATE(), DATE(csbd.date) <= CURDATE())
-                          AND cue.watch_at IS NOT NULL
-                          AND cue.previous_occurrence_id IS NULL
-                       )                                                as watched_aired_episode_count,
-                       (SELECT count(*)
-                        FROM user_episode cue
-                            LEFT JOIN series_broadcast_schedule csbs ON s.id = csbs.series_id AND csbs.`season_number`=cue.`season_number` AND IF(csbs.multi_part, cue.episode_number BETWEEN csbs.season_part_first_episode AND (csbs.season_part_first_episode + csbs.season_part_episode_count - 1), 1)
-                            LEFT JOIN series_broadcast_date csbd ON csbd.series_broadcast_schedule_id = csbs.id AND csbd.episode_id = cue.episode_id
-                        WHERE cue.user_series_id = us.id
-                          AND cue.season_number > 0
-                          AND IF(csbd.id IS NULL, cue.air_date <= CURDATE(), DATE(csbd.date) <= CURDATE())
-                          AND cue.previous_occurrence_id IS NULL
-                        )                                               as aired_episode_count,
-                       us.last_watch_at                                 as series_last_watch_at,
-                       ue.episode_number                                as episode_number,
-                       ue.season_number                                 as season_number,
-                       (SELECT COUNT(*)
-                       		  FROM `user_list_series` uls
-                       		      INNER JOIN `user_list` ul ON ul.`user_id`=$userId AND uls.`user_list_id`=ul.`id`
-                       		  WHERE uls.`series_id`=s.`id`)             as is_series_in_list
-                FROM series s
-                         INNER JOIN user_series us ON s.id = us.series_id
-                         INNER JOIN user_episode ue ON us.id = ue.user_series_id
-                         LEFT JOIN series_broadcast_schedule sbs ON s.id = sbs.series_id AND sbs.`season_number`=ue.`season_number` AND IF(sbs.multi_part, ue.episode_number BETWEEN sbs.season_part_first_episode AND (sbs.season_part_first_episode + sbs.season_part_episode_count - 1), 1)
-                         LEFT JOIN series_broadcast_date sbd ON sbd.series_broadcast_schedule_id = sbs.id AND sbd.episode_id = ue.episode_id
-                         LEFT JOIN `series_watch_link` swl ON s.id = swl.`series_id`
-                         LEFT JOIN watch_provider wp ON wp.provider_id = IF(sbs.`id`, sbs.provider_id, swl.`provider_id`)
-                         LEFT JOIN series_localized_name sln ON s.id = sln.series_id AND sln.locale = '$locale'
-                WHERE us.user_id = $userId
-                  AND $dayCondition
-                ORDER BY date, sbs.air_at, ue.season_number , ue.episode_number";
-//        AND ue.season_number > 0
 
-        return $this->getAll($sql);
+        $sql = <<<SQL
+            SELECT
+                ue.id                                               AS episode_id,
+                s.id                                                AS id,
+                s.tmdb_id                                           AS tmdb_id,
+                IF(sbd.id IS NULL, ue.air_date, DATE(sbd.date))     AS date,
+                s.name                                              AS name,
+                s.slug                                              AS slug,
+                sln.name                                            AS sln_name,
+                sln.slug                                            AS sln_slug,
+                s.poster_path                                       AS poster_path,
+                s.status                                            AS status,
+                (s.first_air_date <= NOW())                         AS released,
+                us.favorite                                         AS favorite,
+                us.progress                                         AS progress,
+                ue.episode_number                                   AS episode_number,
+                ue.season_number                                    AS season_number,
+                ue.watch_at                                         AS watch_at,
+                sbs.air_at                                          AS air_at,
+                IF(sbs.id, sbs.provider_id, swl.provider_id)        AS provider_id,
+                wp.provider_name                                    AS provider_name,
+                wp.logo_path                                        AS provider_logo_path,
+                counts.watched_aired_episode_count                  AS watched_aired_episode_count,
+                counts.aired_episode_count                          AS aired_episode_count,
+                us.last_watch_at                                    AS series_last_watch_at,
+                (SELECT COUNT(*)
+                 FROM user_list_series uls
+                     INNER JOIN user_list ul ON ul.user_id = :userId AND uls.user_list_id = ul.id
+                 WHERE uls.series_id = s.id
+                )                                                   AS is_series_in_list
+            FROM series s
+                INNER JOIN user_series us ON s.id = us.series_id
+                INNER JOIN user_episode ue ON us.id = ue.user_series_id
+                LEFT JOIN series_broadcast_schedule sbs ON s.id = sbs.series_id AND sbs.season_number = ue.season_number AND IF(sbs.multi_part, ue.episode_number BETWEEN sbs.season_part_first_episode AND (sbs.season_part_first_episode + sbs.season_part_episode_count - 1), 1)
+                LEFT JOIN series_broadcast_date sbd ON sbd.series_broadcast_schedule_id = sbs.id AND sbd.episode_id = ue.episode_id
+                LEFT JOIN series_watch_link swl ON s.id = swl.series_id
+                LEFT JOIN watch_provider wp ON wp.provider_id = IF(sbs.id, sbs.provider_id, swl.provider_id)
+                LEFT JOIN series_localized_name sln ON s.id = sln.series_id AND sln.locale = :locale
+                LEFT JOIN LATERAL (
+                    -- Calcul fusionné des counts, corrélé avec us.id (via corrélation latérale)
+                    SELECT 
+                        COUNT(*) AS aired_episode_count,
+                        SUM(CASE WHEN cue.watch_at IS NOT NULL THEN 1 ELSE 0 END) AS watched_aired_episode_count
+                    FROM user_episode cue
+                        LEFT JOIN series_broadcast_schedule csbs ON s.id = csbs.series_id AND csbs.season_number = cue.season_number AND IF(csbs.multi_part, cue.episode_number BETWEEN csbs.season_part_first_episode AND (csbs.season_part_first_episode + csbs.season_part_episode_count - 1), 1)
+                        LEFT JOIN series_broadcast_date csbd ON csbd.series_broadcast_schedule_id = csbs.id AND csbd.episode_id = cue.episode_id
+                    WHERE cue.user_series_id = us.id  -- Corrélation avec la requête externe
+                      AND cue.season_number > 0
+                      AND IF(csbd.id IS NULL, cue.air_date <= CURDATE(), DATE(csbd.date) <= CURDATE())
+                      AND cue.previous_occurrence_id IS NULL
+                ) AS counts ON TRUE  -- 'ON TRUE' pour JOIN latéral sans condition supplémentaire
+            WHERE us.user_id = :userId
+              AND $dayCondition
+            ORDER BY date, sbs.air_at, ue.season_number, ue.episode_number
+        SQL;
+
+        try {
+            return $this->em->getConnection()->executeQuery($sql, $params, $types)->fetchAllAssociative();
+        } catch (\Exception $e) {
+            $this->logger->error('Erreur episodesOfTheDay: ' . $e->getMessage());
+            return [];
+        }
+    }
+
+    public function episodesOneOfTheDay(User $user, bool $next7Days = true, ?string $startDate = null, ?string $endDate = null): array
+    {
+        $params = ['userId' => $user->getId()];
+        $types = ['userId' => ParameterType::INTEGER];
+
+        // Dates fixes si fournies, sinon CURDATE()/ADDDATE()
+        if ($startDate && $endDate) {
+            $dayCondition = "IF(sbd.id IS NULL, ue.air_date >= :startDate AND ue.air_date <= :endDate, DATE(sbd.date) >= :startDate AND DATE(sbd.date) <= :endDate)";
+            $params['startDate'] = $startDate;
+            $params['endDate'] = $endDate;
+            $types['startDate'] = ParameterType::STRING;
+            $types['endDate'] = ParameterType::STRING;
+        } elseif ($next7Days) {
+            $dayCondition = "IF(sbd.id IS NULL, ue.air_date >= CURDATE() AND ue.air_date <= ADDDATE(CURDATE(), INTERVAL 7 DAY), DATE(sbd.date) >= CURDATE() AND DATE(sbd.date) <= ADDDATE(CURDATE(), INTERVAL 7 DAY))";
+        } else {
+            $dayCondition = "IF(sbd.id IS NULL, ue.air_date = CURDATE(), DATE(sbd.date) = CURDATE())";
+        }
+
+        $sql = <<<SQL
+            SELECT DISTINCT
+                ue.id                                               AS episode_id,
+                s.id                                                AS series_id,
+                s.tmdb_id                                           AS tmdb_id,
+                IF(sbd.id IS NULL, ue.air_date, DATE(sbd.date))     AS date,  -- Date effective pour comparaison TMDB
+                ue.season_number                                    AS season_number,
+                ue.episode_number                                   AS episode_number,  -- Toujours 1 ici
+                sbd.id                                              AS is_custom_date,  -- NULL si pas custom
+                (SELECT COUNT(*) FROM user_episode cue WHERE cue.user_series_id = us.id AND cue.season_number = ue.season_number) AS db_episode_count  -- Compte épisodes DB pour sync
+            FROM series s
+                INNER JOIN user_series us ON s.id = us.series_id
+                INNER JOIN user_episode ue ON us.id = ue.user_series_id
+                LEFT JOIN series_broadcast_schedule sbs ON s.id = sbs.series_id AND sbs.season_number = ue.season_number AND IF(sbs.multi_part, ue.episode_number BETWEEN sbs.season_part_first_episode AND (sbs.season_part_first_episode + sbs.season_part_episode_count - 1), 1)
+                LEFT JOIN series_broadcast_date sbd ON sbd.series_broadcast_schedule_id = sbs.id AND sbd.episode_id = ue.episode_id
+            WHERE us.user_id = :userId
+              AND ue.episode_number = 1  -- seulement premiers épisodes (inclut spéciaux).
+              AND $dayCondition
+            ORDER BY date, ue.season_number
+        SQL;
+
+        try {
+            return $this->em->getConnection()->executeQuery($sql, $params, $types)->fetchAllAssociative();
+        } catch (\Exception $e) {
+            $this->logger->error('Erreur episodesOneOfTheDay: ' . $e->getMessage());
+            return [];
+        }
     }
 
     public function episodesToWatch(User $user, string $locale = 'fr', int $page = 1, int $limit = 20): array

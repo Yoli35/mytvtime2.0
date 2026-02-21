@@ -7,16 +7,20 @@ use App\Entity\Network;
 use App\Entity\Series;
 use App\Entity\SeriesBroadcastSchedule;
 use App\Entity\SeriesLocalizedName;
+
 //use App\Entity\SeriesLocalizedOverview;
 use App\Entity\Settings;
 use App\Entity\User;
 use App\Entity\UserEpisode;
+use App\Entity\UserSeries;
 use App\Repository\FilmingLocationRepository;
 use App\Repository\NetworkRepository;
 use App\Repository\SeriesLocalizedNameRepository;
+
 //use App\Repository\SeriesLocalizedOverviewRepository;
 use App\Repository\SettingsRepository;
 use App\Repository\SourceRepository;
+use App\Repository\UserEpisodeRepository;
 use App\Repository\UserSeriesRepository;
 use DateMalformedStringException;
 use DateTimeImmutable;
@@ -30,20 +34,21 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 class SeriesService extends AbstractController
 {
     public function __construct(
-        private readonly DateService                       $dateService,
-        private readonly FilmingLocationRepository         $filmingLocationRepository,
-        private readonly ImageConfiguration                $imageConfiguration,
-        private readonly ImageService                      $imageService,
-        private readonly KeywordService                    $keywordService,
-        private readonly MonologLogger                     $logger,
-        private readonly NetworkRepository                 $networkRepository,
-        private readonly SeriesLocalizedNameRepository     $seriesLocalizedNameRepository,
+        private readonly DateService                   $dateService,
+        private readonly FilmingLocationRepository     $filmingLocationRepository,
+        private readonly ImageConfiguration            $imageConfiguration,
+        private readonly ImageService                  $imageService,
+        private readonly KeywordService                $keywordService,
+        private readonly MonologLogger                 $logger,
+        private readonly NetworkRepository             $networkRepository,
+        private readonly SeriesLocalizedNameRepository $seriesLocalizedNameRepository,
 //        private readonly SeriesLocalizedOverviewRepository $seriesLocalizedOverviewRepository,
-        private readonly SettingsRepository                $settingsRepository,
-        private readonly SourceRepository                  $sourceRepository,
-        private readonly TMDBService                       $tmdbService,
-        private readonly TranslatorInterface               $translator,
-        private readonly UserSeriesRepository              $userSeriesRepository,
+        private readonly SettingsRepository            $settingsRepository,
+        private readonly SourceRepository              $sourceRepository,
+        private readonly TMDBService                   $tmdbService,
+        private readonly TranslatorInterface           $translator,
+        private readonly UserEpisodeRepository         $userEpisodeRepository,
+        private readonly UserSeriesRepository          $userSeriesRepository,
     )
     {
     }
@@ -94,7 +99,7 @@ class SeriesService extends AbstractController
         $tv['translations'] = $this->getTranslations($tv['translations']['translations'], $country, $locale);
         $tv['localized_name'] = $this->getTvLocalizedName($tv, $series, $locale);
         $tv['localized_overviews'] = $series->getLocalizedOverviews($locale);
-        $tv['keywords']['results'] = $this->keywordService->saveKeywords($tv['keywords']['results'], 'controller');;
+        $tv['keywords']['results'] = $this->keywordService->saveKeywords($tv['keywords']['results'], 'controller');
         $tv['missing_translations'] = $this->keywordService->keywordsTranslation($tv['keywords']['results'], $locale);
         $tv['networks'] = $this->networks($tv);
         $tv['sources'] = $this->sourceRepository->findBy([], ['name' => 'ASC']);
@@ -133,6 +138,178 @@ class SeriesService extends AbstractController
 //
 //        return $tv;
 //    }
+
+    /**
+     * Synchronise les saisons basées sur les premiers épisodes.
+     * Compare DB vs TMDB et met à jour si diffs.
+     * Méthode silencieuse sauf pour admins.
+     *
+     * @return array Logs (visibles seulement pour admins)
+     */
+    public function syncSeasonsFromEpisodesOne(User $user, bool $next7Days = true, ?string $startDate = null, ?string $endDate = null): array
+    {
+        $episodesOne = $this->userEpisodeRepository->episodesOneOfTheDay($user, $next7Days, $startDate, $endDate);
+        $syncResults = [];
+
+        foreach ($episodesOne as $ep) {
+            $seriesId = $ep['series_id'];
+            $tmdbId = $ep['tmdb_id'];
+            $seasonNumber = $ep['season_number'];
+            $dbAirDate = $ep['date'];
+            $isCustomDate = $ep['is_custom_date'] !== null;
+
+            // Appel TMDB
+            $tmdbSeason = json_decode($this->tmdbService->getTvSeason($tmdbId, $seasonNumber, 'fr-FR'), true);
+            $tmdbEpisodeCount = $tmdbSeason['episode_count'] ?? 0;
+            $tmdbFirstAirDate = $tmdbSeason['episodes'][0]['air_date'] ?? null;
+
+            // Vérifications
+            $needsSync = false;
+            if ($ep['db_episode_count'] != $tmdbEpisodeCount) {
+                $needsSync = true;
+                $syncResults[] = "Saison $seasonNumber de série $seriesId : Nombre épisodes diffère (DB: {$ep['db_episode_count']} vs TMDB: $tmdbEpisodeCount)";
+            }
+            if (!$isCustomDate && $dbAirDate != $tmdbFirstAirDate) {
+                $needsSync = true;
+                $syncResults[] = "Saison $seasonNumber de série $seriesId : Date diffère sans custom (DB: $dbAirDate vs TMDB: $tmdbFirstAirDate)";
+            }
+
+            if ($needsSync) {
+                $userSeries = $this->userSeriesRepository->findOneBy(['series' => $seriesId, 'user' => $user]);
+                $userEpisodes = $this->userEpisodeRepository->findBy(['userSeries' => $userSeries, 'seasonNumber' => $seasonNumber, 'previousOccurrence' => null]);
+                if ($userSeries) {
+                    // Sync via votre méthode
+                    $this->addSeasonToUser($user, $userSeries, $seasonNumber, $userEpisodes);
+                    $syncResults[] = "Saison $seasonNumber synchronisée pour série $seriesId";
+                }
+            }
+        }
+
+        // Logs visibles seulement pour admins
+        if ($user->isGranted('ROLE_ADMIN')) {
+            foreach ($syncResults as $log) {
+                $this->logger->info($log);  // Ou addFlash si dans controller
+            }
+        }
+
+        return $syncResults;  // Retourne pour usage interne (ex. : tests)
+    }
+
+    public function addSeasonToUser(User $user, UserSeries $userSeries, int $seasonNumber, array $userEpisodes): array
+    {
+        $reloadUserEpisodes = false;
+        $series = $userSeries->getSeries();
+        $locale = $user->getPreferredLanguage() ?? "fr";
+        $language = $locale . "-" . $user->getCountry() ?? $this->getDefaultRegion($locale);
+        $tvSeason = json_decode($this->tmdbService->getTvSeason($series->getTmdbId(), $seasonNumber, $language), true);
+        $newEpisodeCount = 0;
+        if (!$tvSeason) {
+            return [0, false];
+        }
+        if (!isset($tvSeason['episodes']) || count($tvSeason['episodes']) == 0) {
+            return [0, false];
+        }
+
+        $seasonNumber = $tvSeason['season_number'];
+        $finaleEpisodeNumber = $this->getFinaleEpisodeNumber($tvSeason);
+
+        foreach ($tvSeason['episodes'] as $episode) {
+            $dbUserEpisode = array_find($userEpisodes, fn($e) => $e->getEpisodeId() == $episode['id']);
+            if ($dbUserEpisode) {
+                // Episode already exists in user's series
+                continue;
+            }
+            if ($episode['episode_number'] > $finaleEpisodeNumber) {
+                $this->addFlash('warning', "// Skip episode " . sprintf("S%02dE%02d", $tvSeason['season_number'], $episode['episode_number']) . " after a finale");
+                continue;
+            }
+            $newEpisodeCount += $this->addEpisodeToUser($userSeries, $episode, $seasonNumber);
+        }
+
+        if ($newEpisodeCount) {
+            $this->userEpisodeRepository->flush();
+            $ueIds = array_column($this->userEpisodeRepository->getSeasonEpisodeIds($userSeries->getId(), $seasonNumber), 'episode_id');
+        } else {
+            $ueIds = array_filter($userEpisodes, fn($e) => $e->getSeasonNumber() == $seasonNumber);
+            $ueIds = array_map(fn($e) => $e->getEpisodeId(), $ueIds);
+//            dd(['user episodes' => $userEpisodes, 'ue ids' => $ueIds]);
+        }
+
+        $epIds = $tvSeason['episodes'] ? array_map(fn($e) => $e['id'], $tvSeason['episodes']) : [];
+        $removedEpisodeIds = array_values(array_diff($ueIds, $epIds));
+        $updatedEpisodeIds = array_values(array_intersect($ueIds, $epIds));
+        $removedEpisodeCount = count($removedEpisodeIds);
+
+        if ($removedEpisodeCount) {
+            if ($removedEpisodeCount == 1) {
+                $this->addFlash('info', $this->translator->trans('An episode has been removed from the series (%id%)', ['%id%' => $removedEpisodeIds[0]]));
+            } else {
+                $this->addFlash('info', $this->translator->trans('%count% episodes have been removed from the series (%list%)', ['%count%' => $removedEpisodeCount, '%list%' => implode(', ', $removedEpisodeIds)]));
+            }
+            $this->userEpisodeRepository->removeByEpisodeIds($userSeries, $removedEpisodeIds);
+            $this->userEpisodeRepository->flush();
+            $reloadUserEpisodes = true;
+
+            // Get TMDB infos for remaining episodes
+            foreach ($updatedEpisodeIds as $episodeId) {
+                /** @var UserEpisode $dbUserEpisode */
+                $dbUserEpisode = array_find($userEpisodes, fn($e) => $e->getEpisodeId() == $episodeId);
+                if ($dbUserEpisode) {
+                    $episode = array_find($tvSeason['episodes'], fn($e) => $e['id'] == $episodeId);
+                    if ($episode) {
+                        $airDate = $episode['air_date'] ? $this->date($episode['air_date'], true) : null;
+                        $dbUserEpisode->setAirDate($airDate);
+                        $dbUserEpisode->setEpisodeNumber($episode['episode_number']);
+                        $this->userEpisodeRepository->save($dbUserEpisode);
+                        $this->addFlash('info', $this->translator->trans('Episode %number% has been updated', ['%number%' => sprintf('S%02dE%02d', $seasonNumber, $episode['episode_number'])]));
+                    }
+                }
+            }
+        }
+
+        return [$newEpisodeCount, $reloadUserEpisodes];
+    }
+
+    public function getFinaleEpisodeNumber(array $tvSeason): int
+    {
+        $finaleEpisodeNumber = count($tvSeason['episodes']);
+        foreach ($tvSeason['episodes'] as $episode) {
+            if (key_exists("episode_type", $episode)) {
+                if ($episode['episode_type'] == "finale") {
+                    return $episode['episode_number'];
+                }
+            }
+        }
+        return $finaleEpisodeNumber;
+    }
+
+    public function getDefaultRegion(string $locale): string
+    {
+        // $locale: 'fr|en|ko'
+        return match ($locale) {
+            'en' => 'US',
+            'ko' => 'KR',
+            default => 'FR',
+        };
+    }
+
+    public function addEpisodeToUser(UserSeries $userSeries, array $episode, int $seasonNumber): int
+    {
+        $userEpisode = new UserEpisode($userSeries, $episode['id'], $seasonNumber, $episode['episode_number'], null);
+        $airDate = $episode['air_date'] ? $this->date($episode['air_date'], true) : null;
+        $userEpisode->setAirDate($airDate);
+        $this->userEpisodeRepository->save($userEpisode);
+        if ($seasonNumber == 0) {
+            return 1;
+        }
+        if ($userSeries->getNextUserEpisode() === null && $airDate && $airDate > $this->now()) {
+            $this->userEpisodeRepository->flush();
+            $userSeries->setNextUserEpisode($userEpisode);
+            $this->userSeriesRepository->save($userSeries, true);
+            $this->addFlash('info', $this->translator->trans('Next episode to watch is %episode%', ['%episode%' => sprintf('S%02dE%02d', $seasonNumber, $episode['episode_number'])]));
+        }
+        return 1;
+    }
 
     public function localizeSeries(Series $series, array $localization, string $locale): void
     {
@@ -966,7 +1143,7 @@ class SeriesService extends AbstractController
         return $emptyLocation->toArray();
     }
 
-    public function getLocationFormData(int $tvId, int $seriesId):array
+    public function getLocationFormData(int $tvId, int $seriesId): array
     {
         $list = array_column($this->filmingLocationRepository->getSourceList(), "source_name");
         return [

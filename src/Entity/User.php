@@ -388,7 +388,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     }
 
     /**
-     * @return Collection<int, Provider>
+     * @return Collection<int, WatchProvider>
      */
     public function getProviders(): Collection
     {
@@ -820,5 +820,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         }
 
         return $this;
+    }
+
+    public function isGranted(string $role): bool
+    {
+        return in_array($role, $this->roles, true);
     }
 }
