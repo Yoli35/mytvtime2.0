@@ -79,7 +79,7 @@
                     background-color: hsl(from var(--orange) h s l /.5);
                     bottom: 0;
                     display: flex;
-                    font-size: 1.5rem;
+                    font-size: 1.25rem;
                     height: 3rem;
                     justify-content: center;
                     position: absolute;
@@ -98,9 +98,9 @@
                 border-radius: 0 0 .5rem .5rem;
                 display: flex;
                 flex-direction: column;
-                font-size: clamp(1rem, 1.5vw, 2rem);
+                font-size: 1rem;
                 font-weight: 100;
-                height: clamp(2.75rem, 4.125vw, 5.5rem);
+                height: 5rem;
                 justify-content: center;
                 line-height: 1.25em;
                 padding-inline: .5rem;
@@ -114,7 +114,6 @@
 
                 .date {
                     color: var(--ardoise-10);
-                    margin-block-end: auto;
                 }
             }
         }

@@ -91,6 +91,8 @@ h2 {
     }
 
     .episode-arrow {
+        --svgSize: max(2.5rem, 3vh, 3vw);
+
         align-items: center;
         aspect-ratio: 1 / 1;
         background-color: var(--orange-50);
@@ -102,7 +104,6 @@ h2 {
         justify-content: center;
         margin-block-start: max(8rem, 8vh, 8vw);
         margin-inline: min(-1.625rem, -2vh, -2vw);
-        /*width: 3rem;*/
         z-index: 2;
     }
 
@@ -4351,12 +4352,13 @@ h2 {
                             textarea {
                                 background-color: var(--ardoise-80);
                                 border: 2px solid var(--orange-50);
-                                border-radius: .25rem;
+                                border-radius: 1rem;
                                 color: var(--ardoise-10);
                                 flex-grow: 1;
                                 font-size: 1rem;
                                 font-weight: 100;
-                                padding-inline: .5rem;
+                                padding-block: 1rem;
+                                padding-inline: 1rem;
                             }
 
                             button {
