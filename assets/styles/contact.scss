@@ -73,12 +73,25 @@
                 input[type="number"],
                 input[type="search"],
                 input[type="text"],
+                input[type="url"] {
+                    border-radius: 5rem;
+                }
+
+                textarea {
+                    border-radius: 1rem;
+                    padding: 1rem;
+                }
+
+                input[type="date"],
+                input[type="email"],
+                input[type="number"],
+                input[type="search"],
+                input[type="text"],
                 input[type="url"],
                 textarea {
                     appearance: none;
                     background-color: var(--ardoise-80);
                     border: 1px solid var(--ardoise-50);
-                    border-radius: 5rem;
                     color: var(--ardoise-10);
                     line-height: 1.25;
                     padding-block: .5rem;
