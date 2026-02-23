@@ -358,6 +358,7 @@ export class TranslationsForms {
 
     saveBiography(e) {
         e.preventDefault();
+        const id = document.querySelector('.person').getAttribute('data-id');
         const biographyField = this.biographyForm.querySelector('#biography-field');
         if (biographyField.value.length < 20) {
             const errorSpan = this.biographyForm.querySelector(".error");
