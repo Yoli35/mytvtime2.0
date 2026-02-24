@@ -132,7 +132,7 @@ readonly class SeriesSchedule
                 }
                 $episodeIdArr = array_unique($item['episodeIds']);
                 $item['episodeIds'] = implode('-', $episodeIdArr);
-                $item['display'] = $item['displayName'] . ' ' . $display;
+                $item['display'] = $item['name'] . ' ' . $display;
                 $item['episodeCount'] = count($episodeIdArr);
 
                 $dayArr[$key] = $item;
@@ -158,7 +158,6 @@ readonly class SeriesSchedule
             $item['seasonNumber'] = null;
             $item['episodeCount'] = 1;
             $item['firstEpisodeNumber'] = 1;
-            $item['localizedSlug'] = $item['slug'] = '';
             $movieArr[$item['id']] = $item;
         }
 
@@ -181,7 +180,7 @@ readonly class SeriesSchedule
                 return [
                     'type' => $item['type'],
                     'display' => $item['display'],
-                    'displayName' => $item['displayName'],
+                    'name' => $item['name'],
                     'airAt' => $item['airAt'],
                     'customDate' => $item['customDate'],
                     'episodeId' => $item['episodeId'] ?? null,
@@ -190,7 +189,6 @@ readonly class SeriesSchedule
                     'episodesWatched' => $item['episodesWatched'],
                     'firstEpisodeNumber' => $item['firstEpisodeNumber'],
                     'id' => $item['id'],
-                    'name' => $item['displayName'],
                     'posterPath' => $item['posterPath'],
                     'providerLogoPath' => $item['providerLogoPath'],
                     'providerName' => $item['providerName'],
@@ -198,7 +196,6 @@ readonly class SeriesSchedule
                     'seasonNumber' => $item['seasonNumber'],
                     'premiere' => $item['seasonNumber'] === 1 && $item['firstEpisodeNumber'] === 1,
                     'last_episode' => $item['last_episode'] ?? false,
-                    'slug' => $item['localizedSlug'] ?? $item['slug'],
                 ];
             }, array_values($itemArr));
             usort($results, function ($a, $b) {
@@ -221,7 +218,6 @@ readonly class SeriesSchedule
 
     private function seriesInArray(array $arr, array $item, string $idx): bool
     {
-//        return key_exists($item['id'], $seriesArr);
         $id = $item['id'];
         $sn = $item['seasonNumber'];
         if (!key_exists($idx, $arr)) {

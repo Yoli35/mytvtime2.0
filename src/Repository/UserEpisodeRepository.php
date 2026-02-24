@@ -464,49 +464,56 @@ class UserEpisodeRepository extends ServiceEntityRepository
         return $this->getAll($sql);
     }
 
-    public function episodesOfTheIntervalForTwig(User $user, string $start, string $end, string $locale = 'fr'): array
+    public function episodesOfTheIntervalForTwig(User $user, string $startDate, string $endDate, string $locale = 'fr'): array
     {
-        $userId = $user->getId();
-        $sql = "SELECT
-                     IF(sbd.id, DATE(sbd.date), ue.air_date) as airDate,
-                     sbs.`override`                          as override,
-                     'series'                                as type,
-                     DATEDIFF(IF(sbd.id, DATE(sbd.date), ue.air_date), DATE(NOW())) as days,
-                     s.id                                    as id, 
-                     s.name                                  as name, 
-                     s.poster_path                           as posterPath,
-                     s.slug                                  as slug, 
-                     sln.name                                as localizedName, 
-                     sln.slug                                as localizedSlug, 
-                     ue.episode_id                           as episodeId,
-                     ue.`episode_number`                     as episodeNumber, 
-                     ue.`season_number`                      as seasonNumber,
-                     ue.`watch_at`                           as watchAt,
-                     sbs.air_at                              as airAt,
-                     sbd.date                                as customDate,
-                     wp.provider_name                        as providerName,
-                     wp.logo_path                            as providerLogoPath,
-                     IF(ue.vote IS NULL, 0, ue.vote)         as vote,
-                     IF(sln.name IS NULL, s.name, sln.name)  as displayName,
-                     ((SELECT COUNT(*)
-                      FROM `user_episode` ue1
-                      WHERE ue1.`user_series_id`=ue.`user_series_id` AND ue1.`season_number`=ue.`season_number`) = ue.`episode_number`)
-                      					                     as last_episode  
-              FROM series s 
-                     INNER JOIN user_series us ON s.id = us.series_id 
-                     INNER JOIN user_episode ue ON us.id = ue.user_series_id 
-                     LEFT JOIN series_localized_name sln ON s.id = sln.series_id AND sln.locale = '$locale'
-                     LEFT JOIN series_broadcast_schedule sbs ON s.id = sbs.series_id AND sbs.season_number = ue.season_number AND IF(sbs.multi_part, ue.episode_number BETWEEN sbs.season_part_first_episode AND (sbs.season_part_first_episode + sbs.season_part_episode_count - 1), 1)
-                     LEFT JOIN series_broadcast_date sbd ON sbd.series_broadcast_schedule_id = sbs.id AND sbd.episode_id = ue.episode_id
-                     LEFT JOIN series_watch_link swl ON s.id = swl.`series_id`
-                     LEFT JOIN watch_provider wp ON wp.provider_id = IF(sbs.`id`, sbs.provider_id, swl.`provider_id`)
-              WHERE us.user_id = $userId
-                     AND IF(sbd.id, DATE(sbd.date) >= '$start', ue.air_date >= '$start')
-                     AND IF(sbd.id, DATE(sbd.date) <= '$end',   ue.air_date <= '$end')
-              ORDER BY displayName, seasonNumber, episodeNumber ";
-        //       (WHERE ...) AND ue.season_number > 0
+        $params = [
+            'userId' => $user->getId(),
+            'startDate' => $startDate,
+            'endDate' => $endDate,
+            'locale' => $locale,
+        ];
+        $types = [
+            'userId' => ParameterType::INTEGER,
+            'startDate' => ParameterType::STRING,
+            'endDate' => ParameterType::STRING,
+            'locale' => ParameterType::STRING,
+        ];
+        $sql = <<<SQL
+            SELECT
+                IF(sbd.id, DATE(sbd.date), ue.air_date) AS airDate,
+                sbs.`override`                          AS override,
+                'series'                                AS type,
+                DATEDIFF(IF(sbd.id, DATE(sbd.date), ue.air_date), DATE(NOW())) AS days,
+                s.id                                    AS id, 
+                IF(sln.name IS NULL, s.name, sln.name)  AS name,
+                s.poster_path                           AS posterPath,
+                ue.episode_id                           AS episodeId,
+                ue.`episode_number`                     AS episodeNumber, 
+                ue.`season_number`                      AS seasonNumber,
+                ue.`watch_at`                           AS watchAt,
+                sbs.air_at                              AS airAt,
+                sbd.date                                AS customDate,
+                wp.provider_name                        AS providerName,
+                wp.logo_path                            AS providerLogoPath,
+                ((SELECT COUNT(*)
+                FROM `user_episode` ue1
+                WHERE ue1.`user_series_id`=ue.`user_series_id` AND ue1.`season_number`=ue.`season_number`) = ue.`episode_number`)
+                                                        AS last_episode  
+            FROM series s 
+                 INNER JOIN user_series us ON s.id = us.series_id 
+                 INNER JOIN user_episode ue ON us.id = ue.user_series_id 
+                 LEFT JOIN series_localized_name sln ON s.id = sln.series_id AND sln.locale = :locale
+                 LEFT JOIN series_broadcast_schedule sbs ON s.id = sbs.series_id AND sbs.season_number = ue.season_number AND IF(sbs.multi_part, ue.episode_number BETWEEN sbs.season_part_first_episode AND (sbs.season_part_first_episode + sbs.season_part_episode_count - 1), 1)
+                 LEFT JOIN series_broadcast_date sbd ON sbd.series_broadcast_schedule_id = sbs.id AND sbd.episode_id = ue.episode_id
+                 LEFT JOIN series_watch_link swl ON s.id = swl.`series_id`
+                 LEFT JOIN watch_provider wp ON wp.provider_id = IF(sbs.`id`, sbs.provider_id, swl.`provider_id`)
+            WHERE us.user_id = :userId
+                 AND IF(sbd.id, DATE(sbd.date) >= :startDate, ue.air_date >= :startDate)
+                 AND IF(sbd.id, DATE(sbd.date) <= :endDate,   ue.air_date <= :endDate)
+            ORDER BY name, seasonNumber, episodeNumber
+        SQL;
 
-        return $this->getAll($sql);
+        return $this->getAll($sql, $params, $types);
     }
 
     public function historyEpisode(User $user, int $dayCount, string $locale): array
@@ -720,20 +727,22 @@ class UserEpisodeRepository extends ServiceEntityRepository
         return $this->getAll($sql);
     }
 
-    public function getAll($sql): array
+    public function getAll($sql, array $params = [], array $types = []): array
     {
         try {
-            return $this->em->getConnection()->fetchAllAssociative($sql);
-        } catch (Exception) {
+            return $this->em->getConnection()->fetchAllAssociative($sql, $params, $types);
+        } catch (\Exception $e) {
+            $this->logger->error('Error: ' . $e->getMessage());
             return [];
         }
     }
 
-    public function getOne($sql): mixed
+    public function getOne($sql, array $params = [], array $types = []): mixed
     {
         try {
-            return $this->em->getConnection()->fetchOne($sql);
-        } catch (Exception) {
+            return $this->em->getConnection()->fetchOne($sql, $params, $types);
+        } catch (\Exception $e) {
+            $this->logger->error('Error: ' . $e->getMessage());
             return [];
         }
     }
