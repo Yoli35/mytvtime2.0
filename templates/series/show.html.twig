@@ -57,12 +57,12 @@
                                 <div class="progress-bar"></div>
                             </div>
                         {% endif %}
-                        <div class="go-to-map"><a href="#series-map-title">{{ 'Filming locations map'|trans }}</a></div>
                         {% if app.environment == 'dev' %}
                             <div class="debug">{{ series.id }} / {{ userSeries.id }} / {{ tv.id }}</div>
                         {% endif %}
                     </div>
                 </div>
+                <div class="go-to-map" data-target="#series-map-content" data-title="{{ 'Filming locations map'|trans }}">{{ ux_icon('mdi:map-outline') }}</div>
                 <div class="infos">
                     <div class="infos-content">
                         <div class="name">
@@ -705,9 +705,11 @@
                 </dialog>
             </div>
 
-            <div class="content">
+            <div class="content" id="series-map-content">
                 {{ include('_blocks/series/_map.html.twig', {locations: locations, mapSettings: mapSettings}) }}
+            </div>
 
+            <div class="content">
                 {% if tv.similar.total_results %}
                     <div class="series-group">
                         <h2>{{ 'Similar series'|trans }}</h2>

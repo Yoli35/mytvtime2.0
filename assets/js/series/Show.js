@@ -156,6 +156,19 @@ export class Show {
         }
 
         /******************************************************************************
+         * Go to the map section.                                                     *
+         ******************************************************************************/
+        const goToMap = document.querySelector('.go-to-map');
+        if (goToMap) {
+            goToMap.addEventListener('click', () => {
+                const target = document.querySelector(goToMap.getAttribute('data-target'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+            });
+        }
+
+        /******************************************************************************
          * Add a copy badge to the name and localized name.                           *
          ******************************************************************************/
         new CopyName(document.querySelector('.header .name h1'));
