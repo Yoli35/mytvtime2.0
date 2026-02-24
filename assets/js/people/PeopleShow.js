@@ -152,9 +152,6 @@ export class PeopleShow {
 
     hidePoster(e) {
         const poster = document.querySelector(".person").querySelector(".poster-hover");
-        if (poster.classList.contains("show") && e.type === "click") {
-            e.preventDefault();
-        }
         poster.classList.remove("show");
     }
 
