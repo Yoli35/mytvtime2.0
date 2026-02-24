@@ -117,6 +117,7 @@ let self;
  * @property {SeasonProvider} seasonProvider
  * @property {number} showId
  * @property {number} seasonNumber
+ * @property {number} seasonProgress
  * @property {User} user
  * @property {Providers} providers
  * @property {Devices} devices
@@ -133,6 +134,7 @@ export class Season {
         this.devices = globs.devices;
         this.providers = globs.providers;
         this.seasonNumber = globs.seasonNumber;
+        this.seasonProgress = globs.seasonProgress;
         this.seriesId = globs.seriesId;
         this.showId = globs.showId;
         this.user = globs.user;
@@ -155,7 +157,7 @@ export class Season {
         /******************************************************************************
          * Animation for the progress bar                                             *
          ******************************************************************************/
-        this.episodeActions.setProgress();
+        this.episodeActions.setProgress(this.seasonProgress);
 
         /******************************************************************************
          * Add a copy badge to the name and localized name                            *

@@ -390,6 +390,7 @@
             },
             "seriesId": {{ series.id }},
             "showId": {{ series.tmdbId }},
+            "seasonProgress": {{ season.progress }},
             "seasonNumber": {{ season.season_number }},
             "seasonProvider": {{ season["watch/providers"]|json_encode(constant('JSON_PRETTY_PRINT'))|raw }},
             "providers": {{ providers|json_encode(constant('JSON_PRETTY_PRINT'))|raw }},
