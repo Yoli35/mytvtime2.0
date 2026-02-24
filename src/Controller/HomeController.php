@@ -44,7 +44,7 @@ class HomeController extends AbstractController
         return $this->redirectToRoute('app_home_index', ['_locale' => $request->getLocale()]);
     }
 
-    #[Route('/home/{_locale}/', name: 'index', requirements: ['_locale' => 'fr|en|ko'])]
+    #[Route('/{_locale}/home/', name: 'index', requirements: ['_locale' => 'fr|en|ko'])]
     public function index(Request $request): Response
     {
         $user = $this->getUser();
