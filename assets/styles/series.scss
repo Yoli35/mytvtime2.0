@@ -4436,8 +4436,10 @@ h2 {
                     .air-date {
                         align-items: center;
                         display: flex;
-                        flex-wrap: wrap;
+                        /*flex-wrap: wrap;*/
                         gap: .125rem 1rem;
+                        min-height: 2.5rem;
+                        overflow-x: auto;
 
                         .airing {
                             align-items: center;
@@ -4445,6 +4447,7 @@ h2 {
                             border-radius: 5rem;
                             color: var(--ardoise-10);
                             display: flex;
+                            flex-shrink: 0;
                             font-size: 1rem;
                             font-weight: 500;
                             gap: .5rem;
@@ -4454,7 +4457,8 @@ h2 {
 
                         .watch-at-list {
                             display: flex;
-                            flex-wrap: wrap;
+                            flex-shrink: 0;
+                            /*flex-wrap: wrap;*/
                             gap: .5rem;
                             justify-content: flex-start;
                             padding-inline: 1rem;
@@ -4466,8 +4470,10 @@ h2 {
                                 color: var(--ardoise-10);
                                 cursor: grab;
                                 display: flex;
+                                flex-shrink: 0;
                                 flex-wrap: nowrap;
                                 gap: .5rem;
+                                overflow-x: auto;
                                 padding: .25rem 1rem;
 
                                 &.editing {
