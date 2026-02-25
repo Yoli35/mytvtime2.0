@@ -5,6 +5,7 @@ namespace App\Repository;
 use App\Entity\FilmingLocation;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\DBAL\Exception;
+use Doctrine\DBAL\ParameterType;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -116,24 +117,6 @@ class FilmingLocationRepository extends ServiceEntityRepository
         return $this->getAll($sql);
     }
 
-    public function getAll($sql): array
-    {
-        try {
-            return $this->em->getConnection()->fetchAllAssociative($sql);
-        } catch (Exception) {
-            return [];
-        }
-    }
-
-    public function getOne($sql): array|false
-    {
-        try {
-            return $this->em->getConnection()->fetchAssociative($sql);
-        } catch (Exception) {
-            return [];
-        }
-    }
-
     public function getSourceList(): array
     {
         $sql = "SELECT DISTINCT source_name
@@ -151,11 +134,38 @@ class FilmingLocationRepository extends ServiceEntityRepository
 
     public function findLatestLocations(int $lastId): array
     {
-        $sql = "SELECT fl.*, fli.path as still_path
+        $params = [
+            'lastId' => $lastId,
+        ];
+        $types = [
+            'lastId' => ParameterType::INTEGER,
+        ];
+        $sql = <<<SQL
+            SELECT fl.*, fli.path AS still_path
                 FROM filming_location fl
-                LEFT JOIN filming_location_image fli ON fl.`still_id` = fli.`id`
-                WHERE fl.id > $lastId
-                ORDER BY fl.id DESC";
-        return $this->getAll($sql);
+                    LEFT JOIN filming_location_image fli ON fl.`still_id` = fli.`id`
+                WHERE fl.id > :lastId
+                ORDER BY fl.id DESC
+        SQL;
+
+        return $this->getAll($sql, $params, $types);
+    }
+
+    public function getAll($sql, array $params = [], array $types = []): array
+    {
+        try {
+            return $this->em->getConnection()->fetchAllAssociative($sql, $params, $types);
+        } catch (Exception) {
+            return [];
+        }
+    }
+
+    public function getOne($sql): array|false
+    {
+        try {
+            return $this->em->getConnection()->fetchAssociative($sql);
+        } catch (Exception) {
+            return [];
+        }
     }
 }
