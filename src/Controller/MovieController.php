@@ -100,11 +100,11 @@ class MovieController extends AbstractController
             }
         } else {
             // /fr/series/all?sort=episodeAirDate&order=DESC&startStatus=series-not-started&endStatus=series-not-watched&perPage=10
-            $page = $request->get('page') ?? 1;
-            $paramSort = $request->get('sort');
-            $paramOrder = $request->get('order');
-            $paramPerPage = $request->get('perPage');
-            $paramTitle = $request->get('title');
+            $page = $request->query->getInt('page', 1);
+            $paramSort = $request->query->get('sort', 'releaseDate');
+            $paramOrder = $request->query->get('order', 'DESC');
+            $paramPerPage = $request->query->getInt('perPage', 10);
+            $paramTitle = $request->query->get('title');
             $settings->setData([
                 'order' => $paramOrder,
                 'page' => $page,
