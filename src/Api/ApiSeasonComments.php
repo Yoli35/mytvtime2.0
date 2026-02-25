@@ -73,11 +73,11 @@ readonly class ApiSeasonComments
         $images = $this->episodeCommentImageRepository->findByEpisodeCommentIds($ids);
         $imagesArr = [];
         foreach ($images as $image) {
-            $commentId = $image->getEpisodeComment()->getId();
+            $commentId = $image['episode_comment_id'];
             if (!isset($imagesArr[$commentId])) {
                 $imagesArr[$commentId] = [];
             }
-            $imagesArr[$commentId][] = $image->getPath();
+            $imagesArr[$commentId][] = $image['path'];
         }
 
         foreach ($comments as $comment) {

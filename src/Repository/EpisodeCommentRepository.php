@@ -38,12 +38,15 @@ class EpisodeCommentRepository extends ServiceEntityRepository
 
     public function commentCountBySeries(): array
     {
-        $sql = "select s.`id` as id, count(ec.`series_id`) as count, if(sln.`name` is not NULL, sln.`name`, s.`name`) as name, ec.`season_number` as sn
-                from `episode_comment` ec
-                    left join `series` s ON s.`id`=ec.`series_id`
-                    left join `series_localized_name` sln ON sln.`series_id`=s.`id`
-                group by ec.`series_id`, s.`id`, sln.`id`, ec.`season_number`
-                order by count desc";
+        $sql = "SELECT s.`id`                                        AS id,
+                    count(ec.`series_id`)                            AS count,
+                    if(sln.`name` IS NOT NULL, sln.`name`, s.`name`) AS name,
+                    ec.`season_number`                               AS sn
+                FROM `episode_comment` ec
+                    LEFT JOIN `series` s ON s.`id`=ec.`series_id`
+                    LEFT JOIN `series_localized_name` sln ON sln.`series_id`=s.`id`
+                GROUP BY ec.`series_id`, s.`id`, sln.`id`, ec.`season_number`
+                ORDER BY count DESC";
 
         return $this->getAll($sql);
     }
