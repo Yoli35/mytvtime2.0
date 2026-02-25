@@ -5,7 +5,6 @@ namespace App\Form;
 use App\DTO\SeriesAdvancedDbSearchDTO;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
-use Symfony\Component\Form\Extension\Core\Type\CountryType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\LanguageType;
@@ -17,7 +16,6 @@ class SeriesAdvancedDbSearchType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
-        dump($options);
         $countries = $options['countries'];
         $builder
             ->add('firstAirDateYear', NumberType::class, [

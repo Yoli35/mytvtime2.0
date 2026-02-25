@@ -45,7 +45,6 @@ readonly class SettingsAdvancedDbSearchService
             $this->settingsRepository->save($advancedSettings, true);
         }
         $settings = $advancedSettings->getData();
-        dump($settings);
         $seriesSearch->setPage($settings['page']);
         $seriesSearch->setLanguage($settings['language']);
         $seriesSearch->setTimezone($settings['timezone']);
