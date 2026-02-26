@@ -4,7 +4,9 @@ namespace App\Repository;
 
 use App\Entity\PeopleUserPreferredName;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\DBAL\ArrayParameterType;
 use Doctrine\DBAL\Exception;
+use Doctrine\DBAL\ParameterType;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -43,20 +45,30 @@ class PeopleUserPreferredNameRepository extends ServiceEntityRepository
 
     public function getUserPreferredNames(int $userId): array
     {
-        $sql = "SELECT * FROM people_user_preferred_name WHERE user_id=$userId";
-        return $this->getAll($sql);
+        $params = ['userId' => $userId];
+        $types = ['userId' => ParameterType::INTEGER];
+
+        $sql = <<<SQL
+            SELECT * FROM people_user_preferred_name WHERE user_id=:userId
+        SQL;
+        return $this->getAll($sql, $params, $types);
     }
 
     public function getPreferredNames(array $tmdbIds): array
     {
-        $sql = "SELECT * FROM people_user_preferred_name WHERE tmdb_id IN (" . implode(',', $tmdbIds) . ")";
-        return $this->getAll($sql);
+        $params = ['tmdbIds' => $tmdbIds];
+        $types = ['tmdbIds' => ArrayParameterType::INTEGER];
+
+        $sql = <<<SQL
+            SELECT * FROM people_user_preferred_name WHERE tmdb_id IN (:tmdbIds)
+        SQL;
+        return $this->getAll($sql, $params, $types);
     }
 
-    public function getAll($sql): array
+    public function getAll(string $sql, array $params = [], array $types = []): array
     {
         try {
-            return $this->em->getConnection()->fetchAllAssociative($sql);
+            return $this->em->getConnection()->fetchAllAssociative($sql, $params, $types);
         } catch (Exception) {
             return [];
         }

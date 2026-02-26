@@ -5,6 +5,7 @@ namespace App\Repository;
 use App\Entity\SeriesCast;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\DBAL\Exception;
+use Doctrine\DBAL\ParameterType;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -29,23 +30,30 @@ class SeriesCastRepository extends ServiceEntityRepository
 
     public function getSeriesCatsBySeriesId(int $seriesId): array
     {
-        $sql = "SELECT
-                    p.`adult` as adult,
-                    p.`gender` as genre,
-                    p.`tmdb_id` as id,
-                    p.`known_for_department` as known_for_department,
-                    p.`name` as name,
-                    sc.`character_name` as character_name,
-                    p.`profile_path` as profile_path
-                FROM people p
-                    INNER JOIN `series_cast` sc ON sc.`series_id`=$seriesId AND sc.`people_id`=p.`id`";
-        return $this->getAll($sql);
+        $params = [
+            'seriesId' => $seriesId,
+        ];
+        $types = [
+            'seriesId' => ParameterType::INTEGER,
+        ];
+        $sql = <<<SQL
+            SELECT p.`adult`             AS adult,
+                p.`gender`               AS genre,
+                p.`tmdb_id`              AS id,
+                p.`known_for_department` AS known_for_department,
+                p.`name`                 AS name,
+                sc.`character_name`      AS character_name,
+                p.`profile_path`         AS profile_path
+            FROM people p
+                INNER JOIN `series_cast` sc ON sc.`series_id` = :seriesId AND sc.`people_id`=p.`id`
+        SQL;
+        return $this->getAll($sql, $params, $types);
     }
 
-    private function getAll($sql): array
+    private function getAll(string $sql, array $params = [], array $types = []): array
     {
         try {
-            return $this->em->getConnection()->fetchAllAssociative($sql);
+            return $this->em->getConnection()->fetchAllAssociative($sql, $params, $types);
         } catch (Exception) {
             return [];
         }

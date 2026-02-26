@@ -26,13 +26,17 @@ class NetworkRepository extends ServiceEntityRepository
 
     public function networkLogoPaths(): array
     {
-        $sql = "SELECT id, logo_path FROM network";
+        $sql = <<<SQL
+            SELECT id, logo_path FROM network
+        SQL;
         return $this->getAll($sql);
     }
 
     public function getNetworkList():array
     {
-        $sql = "SELECT network_id, name, logo_path FROM network ORDER BY name";
+        $sql = <<<SQL
+            SELECT network_id, name, logo_path FROM network ORDER BY name
+        SQL;
         return $this->getAll($sql);
     }
 

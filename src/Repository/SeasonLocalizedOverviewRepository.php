@@ -5,6 +5,7 @@ namespace App\Repository;
 use App\Entity\SeasonLocalizedOverview;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\DBAL\Exception;
+use Doctrine\DBAL\ParameterType;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -32,28 +33,40 @@ class SeasonLocalizedOverviewRepository extends ServiceEntityRepository
         $this->em->flush();
     }
 
-    public function getSeasonLocalizedOverview(int $serieId, int $seasonNumber, string $locale): array|bool
+    public function getSeasonLocalizedOverview(int $seriesId, int $seasonNumber, string $locale): array|bool
     {
-        $sql = "SELECT slo.*
-                FROM `season_localized_overview` slo
-                WHERE slo.series_id = $serieId AND slo.season_number = $seasonNumber AND slo.locale = '$locale'";
+        $params = [
+            'seriesId' => $seriesId,
+            'seasonNumber' => $seasonNumber,
+            'locale' => $locale,
+        ];
+        $types = [
+            'seriesId' => ParameterType::INTEGER,
+            'seasonNumber' => ParameterType::INTEGER,
+            'locale' => ParameterType::STRING,
+        ];
+        $sql = <<<SQL
+            SELECT slo.*
+            FROM `season_localized_overview` slo
+            WHERE slo.series_id = :seriesId AND slo.season_number = :seasonNumber AND slo.locale = :locale
+        SQL;
 
-        return $this->getOne($sql);
+        return $this->getOne($sql, $params, $types);
     }
 
-    public function getAll($sql): array
+    public function getAll(string $sql, array $params = [], array $types = []): array
     {
         try {
-            return $this->em->getConnection()->fetchAllAssociative($sql);
+            return $this->em->getConnection()->fetchAllAssociative($sql, $params, $types);
         } catch (Exception) {
             return [];
         }
     }
 
-    public function getOne($sql): array|bool
+    public function getOne(string $sql, array $params = [], array $types = []): array|bool
     {
         try {
-            return $this->em->getConnection()->fetchAssociative($sql);
+            return $this->em->getConnection()->fetchAssociative($sql, $params, $types);
         } catch (Exception) {
             return [];
         }

@@ -5,6 +5,7 @@ namespace App\Repository;
 use App\Entity\Photo;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\DBAL\Exception;
+use Doctrine\DBAL\ParameterType;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -27,58 +28,51 @@ class PhotoRepository extends ServiceEntityRepository
         }
     }
 
-    public function photoIdsByDate(int $userId, string $date): array
-    {
-        $sql = "SELECT *
-                FROM `photo` p
-                WHERE p.`user_id`=$userId AND DATE(p.`date`)='$date'
-                ORDER BY p.`created_at` DESC";
-
-        return $this->getAll($sql);
-    }
-
     public function photoByFilename(int $userId, string $filename): array
     {
-        $sql = "SELECT *
+        $p = [
+            'userId' => $userId,
+            'filename' => $filename
+        ];
+        $t = [
+            'userId' => ParameterType::INTEGER,
+            'filename' => ParameterType::STRING,
+        ];
+
+        $sql = <<<SQL
+            SELECT *
                 FROM `photo` p
                 	LEFT JOIN `photo_album` pa ON pa.`photo_id`=p.`id`
-                WHERE p.`user_id`=$userId AND p.`image_path`='$filename'";
+                WHERE p.`user_id` = :userId AND p.`image_path` = :filename
+            SQL;
 
-        return $this->getAll($sql);
-    }
-
-    public function photoByAlbum(int $albumId): array
-    {
-        $sql = "SELECT *
-                FROM `photo` p
-                    INNER JOIN `photo_album` pa ON pa.`photo_id`=p.`id`
-                WHERE pa.`album_id`=$albumId";
-
-        return $this->getAll($sql);
+        return $this->getAll($sql, $p, $t);
     }
 
     public function photoAll(): array
     {
-        $sql = "SELECT *
+        $sql = <<<SQL
+            SELECT *
                 FROM `photo` p
-                WHERE 1";
+                WHERE 1
+            SQL;
 
         return $this->getAll($sql);
     }
 
-    public function getAll($sql): array
+    public function getAll(string $sql, array $p=[], array $t=[]): array
     {
         try {
-            return $this->em->getConnection()->fetchAllAssociative($sql);
+            return $this->em->getConnection()->fetchAllAssociative($sql, $p, $t);
         } catch (Exception) {
             return [];
         }
     }
 
-    public function getOne($sql): array|false
+    public function getOne($sql, array $p=[], array $t=[]): array|false
     {
         try {
-            return $this->em->getConnection()->fetchAssociative($sql);
+            return $this->em->getConnection()->fetchAssociative($sql, $p, $t);
         } catch (Exception) {
             return [];
         }

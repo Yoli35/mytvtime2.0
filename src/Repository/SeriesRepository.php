@@ -11,6 +11,8 @@ use Doctrine\DBAL\Exception;
 use Doctrine\DBAL\ParameterType;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
+use Psr\Log\LoggerInterface;
+use RuntimeException;
 
 /**
  * @extends ServiceEntityRepository<Series>
@@ -22,7 +24,11 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class SeriesRepository extends ServiceEntityRepository
 {
-    public function __construct(ManagerRegistry $registry, private readonly EntityManagerInterface $em)
+    public function __construct(
+        ManagerRegistry $registry,
+        private readonly EntityManagerInterface $em,
+        private readonly LoggerInterface $logger
+    )
     {
         parent::__construct($registry, Series::class);
     }
@@ -41,22 +47,44 @@ class SeriesRepository extends ServiceEntityRepository
         $this->em->flush();
     }
 
-    public function search(User $user, string $query, ?int $firstAirDateYear, int $page = 1): array
+    public function search(User $user, string $query, ?int $date, int $page = 1, int $limit = 20): array
     {
         $userId = $user->getId();
-        $offset = ($page - 1) * 20;
+        $offset = ($page - 1) * $limit;
 
-        $sql = "SELECT s.* 
+        $params = [
+            'userId' => $userId,
+            'query' => "%$query%",
+            'date' => $date,
+            'offset' => $offset,
+        ];
+        $types = [
+            'userId' => ParameterType::INTEGER,
+            'query' => ParameterType::STRING,
+            'date' => ParameterType::STRING,
+            'offset' => ParameterType::INTEGER,
+        ];
+        if ($date) {
+            $sql = <<<SQL
+                SELECT s.* 
                 FROM user_series us 
                     INNER JOIN series s ON us.series_id = s.id 
                     LEFT JOIN series_localized_name sln ON s.id = sln.series_id
-                WHERE us.user_id = $userId AND (s.name LIKE '%$query%' OR sln.name LIKE '%$query%') ";
-        if ($firstAirDateYear) {
-            $sql .= "AND YEAR(s.first_air_date) LIKE $firstAirDateYear ";
+                WHERE us.user_id = :userId AND (s.name LIKE :query OR sln.name LIKE :query) AND YEAR(s.first_air_date) LIKE :date
+                LIMIT 20 OFFSET :offset
+            SQL;
+        } else {
+            $sql = <<<SQL
+                SELECT s.* 
+                FROM user_series us 
+                    INNER JOIN series s ON us.series_id = s.id 
+                    LEFT JOIN series_localized_name sln ON s.id = sln.series_id
+                WHERE us.user_id = :userId AND (s.name LIKE :query OR sln.name LIKE :query)
+                LIMIT 20 OFFSET :offset
+            SQL;
         }
-        $sql .= "  LIMIT 20 OFFSET $offset";
 
-        return $this->getAll($sql);
+        return $this->getAll($sql, $params, $types);
     }
 
     public function searchCount(User $user, string $query, ?int $firstAirDateYear): array
@@ -77,211 +105,262 @@ class SeriesRepository extends ServiceEntityRepository
 
     public function getLocalizedNames(array $seriesIds, string $locale): array
     {
-        $ids = implode(',', $seriesIds);
-        $sql = "SELECT series_id, name
-                FROM series_localized_name
-                WHERE series_id IN ($ids) AND locale='$locale'";
+        $params = [
+            'locale' => $locale,
+            'seriesIds' => $seriesIds,
+        ];
+        $types = [
+            'locale' => ParameterType::STRING,
+            'seriesIds' => ArrayParameterType::INTEGER,
+        ];
+        $sql = <<<SQL
+            SELECT series_id, name
+            FROM series_localized_name
+            WHERE series_id IN (:ids) AND locale = :locale
+        SQL;
 
-        return $this->getAll($sql);
+        return $this->getAll($sql, $params, $types);
     }
 
     public function userSeriesInfos(User $user): array
     {
         $userId = $user->getId();
-        $sql = "SELECT s.tmdb_id as id,
-                       sln.name as localized_name,
-                       us.progress as progress,
-                       us.rating as rating,
-                       us.favorite as favorite
-                FROM series s
-                         INNER JOIN user_series us ON s.id = us.series_id
-                         LEFT JOIN series_localized_name sln ON s.id = sln.series_id
-                WHERE us.user_id=$userId";
+        $sql = <<<SQL
+            SELECT s.tmdb_id as id,
+                   sln.name as localized_name,
+                   us.progress as progress,
+                   us.rating as rating,
+                   us.favorite as favorite
+            FROM series s
+                     INNER JOIN user_series us ON s.id = us.series_id
+                     LEFT JOIN series_localized_name sln ON s.id = sln.series_id
+            WHERE us.user_id = :userId
+        SQL;
 
-        return $this->getAll($sql);
-    }
-
-    public function seriesImages(Series $series): array
-    {
-        $seriesId = $series->getId();
-        $sql = "SELECT type, image_path
-                FROM series_image si
-                WHERE series_id=$seriesId";
-
-        return $this->getAll($sql);
+        return $this->getAll($sql, ['userId' => $userId], ['userId' => ParameterType::INTEGER]);
     }
 
     public function seriesPosters(int $seriesId): array
     {
-        $sql = "SELECT image_path
-                FROM series_image si
-                WHERE series_id=$seriesId AND type='poster'";
+        $sql = <<<SQL
+            SELECT image_path
+            FROM series_image si
+            WHERE series_id = :seriesId AND type='poster'
+        SQL;
 
-        return $this->getAll($sql);
+        return $this->getAll($sql, ['seriesId' => $seriesId], ['seriesId' => ParameterType::INTEGER]);
     }
 
     public function hasSeriesStartedAiring(int $seriesId, string $date): bool
     {
-        $sql = "SELECT COUNT(*) as count
-                FROM series s
-                WHERE s.id=$seriesId AND s.first_air_date <= '$date'";
+        $params = [
+            'seriesId' => $seriesId,
+            'date' => $date,
+        ];
+        $types = [
+            'seriesId' => ParameterType::INTEGER,
+            'date' => ParameterType::STRING,
+        ];
+        $sql = <<<SQL
+            SELECT COUNT(*) as count
+            FROM series s
+            WHERE s.id=:seriesId AND s.first_air_date <= :date
+        SQL;
 
-        $result = $this->getOne($sql);
+        $result = $this->getOne($sql, $params, $types);
         return count($result) > 0;
     }
 
-    public function adminSeries(string $locale, int $page, string $sort, string $order, int $perPage = 20): array
+    public function adminSeries(string $locale, int $page, string $sort, string $order, int $limit = 20): array
     {
-        $offset = ($page - 1) * $perPage;
-        $sql = "SELECT
-                    s.first_air_date,
-                    s.id,
-                    s.name,
-                    s.number_of_episode,
-                    s.number_of_season,
-                    s.origin_country,
-                    s.poster_path,
-                    s.status,
-                    s.tmdb_id,
-                    sln.name as localized_name,
-                    (SELECT CONCAT(wp.`logo_path`, '|', wp.`provider_name`)
-                     FROM `watch_provider` wp
-                     	  INNER JOIN `series_watch_link` swl ON s.id = swl.series_id
-                     WHERE wp.provider_id = swl.provider_id
-                     LIMIT 1) as logo1,
-                    (SELECT CONCAT(wp.`logo_path`, '|', wp.`provider_name`)
-                     FROM `watch_provider` wp
-                     	  INNER JOIN `series_broadcast_schedule` sbs ON sbs.`series_id` = s.id
-                     WHERE wp.provider_id = sbs.provider_id
-                     LIMIT 1) as logo2
-                FROM series s
-                        LEFT JOIN series_localized_name sln ON s.id = sln.series_id AND sln.locale = '$locale'
-                ORDER BY $sort $order
-                LIMIT $perPage OFFSET $offset";
+        $offset = ($page - 1) * $limit;
+        $params = [
+            'sort' => $sort,
+            'limit' => $limit,
+            'offset' => $offset,
+            'locale' => $locale,
+        ];
+        $types = [
+            'sort' => ParameterType::STRING,
+            'limit' => ParameterType::INTEGER,
+            'offset' => ParameterType::INTEGER,
+            'locale' => ParameterType::STRING,
+        ];
+        $sql = <<<SQL
+            SELECT
+                s.first_air_date,
+                s.id,
+                s.name,
+                s.number_of_episode,
+                s.number_of_season,
+                s.origin_country,
+                s.poster_path,
+                s.status,
+                s.tmdb_id,
+                sln.name as localized_name,
+                (SELECT CONCAT(wp.`logo_path`, '|', wp.`provider_name`)
+                 FROM `watch_provider` wp
+                      INNER JOIN `series_watch_link` swl ON s.id = swl.series_id
+                 WHERE wp.provider_id = swl.provider_id
+                 LIMIT 1) as logo1,
+                (SELECT CONCAT(wp.`logo_path`, '|', wp.`provider_name`)
+                 FROM `watch_provider` wp
+                      INNER JOIN `series_broadcast_schedule` sbs ON sbs.`series_id` = s.id
+                 WHERE wp.provider_id = sbs.provider_id
+                 LIMIT 1) as logo2
+            FROM series s
+                    LEFT JOIN series_localized_name sln ON s.id = sln.series_id AND sln.locale = :locale
+            ORDER BY :sort $order
+            LIMIT :limit OFFSET :offset
+        SQL;
 
-        return $this->getAll($sql);
+        return $this->getAll($sql, $params, $types);
     }
 
     public function getSeriesIdsForUpdates(): array
     {
-        $sql = "SELECT s.id, s.tmdb_id
-                FROM series s";
+        $sql = <<<SQL
+            SELECT s.id, s.tmdb_id
+            FROM series s
+        SQL;
 
         return $this->getAll($sql);
     }
 
     public function adminSeriesTmdbId(): array
     {
-        $sql = "SELECT s.tmdb_id
-                FROM series s";
+        $sql = <<<SQL
+            SELECT s.tmdb_id
+            FROM series s
+        SQL;
 
         return $this->getAll($sql);
     }
 
     public function adminSeriesById(int $id): array
     {
-        $sql = "SELECT *
-                FROM series s
-                WHERE s.id=$id";
+        $sql = <<<SQL
+            SELECT *
+            FROM series s
+            WHERE s.id = :id
+        SQL;
 
-        return $this->getOne($sql);
+        return $this->getOne($sql, ['id' => $id], ['id' => ParameterType::INTEGER]);
     }
 
     public function adminSeriesByTmdbId(int $id): array
     {
-        $sql = "SELECT *
-                FROM series s
-                WHERE s.tmdb_id=$id";
+        $sql = <<<SQL
+            SELECT *
+            FROM series s
+            WHERE s.tmdb_id = :id
+        SQL;
 
-        return $this->getOne($sql);
+        return $this->getOne($sql, ['id' => $id], ['id' => ParameterType::INTEGER]);
     }
 
 
     // 'series_additional_overview'
     public function seriesAdditionalOverviews(int $seriesId): array
     {
-        $sql = "SELECT *
-                FROM series_additional_overview sao
-                WHERE series_id=$seriesId";
+        $sql = <<<SQL
+            SELECT *
+            FROM series_additional_overview sao
+            WHERE series_id = :seriesId
+        SQL;
 
-        return $this->getAll($sql);
+        return $this->getAll($sql, ['seriesId' => $seriesId], ['seriesId' => ParameterType::INTEGER]);
     }
 
     // 'series_broadcast_date'
-    public function seriesBroadcastDates(int $sbsId): array
+    public function seriesBroadcastDates(int $id): array
     {
-        $sql = "SELECT *
-                FROM series_broadcast_date sbd
-                WHERE sbd.series_broadcast_schedule_id = $sbsId";
+        $sql = <<<SQL
+            SELECT *
+            FROM series_broadcast_date sbd
+            WHERE sbd.series_broadcast_schedule_id = :id
+        SQL;
 
-        return $this->getAll($sql);
+        return $this->getAll($sql, ['id' => $id], ['id' => ParameterType::INTEGER]);
     }
 
     // 'series_broadcast_schedule'
     public function seriesBroadcastSchedules(int $seriesId): array
     {
-        $sql = "SELECT sbs.*,
-                       wp.provider_name as provider_name,
-                       wp.logo_path as provider_logo
-                FROM series_broadcast_schedule sbs
-                LEFT JOIN watch_provider wp ON sbs.provider_id = wp.provider_id
-                WHERE sbs.series_id=$seriesId";
+        $sql = <<<SQL
+            SELECT sbs.*,
+                   wp.provider_name as provider_name,
+                   wp.logo_path as provider_logo
+            FROM series_broadcast_schedule sbs
+            LEFT JOIN watch_provider wp ON sbs.provider_id = wp.provider_id
+            WHERE sbs.series_id = :seriesId
+        SQL;
 
-        return $this->getAll($sql);
+        return $this->getAll($sql, ['seriesId' => $seriesId], ['seriesId' => ParameterType::INTEGER]);
     }
 
     // 'series_image'
     public function seriesImagesById(int $seriesId): array
     {
-        $sql = "SELECT *
-                FROM series_image si
-                WHERE si.series_id=$seriesId";
+        $sql = <<<SQL
+            SELECT *
+            FROM series_image si
+            WHERE si.series_id = :seriesId
+        SQL;
 
-        return $this->getAll($sql);
+        return $this->getAll($sql, ['seriesId' => $seriesId], ['seriesId' => ParameterType::INTEGER]);
     }
 
     // 'series_localized_name'
     public function seriesLocalizedNames(int $seriesId): array
     {
-        $sql = "SELECT *
-                FROM series_localized_name sln
-                WHERE sln.series_id=$seriesId";
+        $sql = <<<SQL
+            SELECT *
+            FROM series_localized_name sln
+            WHERE sln.series_id = :seriesId
+        SQL;
 
-        return $this->getAll($sql);
+        return $this->getAll($sql, ['seriesId' => $seriesId], ['seriesId' => ParameterType::INTEGER]);
     }
 
     // 'series_localized_overview'
     public function seriesLocalizedOverviews(int $seriesId): array
     {
-        $sql = "SELECT *
+        $sql = <<<SQL
+            SELECT *
                 FROM series_localized_overview slo
-                WHERE slo.series_id=$seriesId";
+                WHERE slo.series_id = :seriesId
+            SQL;
 
-        return $this->getAll($sql);
+        return $this->getAll($sql, ['seriesId' => $seriesId], ['seriesId' => ParameterType::INTEGER]);
     }
 
     // 'series_network'
     public function seriesNetworks(int $seriesId): array
     {
-        $sql = "SELECT n.*
+        $sql = <<<SQL
+            SELECT n.*
                 FROM series_network sn
                 LEFT JOIN network n ON sn.network_id = n.id
-                WHERE sn.series_id=$seriesId";
+                WHERE sn.series_id = :seriesId
+            SQL;
 
-        return $this->getAll($sql);
+        return $this->getAll($sql, ['seriesId' => $seriesId], ['seriesId' => ParameterType::INTEGER]);
     }
 
     // 'series_watch_link'
     public function seriesWatchLinks(int $seriesId): array
     {
-        $sql = "SELECT swl.*,
+        $sql = <<<SQL
+            SELECT swl.*,
                        wp.provider_name as provider_name,
                        wp.logo_path as provider_logo
                 FROM series_watch_link swl
                 LEFT JOIN watch_provider wp ON swl.provider_id = wp.provider_id
-                WHERE swl.series_id=$seriesId";
+                WHERE swl.series_id = :seriesId
+            SQL;
 
-        return $this->getAll($sql);
+        return $this->getAll($sql, ['seriesId' => $seriesId], ['seriesId' => ParameterType::INTEGER]);
     }
 
     public function advancedSearchCountries(User $user): array
@@ -307,6 +386,7 @@ class SeriesRepository extends ServiceEntityRepository
         try {
             return $this->em->getConnection()->fetchAllAssociative($sql, $params, $types);
         } catch (Exception) {
+            $this->logger->error('Failed to execute SQL query: ' . $sql, ['params' => $params, 'types' => $types]);
             return [];
         }
     }
@@ -316,6 +396,7 @@ class SeriesRepository extends ServiceEntityRepository
         try {
             return $this->em->getConnection()->fetchAssociative($sql, $params, $types);
         } catch (Exception) {
+            $this->logger->error('Failed to execute SQL query: ' . $sql, ['params' => $params, 'types' => $types]);
             return [];
         }
     }
@@ -330,9 +411,7 @@ class SeriesRepository extends ServiceEntityRepository
         $parts = array_filter($parts, static fn(string $v) => $v !== '');
 
         $ids = array_map('intval', $parts);
-        $ids = array_values(array_unique(array_filter($ids, static fn(int $v) => $v > 0)));
-
-        return $ids;
+        return array_values(array_unique(array_filter($ids, static fn(int $v) => $v > 0)));
     }
 
     /**
@@ -345,8 +424,8 @@ class SeriesRepository extends ServiceEntityRepository
             'locale' => $user->getPreferredLanguage() ?? 'fr',
         ];
         $types = [
-            'userId' => \Doctrine\DBAL\ParameterType::INTEGER,
-            'locale' => \Doctrine\DBAL\ParameterType::STRING,
+            'userId' => ParameterType::INTEGER,
+            'locale' => ParameterType::STRING,
         ];
 
         $sortArr = explode('|', $seriesSearch->getSortBy());
@@ -376,11 +455,11 @@ class SeriesRepository extends ServiceEntityRepository
 
         // SELECT fields
         if ($limit) {
-            // En mode OR, DISTINCT évite les doublons dus aux joins.
-            // En mode AND (GROUP BY), DISTINCT est inutile mais ne gêne pas.
+            // En mode OR, DISTINCT évite les doublons dus aux jointures.
+            // En mode AND (GROUP BY), DISTINCT est inutile, mais ne gêne pas.
             $fields = 'DISTINCT s.backdrop_path as backdrop_path, s.tmdb_id as id, s.origin_country as country, s.original_language as original_language, s.overview as overview, s.poster_path as poster_path, s.first_air_date as first_air_date, us.added_at as added_at, s.name as name, IF(sln.id, sln.name, s.name) as display_name';
         } else {
-            // Le COUNT sera géré plus bas (subquery si AND)
+            // Le COUNT sera géré plus bas (subquery si AND).
             $fields = 's.id';
         }
 
@@ -435,34 +514,30 @@ class SeriesRepository extends ServiceEntityRepository
 
         if ($hasKeywords) {
             $params['kwTmdbIds'] = $kwTmdbIds;
-            $types['kwTmdbIds'] = \Doctrine\DBAL\ArrayParameterType::INTEGER;
+            $types['kwTmdbIds'] = ArrayParameterType::INTEGER;
 
             if ($separator === ',') {
-                // AND: tous les mots-clés
+                // Tous les mots-clés
                 $params['kwCount'] = count($kwTmdbIds);
-                $types['kwCount'] = \Doctrine\DBAL\ParameterType::INTEGER;
+                $types['kwCount'] = ParameterType::INTEGER;
 
-                $where[] = <<<SQL
-                        s.id IN (
+                $where[] = 's.id IN (
                             SELECT sk2.series_id
                             FROM series_keyword sk2
                             INNER JOIN keyword k2 ON k2.id = sk2.keyword_id
                             WHERE k2.keyword_id IN (:kwTmdbIds)
                             GROUP BY sk2.series_id
                             HAVING COUNT(DISTINCT k2.keyword_id) = :kwCount
-                        )
-        SQL;
+                        )';
             } else {
-                // OR: au moins un mot-clé
-                $where[] = <<<SQL
-                        EXISTS (
+                // Au moins un mot-clé
+                $where[] = 'EXISTS (
                             SELECT 1
                             FROM series_keyword sk2
                             INNER JOIN keyword k2 ON k2.id = sk2.keyword_id
                             WHERE sk2.series_id = s.id
                               AND k2.keyword_id IN (:kwTmdbIds)
-                        )
-        SQL;
+                        )';
             }
         }
 
@@ -489,7 +564,7 @@ class SeriesRepository extends ServiceEntityRepository
         // On extrait la partie "FROM ..."
 // (supporte: espaces avant FROM, CRLF, etc.)
         if (!preg_match('/\bFROM\b.*$/is', $sql, $m)) {
-            throw new \RuntimeException('Unable to build count query: FROM clause not found.');
+            throw new RuntimeException('Unable to build count query: FROM clause not found.');
         }
         $fromAndAfter = $m[0];
         $countSql = "SELECT COUNT(DISTINCT s.id) as n\n" . $fromAndAfter;
@@ -501,84 +576,12 @@ class SeriesRepository extends ServiceEntityRepository
     {
         [$sql, $params, $types] = $this->advancedDbSearchSQL($user, $seriesSearch);
         return $this->getAll($sql, $params, $types);
-//        return $this->em->getConnection()->fetchAllAssociative($sql, $params, $types);
     }
 
     public function advancedDbSearchCount(User $user, SeriesAdvancedDbSearchDTO $seriesSearch): int
     {
         [$sql, $params, $types] = $this->advancedDbSearchSQL($user, $seriesSearch, false);
         $row = $this->getOne($sql, $params, $types);
-//        $row = $this->em->getConnection()->fetchAssociative($sql, $params, $types);
         return (int)($row['n'] ?? 0);
     }
-
-    /*public function advancedDbSearch(User $user, SeriesAdvancedDbSearchDTO $seriesSearch): array
-    {
-        $sql = $this->advancedDbSearchSQL($user, $seriesSearch);
-        dump($sql);
-
-        return $this->getAll($sql);
-    }
-
-    public function advancedDbSearchCount(User $user, SeriesAdvancedDbSearchDTO $seriesSearch): int
-    {
-        $sql = $this->advancedDbSearchSQL($user, $seriesSearch, false);
-        dump($sql, $this->getOne($sql));
-        return $this->getOne($sql)['n'];
-    }
-
-    private function advancedDbSearchSQL(User $user, SeriesAdvancedDbSearchDTO $seriesSearch, bool $limit = true): string
-    {
-        // App\DTO\SeriesAdvancedDbSearchDTO {#12348 ▼
-        // * -firstAirDateYear: null
-        // * -firstAirDateGTE: null
-        // * -firstAirDateLTE: null
-        // * -withOriginCountry: "TH"
-        // * -withOriginalLanguage: null
-        //  -withKeywords: "289844"
-        //  -keywords: array:3540 [▶]
-        //  -keywordSeparator: ","
-        // * -withStatus: null
-        // * -sortBy: "first_air_date.desc"
-        //  -page: 1
-        //}
-        dump($seriesSearch);
-        $userId = $user->getId();
-        $sortArr = explode('|', $seriesSearch->getSortBy());
-        $sort = $sortArr[0];
-        $order = strtoupper($sortArr[1]);
-        $offset = ($seriesSearch->getPage() - 1) * 20;
-
-        $fields = $limit ?
-            's.backdrop_path as backdrop_path, s.tmdb_id as id, s.origin_country as country, s.original_language as original_language, s.overview as overview, s.poster_path as poster_path, s.first_air_date as first_air_date, s.name as name, IF(sln.`id`, sln.`name`, s.`name`) as display_name'
-            : 'COUNT(*) as n';
-
-        $sql = "SELECT $fields
-        FROM series s
-            INNER JOIN user_series us ON us.series_id = s.id
-            LEFT JOIN `series_localized_name` sln ON sln.`series_id`=s.`id`
-        WHERE us.user_id = $userId";
-        if ($seriesSearch->getWithOriginCountry()) {
-            $sql .= " AND s.origin_country LIKE '%{$seriesSearch->getWithOriginCountry()}%'";
-        }
-        if ($seriesSearch->getWithOriginalLanguage()) {
-            $sql .= " AND s.origin_language='{$seriesSearch->getWithOriginalLanguage()}'";
-        }
-        if ($seriesSearch->getFirstAirDateYear()) {
-            $sql .= " AND YEAR(s.first_air_date) = {$seriesSearch->getFirstAirDateYear()}";
-        }
-        if ($seriesSearch->getFirstAirDateGTE()) {
-            $sql .= " AND DATE(s.first_air_date) >= '{$seriesSearch->getFirstAirDateGTE()->format("Y-m-d")}'";
-        }
-        if ($seriesSearch->getFirstAirDateLTE()) {
-            $sql .= " AND DATE(s.first_air_date) <= '{$seriesSearch->getFirstAirDateLTE()->format("Y-m-d")}'";
-        }
-        if ($seriesSearch->getWithStatus()) {
-            $sql .= " AND s.status='{$seriesSearch->getWithStatus()}'";
-        }
-        if ($limit) $sql .= " ORDER BY $sort $order";
-        if ($limit) $sql .= " LIMIT 20 OFFSET $offset";
-
-        return $sql;
-    }*/
 }

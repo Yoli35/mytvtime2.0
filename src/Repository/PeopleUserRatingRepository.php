@@ -5,6 +5,7 @@ namespace App\Repository;
 use App\Entity\PeopleUserRating;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\DBAL\Exception;
+use Doctrine\DBAL\ParameterType;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -31,29 +32,39 @@ class PeopleUserRatingRepository extends ServiceEntityRepository
 
     public function getPeopleUserRating(int $userId, int $id): array
     {
-        $sql = "SELECT AVG(pur.rating)                         as avg_rating,
-                (SELECT rating 
-                    FROM people_user_rating 
-                    WHERE user_id = $userId AND tmdb_id = $id) as rating
-                FROM people_user_rating  pur
-                WHERE tmdb_id = $id";
+        $p = [
+            'userId' => $userId,
+            'id' => $id
+        ];
+        $t = [
+            'userId' => ParameterType::INTEGER,
+            'id' => ParameterType::INTEGER,
+        ];
+        $sql = <<<SQL
+            SELECT AVG(pur.rating)                         as avg_rating,
+            (SELECT rating 
+                FROM people_user_rating 
+                WHERE user_id = :userId AND tmdb_id = :id) as rating
+            FROM people_user_rating  pur
+            WHERE tmdb_id = $id
+        SQL;
 
-        return $this->getOne($sql);
+        return $this->getOne($sql, $p, $t);
     }
 
-    public function getAll($sql): array
+    public function getAll(string $sql, array $p = [], array $t = []): array
     {
         try {
-            return $this->em->getConnection()->fetchAllAssociative($sql);
+            return $this->em->getConnection()->fetchAllAssociative($sql, $p, $t);
         } catch (Exception) {
             return [];
         }
     }
 
-    public function getOne($sql): array
+    public function getOne(string $sql, array $p = [], array $t = []): array
     {
         try {
-            return $this->em->getConnection()->fetchAssociative($sql);
+            return $this->em->getConnection()->fetchAssociative($sql, $p, $t);
         } catch (Exception) {
             return [];
         }
