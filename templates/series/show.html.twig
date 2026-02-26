@@ -69,7 +69,7 @@
                             <h1>
                                 {% if tv.localized_name %}
                                     <span class="localization-span">{{ tv.localized_name.name }}</span><br>
-                                {% elseif tv.original_language != app.locale and tv.name == tv.original_name and tv.translations %}
+                                {% elseif tv.original_language != app.locale and tv.name == tv.original_name and tv.translations and tv.translations.data.name %}
                                     <span class="localization-span">{{ tv.translations.data.name }}</span><br>
                                 {% endif %}
                                 <span class="name-span">{{ series.name }}</span>
