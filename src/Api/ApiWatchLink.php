@@ -110,6 +110,7 @@ class ApiWatchLink extends AbstractController
 
         return $this->json([
             'ok' => true,
+            'link' => $this->getLink($watchLink),
         ]);
     }
 
