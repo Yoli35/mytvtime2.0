@@ -4352,7 +4352,8 @@ h2 {
                             }
 
                             textarea {
-                                background-color: var(--ardoise-80);
+                                backdrop-filter: blur(1rem);
+                                background-color: hsl(from var(--ardoise-80) h s l / .5);
                                 border: 2px solid var(--orange-50);
                                 border-radius: 1rem;
                                 color: var(--ardoise-10);
