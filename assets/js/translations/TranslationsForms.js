@@ -306,7 +306,7 @@ export class TranslationsForms {
                     editDiv.classList.add('edit');
                     editDiv.setAttribute('data-id', newId);
                     editDiv.setAttribute('data-title', self.translations['Edit']);
-                    const penSvg = document.querySelector('#svgs').querySelector('#pen').querySelector('svg').cloneNode(true);
+                    const penSvg = document.querySelector('#svgs').querySelector('div#pen').querySelector('svg').cloneNode(true);
                     editDiv.appendChild(penSvg);
                     editDiv.addEventListener('click', self.editOverview);
                     toolsDiv.appendChild(editDiv);
@@ -315,7 +315,7 @@ export class TranslationsForms {
                     deleteDiv.classList.add('delete');
                     deleteDiv.setAttribute('data-id', newId);
                     deleteDiv.setAttribute('data-title', self.translations['Delete']);
-                    const trashSvg = document.querySelector('#svgs').querySelector('#trash').querySelector('svg').cloneNode(true);
+                    const trashSvg = document.querySelector('#svgs').querySelector('div#trash').querySelector('svg').cloneNode(true);
                     deleteDiv.appendChild(trashSvg);
                     deleteDiv.addEventListener('click', self.openDeleteOverviewForm);
                     toolsDiv.appendChild(deleteDiv);
