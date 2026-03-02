@@ -1822,6 +1822,15 @@ h2 {
                     }
                 }
 
+                label:has(input[type=checkbox]) {
+                    padding-inline: 0;
+
+                    .big-switch {
+                        transform: scale(1.25);
+                        margin-inline-end: .5rem;
+                    }
+                }
+
                 > div {
                     align-items: flex-start;
                     display: flex;
@@ -1831,15 +1840,6 @@ h2 {
                     .date-time {
                         display: flex;
                         gap: .5rem;
-
-                        label:has(input[type=checkbox]) {
-                            padding-inline: 0;
-
-                            .big-switch {
-                                transform: scale(1.25);
-                                margin-inline-end: .5rem;
-                            }
-                        }
 
                         .finale-date {
                             align-items: center;
@@ -2587,6 +2587,202 @@ h2 {
                                 }
                             }
                         }
+                    }
+                }
+            }
+        }
+    }
+}
+
+@media (width < 48rem) {
+    .series-show .schedules .schedule-form {
+        margin-inline: 0;
+        overflow: unset;
+        overflow-y: auto;
+        width: 100%;
+
+        &.show {
+            height: fit-content;
+        }
+
+        .form-field {
+            .group {
+                background-color: hsl(from var(--orange-20) h s l / .5);
+                border-radius: .5rem;
+
+                &.full {
+                    border: 2px solid;
+                    flex-direction: column;
+                    align-items: center;
+                    width: calc(100vw - 2rem);
+                }
+
+                &:has(.scheduled-day) {
+                    width: 80%;
+                }
+
+                .scheduled-day {
+                    width: 12rem;
+                    margin-inline: auto;
+                }
+            }
+
+            > div {
+                .date-time {
+                    .finale-date {
+                        align-items: center;
+                        background-color: var(--green);
+                        border-radius: 5rem;
+                        color: var(--ardoise-10);
+                        display: flex;
+                        font-size: 1.25rem;
+                        font-weight: 300;
+                        height: 2rem;
+                        margin-inline: auto;
+                        opacity: 0;
+                        padding-inline: 1rem;
+                        transition: opacity .3s ease-in-out;
+
+                        &:has(span) {
+                            opacity: 1;
+                        }
+                    }
+                }
+
+                h4 {
+                    line-height: 1.75rem /* hauteur des label:has(input[type=checkbox]) */
+                }
+
+                label {
+                    align-items: center;
+                    border-bottom: 2px solid transparent;
+                    display: flex;
+                    gap: .5rem;
+                    margin-inline-start: 0;
+
+                    /*&:hover, &.active {
+                        border-bottom: 2px solid var(--orange-50);
+                    }*/
+                }
+
+                label[for^=season-number] {
+                    background-color: var(--orange-30);
+                    border-radius: 5rem;
+                    box-shadow: 0 0 1rem hsla(from var(--orange-10) h s l / .25) inset;
+                    font-size: 2rem;
+                    gap: 1rem;
+                    padding-block: .5rem;
+                    padding-inline: 1.5rem .5rem;
+
+                    input {
+                        border-radius: 5rem;
+                        font-size: inherit;
+                        width: 6rem;
+                    }
+                }
+
+                label:has(select) {
+                    flex-direction: column;
+                    max-width: 90%;
+                    width: unset;
+                }
+
+                label:has(select) select {
+                    max-width: 90%;
+                    width: unset;
+                }
+
+                label:has(select)::after {
+                    right: 2rem;
+                    top: 2.75rem;
+                }
+
+                label:has(.provider-logo) {
+                    .provider-logo {
+                        border: 2px dashed var(--orange-50);
+                        border-radius: .5rem;
+                        flex-shrink: 0;
+                        height: 3rem;
+                        object-fit: cover;
+                        width: 3rem;
+
+                        &:has(img) {
+                            border-radius: .375rem;
+                            border-style: solid;
+
+                            img {
+                                border-radius: .25rem;
+                                height: 2.75rem;
+                                object-fit: cover;
+                                width: 2.75rem;
+                            }
+                        }
+                    }
+
+                    &::after {
+                        right: 2rem;
+                        top: 2.75rem;
+                    }
+                }
+
+                label:has(input[type=checkbox]) {
+                    /*background-color: var(--orange-30);*/
+                    border-radius: .25rem;
+                    /*border: 2px solid var(--orange-50);*/
+                    cursor: pointer;
+                    justify-content: center;
+                    padding-inline: .5rem;
+
+                    /*input[type=checkbox] {
+                        display: none;
+                    }*/
+                }
+
+                label:has(input[type=checkbox]:checked) {
+                    /*background-color: var(--green-60);*/
+                    /*border: 2px solid var(--green-30);*/
+                }
+
+                input[type=number] {
+                    background-color: var(--orange-20);
+                    border: 2px solid var(--orange-50);
+                    border-radius: 5rem;
+                    color: var(--orange-90);
+                    padding-block: .25rem;
+                    padding-inline: .75rem;
+                    width: 4rem;
+                }
+
+                input[type=time], input[type=date] {
+                    background-color: var(--orange-20);
+                    border: 2px solid var(--orange-50);
+                    border-radius: 5rem;
+                    color: var(--orange-90);
+                    padding-block: .25rem;
+                    padding-inline: .75rem;
+                }
+            }
+
+            &:has(button) {
+                gap: 1rem;
+                justify-content: flex-end;
+
+                button {
+                    background-color: var(--orange-30);
+                    border-radius: 5rem;
+                    border: 2px solid var(--orange);
+                    box-shadow: 0 0 1rem hsla(from var(--orange-10) h s l / .25) inset;
+                    color: var(--orange-90);
+                    cursor: pointer;
+                    padding: .5rem 1rem;
+
+                    &:first-of-type {
+                        margin-inline-start: auto;
+                    }
+
+                    &:hover {
+                        background-color: var(--orange-40);
+                        border: 2px solid var(--orange-60);
                     }
                 }
             }

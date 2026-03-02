@@ -44,11 +44,7 @@
                         </label>
                     </div>
                     <div class="date-time group full">
-                        <label for="override-{{ schedule.id }}" data-title="{{ 'Override the Movie Database schedule'|trans }}">
-                            <input type="checkbox" switch name="override-{{ schedule.id }}" id="override-{{ schedule.id }}" {% if schedule.override %}checked{% endif %} class="big-switch">
-                            {{ 'Override TMDB'|trans }}
-                        </label>
-                        <label for="frequency-{{ schedule.id }}">
+                        <label for="frequency-{{ schedule.id }}">{{ 'Freq.'|trans }}
                             <select name="frequency-{{ schedule.id }}" id="frequency-{{ schedule.id }}">
                                 <option value="">{{ 'Frequency'|trans }}</option>
                                 <option value="1" {% if schedule.frequency == 1 %}selected{% endif %}>{{ 'All at once'|trans }}</option>
@@ -142,7 +138,13 @@
                     </div>
                 </div>
             </div>
+        </div>
+        <div class="group">
             <div class="form-field">
+                <label for="override-{{ schedule.id }}" data-title="{{ 'Override the Movie Database schedule'|trans }}">
+                    <input type="checkbox" switch name="override-{{ schedule.id }}" id="override-{{ schedule.id }}" {% if schedule.override %}checked{% endif %} class="big-switch">
+                    {{ 'Override TMDB'|trans }}
+                </label>
                 <button type="button" onclick="ToggleScheduleForm({{ schedule.id }})">{{ 'Close'|trans }}</button>
                 <button type="button" onclick="SaveSchedule({{ schedule.id }})">{{ 'Save'|trans }}</button>
             </div>
