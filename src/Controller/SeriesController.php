@@ -2550,6 +2550,10 @@ class SeriesController extends AbstractController
         $stills = $this->episodeStillRepository->getSeasonStills($episodeIds);
 
         $finaleEpisodeNumber = $this->seriesService->getFinaleEpisodeNumber($season);
+        if (count($season['episodes']) > $finaleEpisodeNumber) {
+            $surplus = count($season['episodes']) - $finaleEpisodeNumber;
+            array_splice($season['episodes'], $finaleEpisodeNumber, $surplus);
+        }
         foreach ($season['episodes'] as $episode) {
 
 //            $episode['substitute_name'] = $this->userEpisodeRepository->getSubstituteName($episode['id']);
