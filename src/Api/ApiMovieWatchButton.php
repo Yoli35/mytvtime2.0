@@ -60,8 +60,6 @@ class ApiMovieWatchButton extends AbstractController
         $lastDatetimeString = str_replace('T', ' ', $lastDatetimeString);
         $newDatetimeString = str_replace('T', ' ', $newDatetimeString);
 
-        dump($newDatetimeString, $newDateString);
-
         if ($lastDatetimeString == $userMovie->getLastViewedAt()->format('Y-m-d H:i:s')) {
             $timezone = $userMovie->getUser()->getTimezone() ?? 'Europe/Paris';
             $datetime = $this->dateService->newDateImmutable($newDatetimeString, $timezone);
@@ -90,7 +88,6 @@ class ApiMovieWatchButton extends AbstractController
         $data = json_decode($request->getContent(), true);
         $datetimeString = $data['date'];
 
-        dump($userMovie, $datetimeString);
         $viewArray = $userMovie->getViewArray();
         // trouver dateString dans 'last_viewed_at' et 'view_array' et mettre à jour 'last_viewed_at' avec la date la plus récente dans 'view_array' ou mettre à 'null'
         if ($datetimeString == $userMovie->getLastViewedAt()->format('Y-m-d H:i:s')) {
