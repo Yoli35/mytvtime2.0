@@ -1233,6 +1233,9 @@ class SeriesController extends AbstractController
 
             $airDays = $as['airDays'];
             foreach ($airDays as $airDay) {
+                if (!$airDay['episodeId']) {    // Diffusion hebdomadaire : "Plusieurs épisodes, puis un"
+                    continue;                   // alors qu'on dispose d'infos TMDB uniquement pour le premier épisode.
+                }
                 if (!$previousOverrideStatus) {
                     $seriesBroadcastDate = new SeriesBroadcastDate($seriesBroadcastSchedule, $airDay['episodeId'], $seasonNumber, $seasonPart, $airDay['episodeNumber'], $airDay['date']);
                 } else {
