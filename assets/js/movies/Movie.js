@@ -3,6 +3,7 @@ import {TranslationsForms} from "TranslationsForms";
 import {Diaporama} from "Diaporama";
 import {ToolTips} from "ToolTips";
 import {AverageColor} from "AverageColor";
+import {WatchButton} from "WatchButton";
 import {WatchLinkCrud} from "WatchLinkCrud";
 
 let self;
@@ -55,7 +56,7 @@ export class Movie {
         if (!userActions) {
             return;
         }
-
+        console.log("Initializing...");
         /******************************************************************************
          * Adjust text color / backdrop average color                                 *
          ******************************************************************************/
@@ -159,30 +160,9 @@ export class Movie {
         /******************************************************************************
          * Mark as viewed                                                             *
          ******************************************************************************/
-        const viewedAtDiv = userActions.querySelector('.viewed-at');
-        viewedAtDiv.addEventListener('click', function () {
-            const viewed = viewedAtDiv.getAttribute('data-viewed');
-            fetch('/' + self.lang + '/movie/viewed/' + self.userMovieId,
-                {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({viewed: viewed})
-                }
-            ).then(response => response.json())
-                /** @param {{viewed: boolean, lastViewedAt: string}} data */
-                .then(data => {
-                    if (!data.body.viewed) {
-                        viewedAtDiv.classList.add('viewed');
-                    }
-                    const viewDateDiv = document.createElement('div');
-                    viewDateDiv.classList.add('view-date');
-                    const textNode = document.createTextNode(' ' + data.body.lastViewedAt);
-                    viewDateDiv.appendChild(textNode);
-                    viewedAtDiv.appendChild(viewDateDiv);
-                });
-        });
+        if (userActions) {
+            new WatchButton();
+        }
 
         /******************************************************************************
          * Menu to add a localized name or an overview and additional overview        *
@@ -195,12 +175,12 @@ export class Movie {
         new Keyword('movie');
 
         /******************************************************************************
-         * Diaporama for posters, backdrops and logos                                 *
+         * Diaporama for posters, backdrops, and logos                                 *
          ******************************************************************************/
         this.initDiaporama();
 
         /******************************************************************************
-         * ToolTips for posters, backdrops and logos                                  *
+         * ToolTips for posters, backdrops, and logos                                  *
          ******************************************************************************/
         this.initToolTips();
 

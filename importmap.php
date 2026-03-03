@@ -127,6 +127,9 @@ return [
     'Video' => [
         'path' => './assets/js/videos/Video.js',
     ],
+    'WatchButton' => [
+        'path' => './assets/js/components/WatchButton.js',
+    ],
     'WatchLinkCrud' => [
         'path' => './assets/js/watch-link/WatchLinkCrud.js',
     ],

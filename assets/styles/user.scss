@@ -211,52 +211,6 @@
             }
         }
 
-        .viewed-at {
-            align-items: center;
-            display: flex;
-            flex-shrink: 0;
-            gap: 1rem;
-            justify-content: center;
-
-            .mark-as-viewed {
-                align-items: center;
-                background-color: var(--orange-50);
-                border-radius: .25rem;
-                color: var(--ardoise-10);
-                cursor: pointer;
-                display: flex;
-                height: 2rem;
-                justify-content: center;
-                outline: 4px solid hsl(from var(--ardoise-10) h s l / .25);
-                width: 2rem;
-
-                &:hover {
-                    background-color: var(--orange-60);
-                }
-
-                &.viewed {
-                    background-color: var(--green-50);
-                    color: var(--ardoise-10);
-
-                    &:hover {
-                        background-color: var(--green-60);
-                    }
-                }
-            }
-
-            .view-date {
-                align-items: center;
-                background-color: var(--green-50);
-                border-radius: .25rem;
-                display: none;
-                font-size: 1rem;
-                font-weight: 300;
-                height: 2rem;
-                outline: 4px solid hsl(from var(--ardoise-10) h s l / .25);
-                padding-inline: .5rem;
-            }
-        }
-
         .rating {
             align-items: center;
             background-color: hsla(from var(--ardoise-80) h s l / .5);
@@ -389,48 +343,6 @@
 #series-season .user-actions .watch-links .watch-link,
 #series-season .content.column .episodes .episode-wrapper .episode .infos .user-actions .wrapper .watch-links .watch-link {
     height: 2rem;
-}
-
-@media (width <= 52rem) {
-    .movie-show {
-        main {
-            .user-details {
-                .user-actions {
-                    .wrapper {
-                        .viewed-at {
-                            .view-date.large {
-                                display: none;
-                            }
-                            .view-date.narrow {
-                                display: flex;
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
-}
-
-@media (width > 52rem) {
-    .movie-show {
-        main {
-            .user-details {
-                .user-actions {
-                    .wrapper {
-                        .viewed-at {
-                            .view-date.large {
-                                display: flex;
-                            }
-                            .view-date.narrow {
-                                display: none;
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
 }
 
 @property --glow-deg {

@@ -146,15 +146,17 @@
                             <div class="user-actions">
                                 <div class="wrapper">
                                     {{ include('_blocks/_watch_links.html.twig', {type: 'movie', media: movie}) }}
-                                    <div class="viewed-at" data-viewed="{{ userMovie.viewed }}">
-                                        <div class="mark-as-viewed{% if userMovie.lastViewedAt %} viewed{% endif %}">{{ ux_icon('mdi:eye') }}</div>
-                                        {% if userMovie.lastViewedAt %}
-                                            <div class="view-date large"> {{ userMovie.lastViewedAt|format_datetime('relative_full', 'short')|capitalize }}</div>
-                                            <div class="view-date narrow"> {{ userMovie.lastViewedAt|format_datetime('relative_short', 'short')|capitalize }}</div>
-                                        {% endif %}
+                                    <div class="watch-button" data-um-id="{{ userMovie.id }}">
+                                        <div class="mark-as-viewed{% if userMovie.lastViewedAt %} viewed{% endif %}">
+                                            <div class="mark-as-viewed-eye">{{ ux_icon('mdi:eye') }}</div>
+                                            <div class="mark-as-viewed-plus">{{ ux_icon('mdi:plus') }}</div>
+                                        </div>
                                         {% for viewDate in userMovie.viewArray %}
-                                            <div class="view-date"> {{ viewDate|format_datetime('relative_full', 'short')|capitalize }}</div>
+                                            <div class="watched-at" data-watched-at="{{ viewDate|date("Y-m-d H:i:s", "UTC") }}"> {{ viewDate|format_date('relative_full')|capitalize }}</div>
                                         {% endfor %}
+                                        {% if userMovie.lastViewedAt %}
+                                            <div class="watched-at" data-watched-at="{{ userMovie.lastViewedAt|date("Y-m-d H:i:s", "UTC") }}"> {{ userMovie.lastViewedAt|format_date('relative_full')|capitalize }}</div>
+                                        {% endif %}
                                     </div>
                                     <div class="rating">
                                         <div class="rating-stars">
@@ -446,6 +448,8 @@
         <div class="svg" id="xmark">{{ ux_icon('mdi:close') }}</div>
         <div class="svg" id="pen">{{ ux_icon('mdi:pencil') }}</div>
         <div class="svg" id="copy">{{ ux_icon('mdi:content-paste') }}</div>
+        <div class="svg" id="save">{{ ux_icon('mdi:checkbox-outline') }}</div>
+        <div class="svg" id="cancel">{{ ux_icon('mdi:close') }}</div>
         <div class="svg" id="trash">{{ ux_icon('mdi:trash') }}</div>
     </div>
     {% include('_blocks/_footer.html.twig') %}

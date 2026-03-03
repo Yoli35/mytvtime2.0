@@ -504,35 +504,6 @@ class MovieController extends AbstractController
         ]);
     }
 
-    #[IsGranted('ROLE_USER')]
-    #[Route('/viewed/{id}', name: 'viewed', requirements: ['id' => Requirement::DIGITS], methods: ['POST'])]
-    public function addViewedDate(Request $request, UserMovie $userMovie): Response
-    {
-        $data = json_decode($request->getContent(), true);
-        $viewed = intval($data['viewed']);
-
-        $now = $this->dateService->getNowImmutable($userMovie->getUser()->getTimezone() ?? 'Europe/Paris');
-
-        if ($viewed) {
-            $viewArray = $userMovie->getViewArray();
-            $lastViewedAt = $userMovie->getLastViewedAt();
-            $viewArray[] = $lastViewedAt->format("Y-m-d H:i:s");
-            $viewArray = array_unique($viewArray);
-            $userMovie->setViewArray($viewArray);
-        }
-        $userMovie->setViewed($viewed + 1);
-        $userMovie->setLastViewedAt($now);
-        $this->userMovieRepository->save($userMovie, true);
-
-        return $this->json([
-            'ok' => true,
-            'body' => [
-                'viewed' => $viewed,
-                'lastViewedAt' => ucfirst($this->dateService->formatDateRelativeLong($now->format("Y-m-d H:i:s"), 'UTC', $userMovie->getUser()->getPreferredLanguage() ?? 'fr'))
-            ],
-        ]);
-    }
-
     #[Route('/infos/add/{id}', name: 'add_infos', requirements: ['id' => Requirement::DIGITS], methods: ['POST'])]
     public function addInfos(Request $request, Movie $movie): Response
     {
