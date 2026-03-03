@@ -122,7 +122,7 @@ export class EpisodeActions {
         const substituteNameDiv = episodeDiv ? episodeDiv.querySelector('.substitute') : null;
         const episodeWatchLinks = episodeDiv ? episodeDiv.querySelector('.watch-links') : null;
         const numberDiv = episodeDiv ? episodeDiv.querySelector('.number') : null;
-        const finaleDivs = episodeDiv ? episodeDiv.querySelectorAll('.finale') : null;
+        const finaleDivs = episodeDiv ? episodeDiv.querySelectorAll('.finale') : [];
 
         fetch('/api/episode/add/' + id, {
             method: 'POST',
@@ -193,13 +193,13 @@ export class EpisodeActions {
 
                 quickEpisodeLinks.forEach((q) => q.classList.add('watched'));
 
-                numberDiv?.classList.add('watched');
+                if (numberDiv) numberDiv.classList.add('watched');
 
-                substituteNameDiv?.classList.add('watched');
+                if (substituteNameDiv) substituteNameDiv.classList.add('watched');
 
-                episodeWatchLinks?.closest('.user-actions').classList.add('d-none');
+                if (episodeWatchLinks) episodeWatchLinks.closest('.user-actions').classList.add('d-none');
 
-                finaleDivs?.forEach(f => {
+                finaleDivs.forEach(f => {
                     f.classList.add('watched');
                 });
 
@@ -365,10 +365,10 @@ export class EpisodeActions {
                 numberDiv.classList.remove('watched');
 
                 const substituteNameDiv = episode.closest('.episode').querySelector('.substitute');
-                substituteNameDiv?.classList.add('watched');
+                if (substituteNameDiv) substituteNameDiv.classList.add('watched');
 
                 const episodeWatchLinks = episode.closest('.episode').querySelector('.watch-links');
-                episodeWatchLinks?.closest('.user-actions').classList.remove('d-none');
+                if (episodeWatchLinks) episodeWatchLinks.closest('.user-actions').classList.remove('d-none');
 
                 const newEpisode = document.createElement('div');
                 newEpisode.classList.add('add-this-episode');
@@ -435,10 +435,6 @@ export class EpisodeActions {
         this.toolTips.hide();
         const selector = episodeId ? '.remove-this-episode[data-ue-id="' + episodeId + '"]' : null;
         const episode = episodeId ? document.querySelector(selector) : e.currentTarget;
-        const sId = episode.getAttribute('data-show-id');
-        /*const id = episode.getAttribute('data-id');*/
-        const episodeNumber = episode.getAttribute('data-e-number');
-        const seasonNumber = episode.getAttribute('data-s-number');
         if (!episodeId) episode.getAttribute('data-ue-id');
 
         fetch('/api/episode/touch/' + episodeId, {
@@ -446,12 +442,7 @@ export class EpisodeActions {
             headers: {
                 'Content-Type': 'application/json',
                 'X-Requested-With': 'XMLHttpRequest'
-            },
-            body: JSON.stringify({
-                showId: sId,
-                seasonNumber: seasonNumber,
-                episodeNumber: episodeNumber
-            })
+            }
         }).then((response) => response.json())
             .then(data => {
                 // TODO: Vérifier "data"
@@ -476,9 +467,6 @@ export class EpisodeActions {
         const newDatetime = datetimeInput.value;
         console.log(newDatetime);
         const episode = datetimeSaveButton.closest('.episode').querySelector('.remove-this-episode');
-        const sId = episode.getAttribute('data-show-id');
-        const episodeNumber = episode.getAttribute('data-e-number');
-        const seasonNumber = episode.getAttribute('data-s-number');
 
         fetch('/api/episode/touch/' + id, {
             method: 'POST',
@@ -487,10 +475,7 @@ export class EpisodeActions {
                 'X-Requested-With': 'XMLHttpRequest'
             },
             body: JSON.stringify({
-                showId: sId,
-                date: newDatetime,
-                seasonNumber: seasonNumber,
-                episodeNumber: episodeNumber
+                date: newDatetime
             })
         }).then((response) => response.json())
             .then(data => {
