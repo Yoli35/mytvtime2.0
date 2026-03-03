@@ -114,6 +114,8 @@ class AdminController extends AbstractController
         }
         return $this->render('admin/index.html.twig', [
             'message' => $message,
+            'previous' => $this->contactMessageRepository->getPreviousMessage($message->getId()),
+            'next' => $this->contactMessageRepository->getNextMessage($message->getId()),
         ]);
     }
 

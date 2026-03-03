@@ -566,19 +566,24 @@
                 }
             }
 
-            .admin__message__details__delete {
-                background-color: var(--remove-this-series);
-                margin-block-start: 2rem;
-                margin-inline-end: auto;
+            .admin_message_tools {
+                display: flex;
+                gap: 1rem;
+                justify-content: flex-end;
+                margin-block: 1rem;
 
-                &:hover {
-                    background-color: var(--remove-this-series-hover);
+                .admin__message__details__delete {
+                    background-color: var(--remove-this-series);
+                    margin-inline-end: auto;
+
+                    &:hover {
+                        background-color: var(--remove-this-series-hover);
+                    }
                 }
-            }
 
-            .admin__message__details__back {
-                margin-block-start: 2rem;
-                margin-inline-start: auto;
+                .admin__message__details__navigation {
+                    --svgSize: 1.5rem;
+                }
             }
         }
     }

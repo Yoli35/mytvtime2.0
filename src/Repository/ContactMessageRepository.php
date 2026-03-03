@@ -4,6 +4,8 @@ namespace App\Repository;
 
 use App\Entity\ContactMessage;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\DBAL\Exception;
+use Doctrine\DBAL\ParameterType;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -33,5 +35,43 @@ class ContactMessageRepository extends ServiceEntityRepository
         if ($flush) {
             $this->entityManager->flush();
         }
+    }
+
+    public function getPreviousMessage(?int $getId): array
+    {
+        $params = ['getId' => $getId];
+        $types = ['getId' => ParameterType::INTEGER];
+        $sql = <<<SQL
+                    SELECT id
+                    FROM contact_message
+                    WHERE id < :getId
+                    ORDER BY id DESC
+                    LIMIT 1
+                SQL;
+        try {
+            $result = $this->entityManager->getConnection()->fetchAssociative($sql, $params, $types);
+        } catch (Exception) {
+            $result = [];
+        }
+        return $result;
+    }
+
+    public function getNextMessage(?int $getId): array
+    {
+        $params = ['getId' => $getId];
+        $types = ['getId' => ParameterType::INTEGER];
+        $sql = <<<SQL
+                    SELECT id
+                    FROM contact_message
+                    WHERE id > :getId
+                    ORDER BY id
+                    LIMIT 1
+                SQL;
+        try {
+            $result = $this->entityManager->getConnection()->fetchAssociative($sql, $params, $types);
+        } catch (Exception) {
+            $result = [];
+        }
+        return $result;
     }
 }
