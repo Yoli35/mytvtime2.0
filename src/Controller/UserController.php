@@ -312,8 +312,9 @@ class UserController extends AbstractController
     private function createHTMLLanguageSelect(string $locale): string
     {
         $languages = (new IntlExtension)->getLanguageNames($locale);
-        $seriesLanguages = $this->userRepository->getSeriesLanguages($locale);
-        $moviesLanguages = $this->userRepository->getMoviesLanguages($locale);
+        $seriesLanguages = $this->userRepository->getSeriesLanguages();
+        $moviesLanguages = $this->userRepository->getMoviesLanguages();
+        dump($seriesLanguages, $moviesLanguages);
         $codes = array_merge($seriesLanguages, $moviesLanguages);
         $codes = array_unique(array_map(function ($lang) {
             return $lang['original_language'];
