@@ -4,7 +4,9 @@ namespace App\Repository;
 
 use App\Entity\UserVideo;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\DBAL\ArrayParameterType;
 use Doctrine\DBAL\Exception;
+use Doctrine\DBAL\ParameterType;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -17,6 +19,7 @@ class UserVideoRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, UserVideo::class);
     }
+
     public function save(UserVideo $userVideo, bool $flush = false): void
     {
         $this->em->persist($userVideo);
@@ -26,68 +29,114 @@ class UserVideoRepository extends ServiceEntityRepository
         }
     }
 
-    public function getUserVideosWithVideos(int $userId, int $categoryId, int $page, int $limit):array
+    public function getUserVideosWithVideos(int $userId, int $categoryId, int $page, int $limit): array
     {
-        $offset = ($page - 1) * $limit;
+        $params = [
+            'userId' => $userId,
+            'limit' => $limit,
+            'offset' => ($page - 1) * $limit,
+        ];
+        $types = [
+            'userId' => ParameterType::INTEGER,
+            'limit' => ParameterType::INTEGER,
+            'offset' => ParameterType::INTEGER,
+        ];
         if ($categoryId) {
             $innerJoin = "INNER JOIN `video_video_category` vvc ON vvc.`video_id`=v.`id` AND vvc.`video_category_id`=$categoryId";
         } else {
             $innerJoin = "";
         }
-        $sql = "SELECT uv.`id` as user_video_id, uv.`created_at` as added_at,
-	                   v.*,
-	                   vc.`thumbnail` as channel_thumbnail, vc.`title` as channel_title, vc.`custom_url` as channel_custom_url
+
+        $sql = <<<SQL
+                SELECT
+                    uv.`id`          AS user_video_id,
+                    uv.`created_at`  AS added_at,
+                    v.`id`           AS id,
+                    v.`title`        AS title,
+                    v.`link`         AS link,
+                    v.`thumbnail`    AS thumbnail,
+                    v.`published_at` AS published_at,
+                    v.`updated_at`   AS updated_at,
+                    v.`duration`     AS duration,
+                    vc.`thumbnail`   AS channel_thumbnail,
+                    vc.`title`       AS channel_title,
+                    vc.`custom_url`  AS channel_custom_url
                 FROM `user_video` uv
                     INNER JOIN `video` v ON v.`id` = uv.`video_id`
                     $innerJoin
                     LEFT JOIN `video_channel` vc ON vc.`id`=v.`channel_id`
-                WHERE uv.`user_id` = $userId
-                ORDER BY v.`published_at` DESC LIMIT $limit OFFSET $offset";
-        return $this->getAll($sql);
+                WHERE uv.`user_id` = :userId
+                ORDER BY v.`published_at` DESC LIMIT :limit OFFSET :offset
+            SQL;
+
+        return $this->getAll($sql, $params, $types);
     }
 
     public function countVideoByCategory(int $userId, int $categoryId): int
     {
-        $sql = "SELECT COUNT(uv.`id`) as total
+        $params = [
+            'userId' => $userId,
+            'categoryId' => $categoryId,
+        ];
+        $types = [
+            'userId' => ParameterType::INTEGER,
+            'categoryId' => ParameterType::INTEGER,
+        ];
+
+        $sql = <<<SQL
+                SELECT COUNT(uv.`id`) AS total
                 FROM `user_video` uv
                     INNER JOIN `video` v ON v.`id` = uv.`video_id`
                     INNER JOIN `video_video_category` vvc ON vvc.`video_id`=v.`id`
-                WHERE uv.`user_id` = $userId AND vvc.`video_category_id` = $categoryId";
-        return (int) $this->getOne($sql);
+                WHERE uv.`user_id` = :userId AND vvc.`video_category_id` = :categoryId
+            SQL;
+        return (int)$this->getOne($sql, $params, $types);
     }
 
     public function getVideoCategories(array $ids): array
     {
-        $idsPlaceholder = implode(',', array_map('intval', $ids));
-        $sql = "SELECT vvc.`video_id` as `video_id`, vc.*
+        $params = [
+            'ids' => $ids,
+        ];
+        $types = [
+            'ids' => ArrayParameterType::INTEGER,
+        ];
+
+        $sql = <<<SQL
+                SELECT vvc.`video_id` AS `video_id`, vc.*
                 FROM `video_video_category` vvc
                     LEFT JOIN `video_category` vc ON vvc.`video_category_id`=vc.`id`
-                WHERE vvc.`video_id` IN ($idsPlaceholder)";
-        return $this->getAll($sql);
+                WHERE vvc.`video_id` IN (:ids)
+            SQL;
+
+        return $this->getAll($sql, $params, $types);
     }
 
     public function getUserVideosTotalDuration(int $userId): int
     {
-        $sql = "SELECT SUM(v.`duration`) as total_duration
+        $sql = <<<SQL
+                SELECT SUM(v.`duration`) AS total_duration
                 FROM `video` v
                     INNER JOIN `user_video` uv ON uv.`video_id` = v.`id`
-                WHERE uv.`user_id` = $userId";
-        return (int) $this->getOne($sql);
+                WHERE uv.`user_id` = :userId
+            SQL;
+
+        return (int)$this->getOne($sql, ['userId' => $userId], ['userId' => ParameterType::INTEGER]);
     }
 
-    public function getAll($sql): array
+    public function getAll(string $sql, array $params = [], array $types = []): array
     {
         try {
-            return $this->em->getConnection()->fetchAllAssociative($sql);
+            return $this->em->getConnection()->fetchAllAssociative($sql, $params, $types);
         } catch (Exception) {
             return [];
         }
     }
 
-    public function getOne($sql): mixed
+    public function getOne($sql, array $params = [], array $types = []): mixed
     {
         try {
-            return $this->em->getConnection()->fetchOne($sql);
+            return $this->em->getConnection()->fetchOne($sql, $params, $types);
         } catch (Exception) {
             return [];
         }

@@ -106,12 +106,12 @@ class SeriesRepository extends ServiceEntityRepository
     public function getLocalizedNames(array $seriesIds, string $locale): array
     {
         $params = [
+            'ids' => $seriesIds,
             'locale' => $locale,
-            'seriesIds' => $seriesIds,
         ];
         $types = [
+            'ids' => ArrayParameterType::INTEGER,
             'locale' => ParameterType::STRING,
-            'seriesIds' => ArrayParameterType::INTEGER,
         ];
         $sql = <<<SQL
             SELECT series_id, name
