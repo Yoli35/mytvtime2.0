@@ -49,7 +49,7 @@ class UserSeriesRepository extends ServiceEntityRepository
         return $this->getAll($sql);
     }
 
-    public function getUserSeries(User $user, string $locale, int $page = 1, int $perPage = 20): array
+    public function getUserSeries(User $user, string $locale, int $page = 1, int $limit = 20): array
     {
         $userId = $user->getId();
         $offset = ($page - 1) * $perPage;
@@ -256,7 +256,7 @@ class UserSeriesRepository extends ServiceEntityRepository
     ): array
     {
         $page = intval($filters['page'] ?? 1);
-        $perPage = intval($filters['perPage'] ?? 20);
+        $limit = intval($filters['limit'] ?? 20);
         $sort = $filters['sort'] ?? 'firstAirDate';
         $order = $filters['order'] ?? 'ASC';
         $network = $filters['network'];

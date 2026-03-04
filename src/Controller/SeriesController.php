@@ -196,7 +196,7 @@ class SeriesController extends AbstractController
             $this->imageService->saveImage("posters", $s['poster_path'], $posterUrl);
             $s['provider_logo_path'] = $this->getProviderLogoFullPath($s['provider_logo_path'], $logoUrl);
             return $s;
-        }, $this->userSeriesRepository->seriesToStart($user, $locale, $sort, $order, 1, -1));
+        }, $this->userSeriesRepository->seriesToStart($user, $locale, $sort, $order));
         $tmdbIds = array_column($seriesToStart, 'tmdb_id');
 
         $series = [];
@@ -241,7 +241,7 @@ class SeriesController extends AbstractController
         $series = array_map(function ($s) {
             $this->imageService->saveImage("posters", $s['poster_path'], $this->imageConfiguration->getUrl('poster_sizes', 5));
             return $s;
-        }, $this->userSeriesRepository->seriesNotSeenInAWhile($user, $locale, $inAWhileDate, 1, -1));
+        }, $this->userSeriesRepository->seriesNotSeenInAWhile($user, $locale, $inAWhileDate));
         $tmdbIds = array_column($series, 'tmdb_id');
 
         return $this->render('series/series_in_a_while.html.twig', [
@@ -259,7 +259,7 @@ class SeriesController extends AbstractController
         $series = array_map(function ($s) {
             $this->imageService->saveImage("posters", $s['poster_path'], $this->imageConfiguration->getUrl('poster_sizes', 5));
             return $s;
-        }, $this->userSeriesRepository->upComingSeries($user, $locale, 'firstAirDate', 1, -1));
+        }, $this->userSeriesRepository->upComingSeries($user, $locale, 'firstAirDate'));
         $tmdbIds = array_column($series, 'tmdb_id');
 
         return $this->render('series/up_coming_series.html.twig', [
@@ -274,7 +274,7 @@ class SeriesController extends AbstractController
     {
         $locale = $user->getPreferredLanguage() ?? $request->getLocale();
 
-        $arr = $this->userSeriesRepository->rankingByVote($user, $locale, 1, -1);
+        $arr = $this->userSeriesRepository->rankingByVote($user, $locale);
         $series = array_filter($arr, function ($s) {
             return $s['average_vote'] > 0;
         });
@@ -303,7 +303,7 @@ class SeriesController extends AbstractController
             $this->imageService->saveImage("posters", $s['poster_path'], $this->imageConfiguration->getUrl('poster_sizes', 5));
             $this->imageService->saveImage("backdrops", $s['backdrop_path'], $this->imageConfiguration->getUrl('backdrop_sizes', 3));
             return $s;
-        }, $this->userSeriesRepository->favoriteSeries($user, $locale, 1, -1));
+        }, $this->userSeriesRepository->favoriteSeries($user, $locale));
 
         $tmdbIds = array_column($series, 'tmdb_id');
 
@@ -352,7 +352,7 @@ class SeriesController extends AbstractController
             $this->imageService->saveImage("posters", $s['poster_path'], $this->imageConfiguration->getUrl('poster_sizes', 5));
             $s['upToDate'] = $s['watched_aired_episode_count'] == $s['aired_episode_count'];
             return $s;
-        }, $this->userSeriesRepository->seriesByCountry($user, $country, $locale, 1, -1));
+        }, $this->userSeriesRepository->seriesByCountry($user, $country, $locale));
         // Le tableau $series est trié par date de première diffusion décroissante, mais certaines séries n'ont pas de date de première diffusion.
         // Ces séries sans date de première diffusion doivent être placées en début de tableau.
         usort($series, function ($a, $b) {
@@ -467,17 +467,17 @@ class SeriesController extends AbstractController
         // Parameters count
         if (!count($request->query->all())) {
             if (!$settings) {
-                $settings = new Settings($user, 'series to end', ['perPage' => 10, 'sort' => 'lastWatched', 'order' => 'DESC', 'network' => 'all']);
+                $settings = new Settings($user, 'series to end', ['limit' => 10, 'sort' => 'lastWatched', 'order' => 'DESC', 'network' => 'all']);
                 $this->settingsRepository->save($settings, true);
             }
         } else {
-            // /fr/series/all?sort=episodeAirDate&order=DESC&startStatus=series-not-started&endStatus=series-not-watched&perPage=10
+            // /fr/series/all?sort=episodeAirDate&order=DESC&startStatus=series-not-started&endStatus=series-not-watched&limit=10
             $paramSort = $request->query->get('sort');
             $paramOrder = $request->query->get('order');
             $paramNetwork = $request->query->get('network');
-            $paramPerPage = $request->query->get('perPage');
+            $paramPerPage = $request->query->get('limit');
             $settings->setData([
-                'perPage' => $paramPerPage,
+                'limit' => $paramPerPage,
                 'sort' => $paramSort,
                 'order' => $paramOrder,
                 'network' => $paramNetwork
@@ -488,7 +488,7 @@ class SeriesController extends AbstractController
         $data = $settings->getData();
         $filters = [
             'page' => $page,
-            'perPage' => $data['perPage'],
+            'limit' => $data['limit'],
             'network' => $data['network'],
             'sort' => $data['sort'],
             'order' => $data['order'],
@@ -538,7 +538,7 @@ class SeriesController extends AbstractController
             'userSeries' => $userSeries,
             'userSeriesCount' => $userSeriesCount,
             'tmdbIds' => $tmdbIds,
-            'pages' => ceil($userSeriesCount / $filters['perPage']),
+            'pages' => ceil($userSeriesCount / $filters['limit']),
             'filters' => $filters,
             'filterBoxOpen' => $filterBoxOpen,
             'filterMeanings' => $filterMeanings,

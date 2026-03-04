@@ -41,7 +41,7 @@ readonly class ApiSeriesWhatNext
         $user = ($this->getUser)();
         $settings = $this->getSettings($user);
 
-        $filters = ['page' => 1, 'perPage' => $settings['limit'], 'sort' => $settings['sort'], 'order' => $settings['order'], 'network' => 'all'];
+        $filters = ['page' => 1, 'limit' => $settings['limit'], 'sort' => $settings['sort'], 'order' => $settings['order'], 'network' => 'all'];
         $localisation = ['language' => 'fr_FR', 'country' => 'FR', 'timezone' => 'Europe/Paris', 'locale' => 'fr'];
 
         $userSeries = $this->userSeriesRepository->getAllSeries(

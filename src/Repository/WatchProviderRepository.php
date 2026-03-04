@@ -73,13 +73,13 @@ class WatchProviderRepository extends ServiceEntityRepository
         return $this->getOne($sql);
     }
 
-    public function adminProviders(int $page, string $sort, string $order, int $perPage = 20): array
+    public function adminProviders(int $page, string $sort, string $order, int $limit = 20): array
     {
-        $offset = ($page - 1) * $perPage;
+        $offset = ($page - 1) * $limit;
         $sql = "SELECT *
                 FROM watch_provider wp
                 ORDER BY $sort $order
-                LIMIT $perPage OFFSET $offset";
+                LIMIT $limit OFFSET $offset";
 
         return $this->getAll($sql);
     }

@@ -56,7 +56,7 @@ export class MovieIndex {
         /** @type {HTMLSelectElement} */
         const orderSelect = document.getElementById('order-by');
         /** @type {HTMLSelectElement} */
-        const perPage = document.getElementById('per-page');
+        const limit = document.getElementById('limit');
         /** @type {HTMLInputElement} */
         const titleFilter = document.getElementById('title-filter');
         let t0 = performance.now();
@@ -102,8 +102,8 @@ export class MovieIndex {
             document.querySelector("#sort-value span").textContent = sort + ' / ' + order;
             getMovies(getParams().concat({key: 'page', value: 1}));
         });
-        perPage.addEventListener('change', function () {
-            document.querySelector("#per-value span").textContent = perPage.value;
+        limit.addEventListener('change', function () {
+            document.querySelector("#per-value span").textContent = limit.value;
             getMovies(getParams().concat({key: 'page', value: 1}));
         });
 
@@ -148,7 +148,7 @@ export class MovieIndex {
             return [
                 {key: 'sort', value: sortSelect.value},
                 {key: 'order', value: orderSelect.value},
-                {key: 'perPage', value: perPage.value},
+                {key: 'limit', value: limit.value},
                 {key: 'title', value: titleFilter.value}
             ];
         }

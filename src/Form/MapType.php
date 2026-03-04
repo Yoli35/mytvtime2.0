@@ -18,7 +18,7 @@ class MapType extends AbstractType
                 'empty_data' => 1,
                 'required' => false,
             ])
-            ->add('perPage', ChoiceType::class, [
+            ->add('limit', ChoiceType::class, [
                 'attr' => ['onchange' => 'this.form.submit()'],
                 'choice_translation_domain' => false,
                 'choices' => [

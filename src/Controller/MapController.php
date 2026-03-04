@@ -126,9 +126,9 @@ class MapController extends AbstractController
         }
         $type = $data->getType();
         $page = $data->getPage();
-        $perPage = $data->getPerPage();
+        $limit = $data->getPerPage();
 
-        $locations = $this->mapService->get($type, $page, $perPage);
+        $locations = $this->mapService->get($type, $page, $limit);
 
         return $this->render('map/last.html.twig', [
             'form' => $form->createView(),
@@ -139,7 +139,7 @@ class MapController extends AbstractController
             'bounds' => $locations['bounds'],
             'type' => $type,
             'page' => $page,
-            'pages' => ceil($locations['filmingLocationCount'] / $perPage),
+            'pages' => ceil($locations['filmingLocationCount'] / $limit),
             'settings' => $settings,
         ]);
     }

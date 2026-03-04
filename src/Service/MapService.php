@@ -17,9 +17,9 @@ readonly class MapService
     {
     }
 
-    public function get(string $order, int $page = 1, int $perPage = 50): array
+    public function get(string $order, int $page = 1, int $limit = 50): array
     {
-        $filmingLocations = $this->filmingLocationRepository->allLocations($order, $page, $perPage);
+        $filmingLocations = $this->filmingLocationRepository->allLocations($order, $page, $limit);
 
         return $this->locationsWithImages($filmingLocations);
     }

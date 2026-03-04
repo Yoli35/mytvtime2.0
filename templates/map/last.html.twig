@@ -54,10 +54,10 @@
                                 {% endif %}
                             {% endfor %}
                         </div>
-                        <label for="{{ form.perPage.vars.id }}">
-                            {{ form.perPage.vars.label|trans }}
-                            {{ form_widget(form.perPage) }}
-                            {{ form_errors(form.perPage) }}
+                        <label for="{{ form.limit.vars.id }}">
+                            {{ form.limit.vars.label|trans }}
+                            {{ form_widget(form.limit) }}
+                            {{ form_errors(form.limit) }}
                         </label>
                         <label for="{{ form.type.vars.id }}">
                             {{ form.type.vars.label|trans }}

@@ -6,7 +6,7 @@ class SeriesFilterDTO
 {
     private string $sort;
     private string $order;
-    private int $perPage;
+    private int $limit;
     private int $page;
     private int $includeStartedSeries;
     private int $includeEndedSeries;
@@ -15,7 +15,7 @@ class SeriesFilterDTO
     {
         $this->sort = 'firstAirDate';
         $this->order = 'DESC';
-        $this->perPage = 20;
+        $this->limit = 20;
         $this->page = 1;
         $this->includeStartedSeries = 1; // 0: all series, 1: only started series 2: only not started series
         $this->includeEndedSeries = 1; // 0: all series, 1: only ongoing series 2: only ended series
@@ -43,12 +43,12 @@ class SeriesFilterDTO
 
     public function getPerPage(): int
     {
-        return $this->perPage;
+        return $this->limit;
     }
 
-    public function setPerPage(int $perPage): void
+    public function setPerPage(int $limit): void
     {
-        $this->perPage = $perPage;
+        $this->limit = $limit;
     }
 
     public function getPage(): int

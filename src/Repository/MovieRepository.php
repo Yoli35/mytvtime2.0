@@ -57,7 +57,7 @@ class MovieRepository extends ServiceEntityRepository
         $sort = $filters['sort'];
         $order = $filters['order'];
         $page = $filters['page'];
-        $limit = 1 * $filters['perPage'];
+        $limit = 1 * $filters['limit'];
         $title = $filters['title'];
 
         $offset = ($page - 1) * $limit;

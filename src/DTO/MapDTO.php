@@ -5,13 +5,13 @@ namespace App\DTO;
 class MapDTO
 {
     private int $page;
-    private int $perPage;
+    private int $limit;
     private string $type;
 
-    public function __construct(string $type, int $page, int $perPage)
+    public function __construct(string $type, int $page, int $limit)
     {
         $this->page = $page;
-        $this->perPage = $perPage;
+        $this->limit = $limit;
         $this->type = $type;
     }
 
@@ -27,12 +27,12 @@ class MapDTO
 
     public function getPerPage(): int
     {
-        return $this->perPage;
+        return $this->limit;
     }
 
-    public function setPerPage(int $perPage): void
+    public function setPerPage(int $limit): void
     {
-        $this->perPage = $perPage;
+        $this->limit = $limit;
     }
 
     public function getType(): string

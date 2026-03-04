@@ -31,7 +31,7 @@
                             {% endif %}
                         </div>
                         <div class="filter-value" data-title="{{ 'Number of elements per page'|trans }}">
-                            {{ ux_icon('mdi:dots-grid') }}&nbsp;{{ filters.perPage }}
+                            {{ ux_icon('mdi:dots-grid') }}&nbsp;{{ filters.limit }}
                         </div>
                     </div>
                     <div class="collapse" data-title="{{ 'Show / hide filter options'|trans }}">
@@ -73,10 +73,10 @@
                         </label>
                     </div>
                     <div class="filter">
-                        <label for="per-page">{{ 'Number of elements per page'|trans }}
-                            <select id="per-page">
+                        <label for="limit">{{ 'Number of elements per page'|trans }}
+                            <select id="limit">
                                 {% for number in [10, 20, 50, 100] %}
-                                    <option value="{{ number }}"{% if filters.perPage==number %} selected{% endif %}>{{ number }}</option>
+                                    <option value="{{ number }}"{% if filters.limit==number %} selected{% endif %}>{{ number }}</option>
                                 {% endfor %}
                             </select>
                         </label>
@@ -154,7 +154,7 @@
             /** @type {HTMLSelectElement} */
             const network = document.getElementById('network');
             /** @type {HTMLSelectElement} */
-            const perPage = document.getElementById('per-page');
+            const limit = document.getElementById('limit');
             const pages = document.querySelectorAll('.pages button');
             console.log({pages});
 
@@ -181,7 +181,7 @@
             orderSelect.addEventListener('change', function () {
                 window.location.href = newUrl(window.location.href, getParams());
             });
-            perPage.addEventListener('change', function () {
+            limit.addEventListener('change', function () {
                 window.location.href = newUrl(window.location.href, getParams());
             });
             network.addEventListener('change', function () {
@@ -193,7 +193,7 @@
                     {key: 'sort', value: sortSelect.value},
                     {key: 'order', value: orderSelect.value},
                     {key: 'network', value: network.value},
-                    {key: 'perPage', value: perPage.value}
+                    {key: 'limit', value: limit.value}
                 ];
             }
 

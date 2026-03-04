@@ -92,23 +92,23 @@ class MovieController extends AbstractController
                 $settings = new Settings($user, 'my movies', [
                     'order' => 'DESC',
                     'page' => 1,
-                    'perPage' => 10,
+                    'limit' => 10,
                     'sort' => 'releaseDate',
                     'title' => '',
                 ]);
                 $this->settingsRepository->save($settings, true);
             }
         } else {
-            // /fr/series/all?sort=episodeAirDate&order=DESC&startStatus=series-not-started&endStatus=series-not-watched&perPage=10
+            // /fr/series/all?sort=episodeAirDate&order=DESC&startStatus=series-not-started&endStatus=series-not-watched&limit=10
             $page = $request->query->getInt('page', 1);
             $paramSort = $request->query->get('sort', 'releaseDate');
             $paramOrder = $request->query->get('order', 'DESC');
-            $paramPerPage = $request->query->getInt('perPage', 10);
+            $paramPerPage = $request->query->getInt('limit', 10);
             $paramTitle = $request->query->get('title');
             $settings->setData([
                 'order' => $paramOrder,
                 'page' => $page,
-                'perPage' => $paramPerPage,
+                'limit' => $paramPerPage,
                 'sort' => $paramSort,
                 'title' => $paramTitle,
             ]);
@@ -118,7 +118,7 @@ class MovieController extends AbstractController
         $filters = [
             'order' => $data['order'],
             'page' => $page,
-            'perPage' => $data['perPage'],
+            'limit' => $data['limit'],
             'sort' => $data['sort'],
             'title' => $data['title'],
         ];
@@ -146,7 +146,7 @@ class MovieController extends AbstractController
         return $this->render('movie/index.html.twig', [
             'userMovies' => $userMovies,
             'userMovieCount' => $userMovieCount,
-            'pages' => ceil($userMovieCount / $filters['perPage']),
+            'pages' => ceil($userMovieCount / $filters['limit']),
             'filterMeanings' => $filterMeanings,
             'filterBoxOpen' => $filterBoxOpen,
             'pageBoxOpen' => $pageBoxOpen,
@@ -439,7 +439,7 @@ class MovieController extends AbstractController
         }, $this->movieRepository->getMovieCards($user, $filters));
 
         $userMovieCount = $this->movieRepository->countMovieCards($user, $filters);
-        $totalPages = ceil($userMovieCount / $filters['perPage']);
+        $totalPages = ceil($userMovieCount / $filters['limit']);
 
         $paginations[0] = $this->getPagination(1, $filters['page'], $totalPages, 'app_movie_index', $request->getLocale());
         $paginations[1] = $this->getPagination(2, $filters['page'], $totalPages, 'app_movie_index', $request->getLocale());
