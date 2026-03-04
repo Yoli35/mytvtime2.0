@@ -6024,9 +6024,12 @@ h2 {
                 width: 15rem;
 
                 a {
+                    .poster {
+                        background-color: hsla(from var(--ardoise-70) h s l / .5);
+                    }
+
                     .poster, .name {
                         align-items: center;
-                        background-color: hsla(from var(--ardoise-70) h s l / .5);
                         display: flex;
                         justify-content: center;
                         width: 15rem;
@@ -6046,12 +6049,12 @@ h2 {
 
                         .series-infos {
                             /*border: 1px dashed var(--orange-50);*/
-                            bottom: 1rem;
+                            bottom: 1.25rem;
                             display: flex;
                             flex-direction: column;
                             gap: .25rem;
                             left: 0;
-                            padding-inline: .5rem;
+                            padding-inline: .25rem;
                             position: absolute;
                             right: 0;
 
@@ -6089,11 +6092,12 @@ h2 {
                         .progress {
                             background-color: var(--orange-10);
                             border: 2px solid var(--orange-40);
-                            bottom: 0;
+                            bottom: .25rem;
                             height: .75rem;
-                            left: 0;
+                            left: .25rem;
                             position: absolute;
-                            right: 0;
+                            right: 0.25rem;
+                            width: unset;
 
                             .progress-bar {
                                 background-color: var(--orange-50);
@@ -6104,11 +6108,16 @@ h2 {
                         }
                     }
 
-                    .name {
-                        border-radius: 0 0 .5rem .5rem;
-                        flex-direction: column;
-                        height: 5rem;
-                        text-align: center;
+                    .infos {
+                        background-color: var(--ardoise-80);
+
+                        .name {
+                            border-radius: 0 0 .5rem .5rem;
+                            flex-direction: column;
+                            height: 5rem;
+                            text-align: center;
+                            width: 100%;
+                        }
                     }
                 }
             }

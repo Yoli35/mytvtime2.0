@@ -2501,7 +2501,7 @@ section:has(.pages) {
 
     &:hover {
         background-color: hsla(from var(--orange-50) h s l / .5);
-        box-shadow: 0 0 1rem 1.25rem hsla(from var(--orange-50) h s l / .5);
+        box-shadow: 0 0 1rem .5rem hsla(from var(--orange-50) h s l / .5);
     }
 
     &.vanishing {

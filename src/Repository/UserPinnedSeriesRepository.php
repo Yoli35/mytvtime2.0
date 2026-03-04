@@ -78,13 +78,4 @@ class UserPinnedSeriesRepository extends ServiceEntityRepository
             return [];
         }
     }
-
-    public function getOne($sql): mixed
-    {
-        try {
-            return $this->em->getConnection()->fetchOne($sql);
-        } catch (Exception) {
-            return [];
-        }
-    }
 }
