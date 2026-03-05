@@ -18,6 +18,144 @@
                 </div>
             </div>
             <div class="site-update glowing-border">
+                <h2>71ᵉ mise à jour : 05/03/2026</h2>
+                <ul>
+                    <li>
+                        <div class="change">→ Adjust card widths for improved responsiveness</div>
+                        <div class="details">Optimizes card layout in the series search results, adjusting widths for different screen sizes. Enhances responsiveness and ensures a better user experience across devices.</div>
+                    </li>
+                    <li>
+                        <div class="change">→ Add parameterized queries to repositories (1/8)</div>
+                        <div class="details">Improves security by transitioning from raw SQL queries to parameterized queries across repositories. Prevents SQL injection and standardizes query execution practices throughout the application.</div>
+                    </li>
+                    <li>
+                        <div class="change">→ Remove unused repository methods and refine styles</div>
+                        <div class="details">Cleans up unused methods from repositories for improved maintainability. Updates styles for better alignment, spacing, and visual consistency across the interface.</div>
+                    </li>
+                    <li>
+                        <div class="change">→ Trim surplus episodes from season lists</div>
+                        <div class="details">Ensures season lists do not include episodes beyond the finale. Improves data accuracy and aligns displayed episodes with the intended season structure.</div>
+                    </li>
+                    <li>
+                        <div class="change">→ Handle missing elements in episode actions script</div>
+                        <div class="details">Ensures the script gracefully handles scenarios where specific DOM elements are absent. Improves robustness and prevents potential runtime errors for a smoother user experience.</div>
+                    </li>
+                    <li>
+                        <div class="change">→ Skip invalid episodes in series air schedule</div>
+                        <div class="details">Prevents processing of scheduled episodes missing valid identifiers. Improves robustness by avoiding potential errors and ensuring only valid data is considered in air date calculations.</div>
+                    </li>
+                    <li>
+                        <div class="change">→ Add watch button for movies</div>
+                        <div class="details">Replaces the "Mark as viewed" feature with a new watch button. Enhances user experience by allowing users to track multiple viewing dates and edit or remove them directly from the interface.</div>
+                    </li>
+                    <li>
+                        <div class="change">→ Add navigation links to message details</div>
+                        <div class="details">Introduces "Next" and "Previous" navigation links for easier browsing between admin messages. Improves usability by enabling quick transitions without returning to the message list.</div>
+                    </li>
+                </ul>
+            </div>
+            <div class="site-update glowing-border">
+                <h2>70ᵉ mise à jour : 16/02/2026</h2>
+                <ul>
+                    <li>
+                        <div class="change">→ Adjust series schedule styles for better usability</div>
+                        <div class="details">Refines layout, spacing, and element alignment in the schedule forms, especially for mobile. Enhances visual clarity and user interaction for improved scheduling experience.</div>
+                    </li>
+                    <li>
+                        <div class="change">→ Switch to parameterized queries (7/8) across repositories</div>
+                        <div class="details">Updates database queries in multiple repositories to use parameterized queries, enhancing security and maintainability. Improves data safety and reduces the risk of SQL injection while ensuring consistent functionality across the application.</div>
+                    </li>
+                    <li>
+                        <div class="change">→ Improve display of translated series names</div>
+                        <div class="details">Ensures the correct translation is displayed for series with localized names. Enhances user experience by showing appropriate names based on the user's language preferences.</div>
+                    </li>
+                    <li>
+                        <div class="change">→ Switch to parameterized queries (6/8) for movie repository</div>
+                        <div class="details">Updates database queries in the movie repository to use parameterized queries, improving security and maintainability. Ensures safer data handling while preserving consistent functionality across the application.</div>
+                    </li>
+                    <li>
+                        <div class="change">→ Switch to parameterized queries (5/8) for repositories</div>
+                        <div class="details">Updates database queries across multiple repositories to use parameterized queries, enhancing security and maintainability. Ensures safer data handling and reduces the risk of SQL injection while maintaining consistent functionality.</div>
+                    </li>
+                    <li>
+                        <div class="change">→ Use parameterized queries (4/8) for episode comments and images</div>
+                        <div class="details">Updates database queries for episode comments and images to use parameterized queries, improving security and maintainability. Ensures safer data handling while maintaining consistent functionality across the application.</div>
+                    </li>
+                    <li>
+                        <div class="change">→ Switch to parameterized queries (3/8) for user episodes</div>
+                        <div class="details">Improves database security and maintainability by replacing hardcoded SQL values with parameterized queries. Ensures consistent query handling and reduces the risk of SQL injection attacks.</div>
+                    </li>
+                    <li>
+                        <div class="change">→ Add interactive map section to series pages</div>
+                        <div class="details">Introduces an accessible and scrollable map section for filming locations. Enhances user experience with smoother navigation and improved visual clarity for map interactions.</div>
+                    </li>
+                    <li>
+                        <div class="change">→ Use parameterized queries (2/8) and consistent key names in series and episodes</div>
+                        <div class="details">Replaces hardcoded SQL values with parameterized queries to improve security and maintainability. Harmonizes key usage for series and episodes to ensure consistency in naming and presentation across the app.</div>
+                    </li>
+                    <li>
+                        <div class="change">→ Use parameterized query (1/8) in pinned series retrieval</div>
+                        <div class="details">Improves security and reliability of pinned series queries by switching to parameterized queries. Prevents potential SQL injection risks and enhances query handling within the database.</div>
+                    </li>
+                    <li>
+                        <div class="change">→ Support posters when no backdrops are available</div>
+                        <div class="details">Adds fallback handling for series posters if backdrops are missing. Improves visual presentation by ensuring at least one image is displayed wherever possible.</div>
+                    </li>
+                    <li>
+                        <div class="change">→ Add automated sync for series seasons from episodes</div>
+                        <div class="details">Automatically synchronizes series seasons based on episode data, ensuring accurate and up-to-date season information. Enhances the user experience by maintaining consistency and reducing manual updates.</div>
+                    </li>
+                    <li>
+                        <div class="change">→ Adjust spacing, font sizes, and proportions for visual consistency</div>
+                        <div class="details">Refines spacing, font sizes, and component proportions across series, card, and movie views. Enhances visual alignment and ensures a more cohesive and polished user interface.</div>
+                    </li>
+                    <li>
+                        <div class="change">→ Improve border radius consistency and visual polish</div>
+                        <div class="details">Updates various border-radius values across components for a more cohesive and modern design. Enhances visual uniformity and overall interface aesthetics.</div>
+                    </li>
+                    <li>
+                        <div class="change">→ Prevent event propagation in preview toggle</div>
+                        <div class="details">Stops click event from propagating when toggling the preview, ensuring no unintended interactions occur. Improves component behavior and enhances user interaction stability.</div>
+                    </li>
+                    <li>
+                        <div class="change">→ Add "What Next" feature for related viewing suggestions</div>
+                        <div class="details">Introduces a new "What Next" button and section, offering users recommendations for related series to watch after completing the last available episode. Enhances user engagement and provides a seamless transition to new content.</div>
+                    </li>
+                    <li>
+                        <div class="change">→ Improve search details styling and categorization adjustments</div>
+                        <div class="details">Enhances visual clarity of search details by refining background colors and categorizing filters, keywords, and sort options. Improves readability and consistency for a more intuitive user experience.</div>
+                    </li>
+                    <li>
+                        <div class="change">→ Improve alternate schedule scroll behavior</div>
+                        <div class="details">Enhances smooth scrolling and centering of highlighted schedule cards, ensuring accessibility even when parent elements are not fully visible. Refines user interaction for a more seamless navigation experience.</div>
+                    </li>
+                    <li>
+                        <div class="change">→ Reposition and style light/dark toggle button</div>
+                        <div class="details">Improves usability by relocating the light/dark mode toggle button for better accessibility. Adjusts styling to align with the overall design, enhancing consistency and user experience.</div>
+                    </li>
+                    <li>
+                        <div class="change">→ Add search result details and user preference integration</div>
+                        <div class="details">Enhances the advanced series search by displaying detailed result information and aligning language and timezone settings with user preferences. Improves clarity and personalization in the search process for a better user experience.</div>
+                    </li>
+                    <li>
+                        <div class="change">→ Replace `gThis` with `self` for improved code readability</div>
+                        <div class="details">Refactors code by consistently replacing `gThis` with `self` as the reference to the current context. Enhances readability and standardizes variable naming for better maintainability.</div>
+                    </li>
+                    <li>
+                        <div class="change">→ Refactor keyword retrieval in advanced search</div>
+                        <div class="details">Replaces in-controller keyword logic with a dedicated service, improving maintainability and consistency across the application. Centralizes keyword management for easier updates and streamlined functionality.</div>
+                    </li>
+                    <li>
+                        <div class="change">→ Sync advanced series search with user preferences</div>
+                        <div class="details">Advanced series search now loads and saves user-specific preferences, ensuring personalized search settings persist across sessions. Improves user experience by retaining filters and options.</div>
+                    </li>
+                    <li>
+                        <div class="change">→ Add advanced series search functionality</div>
+                        <div class="details">Introduces an advanced search option for user series with enhanced filtering capabilities, including date, language, keywords, and origin country. Improves the user’s ability to find specific content based on detailed search criteria.</div>
+                    </li>
+                </ul>
+            </div>
+            <div class="site-update glowing-border">
                 <h2>69ᵉ mise à jour : 16/02/2026</h2>
                 <ul>
                     <li>
