@@ -427,7 +427,7 @@ class UserSeriesRepository extends ServiceEntityRepository
         $types = [
             'userId' => ParameterType::INTEGER,
             'query' => ParameterType::STRING,
-            'locale' => $locale,
+            'locale' => ParameterType::STRING,
         ];
         $sql = <<<SQL
                 SELECT s.`id`                                     AS id,
