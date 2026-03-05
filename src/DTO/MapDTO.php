@@ -25,12 +25,12 @@ class MapDTO
         $this->page = $page;
     }
 
-    public function getPerPage(): int
+    public function getLimit(): int
     {
         return $this->limit;
     }
 
-    public function setPerPage(int $limit): void
+    public function setLimit(int $limit): void
     {
         $this->limit = $limit;
     }

@@ -475,9 +475,9 @@ class SeriesController extends AbstractController
             $paramSort = $request->query->get('sort');
             $paramOrder = $request->query->get('order');
             $paramNetwork = $request->query->get('network');
-            $paramPerPage = $request->query->get('limit');
+            $paramLimit = $request->query->get('limit');
             $settings->setData([
-                'limit' => $paramPerPage,
+                'limit' => $paramLimit,
                 'sort' => $paramSort,
                 'order' => $paramOrder,
                 'network' => $paramNetwork

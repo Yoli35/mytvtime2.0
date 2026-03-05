@@ -103,12 +103,12 @@ class MovieController extends AbstractController
             $page = $request->query->getInt('page', 1);
             $paramSort = $request->query->get('sort', 'releaseDate');
             $paramOrder = $request->query->get('order', 'DESC');
-            $paramPerPage = $request->query->getInt('limit', 10);
+            $paramLimit = $request->query->getInt('limit', 10);
             $paramTitle = $request->query->get('title');
             $settings->setData([
                 'order' => $paramOrder,
                 'page' => $page,
-                'limit' => $paramPerPage,
+                'limit' => $paramLimit,
                 'sort' => $paramSort,
                 'title' => $paramTitle,
             ]);

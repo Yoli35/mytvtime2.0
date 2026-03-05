@@ -126,7 +126,7 @@ class MapController extends AbstractController
         }
         $type = $data->getType();
         $page = $data->getPage();
-        $limit = $data->getPerPage();
+        $limit = $data->getLimit();
 
         $locations = $this->mapService->get($type, $page, $limit);
 

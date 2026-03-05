@@ -150,7 +150,7 @@ export class AlbumShow {
         const lang = document.querySelector('html').getAttribute('lang');
         const settings = {
             layout: layout,
-            photosPerPage: self.settings.photosPerPage,
+            photosLimit: self.settings.photosLimit,
         };
         fetch('/' + lang + '/album/settings/' + id, {
             method: 'POST',

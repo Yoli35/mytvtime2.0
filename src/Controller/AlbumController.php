@@ -154,18 +154,18 @@ final class AlbumController extends AbstractController
     {
         // {
         //     "layout": "list",
-        //     "photosPerPage": 20
+        //     "photosLimit": 20
         // }
         $data = json_decode($request->getContent(), true);
 //        dump($data);
         $settings = $this->settingsRepository->findOneBy(['user' => $album->getUser(), 'name' => 'album']);
 
         $layout = $data['layout'] ?? 'grid';
-        $photosPerPage = $data['photosPerPage'] ?? 20;
+        $photosLimit = $data['photosLimit'] ?? 20;
         if (!$settings) {
-            $settings = new Settings($album->getUser(), 'album', ['layout' => $layout, 'photosPerPage' => $photosPerPage]);
+            $settings = new Settings($album->getUser(), 'album', ['layout' => $layout, 'photosLimit' => $photosLimit]);
         } else {
-            $settings->setData(['layout' => $layout, 'photosPerPage' => $photosPerPage]);
+            $settings->setData(['layout' => $layout, 'photosLimit' => $photosLimit]);
         }
         $this->settingsRepository->save($settings, true);
 
@@ -175,7 +175,7 @@ final class AlbumController extends AbstractController
             'messages' => $messages,
             'settings' => [
                 'layout' => $settings->getData()['layout'],
-                'photosPerPage' => $settings->getData()['photosPerPage'],
+                'photosLimit' => $settings->getData()['photosLimit'],
             ],
         ]);
     }
@@ -448,7 +448,7 @@ final class AlbumController extends AbstractController
     {
         $settings = $this->settingsRepository->findOneBy(['user' => $user, 'name' => 'album']);
         if (!$settings) {
-            $settings = new Settings($user, 'album', ['layout' => 'grid', 'photosPerPage' => 20]);
+            $settings = new Settings($user, 'album', ['layout' => 'grid', 'photosLimit' => 20]);
             $this->settingsRepository->save($settings, true);
         }
         return $settings->getData();
