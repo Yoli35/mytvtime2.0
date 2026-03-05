@@ -28,6 +28,7 @@ class Keywords extends AbstractController
         $type = $data['type'];
         $keywords = $data['keywords'];
         $language = $data['language'];
+        $noUpdate = $data['noUpdate'] ?? false;
 
         $keywordYaml = $this->keywordService->getTranslationLines($language);
 
@@ -45,6 +46,13 @@ class Keywords extends AbstractController
             fputs($res, $line);
         }
         fclose($res);
+
+        if ($noUpdate) {
+            return $this->json([
+                'ok' => true,
+                'message' => 'Keywords updated successfully',
+            ]);
+        }
 
         if ($type == 'movie') {
             $keywords = json_decode($this->tmdbService->getMovieKeywords($tmdbId), true);

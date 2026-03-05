@@ -26,6 +26,12 @@
                             {{ 'Users'|trans }}
                         </div>
                     </a>
+                    <a href="{{ path('admin_keywords') }}"{% if route starts with 'admin_keyword' %} class="active"{% endif %}>
+                        <div>{{ ux_icon('mdi:alpha-k-box-outline') }}</div>
+                        <div class="large">
+                            {{ 'Keywords'|trans }}
+                        </div>
+                    </a>
                     <a href="{{ path('admin_messages') }}"{% if route starts with 'admin_message' %} class="active"{% endif %}>
                         <div>{{ ux_icon('mdi:email', {height: "18px", width: "18px"}) }}</div>
                         <div class="large">
@@ -163,6 +169,9 @@
 
                 {% if route == 'admin_index' or route == 'admin_users' %}
                     {% include('_blocks/admin/_users.html.twig') %}
+                {% endif %}
+                {% if route == 'admin_keywords' %}
+                    {% include('_blocks/admin/_keywords.html.twig') %}
                 {% endif %}
                 {% if route == 'admin_messages' %}
                     {% include('_blocks/admin/_messages.html.twig') %}

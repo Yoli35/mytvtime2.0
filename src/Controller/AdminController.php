@@ -7,9 +7,9 @@ use App\Entity\PointOfInterest;
 use App\Entity\PointOfInterestImage;
 use App\Entity\Settings;
 use App\Entity\User;
-use App\Form\PointOfInterestForm;
 use App\Repository\ContactMessageRepository;
 use App\Repository\FilmingLocationRepository;
+use App\Repository\KeywordRepository;
 use App\Repository\MovieRepository;
 use App\Repository\PointOfInterestCategoryRepository;
 use App\Repository\PointOfInterestImageRepository;
@@ -23,6 +23,7 @@ use App\Repository\WatchProviderRepository;
 use App\Service\DateService;
 use App\Service\ImageConfiguration;
 use App\Service\ImageService;
+use App\Service\KeywordService;
 use App\Service\TMDBService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
@@ -34,7 +35,6 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Routing\Requirement\Requirement;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
-use Symfony\Component\Uid\Uuid;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 /** @method User|null getUser() */
@@ -49,7 +49,8 @@ class AdminController extends AbstractController
         private readonly FilmingLocationRepository         $filmingLocationRepository,
         private readonly ImageConfiguration                $imageConfiguration,
         private readonly ImageService                      $imageService,
-        private readonly MapController                     $mapController,
+        private readonly KeywordRepository                 $keywordRepository,
+        private readonly KeywordService                    $keywordService,
         private readonly MovieRepository                   $movieRepository,
         private readonly PointOfInterestCategoryRepository $pointOfInterestCategoryRepository,
         private readonly PointOfInterestImageRepository    $pointOfInterestImageRepository,
@@ -92,6 +93,23 @@ class AdminController extends AbstractController
         return $this->render('admin/index.html.twig', [
             'users' => $users,
             'pagination' => $paginationLinks,
+        ]);
+    }
+
+    #[Route('/keywords', name: 'keywords')]
+    public function keywords(Request $request): Response
+    {
+        $firsts = ['other', '0-9','a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'];
+        $first = $request->query->get('first', 'a');
+        $keywords = $this->keywordRepository->get($first);
+        $missingTranslations = $this->keywordService->keywordsTranslation($keywords, $request->getLocale());
+
+        return $this->render('admin/index.html.twig', [
+            'first' => $first,
+            'firsts' => $firsts,
+            'keywords' => $keywords,
+            'missingTranslations' => $missingTranslations,
+            'language' => $request->getLocale(),
         ]);
     }
 

@@ -1,0 +1,77 @@
+<h2>{{ 'Keywords'|trans }} ({{ keywords|length }}) — {{ missingTranslations|length }} {{ 'missing translations'|trans }}</h2>
+<div class="admin__keywords">
+
+    <div class="admin__keywords_firsts">
+        {% for f in firsts %}
+            <a href="?first={{ f }}"{% if first == f %} class="active"{% endif %}>{{ f }}</a>
+        {% endfor %}
+    </div>
+
+    <div class="keyword">
+        <div class="keyword__id">#</div>
+        <div class="keyword__name">{{ 'Name'|trans }}</div>
+        <div class="keyword__tmdb_id">{{ 'TMDB ID'|trans }}</div>
+        <div class="keyword__input_label">{{ 'Translation'|trans }}</div>
+    </div>
+    {% for k in keywords %}
+        <div class="keyword">
+            <div class="keyword__id">{{ k.id }}</div>
+            <div class="keyword__name">{{ k.name }}</div>
+            <div class="keyword__tmdb_id">{{ k.keyword_id }}</div>
+            <div class="keyword__translation">
+                {% if k.name in missingTranslations %}
+                    <label for="{{ k.id }}"><input type="text" id="{{ k.id }}" value="{{ k.name }}" data-keyword="{{ k.name }}" class="keyword__input"></label>
+                {% else %}
+                    {{ ux_icon('mdi:check') }} {{ k.name|trans([], 'keywords') }}
+                {% endif %}
+            </div>
+        </div>
+    {% endfor %}
+
+</div>
+<div id="svgs" style="display:none">
+    <div id="check">{{ ux_icon('mdi:check') }}</div>
+</div>
+<script>
+    // focus sur le premier input
+    document.addEventListener('DOMContentLoaded', function() {
+        const firstInput = document.querySelector('.keyword__input');
+        if (firstInput) {
+            firstInput.focus();
+        }
+
+        const inputs = document.querySelectorAll('.keyword__input');
+        inputs.forEach(input => {
+            input.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter') {
+                    if (input.value.length === 0) {
+                        return;
+                    }
+                    const translations = [{original: input.dataset.keyword, translated: input.value}];
+                    fetch('/api/keywords/save', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({type: '', id: 0, noUpdate: 1, language: "{{ language }}", keywords: translations})
+                    })
+                        .then((response) => response.json())
+                        .then(data => {
+                            console.log(data);
+                            const keywordTranslationDiv = input.closest('.keyword__translation');
+                            const label = keywordTranslationDiv.querySelector('label');
+                            label.remove();
+                            const svgCheck = document.querySelector('#check').querySelector('svg').cloneNode(true);
+                            keywordTranslationDiv.appendChild(svgCheck);
+                            keywordTranslationDiv.appendChild(document.createTextNode(input.value));
+                            const firstInput = document.querySelector('.keyword__input');
+                            if (firstInput) {
+                                firstInput.focus();
+                            }
+                        });
+                }
+            })
+        })
+
+    });
+</script>

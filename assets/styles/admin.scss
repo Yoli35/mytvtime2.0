@@ -449,6 +449,107 @@
         }
     }
 
+    .admin__keywords {
+        display: flex;
+        flex-direction: column;
+        gap: .25rem;
+
+        .admin__keywords_firsts {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            justify-content: center;
+
+            a {
+                align-items: center;
+                background-color: var(--orange-30);
+                border-radius: 5rem;
+                display: flex;
+                height: 1.5rem;
+                padding-inline: 1rem;
+
+                &:hover {
+                    background-color: var(--orange-40);
+                }
+
+                &.active {
+                    background-color: var(--orange-50);
+                }
+            }
+        }
+
+        .keyword {
+            align-items: center;
+            border-radius: .25rem;
+            display: flex;
+            font-size: .875rem;
+
+            gap: 1rem;
+            padding-block: .25rem;
+            padding-inline: 1rem;
+
+            .keyword__id {
+                flex-shrink: 0;
+                text-align: right;
+                width: 3rem;
+            }
+
+            .keyword__name {
+                flex-shrink: 0;
+                overflow-x: auto;
+                white-space: nowrap;
+                width: 20rem;
+            }
+
+            .keyword__tmdb_id {
+                flex-shrink: 0;
+                text-align: right;
+                width: 5rem;
+            }
+
+            .keyword__input_label {
+                width: 20rem;
+            }
+
+            .keyword__translation {
+                display: flex;
+                gap: 1rem;
+                overflow-x: auto;
+                text-wrap: nowrap;
+
+                svg {
+                    color: green;
+                    flex-shrink: 0;
+                }
+            }
+
+            .keyword__input {
+                background-color: var(--orange-30);
+                border: none;
+                border-radius: 5rem;
+                outline: none;
+                padding: .5rem;
+                width: 20rem;
+            }
+
+            &:nth-child(odd) {
+                background-color: hsla(from var(--ardoise-80) h s l / .5);
+
+                &:hover {
+                    background-color: hsla(from var(--ardoise-60) h s l / .5);
+                }
+            }
+
+            &:nth-child(even) {
+                background-color: hsla(from var(--ardoise-90) h s l / .5);
+
+                &:hover {
+                    background-color: hsla(from var(--ardoise-70) h s l / .5);
+                }
+            }
+        }
+    }
+
     .admin__messages {
         display: flex;
         flex-direction: column;

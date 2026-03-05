@@ -4,6 +4,8 @@ namespace App\Repository;
 
 use App\Entity\Keyword;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\DBAL\Exception;
+use Doctrine\DBAL\ParameterType;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -28,5 +30,29 @@ class KeywordRepository extends ServiceEntityRepository
     public function flush(): void
     {
         $this->getEntityManager()->flush();
+    }
+
+    public function get(string $letter): array
+    {
+        // $letter == 'other' means keyword begins with non-latin character
+        if ($letter === 'other') {
+            $letter = '\\P{Latin}\\D';
+        }
+        elseif (strlen($letter) > 2) {
+            $letter = '[' . $letter . ']';
+        }
+        $params['letter'] = '^' . $letter;
+        $types['letter'] = ParameterType::STRING;
+        $sql = <<<SQL
+            SELECT k.`id` AS id, k.`name` AS name, k.`keyword_id` AS keyword_id
+            FROM `keyword` k
+            WHERE k.`name` REGEXP :letter
+            ORDER BY k.`name`
+        SQL;
+        try {
+            return $this->getEntityManager()->getConnection()->fetchAllAssociative($sql, $params, $types);
+        } catch (Exception) {
+            return [];
+        }
     }
 }
