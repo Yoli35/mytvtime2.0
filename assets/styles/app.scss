@@ -1076,22 +1076,21 @@ label:has(input[type="text"]) {
     }
 
     .debug-comment-menu {
-        /* background-color: var(--orange-30);*/
-        /* border-radius: .25rem;*/
-        /* border: 2px dashed var(--orange-50);*/
-        /* color: var(--orange-80);*/
-        /*justify-self: anchor-center;*/
-        /*position-anchor: --debug-comment-anchor;*/
-        /*position: fixed;*/
-        /*top: calc(anchor(bottom) + 5px);*/
         position: absolute;
         right: 0;
         top: 2rem;
         z-index: 1000;
 
         .debug-comment-item {
-            padding: .125rem 1rem;
-            text-wrap: nowrap;
+            border-radius: 5rem;
+
+            a {
+                display: flex;
+                gap: 1rem;
+                justify-content: space-between;
+                padding: .125rem 1rem;
+                text-wrap: nowrap;
+            }
 
             &:hover {
                 background-color: var(--orange-50);
@@ -2449,7 +2448,7 @@ section:has(.pages) {
 
                 &:has(.filter),
                 &:has(.keyword),
-                &:has(.sort-by){
+                &:has(.sort-by) {
                     align-items: center;
                     display: flex;
                     flex-wrap: wrap;

@@ -247,6 +247,9 @@ export class Menu {
                 if (menu.classList.contains("log")) {
                     self.checkLog();
                 }
+                if (menu.classList.contains("debug-comment-menu")) {
+                    self.updateCommentMenu(item, menu);
+                }
                 if (menu.classList.contains("main")) {
                     self.updateMainMenu();
                 }
@@ -264,7 +267,6 @@ export class Menu {
             });
         }
     }
-
 
     initMultiSearch(navbar) {
         if (!this.userConnected) {
@@ -551,6 +553,35 @@ export class Menu {
                 }
                 wrapperDiv.classList.add("ready");
                 self.tooltips.init(suggestionsDiv);
+            })
+            .catch(err => {
+                console.log(err);
+            });
+    }
+
+    updateCommentMenu(navbarItem, menu) {
+        const commentMenuDiv = document.querySelector(".debug-comment-menu");
+        const lastCommentId = commentMenuDiv.getAttribute("data-id") || "-1";
+        const apiUrl = '/api/comment/menu/update';
+        const options = {
+            method: 'POST',
+            headers: {
+                accept: 'application/json'
+            },
+            body: JSON.stringify({lastCommentId : lastCommentId}),
+        };
+
+        fetch(apiUrl, options)
+            .then(res => res.json())
+            .then(res => {
+                if (res['update'] === false) return;
+                console.log('comment menu updated');
+                const block = res['block'];
+                const blockDiv = document.createElement('div');
+                blockDiv.innerHTML = block;
+                const ul = blockDiv.querySelector("ul");
+                menu.querySelector("ul").replaceWith(ul);
+                menu.setAttribute("data-id", res['lastCommentId']);
             })
             .catch(err => {
                 console.log(err);

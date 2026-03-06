@@ -1,0 +1,12 @@
+<div class="menu debug-comment-menu" data-id="{{ lastCommentId }}">
+    <ul>
+        {% for sl in seriesList %}
+            <li class="debug-comment-item">
+                <a href="{{ path('app_series_season_show', {id: sl.id, slug: sl.name|slug, seasonNumber: sl.sn}) }}">
+                    <div>{{ sl.name }} ({{ sl.count }}) - {{ sl.id }}</div>
+                    <div>{{ sl.last_comment|format_datetime('relative_medium', 'short') }}</div>
+                </a>
+            </li>
+        {% endfor %}
+    </ul>
+</div>
