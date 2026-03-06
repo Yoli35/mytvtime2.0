@@ -1,11 +1,13 @@
-<h2>{{ 'Keywords'|trans }} ({{ keywords|length }}) — {{ missingTranslations|length }} {{ 'missing translations'|trans }}</h2>
-<div class="admin__keywords">
+{% set count = missingTranslations|length %}
+<h2>{{ 'Keywords'|trans }} ({{ keywords|length }}) <span class="missing-translations"><span class="missing-count" data-count="{{ count }}">{{ count }}</span> {{ 'missing translations'|trans }}</span></h2>
 
     <div class="admin__keywords_firsts">
         {% for f in firsts %}
             <a href="?first={{ f }}"{% if first == f %} class="active"{% endif %}>{{ f }}</a>
         {% endfor %}
     </div>
+
+<div class="admin__keywords">
 
     <div class="keyword">
         <div class="keyword__id">#</div>
@@ -64,6 +66,10 @@
                             const svgCheck = document.querySelector('#check').querySelector('svg').cloneNode(true);
                             keywordTranslationDiv.appendChild(svgCheck);
                             keywordTranslationDiv.appendChild(document.createTextNode(input.value));
+                            const missingCountSpan = document.querySelector('.missing-count');
+                            const missingCount = missingCountSpan.textContent - 1;
+                            missingCountSpan.dataset.count = missingCount.toString();
+                            missingCountSpan.textContent = missingCount.toString();
                             const firstInput = document.querySelector('.keyword__input');
                             if (firstInput) {
                                 firstInput.focus();
