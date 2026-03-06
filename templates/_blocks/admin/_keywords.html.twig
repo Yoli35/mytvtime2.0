@@ -1,11 +1,11 @@
 {% set count = missingTranslations|length %}
 <h2>{{ 'Keywords'|trans }} ({{ keywords|length }}) <span class="missing-translations"><span class="missing-count" data-count="{{ count }}">{{ count }}</span> {{ 'missing translations'|trans }}</span></h2>
 
-    <div class="admin__keywords_firsts">
-        {% for f in firsts %}
-            <a href="?first={{ f }}"{% if first == f %} class="active"{% endif %}>{{ f }}</a>
-        {% endfor %}
-    </div>
+<div class="admin__keywords_firsts">
+    {% for f in firsts %}
+        <a href="?first={{ f }}"{% if first == f %} class="active"{% endif %} data-letter="{{ f }}">{{ f }}</a>
+    {% endfor %}
+</div>
 
 <div class="admin__keywords">
 
@@ -31,20 +31,28 @@
     {% endfor %}
 
 </div>
+<div id="globs" style="display:none">
+    {
+    "first": "{{ first }}",
+    "firsts": {{ firsts|json_encode(constant('JSON_PRETTY_PRINT'))|raw }}
+    }
+</div>
 <div id="svgs" style="display:none">
     <div id="check">{{ ux_icon('mdi:check') }}</div>
 </div>
 <script>
-    // focus sur le premier input
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', function () {
+        let firstArray = [];
+        const globs = document.querySelector('#globs').textContent;
+        const json = JSON.parse(globs);
+        const activeLetter = json['first'];
         const firstInput = document.querySelector('.keyword__input');
         if (firstInput) {
             firstInput.focus();
         }
-
         const inputs = document.querySelectorAll('.keyword__input');
         inputs.forEach(input => {
-            input.addEventListener('keydown', function(e) {
+            input.addEventListener('keydown', function (e) {
                 if (e.key === 'Enter') {
                     if (input.value.length === 0) {
                         return;
@@ -59,7 +67,7 @@
                     })
                         .then((response) => response.json())
                         .then(data => {
-                            console.log(data);
+                            /*console.log(data);*/
                             const keywordTranslationDiv = input.closest('.keyword__translation');
                             const label = keywordTranslationDiv.querySelector('label');
                             label.remove();
@@ -70,6 +78,8 @@
                             const missingCount = missingCountSpan.textContent - 1;
                             missingCountSpan.dataset.count = missingCount.toString();
                             missingCountSpan.textContent = missingCount.toString();
+                            const link = document.querySelector(`[data-letter="${activeLetter}"]`);
+                            link.title = missingCount.toString() + ' / ' + firstArray[activeLetter];
                             const firstInput = document.querySelector('.keyword__input');
                             if (firstInput) {
                                 firstInput.focus();
@@ -78,6 +88,27 @@
                 }
             })
         })
+
+        fetch('/api/keywords/check', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+            .then((response) => response.json())
+            .then(data => {
+                /*console.log(data);*/
+                const links = document.querySelectorAll('.admin__keywords_firsts > a');
+                firstArray = data['firstArray'];
+                links.forEach(link => {
+                    const letter = link.dataset.letter;
+                    if (firstArray[letter] === 0) {
+                        link.classList.add('done');
+                    } else {
+                        link.title = firstArray[letter];
+                    }
+                })
+            });
 
     });
 </script>

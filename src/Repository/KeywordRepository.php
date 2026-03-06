@@ -55,4 +55,18 @@ class KeywordRepository extends ServiceEntityRepository
             return [];
         }
     }
+
+    public function getAll(): array
+    {
+        $sql = <<<SQL
+            SELECT k.`id` AS id, k.`name` AS name, k.`keyword_id` AS keyword_id
+            FROM `keyword` k
+            ORDER BY k.`name`
+        SQL;
+        try {
+            return $this->getEntityManager()->getConnection()->fetchAllAssociative($sql);
+        } catch (Exception) {
+            return [];
+        }
+    }
 }

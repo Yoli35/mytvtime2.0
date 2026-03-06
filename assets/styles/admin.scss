@@ -498,6 +498,10 @@
             &.active {
                 background-color: var(--orange-50);
             }
+
+            &.done {
+                background-color: var(--green-50);
+            }
         }
     }
 
