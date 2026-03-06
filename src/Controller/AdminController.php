@@ -114,7 +114,7 @@ class AdminController extends AbstractController
     }
 
     #[Route('/messages', name: 'messages')]
-    public function messages(Request $request): Response
+    public function messages(): Response
     {
         $messages = $this->contactMessageRepository->findBy([], ['date' => 'DESC']);
 
@@ -124,7 +124,7 @@ class AdminController extends AbstractController
     }
 
     #[Route('/message/{id}', name: 'message_detail', requirements: ['id' => Requirement::DIGITS])]
-    public function message(Request $request, ContactMessage $message): Response
+    public function message(ContactMessage $message): Response
     {
         if ($message->isMessageRead() === false) {
             $message->setMessageRead(true);
@@ -138,7 +138,7 @@ class AdminController extends AbstractController
     }
 
     #[Route('/message/delete/{id}', name: 'message_delete', requirements: ['id' => Requirement::DIGITS])]
-    public function messageDelete(Request $request, ContactMessage $message): Response
+    public function messageDelete(ContactMessage $message): Response
     {
         $this->contactMessageRepository->remove($message, true);
 
@@ -146,7 +146,7 @@ class AdminController extends AbstractController
     }
 
     #[Route('/tools', name: 'tools')]
-    public function tools(Request $request): Response
+    public function tools(): Response
     {
         return $this->render('admin/index.html.twig');
     }
@@ -154,8 +154,7 @@ class AdminController extends AbstractController
     #[Route('/api', name: 'api')]
     public function api(): Response
     {
-        return $this->render('admin/index.html.twig', [
-        ]);
+        return $this->render('admin/index.html.twig');
     }
 
     #[Route('/api/modules', name: 'api_modules', methods: ['GET'])]
@@ -363,7 +362,7 @@ class AdminController extends AbstractController
             'Credits' => ['value' => 'credits', 'extra_fields' => ['language' => 'en-US']], // +language
             'Agregate credits' => ['value' => 'aggregate_credits', 'extra_fields' => ['language' => 'en-US']], // +language
             'External IDs' => ['value' => 'external_ids', 'extra_fields' => []],
-            'Images' => ['value' => 'images', 'extra_fields' => ['include_image_language' => 'fr,null', 'language' => 'en-US']], // +include_image_language (specify a comma separated list of ISO-639-1 values to query, for example: en,null), language
+            'Images' => ['value' => 'images', 'extra_fields' => ['include_image_language' => 'fr,null', 'language' => 'en-US']], // +include_image_language (specify a comma-separated list of ISO-639-1 values to query, for example, en,null), language
             'Keywords' => ['value' => 'keywords', 'extra_fields' => []],
             'Lists' => ['value' => 'lists', 'extra_fields' => ['language' => 'en-US', 'page' => 1]], // +language, page
             'Reviews' => ['value' => 'reviews', 'extra_fields' => ['language' => 'en-US', 'page' => 1]], // +language, page
@@ -640,7 +639,7 @@ class AdminController extends AbstractController
             'Changes' => ['value' => 'changes', 'extra_fields' => ['end_date' => $now->format("Y-m-d"), 'start_date' => $start->format("Y-m-d"), 'page' => 1]], // +page
             'Credits' => ['value' => 'credits', 'extra_fields' => ['language' => 'en-US']], // +language
             'External IDs' => ['value' => 'external_ids', 'extra_fields' => []],
-            'Images' => ['value' => 'images', 'extra_fields' => ['include_image_language' => 'fr,null', 'language' => '']], // +include_image_language (specify a comma separated list of ISO-639-1 values to query, for example: en,null), language
+            'Images' => ['value' => 'images', 'extra_fields' => ['include_image_language' => 'fr,null', 'language' => '']], // +include_image_language (specify a comma-separated list of ISO-639-1 values to query, for example, en,null), language
             'Keywords' => ['value' => 'keywords', 'extra_fields' => []],
             'Lists' => ['value' => 'lists', 'extra_fields' => ['language' => 'en-US', 'page' => 1]], // +language, page
             'Release Dates' => ['value' => 'release_dates', 'extra_fields' => []], // see $movie['release_types']
@@ -1096,9 +1095,9 @@ class AdminController extends AbstractController
 
         $videos = array_map(function ($v) {
             $v['published_at'] = $this->dateService->formatDateRelativeMedium($v['published_at'], 'UTC', 'fr') . " " . $this->translator->trans('at') . " " . substr($v['published_at'], 11, 5);
-            if (!is_numeric($v['published_at'][0])) $l['created_at'] = ucfirst($v['published_at']);
+            if (!is_numeric($v['published_at'][0])) $v['published_at'] = ucfirst($v['published_at']);
             $v['updated_at'] = $this->dateService->formatDateRelativeMedium($v['updated_at'], 'UTC', 'fr') . " " . $this->translator->trans('at') . " " . substr($v['updated_at'], 11, 5);
-            if (!is_numeric($v['updated_at'][0])) $l['created_at'] = ucfirst($v['updated_at']);
+            if (!is_numeric($v['updated_at'][0])) $v['updated_at'] = ucfirst($v['updated_at']);
             $v['duration'] = $this->videoController->formatDuration($v['duration']);
             return $v;
         }, $videos);
@@ -1122,7 +1121,7 @@ class AdminController extends AbstractController
     }
 
     #[Route('/video/{id}', name: 'video_edit')]
-    public function videoEdit(Request $request, int $id): Response
+    public function videoEdit(int $id): Response
     {
         $video = $this->videoRepository->find($id);
         if (!$video) {
@@ -1216,7 +1215,7 @@ class AdminController extends AbstractController
     {
         $queryParams['p'] = $page;
         $url = $route . '?' . http_build_query($queryParams);
-        return sprintf('<a href="%s" class="page%s">%s</a>', $url, $activeClass, $label);
+        return '<a href="' . $url . '" class="page' . $activeClass . '">' . $label . '</a>';
     }
 
     private function generateAdminUrl(string $route, array $queryParams): string
