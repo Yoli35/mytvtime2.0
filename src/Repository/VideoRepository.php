@@ -55,7 +55,10 @@ class VideoRepository extends ServiceEntityRepository
                 ORDER BY v.published_at DESC
                 LIMIT 1
              SQL;
-        return $this->getOne($sql, $params, $types);
+
+        $r = $this->getOne($sql, $params, $types);
+
+        return is_iterable($r) ? $r[0] : false;
     }
 
     public function getNextVideo(Video $video, User $user): array|false
@@ -80,7 +83,9 @@ class VideoRepository extends ServiceEntityRepository
                 LIMIT 1
              SQL;
 
-        return $this->getOne($sql, $params, $types);
+        $r = $this->getOne($sql, $params, $types);
+
+        return is_iterable($r) ? $r[0] : false;
     }
 
     public function adminVideos(int $page, string $sort, string $order, int $limit): array
