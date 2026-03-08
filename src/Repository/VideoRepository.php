@@ -55,10 +55,7 @@ class VideoRepository extends ServiceEntityRepository
                 ORDER BY v.published_at DESC
                 LIMIT 1
              SQL;
-
-        $r = $this->getOne($sql, $params, $types);
-
-        return is_iterable($r) ? $r[0] : false;
+        return $this->getOne($sql, $params, $types);
     }
 
     public function getNextVideo(Video $video, User $user): array|false
