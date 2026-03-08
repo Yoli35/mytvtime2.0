@@ -758,7 +758,7 @@ class SeriesController extends AbstractController
             $enTranslations = array_find($tv['translations']['translations'], function ($item) {
                 return $item['iso_639_1'] == 'en';
             });
-            $tv['overview'] = $enTranslations['data']['overview'];
+            $tv['overview'] = $enTranslations['data']['overview'] ?? '';
             $this->addFlash('info', 'The series overview is missing. "' . ($enTranslations['data']['overview'] ?? 'null') . '" found.');
         }
         $this->imageService->saveImage("posters", $tv['poster_path'], $this->imageConfiguration->getUrl('poster_sizes', 5));
@@ -2247,7 +2247,7 @@ class SeriesController extends AbstractController
         return $userSeries;
     }
 
-    public function prepareMail(UserSeries $userSeries, string $localizedName, string $localizedOverview): ContactMessage
+    public function prepareMail(UserSeries $userSeries, ?string $localizedName, ?string $localizedOverview): ContactMessage
     {
         $user = $userSeries->getUser();
         $series = $userSeries->getSeries();

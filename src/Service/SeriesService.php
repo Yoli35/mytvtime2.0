@@ -109,7 +109,7 @@ class SeriesService extends AbstractController
 
         if ($tv['localized_name']) {
             $tv['display_name'] = $tv['localized_name']->getName();
-        } elseif (strlen($tv['translations']['data']['name'])) {
+        } elseif (strlen($tv['translations'] && $tv['translations']['data'] && $tv['translations']['data']['name'])) {
             $tv['display_name'] = $tv['translations']['data']['name'];
         } else {
             $tv['display_name'] = $tv['name'];
