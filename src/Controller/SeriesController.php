@@ -829,12 +829,8 @@ class SeriesController extends AbstractController
         $blurredPosterPath = $this->imageService->blurPoster($series->getPosterPath(), 'series', 8);
 
         $series->setUpdates([]);
-        $seriesArr = $series->toArray();
+        $seriesArr = $series->toArray($user);
         $seriesArr['blurredPosterPath'] = $blurredPosterPath;
-
-        $seriesArr['userLists'] = $series->getUserLists()->filter(function (UserList $ul) use ($user) {
-            return $ul->getUser() === $user;
-        })->toArray();
 
         $this->checkSlug($series, $slug, $locale);
 
@@ -894,10 +890,25 @@ class SeriesController extends AbstractController
 
         $filmingLocationsWithBounds = $this->seriesService->getFilmingLocations($series, $tv['localized_name']);
 
+        if ($seriesArr['seriesToWatchLater']) {
+            $messages[] = [
+                'status' => 'series-to-watch-later',
+                'message' => [
+                    'content' => $this->translator->trans('This series belongs to your watch later list!'),
+                    'localized_name' => $tv['localized_name']?->getName(),
+                    'name' => $seriesArr['name'],
+                    'poster_path' => $series->getPosterPath(),
+                    'link' => $this->generateUrl('app_series_episode_show', ['_locale' => $locale, 'id' => $series->getId(), 'seasonNumber' => 1, 'episodeNumber' => 1, 'slug' => $slug]),
+                    'link_text' => 'Go',
+                ]
+            ];
+        }
+
         return $this->render("series/show.html.twig", [
             'series' => $seriesArr,
             'tv' => $tv,
             'userSeries' => $userSeries,
+            'messages' => $messages ?? [],
             'providers' => $this->watchLinkApi->getWatchProviders($country),
             'locations' => $filmingLocationsWithBounds['filmingLocations'],
             'locationsBounds' => $filmingLocationsWithBounds['bounds'],

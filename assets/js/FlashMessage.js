@@ -4,6 +4,7 @@ export class FlashMessage {
         this.closeAll = this.closeAll.bind(this);
         this.dismisses = ['hide-scale', 'hide-to-left', 'hide-to-right', 'hide-to-top', 'hide-to-bottom'];
         this.dismissesCount = this.dismisses.length;
+        this.closeTime = 30000;
         if (!self) {
             this.start();
         }
@@ -47,6 +48,8 @@ export class FlashMessage {
      * @property {string} localized_name
      * @property {string} poster_path
      * @property {string} content
+     * @property {string} link
+     * @property {string} link_text
      */
 
     /**
@@ -64,7 +67,8 @@ export class FlashMessage {
         flashMessageDiv.classList.add('flash-message');
         flashMessageDiv.classList.add(status);
 
-        if (status ==='update') {
+        if (status ==='update' || status === 'series-to-watch-later') {
+            flashMessagesDiv.classList.add(status);
             const posterDiv = document.createElement('div');
             posterDiv.classList.add('poster');
             if (message.poster_path) {
@@ -88,9 +92,22 @@ export class FlashMessage {
             contentDiv.classList.add('content');
             contentDiv.innerHTML = message.content;
             infosDiv.appendChild(contentDiv);
+
+            if (status === 'series-to-watch-later') {
+                const a = document.createElement('a');
+                a.href = message.link;
+                const div = document.createElement('div');
+                div.innerText = message.link_text;
+                a.appendChild(div);
+                infosDiv.appendChild(a);
+            }
             flashMessageDiv.appendChild(infosDiv);
+
+            this.closeTime = 60000;
         } else {
             flashMessageDiv.innerHTML = '[' + new Date().toLocaleString() + '] ' + message + (subMessage.length ? ('<br>' + subMessage) : '');
+
+            this.closeTime = 30000;
         }
         flashMessagesDiv.appendChild(flashMessageDiv);
         // <div class="closure-countdown">
@@ -133,7 +150,7 @@ export class FlashMessage {
         setTimeout(() => {
             clearInterval(i);
             this.close(flashMessageDiv, dismissClass);
-        }, 30000);
+        }, this.closeTime);
     }
 
     close(flash, dismissClass) {

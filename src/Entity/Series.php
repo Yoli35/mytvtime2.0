@@ -298,8 +298,12 @@ class Series
         return $this;
     }
 
-    public function toArray(string $country = "FR"): array
+    public function toArray(User $user, string $country = "FR"): array
     {
+        $userLists = $this->getUserLists()->filter(function (UserList $ul) use ($user) {
+            return $ul->getUser() === $user;
+        })->toArray();
+
         return [
             'backdropPath' => $this->getBackdropPath(),
             'createdAt' => $this->getCreatedAt(),
@@ -319,6 +323,10 @@ class Series
             'updates' => $this->getUpdates() ?? [],
             'visitNumber' => $this->getVisitNumber(),
             'watchLinks' => $this->getSeriesWatchLinks()->toArray(),
+            'userLists' => $userLists,
+            'seriesToWatchLater' => array_find($userLists, function (UserList $ul) use ($user) {
+                    return $ul->getId() === 1;
+                }) != null
         ];
     }
 

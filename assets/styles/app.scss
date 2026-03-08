@@ -2539,7 +2539,7 @@ section:has(.pages) {
         }
 
         &.success {
-            background-color: var(--green-70-50);
+            background-color: hsla(from var(--green-70) h s l / .5);
             border-color: var(--green-10);
             color: var(--green-10);
         }
@@ -2555,6 +2555,32 @@ section:has(.pages) {
             background-color: hsla(from var(--red-50) h s l / .5);
             border-color: var(--red-20);
             color: var(--red-20);
+        }
+
+        &.series-to-watch-later {
+            background-color: hsla(from var(--green-70) h s l / .5);
+            font-size: 1.25rem;
+            font-weight: 300;
+
+            .poster {
+                aspect-ratio: 2 / 3;
+                height: 10rem;
+            }
+
+            .infos {
+                align-items: flex-start;
+                display: flex;
+                flex-direction: column;
+                gap: .25rem;
+
+                > a > div {
+                    background-color: var(--orange);
+                    border-radius: 5rem;
+                    margin-block-start: 1rem;
+                    margin-inline-start: auto;
+                    padding: .25rem 1.5rem;
+                }
+            }
         }
 
         .close {

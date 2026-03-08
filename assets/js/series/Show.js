@@ -59,6 +59,7 @@ export class Show {
      * @type {Object}
      * @property {number} seriesId
      * @property {number} userSeriesId
+     * @property {Array} messages
      * @property {Array} providers
      * @property {Array} translations
      * @property {Api} api
@@ -110,6 +111,7 @@ export class Show {
         /** @var {Globs} */
         const jsonGlobsObject = JSON.parse(document.querySelector('div#globs').textContent);
         // const svgs = document.querySelector('div#svgs');
+        const messages = jsonGlobsObject.messages;
         const providers = jsonGlobsObject.providers;
         const seriesId = jsonGlobsObject.seriesId;
         const seriesName = document.querySelector('span.localization-span, span.name-span').textContent;//jsonGlobsObject.seriesName;
@@ -154,6 +156,14 @@ export class Show {
                 }, 1000);
             }
         }
+
+        /******************************************************************************
+         * Display messages if any                                                    *
+         ******************************************************************************/
+            messages.forEach(message => {
+                this.flashMessage.add(message.status, message.message)
+            });
+        console.log(messages);
 
         /******************************************************************************
          * Go to the map section.                                                     *
