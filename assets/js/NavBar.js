@@ -14,7 +14,7 @@ export class NavBar {
     }
 
     init() {
-        // const navbar = document.querySelector(".navbar");
+        const navbar = document.querySelector(".navbar");
         // const navBarBounds = navbar.getBoundingClientRect();
         // const body = document.querySelector("body");
         // this.debugDiv = document.createElement("div");
@@ -34,6 +34,28 @@ export class NavBar {
                 this.root.style.setProperty("--navbar-opacity", opacity.toString());
             }
         });*/
+        const multiSearchDiv = navbar.querySelector('.multi-search');
+        if (multiSearchDiv) {
+            const countDownDiv = document.createElement('div');
+            countDownDiv.classList.add('count-down');
+            navbar.insertBefore(countDownDiv, multiSearchDiv);
+            const initialDate = new Date('2026-03-16T21:00:00.000Z');
+            const countDownInterval = setInterval(() => {
+                const currentDate = new Date();
+                const timeDifference = initialDate - currentDate;
+                if (timeDifference < 0) {
+                    clearInterval(countDownInterval);
+                    countDownDiv.innerText = "00:00:00:00";
+                    return;
+                }
+                const days = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((timeDifference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutes = Math.floor((timeDifference % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((timeDifference % (1000 * 60)) / 1000);
+                // Affiche le temps restant au format DD:HH:MM:SS
+                countDownDiv.textContent = `${days.toString().padStart(2, '0')}:${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            }, 1000);
+        }
     }
 
     navBarColor(hsl) {

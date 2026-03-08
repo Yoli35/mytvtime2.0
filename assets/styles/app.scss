@@ -387,6 +387,7 @@ label:has(input[type="text"]) {
     .navbar-items {
         align-items: center;
         display: flex;
+        flex-shrink: 0;
 
         &.right {
             margin-inline-start: 0;
@@ -1336,6 +1337,24 @@ label:has(input[type="text"]) {
     svg {
         height: 1.5rem;
         width: 1.5rem;
+    }
+
+    .count-down {
+        align-items: center;
+        border: 2px solid var(--orange-50);
+        border-radius: 5rem;
+        display: flex;
+        font-family: "JetBrains Mono", monospace;
+        gap: 1rem;
+        justify-content: center;
+        margin-inline: auto;
+        overflow: hidden;
+        padding-block: .25rem;
+        padding-inline: 1rem;
+
+        &:hover {
+            color: var(--orange-90);
+        }
     }
 }
 
