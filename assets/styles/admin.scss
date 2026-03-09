@@ -674,6 +674,7 @@
 
             .button {
                 background-color: var(--orange-50);
+                border: 2px solid var(--orange-50);
                 border-radius: 5rem;
                 color: var(--ardoise-10);
                 cursor: pointer;
@@ -683,6 +684,13 @@
 
                 &:hover {
                     background-color: var(--orange-30);
+                }
+
+                &.none {
+                    background-color: transparent;
+                    border: 2px solid;
+                    color: hsl(from var(--orange-40) h s l / 0.5);
+                    cursor: not-allowed;
                 }
             }
 

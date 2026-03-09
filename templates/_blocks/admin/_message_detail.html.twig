@@ -12,11 +12,19 @@
                 <a href="{{ path('admin_message_detail', {'id': previous.id}) }}" data-title="{{ 'Previous message'|trans }}" class="button admin__message__details__navigation">
                     {{ ux_icon('mdi:chevron-down') }}
                 </a>
+            {% else %}
+                <div data-title="{{ 'No previous message'|trans }}" class="button admin__message__details__navigation none">
+                    {{ ux_icon('mdi:chevron-up') }}
+                </div>
             {% endif %}
             {% if next %}
                 <a href="{{ path('admin_message_detail', {'id': next.id}) }}" data-title="{{ 'Next message'|trans }}" class="button admin__message__details__navigation">
                     {{ ux_icon('mdi:chevron-up') }}
                 </a>
+            {% else %}
+                <div data-title="{{ 'No next message'|trans }}" class="button admin__message__details__navigation none">
+                    {{ ux_icon('mdi:chevron-up') }}
+                </div>
             {% endif %}
         </div>
         <div class="admin__message__details__field">

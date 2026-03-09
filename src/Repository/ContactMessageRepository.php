@@ -37,7 +37,7 @@ class ContactMessageRepository extends ServiceEntityRepository
         }
     }
 
-    public function getPreviousMessage(?int $getId): array
+    public function getPreviousMessage(?int $getId): array|false
     {
         $params = ['getId' => $getId];
         $types = ['getId' => ParameterType::INTEGER];
@@ -51,12 +51,12 @@ class ContactMessageRepository extends ServiceEntityRepository
         try {
             $result = $this->entityManager->getConnection()->fetchAssociative($sql, $params, $types);
         } catch (Exception) {
-            $result = [];
+            $result = false;
         }
         return $result;
     }
 
-    public function getNextMessage(?int $getId): array
+    public function getNextMessage(?int $getId): array|false
     {
         $params = ['getId' => $getId];
         $types = ['getId' => ParameterType::INTEGER];
@@ -70,7 +70,7 @@ class ContactMessageRepository extends ServiceEntityRepository
         try {
             $result = $this->entityManager->getConnection()->fetchAssociative($sql, $params, $types);
         } catch (Exception) {
-            $result = [];
+            $result = false;
         }
         return $result;
     }
