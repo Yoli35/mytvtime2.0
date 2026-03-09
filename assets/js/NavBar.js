@@ -39,7 +39,7 @@ export class NavBar {
             const countDownDiv = document.createElement('div');
             countDownDiv.classList.add('count-down');
             navbar.insertBefore(countDownDiv, multiSearchDiv);
-            const initialDate = new Date('2026-03-16T21:00:00.000Z');
+            const initialDate = new Date('2026-03-16T20:00:00.000Z');
             const countDownInterval = setInterval(() => {
                 const currentDate = new Date();
                 const timeDifference = initialDate - currentDate;
