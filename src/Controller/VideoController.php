@@ -12,6 +12,7 @@ use App\Repository\VideoChannelRepository;
 use App\Repository\VideoRepository;
 use App\Service\DateService;
 use App\Service\ImageService;
+use App\Service\VideoService;
 use DateInterval;
 use DateTimeImmutable;
 use Google\Exception;
@@ -47,6 +48,7 @@ final class VideoController extends AbstractController
         private readonly VideoCategoryRepository $categoryRepository,
         private readonly VideoChannelRepository  $channelRepository,
         private readonly VideoRepository         $videoRepository,
+        private readonly VideoService            $videoService,
         private readonly UserVideoRepository     $userVideoRepository,
     )
     {
@@ -115,7 +117,7 @@ final class VideoController extends AbstractController
         } else {
             $count = $this->userVideoRepository->countVideoByCategory($user->getId(), $categoryId);
         }
-        $categories = $this->getCategories();
+        $categories = $this->videoService->getCategories();
 
         return $this->render('video/index.html.twig', [
             'dbUserVideos' => $dbUserVideos,
@@ -141,7 +143,7 @@ final class VideoController extends AbstractController
             throw $this->createNotFoundException('Video not found');
         }
 
-        $categories = $this->getCategories();
+        $categories = $this->videoService->getCategories();
         $previousVideo = $this->videoRepository->getPreviousVideo($video, $user);
         $nextVideo = $this->videoRepository->getNextVideo($video, $user);
 
@@ -267,29 +269,6 @@ final class VideoController extends AbstractController
         $this->videoRepository->save($video, true);
 
         return new JsonResponse(['message' => 'Category removed successfully', 'id' => $category->getId()]);
-    }
-
-    private function getCategories() :array
-    {
-        $categories = array_map(function ($cat) {
-            return [
-                'id' => $cat->getId(),
-                'name' => $this->translator->trans($cat->getName()),
-                'color' => $cat->getColor(),
-            ];
-        }, $this->categoryRepository->findAll());
-
-        usort($categories, function ($a, $b) {
-            // Remplacer les accents pour une comparaison correcte
-            $a['name'] = preg_replace('/[ÉÈÊË]/u', 'E', $a['name']);
-            $b['name'] = preg_replace('/[ÉÈÊË]/u', 'E', $b['name']);
-            $a['name'] = preg_replace('/[éèêë]/u', 'e', $a['name']);
-            $b['name'] = preg_replace('/[éèêë]/u', 'e', $b['name']);
-            // Comparer les noms des catégories
-            return strcmp($a['name'], $b['name']);
-        });
-
-        return $categories;
     }
 
     private function parseLink(string $userLink): ?string

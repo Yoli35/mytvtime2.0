@@ -80,9 +80,7 @@ class VideoRepository extends ServiceEntityRepository
                 LIMIT 1
              SQL;
 
-        $r = $this->getOne($sql, $params, $types);
-
-        return is_iterable($r) ? $r[0] : false;
+        return $this->getOne($sql, $params, $types);
     }
 
     public function adminVideos(int $page, string $sort, string $order, int $limit): array
@@ -128,13 +126,13 @@ class VideoRepository extends ServiceEntityRepository
         }
     }
 
-    public function getOne($sql, array $params = [], array $types = []): array|int|null
+    public function getOne($sql, array $params = [], array $types = []): array|false
     {
         try {
             return $this->em->getConnection()->fetchAssociative($sql, $params, $types);
         } catch (Exception) {
             $this->logger->error('Failed to execute SQL query: ' . $sql, ['params' => $params, 'types' => $types]);
-            return [];
+            return false;
         }
     }
 }

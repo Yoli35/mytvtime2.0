@@ -337,7 +337,21 @@ label:has(select) {
 
 label:has(input[type="password"]),
 label:has(input[type="text"]) {
+    align-items: center;
+    display: flex;
+    gap: 1rem;
+    margin-inline-start: auto;
     position: relative;
+    white-space: nowrap;
+
+    input[type=text],
+    input[type=password] {
+        background-color: var(--ardoise-80);
+        border-radius: 5rem;
+        border: 1px solid var(--ardoise-50);
+        color: var(--ardoise-10);
+        padding: .5rem 1rem;
+    }
 }
 
 .navbar {
@@ -2800,7 +2814,7 @@ section:has(.pages) {
         width: 1.5rem;
     }
 
-    .to-top, .preview-toggler {
+    .to-top, .theme-toggler, .preview-toggler {
         align-items: center;
         background-color: var(--orange-50);
         border-radius: 50%;
@@ -2826,7 +2840,7 @@ section:has(.pages) {
         }
     }
 
-    .preview-toggler {
+    .theme-toggler, .preview-toggler {
         display: flex;
 
         &.active {

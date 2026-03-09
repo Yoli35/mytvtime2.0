@@ -1,6 +1,7 @@
 import {ToolTips} from "ToolTips";
 
 let self = null;
+
 export class Video {
 
     /**
@@ -39,26 +40,65 @@ export class Video {
     initCategories() {
         const videoPage = document.querySelector('.video-page');
         const categorySelect = document.querySelector('select[id="categories"]');
+        const newCategoryInput = document.querySelector('input[id="new-category"]');
+        const newCategoryColor = document.querySelector('input[id="new-category-color"]');
 
-        if (categorySelect) {
-            if (videoPage) {
-                const videoId = videoPage.getAttribute('data-id');
-                const deleteDivs = document.querySelectorAll('.delete-category');
-                deleteDivs.forEach((deleteDiv) => {
-                    const categoryDiv = deleteDiv.closest('.category');
-                    const categoryId = categoryDiv.getAttribute('data-id');
-                    deleteDiv.addEventListener('click', (event) => {
-                        event.preventDefault();
-                        this.deleteCategory(videoId, categoryId, categoryDiv);
-                    });
-                    this.videoCategories.push(parseInt(categoryId));
+        this.initCategorySelect(categorySelect, videoPage);
+
+        if (newCategoryInput) {
+            const videoId = videoPage.getAttribute('data-id');
+            newCategoryInput.addEventListener('keydown', (event) => {
+                if (event.key === 'Enter') {
+                    const newCategory = newCategoryInput.value.trim();
+                    const categoryColor = newCategoryColor.value;
+                    if (newCategory) {
+                        fetch('/api/video/category/new',
+                            {
+                                method: 'POST',
+                                body: JSON.stringify({video_id: videoId, category_name: newCategory, category_color: categoryColor}),
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    'X-Requested-With': 'XMLHttpRequest'
+                                }
+                            }).then(r => r.json())
+                            .then(data => {
+                                if (data.success) {
+                                    const selectCategoriesDiv = document.querySelector('.select-categories');
+                                    const temp = document.createElement('div');
+                                    temp.innerHTML = data.block;
+                                    selectCategoriesDiv.replaceWith(temp.querySelector('.select-categories'));
+                                    self.initCategorySelect(document.querySelector('.select-categories'), videoPage);
+                                } else {
+                                    console.error('Failed to add category:', data.error);
+                                }
+                            });
+                    }
+                }
+            });
+            // newCategoryColor.addEventListener('change', (event) => {
+            //     console.log(event.target.value)
+            // })
+        }
+    }
+
+    initCategorySelect(categorySelect, videoPage) {
+        if (categorySelect && videoPage) {
+            const videoId = videoPage.getAttribute('data-id');
+            const deleteDivs = document.querySelectorAll('.delete-category');
+            deleteDivs.forEach((deleteDiv) => {
+                const categoryDiv = deleteDiv.closest('.category');
+                const categoryId = categoryDiv.getAttribute('data-id');
+                deleteDiv.addEventListener('click', (event) => {
+                    event.preventDefault();
+                    this.deleteCategory(videoId, categoryId, categoryDiv);
                 });
-                this.updateSelect();
-                categorySelect.addEventListener('change', (event) => {
-                    const selectedCategory = event.target.value;
-                    this.addCategory(videoId, selectedCategory);
-                });
-            }
+                this.videoCategories.push(parseInt(categoryId));
+            });
+            this.updateSelect();
+            categorySelect.addEventListener('change', (event) => {
+                const selectedCategory = event.target.value;
+                this.addCategory(videoId, selectedCategory);
+            });
         }
     }
 

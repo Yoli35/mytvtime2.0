@@ -386,6 +386,9 @@
                 .select-categories {
                     background-color: var(--orange-40);
                     border-radius: .25rem;
+                    display: flex;
+                    flex-direction: column;
+                    gap: .5rem;
                     padding: 1rem;
                 }
 
