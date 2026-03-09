@@ -2598,6 +2598,14 @@ h2 {
     }
 }
 
+.series-show[data-theme="dark"], .episode-show[data-theme="dark"] {
+    color: var(--ardoise-90) !important;
+}
+
+.series-show[data-theme="light"], .episode-show[data-theme="light"] {
+    color: var(--ardoise-10) !important;
+}
+
 @media (width < 48rem) {
     .series-show .schedules .schedule-form {
         margin-inline: 0;

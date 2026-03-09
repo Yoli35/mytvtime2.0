@@ -31,6 +31,9 @@ return [
     'AlbumShow' => [
         'path' => './assets/js/album/AlbumShow.js',
     ],
+    'Application' => [
+        'path' => './assets/js/Application.js',
+    ],
     'AverageColor' => [
         'path' => './assets/js/images/AverageColor.js',
     ],

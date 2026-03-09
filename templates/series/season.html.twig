@@ -23,7 +23,7 @@
     </script>
     {{ include('_blocks/_menu.html.twig', {seriesName: season.series_localized_name ? season.series_localized_name.name:series.name, seriesLink: path('app_series_show', {id: series.id, slug: season.series_localized_name.slug ?? series.slug}) }) }}
     <div class="container-fluid backgroundImageOverlay">
-        <div id="series-season" class="series-show">
+        <div id="series-season" class="series-show" data-theme="none">
             <div class="header">
 
                 {% if quickLinks.count > 1 %}

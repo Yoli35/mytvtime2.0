@@ -4,6 +4,7 @@ import {AdminMovieEdit} from "AdminMovieEdit";
 import {AdminPointsOfInterest} from "AdminPointsOfInterest";
 import {AdminSeriesUpdates} from "AdminSeriesUpdates";
 import {AlbumShow} from "AlbumShow";
+import {Application} from "Application";
 import {AverageColor} from 'AverageColor';
 import {EpisodeHistory} from "EpisodeHistory";
 import {Episode} from "Episode";
@@ -36,39 +37,7 @@ window.addEventListener("DOMContentLoaded", () => {
     const menu = new Menu();
     menu.init();
 
-    const toTop = document.querySelector(".to-top");
-    if (toTop) {
-        toTop.addEventListener("click", () => {
-            window.scrollTo({
-                top: 0,
-                behavior: "smooth"
-            });
-        });
-        window.addEventListener("scroll", () => {
-            if (window.scrollY > 100) {
-                toTop.classList.add("show");
-            } else {
-                toTop.classList.remove("show");
-            }
-        });
-    }
-    const previewToggler = document.querySelector(".preview-toggler");
-    const toggler = function () {
-        if (menu.getPreview()) {
-            previewToggler.classList.add("active");
-        } else {
-            previewToggler.classList.remove("active");
-        }
-    }
-    toggler();
-    if (previewToggler) {
-        previewToggler.addEventListener("click", (e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            menu.togglePreview();
-            toggler();
-        });
-    }
+    new Application(menu);
 
     // Flash messages
     const flashMessage = new FlashMessage();
