@@ -100,6 +100,9 @@ return [
     'ProviderSelect' => [
         'path' => './assets/js/home/ProviderSelect.js',
     ],
+    'RgbToHsl' => [
+        'path' => './assets/js/images/RgbToHsl.js',
+    ],
     'RgbToLch' => [
         'path' => './assets/js/images/RgbToLch.js',
     ],

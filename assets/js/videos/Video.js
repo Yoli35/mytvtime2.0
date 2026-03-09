@@ -1,3 +1,4 @@
+import {RgbToHsl} from "RgbToHsl";
 import {ToolTips} from "ToolTips";
 
 let self = null;
@@ -50,7 +51,11 @@ export class Video {
             newCategoryInput.addEventListener('keydown', (event) => {
                 if (event.key === 'Enter') {
                     const newCategory = newCategoryInput.value.trim();
-                    const categoryColor = newCategoryColor.value;
+                    const categoryHexColor = newCategoryColor.value;
+                    // convert #FFFFFF to rgb
+                    const rgb = self.hexToRgb(categoryHexColor);
+                    const hsl = new RgbToHsl(rgb);
+                    const categoryColor = `hsl(${hsl.h}, ${hsl.s}%, ${hsl.l}%)`;
                     if (newCategory) {
                         fetch('/api/video/category/new',
                             {
@@ -511,5 +516,16 @@ export class Video {
         textDiv.innerHTML = value + " <span>" + text + "</span>";
         div.appendChild(textDiv);
         return div;
+    }
+
+    hexToRgb(hexColor) {
+        const rgb = {r: 0, g: 0, b: 0};
+        const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hexColor);
+        if (result) {
+            rgb.r = parseInt(result[1], 16);
+            rgb.g = parseInt(result[2], 16);
+            rgb.b = parseInt(result[3], 16);
+        }
+        return rgb;
     }
 }
