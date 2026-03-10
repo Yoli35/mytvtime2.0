@@ -36,6 +36,8 @@
                 {% endif %}
                 <div class="infos">
                     <h1>{{ episode.episode_number }} / {{ season.episodes|length }}. {{ episode.user_episode.substitute_name ?: episode.name }}</h1>
+                    {{ include('_blocks/series/_episode_air_date.html.twig', {episode: episode, ue: episode.user_episode, ues: episode.user_episodes}) }}
+                    {{ include('_blocks/series/_episode_stats.html.twig', {episode: episode}) }}
                     <div class="overview">{{ episode.user_episode.localized_overview ?: episode.overview }}</div>
                 </div>
                 <div class="navigation">

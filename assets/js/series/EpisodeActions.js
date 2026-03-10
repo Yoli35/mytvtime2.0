@@ -118,7 +118,7 @@ export class EpisodeActions {
         const backToTopLink = episode.parentElement.querySelector('.back-to-top');
         /*const backToSeriesLink = episode.parentElement.querySelector('.back-to-series').closest('a');*/
         const quickEpisodeLinks = document.querySelectorAll('.quick-episode[data-number="' + episodeNumber + '"]');
-        const episodeDiv = episode.closest('.episode')
+        const episodeDiv = episode.closest('.episode') || episode.closest('.episode-show');
         const substituteNameDiv = episodeDiv ? episodeDiv.querySelector('.substitute') : null;
         const episodeWatchLinks = episodeDiv ? episodeDiv.querySelector('.watch-links') : null;
         const numberDiv = episodeDiv ? episodeDiv.querySelector('.number') : null;
@@ -142,17 +142,17 @@ export class EpisodeActions {
                 // TODO: Vérifier "data"
                 console.log(data);
                 if (episodeDiv) {
-                    const airDateDiv = episodeDiv.querySelector('.air-date');
+                    const airDateDiv = episodeDiv.querySelector('.episode-air-date-component');
                     const block = document.createElement('div');
                     block.innerHTML = data['airDateBlock'];
-                    const newAirDateDiv = block.querySelector('.air-date');
+                    const newAirDateDiv = block.querySelector('.episode-air-date-component');
                     const newWatchedAtDivs = block.querySelectorAll('.watched-at');
                     newWatchedAtDivs.forEach(newWatchedAtDiv => {
                         newWatchedAtDiv.addEventListener('click', this.modifyWatchedAtOpen);
                     });
                     airDateDiv.replaceWith(newAirDateDiv);
 
-                    numberDiv.setAttribute('data-title', data['views']);
+                    numberDiv?.setAttribute('data-title', data['views']);
                 }
 
                 const now = new Date();
@@ -339,9 +339,10 @@ export class EpisodeActions {
         }).then((response) => response.json())
             .then(data => {
                 views--;
-
                 episode.setAttribute('data-views', '' + views);
-                const numberDiv = episode.closest('.episode').querySelector('.number');
+
+                const episodeContainer = episode.closest('.episode') || episode.closest('.episode-show');
+                const numberDiv = episodeContainer.querySelector('.number');
                 numberDiv.setAttribute('data-title', "x" + views);
                 this.toolTips.init(numberDiv);
                 if (views > 0) {
@@ -350,7 +351,7 @@ export class EpisodeActions {
 
                 this.setProgress(data['progress']);
 
-                const airDateDiv = episode.closest('.episode').querySelector('.air-date');
+                const airDateDiv = episodeContainer.querySelector('.episode-air-date-component');
                 const watchedAtDiv = airDateDiv.querySelector(`.watched-at[data-ue-id="${ueId}"]`);
                 watchedAtDiv.remove();
 
@@ -447,7 +448,8 @@ export class EpisodeActions {
             .then(data => {
                 // TODO: Vérifier "data"
                 console.log(data);
-                const airDateDiv = episode.closest('.episode').querySelector('.air-date');
+                const episodeContainer = episode.closest('.episode') || episode.closest('.episode-show')
+                const airDateDiv = episodeContainer.querySelector('.episode-air-date-component');
                 const watchedAtDiv = airDateDiv.querySelector('.watched-at');
                 watchedAtDiv.innerHTML = data['viewedAt'];
                 watchedAtDiv.setAttribute('data-watched-at', data['dataViewedAt']);
@@ -460,13 +462,14 @@ export class EpisodeActions {
     touchEpisode(e) { // Ajuste la date de visionnage à la valeur de l'input datetime-local
         const datetimeSaveButton = e.currentTarget;
         const id = datetimeSaveButton.getAttribute('data-ue-id');
-        const airDateDiv = datetimeSaveButton.closest('.air-date');
+        const airDateDiv = datetimeSaveButton.closest('.episode-air-date-component');
         const watchedAtDiv = airDateDiv.querySelector('.watched-at[data-ue-id="' + id + '"]');
         const watchedAtModifyDiv = datetimeSaveButton.closest(".watched-at-modify");
         const datetimeInput = watchedAtModifyDiv.querySelector('input');
         const newDatetime = datetimeInput.value;
         console.log(newDatetime);
-        const episode = datetimeSaveButton.closest('.episode').querySelector('.remove-this-episode');
+        const episodeContainer = datetimeSaveButton.closest('.episode') || datetimeSaveButton.closest('.episode-show');
+        const episode = episodeContainer.querySelector('.remove-this-episode');
 
         fetch('/api/episode/touch/' + id, {
             method: 'POST',
@@ -581,7 +584,7 @@ export class EpisodeActions {
         const episodeId = watchedAtDiv.getAttribute('data-id');
         const userEpisodeId = watchedAtDiv.getAttribute('data-ue-id');
         const watchedAt = watchedAtDiv.getAttribute('data-watched-at');
-        const airDateDiv = watchedAtDiv.closest('.air-date');
+        const airDateDiv = watchedAtDiv.closest('.episode-air-date-component');
         const watchedAtModifyDiv = document.createElement('div');
         watchedAtModifyDiv.classList.add('watched-at-modify');
         const datetimeInput = document.createElement('input');

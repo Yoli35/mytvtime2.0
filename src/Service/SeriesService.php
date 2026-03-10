@@ -469,6 +469,7 @@ class SeriesService extends AbstractController
             'hours' => $this->translator->trans('hours'),
             'minute' => $this->translator->trans('minute'),
             'minutes' => $this->translator->trans('minutes'),
+            'now' => $this->translator->trans('Now'),
             'second' => $this->translator->trans('second'),
             'seconds' => $this->translator->trans('seconds'),
         ];

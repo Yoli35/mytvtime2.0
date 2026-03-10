@@ -283,16 +283,7 @@
                                                 </div>
                                                 {{ include('_blocks/series/_watch_links.html.twig', {watchLinks: series.seriesWatchLinks, seasonNumber: season.season_number, hidden: (ue.watch_at != null)}) }}
                                                 {{ include('_blocks/series/_episode_air_date.html.twig', {episode: episode, ue: ue, ues: episode.user_episodes}) }}
-                                                {% if episode.runtime or episode.vote_average %}
-                                                    <div class="episode-stats">
-                                                        {% if episode.runtime %}
-                                                            <div class="runtime">{{ episode.runtime }} {{ 'minutes'|trans }}</div>
-                                                        {% endif %}
-                                                        {% if episode.vote_average %}
-                                                            <div class="vote-average">{{ episode.vote_average }} / 10 - {{ episode.vote_count }} {{ (episode.vote_count > 1 ? 'votes':'vote')|trans }}</div>
-                                                        {% endif %}
-                                                    </div>
-                                                {% endif %}
+                                                {{ include('_blocks/series/_episode_stats.html.twig', {episode: episode}) }}
                                                 <div class="episode-overview" data-id="{{ episode.id }}">
                                                     {% if episode.overview %}
                                                         <div class="overview">

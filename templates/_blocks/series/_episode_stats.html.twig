@@ -1,0 +1,10 @@
+{% if episode.runtime or episode.vote_average %}
+    <div class="episode-stats-container">
+        {% if episode.runtime %}
+            <div class="runtime">{{ episode.runtime }} {{ 'minutes'|trans }}</div>
+        {% endif %}
+        {% if episode.vote_average %}
+            <div class="vote-average">{{ episode.vote_average }} / 10 - {{ episode.vote_count }} {{ (episode.vote_count > 1 ? 'votes':'vote')|trans }}</div>
+        {% endif %}
+    </div>
+{% endif %}

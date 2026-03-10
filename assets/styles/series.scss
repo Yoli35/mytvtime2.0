@@ -4443,32 +4443,10 @@ h2 {
 
                     &.light {
                         color: var(--ardoise-90);
-
-                        .episode-stats {
-                            .light-dark-toggler {
-                                background-color: var(--orange-70);
-                                color: var(--ardoise-90);
-                            }
-
-                            .light-dark-toggler:hover {
-                                background-color: var(--orange-60);
-                            }
-                        }
                     }
 
                     &.dark {
                         color: var(--ardoise-10);
-
-                        .episode-stats {
-                            .light-dark-toggler {
-                                background-color: var(--orange-30);
-                                color: var(--ardoise-10);
-                            }
-
-                            .light-dark-toggler:hover {
-                                background-color: var(--orange-40);
-                            }
-                        }
                     }
 
                     .episode-name {
@@ -4631,133 +4609,7 @@ h2 {
                         }*/
                     }
 
-                    .episode-stats {
-                        display: flex;
-                        gap: 1rem;
-
-                        .runtime, .vote-average {
-
-                        }
-                    }
-
-                    .air-date {
-                        align-items: center;
-                        display: flex;
-                        /*flex-wrap: wrap;*/
-                        gap: .125rem 1rem;
-                        min-height: 2.5rem;
-                        overflow-x: auto;
-
-                        .airing {
-                            align-items: center;
-                            background-color: hsla(from var(--ardoise-80) h s l / .5);
-                            border-radius: 5rem;
-                            color: var(--ardoise-10);
-                            display: flex;
-                            flex-shrink: 0;
-                            font-size: 1rem;
-                            font-weight: 500;
-                            gap: .5rem;
-                            padding-block: .25rem;
-                            padding-inline: 1rem;
-                        }
-
-                        .watch-at-list {
-                            display: flex;
-                            flex-shrink: 0;
-                            /*flex-wrap: wrap;*/
-                            gap: .5rem;
-                            justify-content: flex-start;
-                            padding-inline: 1rem;
-
-                            .watched-at {
-                                align-items: center;
-                                background-color: cadetblue;
-                                border-radius: 5rem;
-                                color: var(--ardoise-10);
-                                cursor: grab;
-                                display: flex;
-                                flex-shrink: 0;
-                                flex-wrap: nowrap;
-                                gap: .5rem;
-                                overflow-x: auto;
-                                padding: .25rem 1rem;
-
-                                &.editing {
-                                    background-color: var(--orange-50);
-                                    cursor: pointer;
-                                }
-                            }
-                        }
-
-                        .watched-at-modify {
-                            background-color: var(--orange-50);
-                            border-radius: 5rem;
-                            color: var(--ardoise-10);
-                            cursor: pointer;
-                            display: flex;
-                            font-size: 1rem;
-                            font-weight: 300;
-                            gap: .25rem;
-                            justify-content: center;
-                            padding: .25rem;
-
-                            input[type="datetime-local"] {
-                                background-color: var(--orange-20);
-                                border: 2px solid var(--orange-50);
-                                border-radius: 5rem;
-                                color: var(--orange-90);
-                                font-size: 1rem;
-                                padding-inline: .5rem;
-                            }
-
-                            .buttons {
-                                display: flex;
-
-                                button {
-                                    align-items: center;
-                                    background-color: var(--orange-40);
-                                    border-radius: 0;
-                                    /*border: 2px solid var(--orange-60);*/
-                                    color: var(--orange-90);
-                                    display: flex;
-                                    cursor: pointer;
-                                    height: 2rem;
-                                    justify-content: center;
-                                    padding: .25rem .5rem;
-                                    width: 2rem;
-
-                                    svg {
-                                        height: 1.5rem;
-                                        width: 1.5rem;
-                                    }
-
-                                    &:hover {
-                                        background-color: hsl(from var(--orange-40) h s l / 0.25);
-                                        /*border: 2px solid var(--orange-70);*/
-                                    }
-
-                                    &:first-child {
-                                        border-radius: 5rem 0 0 5rem;
-
-                                        svg {
-                                            padding-inline-start: .25rem;
-                                        }
-                                    }
-
-                                    &:last-child {
-                                        border-radius: 0 5rem 5rem 0;
-
-                                        svg {
-                                            padding-inline-end: .25rem;
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-
-                    .air-date, .episodes, .runtime {
+                    .episodes, .runtime {
                         font-size: 1rem;
                         font-weight: 300;
                     }
@@ -4957,6 +4809,145 @@ h2 {
         display: flex !important;
     }
 
+}
+
+.episode-air-date-component {
+    align-items: center;
+    display: flex;
+    font-size: 1rem;
+    font-weight: 300;
+    gap: .125rem 1rem;
+    min-height: 2.5rem;
+    overflow-x: auto;
+
+    .airing {
+        align-items: center;
+        background-color: hsla(from var(--ardoise-80) h s l / .5);
+        border-radius: 5rem;
+        border: 4px solid hsla(from var(--ardoise-20) h s l / .25);
+        color: var(--ardoise-10);
+        display: flex;
+        flex-shrink: 0;
+        font-size: 1rem;
+        font-weight: 500;
+        gap: .5rem;
+        padding-block: .25rem;
+        padding-inline: 1rem;
+    }
+
+    .watch-at-list {
+        display: flex;
+        flex-shrink: 0;
+        gap: .5rem;
+        justify-content: flex-start;
+
+        .watched-at {
+            align-items: center;
+            background-color: cadetblue;
+            border-radius: 5rem;
+            border: 4px solid hsla(from var(--ardoise-20) h s l / .25);
+            color: var(--ardoise-10);
+            cursor: grab;
+            display: flex;
+            flex-shrink: 0;
+            flex-wrap: nowrap;
+            gap: .5rem;
+            overflow-x: auto;
+            padding: .25rem 1rem;
+
+            &.editing {
+                background-color: var(--orange-50);
+                cursor: pointer;
+            }
+        }
+    }
+
+    .watched-at-modify {
+        background-color: var(--orange-50);
+        border-radius: 5rem;
+        border: 4px solid hsla(from var(--ardoise-20) h s l / .25);
+        color: var(--ardoise-10);
+        cursor: pointer;
+        display: flex;
+        font-size: 1rem;
+        font-weight: 300;
+        gap: .25rem;
+        justify-content: center;
+        padding: .25rem;
+
+        input[type="datetime-local"] {
+            background-color: var(--orange-20);
+            border: 2px solid var(--orange-50);
+            border-radius: 5rem;
+            color: var(--orange-90);
+            font-size: 1rem;
+            padding-inline: .5rem;
+        }
+
+        .buttons {
+            display: flex;
+
+            button {
+                align-items: center;
+                background-color: var(--orange-40);
+                border-radius: 0;
+                /*border: 2px solid var(--orange-60);*/
+                color: var(--orange-90);
+                display: flex;
+                cursor: pointer;
+                height: 2rem;
+                justify-content: center;
+                padding: .25rem .5rem;
+                width: 2rem;
+
+                svg {
+                    height: 1.5rem;
+                    width: 1.5rem;
+                }
+
+                &:hover {
+                    background-color: hsl(from var(--orange-40) h s l / 0.25);
+                    /*border: 2px solid var(--orange-70);*/
+                }
+
+                &:first-child {
+                    border-radius: 5rem 0 0 5rem;
+
+                    svg {
+                        padding-inline-start: .25rem;
+                    }
+                }
+
+                &:last-child {
+                    border-radius: 0 5rem 5rem 0;
+
+                    svg {
+                        padding-inline-end: .25rem;
+                    }
+                }
+            }
+        }
+    }
+}
+
+.episode-stats-container {
+    display: flex;
+    gap: 1rem;
+
+    .runtime, .vote-average {
+        align-items: center;
+        background-color: hsla(from var(--green) h s l / .5);
+        border-radius: 5rem;
+        border: 4px solid hsla(from var(--ardoise-20) h s l / .25);
+        color: var(--ardoise-10);
+        display: flex;
+        flex-shrink: 0;
+        font-size: 1rem;
+        font-weight: 500;
+        gap: .5rem;
+        padding-block: .25rem;
+        padding-inline: 1rem;
+    }
 }
 
 .episodes-comments {

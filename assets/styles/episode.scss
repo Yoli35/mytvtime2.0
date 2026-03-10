@@ -27,6 +27,9 @@
 
         .infos {
             border-radius: 1rem;
+            display: flex;
+            flex-direction: column;
+            gap: .5rem;
             padding: 2rem;
             transition: background-color 0.3s ease, backdrop-filter 0.3s ease;
 
@@ -43,6 +46,10 @@
             &:hover {
                 backdrop-filter: blur(5rem);
                 background: linear-gradient(to bottom, hsla(from var(--ardoise-90) h s l / .25) 0%, hsla(from var(--ardoise-90) h s l / .75) 100%);
+            }
+
+            .episode-air-date-component, .episode-stats-container {
+                margin-inline-start: auto;
             }
         }
 
