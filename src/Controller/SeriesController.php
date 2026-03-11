@@ -1451,11 +1451,12 @@ class SeriesController extends AbstractController
         ]);
     }
 
-    #[Route('/backdrops/get/{id}', name: 'get_backdrops', requirements: ['id' => Requirement::DIGITS], methods: 'POST')]
-    public function getAllBackdrops(int $id): Response
+    #[Route('/images/get/{id}', name: 'get_images', requirements: ['id' => Requirement::DIGITS], methods: 'POST')]
+    public function getAllImages(int $id): Response
     {
         $images = json_decode($this->tmdbService->getAllTvImages($id), true);
         $backdrops = $images['backdrops'];
+        $logos = $images['logos'];
         $posters = $images['posters'];
 
         return $this->json([
@@ -1463,12 +1464,14 @@ class SeriesController extends AbstractController
             'success' => true,
             'backdrops' => $backdrops,
             'backdropUrl' => $this->imageConfiguration->getUrl('backdrop_sizes', 2),
+            'logos' => $logos,
+            'logoUrl' => $this->imageConfiguration->getUrl('logo_sizes', 2),
             'posters' => $posters,
             'posterUrl' => $this->imageConfiguration->getUrl('poster_sizes', 2),
         ]);
     }
 
-    #[Route('/backdrops/add', name: 'add_backdrops', methods: 'POST')]
+    #[Route('/images/add', name: 'add_images', methods: 'POST')]
     public function addAllBackdrops(Request $request): Response
     {
         $data = json_decode($request->getContent(), true);
@@ -1480,12 +1483,15 @@ class SeriesController extends AbstractController
 
         if ($method === 'all') {
             $backdrops = $data['backdrops'];
+            $logos = $data['logos'];
             $posters = $data['posters'];
 
             $backdropUrl = $this->imageConfiguration->getUrl('backdrop_sizes', 3);
+            $logoUrl = $this->imageConfiguration->getUrl('logo_sizes', 5);
             $posterUrl = $this->imageConfiguration->getUrl('poster_sizes', 5);
 
             $addedBackdropCount = 0;
+            $addedLogoCount = 0;
             $addedPosterCount = 0;
 
             foreach ($backdrops as $backdrop) {
@@ -1496,6 +1502,16 @@ class SeriesController extends AbstractController
                     $addedBackdropCount++;
                 }
             }
+
+            foreach ($logos as $logo) {
+                if (!$this->inImages($logo['file_path'], $images)) {
+                    $seriesImage = new SeriesImage($series, "logo", $logo['file_path']);
+                    $this->seriesImageRepository->save($seriesImage);
+                    $this->imageService->saveImage("logos", $logo['file_path'], $logoUrl);
+                    $addedLogoCount++;
+                }
+            }
+
             foreach ($posters as $poster) {
                 if (!$this->inImages($poster['file_path'], $images)) {
                     $seriesImage = new SeriesImage($series, "poster", $poster['file_path']);
@@ -1505,12 +1521,12 @@ class SeriesController extends AbstractController
                 }
             }
 
-            if ($addedBackdropCount + $addedPosterCount > 0) {
+            if ($addedBackdropCount + $addedLogoCount + $addedPosterCount > 0) {
                 $this->seriesImageRepository->flush();
             }
         } else {
             $image = $data['image'];
-            $type = $data['type']; // "backdrop" or "poster"
+            $type = $data['type']; // "backdrop", "logo" or "poster"
             $imagePath = $image['file_path'];
             if (!$this->inImages($imagePath, $images)) {
                 $seriesImage = new SeriesImage($series, $type, $imagePath);
@@ -1518,11 +1534,18 @@ class SeriesController extends AbstractController
                 if ($type === 'backdrop') {
                     $this->imageService->saveImage("backdrops", $imagePath, $this->imageConfiguration->getUrl('backdrop_sizes', 3));
                     $addedBackdropCount = 1;
+                    $addedLogoCount = 0;
+                    $addedPosterCount = 0;
+                } else  if ($type === 'logo') {
+                    $this->imageService->saveImage("logos", $imagePath, $this->imageConfiguration->getUrl('logo_sizes', 5));
+                    $addedBackdropCount = 0;
+                    $addedLogoCount = 1;
                     $addedPosterCount = 0;
                 } else {
                     $this->imageService->saveImage("posters", $imagePath, $this->imageConfiguration->getUrl('poster_sizes', 5));
-                    $addedPosterCount = 1;
                     $addedBackdropCount = 0;
+                    $addedLogoCount = 0;
+                    $addedPosterCount = 1;
                 }
             } else {
                 return $this->json([
@@ -1537,6 +1560,7 @@ class SeriesController extends AbstractController
             'ok' => true,
             'success' => true,
             'addedBackdrops' => $addedBackdropCount,
+            'addedLogos' => $addedLogoCount,
             'addedPosters' => $addedPosterCount,
         ]);
     }

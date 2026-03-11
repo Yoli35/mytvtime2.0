@@ -446,32 +446,15 @@ class SeriesService extends AbstractController
             'Up to date' => $this->translator->trans('Up to date'),
             'Not a valid file type. Update your selection' => $this->translator->trans('Not a valid file type. Update your selection'),
             'special.episodes' => $this->translator->trans('special.episodes'),
-        ];
-    }
-
-    public function getEpisodeShowTranslations(): array
-    {
-        return [
-            'Add' => $this->translator->trans('Add'),
-            'Add answer' => $this->translator->trans('Add answer'),
-            'Add images' => $this->translator->trans('Add images'),
-            'Back to the season' => $this->translator->trans('Back to the season'),
-            'Desktop' => $this->translator->trans('Desktop'),
-            'Laptop' => $this->translator->trans('Laptop'),
-            'Mobile' => $this->translator->trans('Mobile'),
-            'Not a valid file type. Update your selection' => $this->translator->trans('Not a valid file type. Update your selection'),
-            'Send your comment' => $this->translator->trans('Send your comment'),
-            'Tablet' => $this->translator->trans('Tablet'),
-            'Television' => $this->translator->trans('Television'),
-            'This field is required' => $this->translator->trans('This field is required'),
-            'Update' => $this->translator->trans('Update'),
-            'hour' => $this->translator->trans('hour'),
-            'hours' => $this->translator->trans('hours'),
-            'minute' => $this->translator->trans('minute'),
-            'minutes' => $this->translator->trans('minutes'),
-            'now' => $this->translator->trans('Now'),
-            'second' => $this->translator->trans('second'),
-            'seconds' => $this->translator->trans('seconds'),
+            'No backdrop' => $this->translator->trans('Aucune bannière'),
+            'No logo' => $this->translator->trans('Aucun logo'),
+            'No poster' => $this->translator->trans('Aucun poster'),
+            'One backdrop' => $this->translator->trans('Une bannière'),
+            'One logo' => $this->translator->trans('Un logo'),
+            'One poster' => $this->translator->trans('One poster'),
+            'backdrops' => $this->translator->trans('bannières'),
+            'logos' => $this->translator->trans('logos'),
+            'posters' => $this->translator->trans('posters'),
         ];
     }
 
@@ -535,6 +518,32 @@ class SeriesService extends AbstractController
             'second' => $this->translator->trans('second'),
             'seconds' => $this->translator->trans('seconds'),
             'since' => $this->translator->trans('since'),
+        ];
+    }
+
+    public function getEpisodeShowTranslations(): array
+    {
+        return [
+            'Add' => $this->translator->trans('Add'),
+            'Add answer' => $this->translator->trans('Add answer'),
+            'Add images' => $this->translator->trans('Add images'),
+            'Back to the season' => $this->translator->trans('Back to the season'),
+            'Desktop' => $this->translator->trans('Desktop'),
+            'Laptop' => $this->translator->trans('Laptop'),
+            'Mobile' => $this->translator->trans('Mobile'),
+            'Not a valid file type. Update your selection' => $this->translator->trans('Not a valid file type. Update your selection'),
+            'Send your comment' => $this->translator->trans('Send your comment'),
+            'Tablet' => $this->translator->trans('Tablet'),
+            'Television' => $this->translator->trans('Television'),
+            'This field is required' => $this->translator->trans('This field is required'),
+            'Update' => $this->translator->trans('Update'),
+            'hour' => $this->translator->trans('hour'),
+            'hours' => $this->translator->trans('hours'),
+            'minute' => $this->translator->trans('minute'),
+            'minutes' => $this->translator->trans('minutes'),
+            'now' => $this->translator->trans('Now'),
+            'second' => $this->translator->trans('second'),
+            'seconds' => $this->translator->trans('seconds'),
         ];
     }
 

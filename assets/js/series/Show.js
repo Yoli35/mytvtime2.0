@@ -160,9 +160,9 @@ export class Show {
         /******************************************************************************
          * Display messages if any                                                    *
          ******************************************************************************/
-            messages.forEach(message => {
-                this.flashMessage.add(message.status, message.message)
-            });
+        messages.forEach(message => {
+            this.flashMessage.add(message.status, message.message)
+        });
         console.log(messages);
 
         /******************************************************************************
@@ -173,7 +173,7 @@ export class Show {
             goToMap.addEventListener('click', () => {
                 const target = document.querySelector(goToMap.getAttribute('data-target'));
                 if (target) {
-                    target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    target.scrollIntoView({behavior: 'smooth', block: 'center'});
                 }
             });
         }
@@ -505,22 +505,25 @@ export class Show {
         /******************************************************************************
          + Add all backdrops and posters from TMDB to the series                      *
          ******************************************************************************/
-        const addAllBackdropsButton = document.querySelector('.add-all-backdrops');
-        const addAllBackdropsDialog = document.querySelector('.add-all-backdrops-dialog');
-        const h3 = addAllBackdropsDialog.querySelector('h3');
-        const addAllBackdropsCancelButton = addAllBackdropsDialog.querySelector('button[name="cancel"]');
-        const addAllBackdropsAddButton = addAllBackdropsDialog.querySelector('button[name="add"]');
-        const tmdbId = addAllBackdropsButton.dataset.seriesId;
-        const addBackdropSeriesName = addAllBackdropsButton.dataset.seriesName;
+        const addAllImagesButton = document.querySelector('.add-all-backdrops');
+        const addAllImagesDialog = document.querySelector('.add-all-images-dialog');
+        const addAllImagesCancelButton = addAllImagesDialog.querySelector('button[name="cancel"]');
+        const addAllImagesAddButton = addAllImagesDialog.querySelector('button[name="add"]');
+        const tmdbId = addAllImagesButton.dataset.seriesId;
+        const addBackdropSeriesName = addAllImagesButton.dataset.seriesName;
         const addBackdropDialog = document.querySelector('.add-backdrop-dialog');
         const addBackdropButton = document.querySelector('.add-backdrop');
         const addBackdropCancelButton = addBackdropDialog.querySelector('button[name="cancel"]');
-        const wrapper = addAllBackdropsDialog.querySelector('.all-images');
+        const wrappers = addAllImagesDialog.querySelectorAll('.all-images');
+        const wrapperBackdrop = addAllImagesDialog.querySelector('.all-images.backdrop');
+        const wrapperPoster = addAllImagesDialog.querySelector('.all-images.poster');
+        const wrapperLogo = addAllImagesDialog.querySelector('.all-images.logo');
         let addAllBackdrops = [];
+        let addAllLogos = [];
         let addAllPosters = [];
 
-        addAllBackdropsButton.addEventListener('click', () => {
-            fetch('/' + lang + '/series/backdrops/get/' + tmdbId, {
+        addAllImagesButton.addEventListener('click', () => {
+            fetch('/' + lang + '/series/images/get/' + tmdbId, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -530,17 +533,8 @@ export class Show {
                 .then(response => response.json())
                 .then(data => {
                     if (data.success) {
-                        addAllBackdrops = data['backdrops'];
-                        const backdropUrl = data['backdropUrl'];
-                        addAllBackdrops.forEach((backdrop, index) => {
-                            const backdropElement = document.createElement('div');
-                            backdropElement.classList.add('backdrop-item');
-                            const imgElement = document.createElement('img');
-                            imgElement.src = backdropUrl + backdrop['file_path'];
-                            imgElement.alt = `Backdrop #${index + 1} - ${addBackdropSeriesName}`;
-                            backdropElement.setAttribute('data-title', `Poster #${index + 1} - ${addBackdropSeriesName}`);
-                            backdropElement.appendChild(imgElement);
-                            wrapper.appendChild(backdropElement);
+                        wrappers.forEach(wrapper => {
+                            wrapper.innerHTML = '';
                         });
                         addAllPosters = data['posters'];
                         const posterUrl = data['posterUrl'];
@@ -552,22 +546,73 @@ export class Show {
                             imgElement.alt = `Poster #${index + 1} - ${addBackdropSeriesName}`;
                             posterElement.setAttribute('title', `Poster #${index + 1} - ${addBackdropSeriesName}`);
                             posterElement.appendChild(imgElement);
-                            wrapper.appendChild(posterElement);
+                            wrapperPoster.appendChild(posterElement);
                         });
-                        h3.querySelector('.poster-count').innerText = addAllPosters.length;
-                        h3.querySelector('.backdrop-count').innerText = addAllBackdrops.length;
-                        addAllBackdropsDialog.showModal();
+
+                        addAllLogos = data['logos'];
+                        const logoUrl = data['logoUrl'];
+                        addAllLogos.forEach((logo, index) => {
+                            const logoElement = document.createElement('div');
+                            logoElement.classList.add('logo-item');
+                            const imgElement = document.createElement('img');
+                            imgElement.src = logoUrl + logo['file_path'];
+                            imgElement.alt = `Logo #${index + 1} - ${addBackdropSeriesName}`;
+                            logoElement.setAttribute('title', `Logo #${index + 1} - ${addBackdropSeriesName}`);
+                            logoElement.appendChild(imgElement);
+                            wrapperLogo.appendChild(logoElement);
+                        })
+
+                        addAllBackdrops = data['backdrops'];
+                        const backdropUrl = data['backdropUrl'];
+                        addAllBackdrops.forEach((backdrop, index) => {
+                            const backdropElement = document.createElement('div');
+                            backdropElement.classList.add('backdrop-item');
+                            const imgElement = document.createElement('img');
+                            imgElement.src = backdropUrl + backdrop['file_path'];
+                            imgElement.alt = `Backdrop #${index + 1} - ${addBackdropSeriesName}`;
+                            backdropElement.setAttribute('data-title', `Poster #${index + 1} - ${addBackdropSeriesName}`);
+                            backdropElement.appendChild(imgElement);
+                            wrapperBackdrop.appendChild(backdropElement);
+                        });
+                        const posterCount = data['posters'].length;
+                        const backdropCount = data['backdrops'].length;
+                        const logoCount = data['logos'].length;
+                        if (posterCount === 1) {
+                            addAllImagesDialog.querySelector('.poster-count').innerText = translations['One poster'];
+                        } else if (posterCount > 1) {
+                            addAllImagesDialog.querySelector('.poster-count').innerText = posterCount + ' ' + translations['posters'];
+                        } else {
+                            addAllImagesDialog.querySelector('.poster-count').innerText = translations['No poster'];
+                        }
+                        if (backdropCount === 1) {
+                            addAllImagesDialog.querySelector('.backdrop-count').innerText = translations['One backdrop'];
+                        } else if (backdropCount > 1) {
+                            addAllImagesDialog.querySelector('.backdrop-count').innerText = backdropCount + ' ' + translations['backdrops'];
+                        } else {
+                            addAllImagesDialog.querySelector('.backdrop-count').innerText = translations['No backdrop'];
+                        }
+                        if (logoCount === 1) {
+                            addAllImagesDialog.querySelector('.logo-count').innerText = translations['One logo'];
+                        } else if (logoCount > 1) {
+                            addAllImagesDialog.querySelector('.logo-count').innerText = logoCount + ' ' + translations['logos'];
+                        } else {
+                            addAllImagesDialog.querySelector('.logo-count').innerText = translations['No logo'];
+                        }
+                        addAllImagesDialog.showModal();
                     }
                 });
         });
-        addAllBackdropsCancelButton.addEventListener('click', () => {
+        addAllImagesCancelButton.addEventListener('click', () => {
             addAllBackdrops = [];
+            addAllLogos = [];
             addAllPosters = [];
-            wrapper.innerHTML = '';
-            addAllBackdropsDialog.close();
+            wrappers.forEach(wrapper => {
+                wrapper.innerHTML = '';
+            });
+            addAllImagesDialog.close();
         });
-        addAllBackdropsAddButton.addEventListener('click', () => {
-            self.fetchSeriesImages(addAllBackdropsDialog, tmdbId, addAllBackdrops, addAllPosters);
+        addAllImagesAddButton.addEventListener('click', () => {
+            self.fetchSeriesImages(addAllImagesDialog, tmdbId, addAllBackdrops, addAllLogos, addAllPosters);
         });
 
         addBackdropButton.addEventListener('click', () => {
@@ -604,19 +649,19 @@ export class Show {
         const seasonNumber = seasonDiv.getAttribute('data-season-number');
 
         fetch('/api/season/overview/get/' + seriesId + '/' + seasonNumber, {method: 'GET'})
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                const infosDiv = seasonDiv.querySelector(".infos");
-                const seasonEpisodesDiv = seasonDiv.querySelector(".season__episodes");
-                const overviewDiv = document.createElement("div");
-                overviewDiv.classList.add('season__overview');
-                overviewDiv.innerText = data['overview'];
-                infosDiv.insertBefore(overviewDiv, seasonEpisodesDiv);
-            }
-            index++;
-            if (index<length) self.fetchSeasonOverviews(seriesId, seasonDivs, index, length);
-        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    const infosDiv = seasonDiv.querySelector(".infos");
+                    const seasonEpisodesDiv = seasonDiv.querySelector(".season__episodes");
+                    const overviewDiv = document.createElement("div");
+                    overviewDiv.classList.add('season__overview');
+                    overviewDiv.innerText = data['overview'];
+                    infosDiv.insertBefore(overviewDiv, seasonEpisodesDiv);
+                }
+                index++;
+                if (index < length) self.fetchSeasonOverviews(seriesId, seasonDivs, index, length);
+            })
     }
 
     fetchEpisodeCards(cards, index, length) {
@@ -639,15 +684,16 @@ export class Show {
             .catch(err => console.log(err));
     }
 
-    fetchSeriesImages(dialog, tmdbId, backdrops, posters) {
+    fetchSeriesImages(dialog, tmdbId, backdrops, logos, posters) {
         if (backdrops.length + posters.length < 20) {
             const data = {
                 seriesId: tmdbId,
                 method: 'all',
                 backdrops: backdrops,
+                logos: logos,
                 posters: posters
             };
-            fetch('/' + self.lang + '/series/backdrops/add', {
+            fetch('/' + self.lang + '/series/images/add', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -673,6 +719,9 @@ export class Show {
             backdrops.forEach(backdrop => {
                 images.push({type: 'backdrop', image: backdrop});
             });
+            logos.forEach(logo => {
+                images.push({type: 'logo', image: logo});
+            });
             posters.forEach(poster => {
                 images.push({type: 'poster', image: poster});
             });
@@ -697,7 +746,7 @@ export class Show {
             image: image,
             type: type
         };
-        fetch('/' + self.lang + '/series/backdrops/add', {
+        fetch('/' + self.lang + '/series/images/add', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
