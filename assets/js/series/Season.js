@@ -69,6 +69,13 @@ let self;
  * @property {wpList} list
  */
 /**
+ * @typedef SeasonProgress
+ * @type {Object}
+ * @property {number} value
+ * @property {number} episodeCount
+ * @property {number} episodeWatchedCount
+ */
+/**
  * @typedef Devices
  * @type {Array.<Device>}
  */
@@ -117,7 +124,7 @@ let self;
  * @property {SeasonProvider} seasonProvider
  * @property {number} showId
  * @property {number} seasonNumber
- * @property {number} seasonProgress
+ * @property {SeasonProgress} seasonProgress
  * @property {User} user
  * @property {Providers} providers
  * @property {Devices} devices

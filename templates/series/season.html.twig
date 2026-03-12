@@ -139,10 +139,10 @@
                         </div>
                     {% endif %}
                 </div>
-                {% set episodeCount = season.episodes|length %}
-                {% set episodeWatchedCount = season.episodes|reduce((carry, ep) => carry + (ep.user_episode.watch_at is not null ? 1:0)) %}
-                {% if episodeCount > 1 %}{# Les saisons à venir ont généralement un seul épisode au départ #}
-                    <div class="progress" data-value="{{ 100 * episodeWatchedCount / episodeCount }}" data-title="{{ episodeWatchedCount }} / {{ episodeCount }}">
+                {% set episodeCount = season.progress.episodeCount %}
+                {% set episodeWatchedCount = season.progress.episodeWatchedCount %}
+                {% if episodeCount > 1 %} Les saisons à venir ont généralement un seul épisode au départ
+                    <div class="progress" data-value="{{ season.progress.value }}" data-title="{{ episodeWatchedCount }} / {{ episodeCount }}">
                         <div class="progress-bar"></div>
                     </div>
                 {% endif %}
@@ -381,7 +381,7 @@
             },
             "seriesId": {{ series.id }},
             "showId": {{ series.tmdbId }},
-            "seasonProgress": {{ season.progress }},
+            "seasonProgress": {{ season.progress|json_encode(constant('JSON_PRETTY_PRINT'))|raw }},
             "seasonNumber": {{ season.season_number }},
             "seasonProvider": {{ season["watch/providers"]|json_encode(constant('JSON_PRETTY_PRINT'))|raw }},
             "providers": {{ providers|json_encode(constant('JSON_PRETTY_PRINT'))|raw }},

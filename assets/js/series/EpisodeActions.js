@@ -87,12 +87,15 @@ export class EpisodeActions {
     }
 
     setProgress(progress) {
+        console.log(progress);
         const progressDiv = document.querySelector('.progress');
         if (progressDiv) {
             const progressBarDiv = document.querySelector('.progress-bar');
-            progressDiv.setAttribute('data-value', progress);
+            progressDiv.setAttribute('data-value', progress.value);
+            progressDiv.setAttribute('data-title', progress.episodeWatchedCount + ' / ' + progress.episodeCount);
+            this.toolTips.initElement(progressDiv);
             progressBarDiv.classList.add('set');
-            progressBarDiv.style.width = progress + '%';
+            progressBarDiv.style.width = progress.value + '%';
             progressBarDiv.setAttribute('aria-valuenow', progress);
             if (progress === "100") {
                 setTimeout(() => {

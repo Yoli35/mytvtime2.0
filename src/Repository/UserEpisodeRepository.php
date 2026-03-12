@@ -844,7 +844,7 @@ class UserEpisodeRepository extends ServiceEntityRepository
         return $this->getAll($sql, $params, $types);
     }
 
-    public function seasonProgress(UserSeries $userSeries, int $seasonNumber): ?float
+    public function seasonProgress(UserSeries $userSeries, int $seasonNumber): array
     {
         $params = [
             'userSeriesId' => $userSeries->getId(),
@@ -862,10 +862,17 @@ class UserEpisodeRepository extends ServiceEntityRepository
               AND ue.previous_occurrence_id IS NULL
         SQL;
 
-        $results = $this->getAll($sql, $params, $types);
-        $result = array_first($results);
+        $result = $this->getAssociative($sql, $params, $types);
+dump($result);
+        if ($result) {
+            return [
+                'value' => $result['episodeWatchedCount'] / $result['episodeCount'] * 100,
+                'episodeCount' => $result['episodeCount'],
+                'episodeWatchedCount' => intval($result['episodeWatchedCount']),
+            ];
+        }
 
-        return $result ? $result['episodeWatchedCount'] / $result['episodeCount'] * 100 : null;
+        return ['value' => 0, 'episodeCount' => 0, 'episodeWatchedCount' => 0];
     }
 
     public function getSeasonEpisodeIds(int $userSeriesId, int $seasonNumber): array
@@ -894,6 +901,16 @@ class UserEpisodeRepository extends ServiceEntityRepository
     {
         try {
             return $this->em->getConnection()->fetchAllAssociative($sql, $params, $types);
+        } catch (\Exception $e) {
+            $this->logger->error('Error: ' . $e->getMessage());
+            return [];
+        }
+    }
+
+    public function getAssociative($sql, array $params = [], array $types = []): array
+    {
+        try {
+            return $this->em->getConnection()->fetchAssociative($sql, $params, $types);
         } catch (\Exception $e) {
             $this->logger->error('Error: ' . $e->getMessage());
             return [];
