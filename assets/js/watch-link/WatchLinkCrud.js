@@ -75,7 +75,6 @@ export class WatchLinkCrud {
             watchLinkFormName.value = "";
             watchLinkFormUrl.value = "";
             watchLinkFormSaisonNumber.value = "-1";
-            watchLinkFormDialog.showModal();
         });
 
         watchLinks.forEach(function (watchLink) {
@@ -98,7 +97,6 @@ export class WatchLinkCrud {
                 watchLinkFormName.value = name;
                 watchLinkFormUrl.value = href;
                 watchLinkFormSaisonNumber.value = seasonNumber;
-                watchLinkFormDialog.showModal();
             });
 
             copy.addEventListener('click', function () {
@@ -118,7 +116,6 @@ export class WatchLinkCrud {
                 watchLinkFormProvider.value = provider;
                 watchLinkFormName.value = name;
                 watchLinkFormUrl.value = href;
-                watchLinkFormDialog.showModal();
             });
         });
 
@@ -142,7 +139,7 @@ export class WatchLinkCrud {
             watchLinkFormName.value = self.buildWatchLabel(self.selectValue(watchLinkFormProvider), self.selectValue(watchLinkFormSaisonNumber));
         });
         watchLinkFormCancel.addEventListener('click', function () {
-            watchLinkFormDialog.close();
+            watchLinkFormDialog.hidePopover();
         });
         watchLinkFormSubmit.addEventListener('click', function (event) {
             event.preventDefault();
@@ -190,8 +187,7 @@ export class WatchLinkCrud {
             ).then(async function (response) {
                 if (response.ok) {
                     const data = await response.json();
-                    // console.log({data});
-                    watchLinkFormDialog.close();
+                    watchLinkFormDialog.hidePopover();
                     const watchLinksDiv = document.querySelector('.watch-links');
                     if (type.value === 'create') {
                         /** @var {Link} link */
@@ -250,7 +246,6 @@ export class WatchLinkCrud {
                             watchLinkFormProvider.value = link.provider.id;
                             watchLinkFormName.value = link.name;
                             watchLinkFormUrl.value = link.url;
-                            watchLinkFormDialog.showModal();
                         });
                         edit.appendChild(editIcon);
                         watchLinkTools.appendChild(edit);
@@ -290,7 +285,6 @@ export class WatchLinkCrud {
                             watchLinkFormProvider.value = link.provider.id;
                             watchLinkFormName.value = link.name;
                             watchLinkFormUrl.value = link.url;
-                            watchLinkFormDialog.showModal();
                         });
                         watchLinkTools.appendChild(del);
                         self.toolTips.init(watchLinkTools);
@@ -375,45 +369,5 @@ export class WatchLinkCrud {
             num = -1;
         }
         return num;
-    }
-
-    // list() {
-    //     const watchLinksDiv = document.querySelector(".watch-links");
-    //     const watchLinkDivs = watchLinksDiv.querySelectorAll(".watch-link");
-    //     watchLinkDivs.forEach(function (item) {
-    //         const id = item.getAttribute("data-id")
-    //         fetch(self.api.directLinkCrud.read + id)
-    //             .then(response => response.json())
-    //             .then(data => {
-    //                 const link = data.link;
-    //                 console.log(link);
-    //             });
-    //     });
-    // }
-
-    displayForm(form) {
-        if (form.getAttribute('popover') === "") {
-            form.showPopover();
-        } else {
-            form.classList.add('display');
-            setTimeout(function () {
-                form.classList.add('active');
-            }, 0);
-        }
-        /** @type HTMLInputElement */
-        const url = form.querySelector("#watch_link_form_url");
-        url.focus();
-        url.select();
-    }
-
-    hideForm(form) {
-        if (form.getAttribute('popover') === "") {
-            form.hidePopover();
-        } else {
-            form.classList.remove('active');
-            setTimeout(function () {
-                form.classList.remove('display');
-            }, 300);
-        }
     }
 }

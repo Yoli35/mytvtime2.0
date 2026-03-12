@@ -225,6 +225,16 @@ dialog.watch-link-dialog::backdrop {
     }
 }
 
+.watch-link-dialog {
+    position: absolute;
+    position-anchor: --watch-link-button;
+    position-area: top;
+}
+
+::backdrop {
+    backdrop-filter: blur(10px);
+}
+
 .keyword-translation-form {
     label {
         align-items: flex-start;

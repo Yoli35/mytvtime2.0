@@ -24,20 +24,20 @@
                  data-name="{{ link.name }}"
                  data-season-number="{{ link.seasonNumber ?? -1 }}"
             >
-                <div class="watch-link-tool edit" data-title="{{ 'Edit watch link'|trans }}">
+                <button class="watch-link-tool edit" data-title="{{ 'Edit watch link'|trans }}" popovertarget="watch-link-popover" popovertargetaction="show">
                     {{ ux_icon('mdi:pencil') }}
-                </div>
-                <div class="watch-link-tool copy" data-title="{{ 'Copy watch link'|trans }}">
+                </button>
+                <button class="watch-link-tool copy" data-title="{{ 'Copy watch link'|trans }}">
                     {{ ux_icon('mdi:content-paste') }}
-                </div>
+                </button>
                 <div class="watch-link-name">{{ link.name }}</div>
-                <div class="watch-link-tool delete" data-title="{{ 'Delete watch link'|trans }}">
+                <button class="watch-link-tool delete" data-title="{{ 'Delete watch link'|trans }}" popovertarget="watch-link-popover" popovertargetaction="show">
                     {{ ux_icon('mdi:trash') }}
-                </div>
+                </button>
             </div>
         </div>
     {% endfor %}
-    <div class="add-watch-link" data-title="{{ 'Add a watch link'|trans }}" popovertarget="watch-link-popover">
+    <button class="add-watch-link" data-title="{{ 'Add a watch link'|trans }}" popovertarget="watch-link-popover" popovertargetaction="show">
         {{ ux_icon('mdi:plus') }}
-    </div>
+    </button>
 </div>
