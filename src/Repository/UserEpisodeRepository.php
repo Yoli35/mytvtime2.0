@@ -863,7 +863,7 @@ class UserEpisodeRepository extends ServiceEntityRepository
         SQL;
 
         $result = $this->getAssociative($sql, $params, $types);
-dump($result);
+
         if ($result) {
             return [
                 'value' => $result['episodeWatchedCount'] / $result['episodeCount'] * 100,
