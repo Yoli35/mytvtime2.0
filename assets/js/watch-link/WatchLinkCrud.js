@@ -55,9 +55,9 @@ export class WatchLinkCrud {
     init() {
         const watchLinks = document.querySelectorAll('.watch-link');
         const addWatchLink = document.querySelector('.add-watch-link');
-        const watchLinkFormContainer = document.querySelector('.watch-link-form');
+        const watchLinkFormDialog = document.querySelector('.watch-link-dialog');
         const watchLinkForm = document.querySelector('#watch_link_form');
-        const watchLinkFormUrl = watchLinkFormContainer.querySelector('#watch_link_form_url');
+        const watchLinkFormUrl = watchLinkFormDialog.querySelector('#watch_link_form_url');
         const watchLinkFormProvider = watchLinkForm.querySelector('#watch_link_form_provider');
         const watchLinkFormName = watchLinkForm.querySelector('#watch_link_form_name');
         const watchLinkFormSaisonNumber = watchLinkForm.querySelector('#watch_link_form_season_number');
@@ -75,7 +75,7 @@ export class WatchLinkCrud {
             watchLinkFormName.value = "";
             watchLinkFormUrl.value = "";
             watchLinkFormSaisonNumber.value = "-1";
-            self.displayForm(watchLinkFormContainer);
+            watchLinkFormDialog.showModal();
         });
 
         watchLinks.forEach(function (watchLink) {
@@ -98,7 +98,7 @@ export class WatchLinkCrud {
                 watchLinkFormName.value = name;
                 watchLinkFormUrl.value = href;
                 watchLinkFormSaisonNumber.value = seasonNumber;
-                self.displayForm(watchLinkFormContainer);
+                watchLinkFormDialog.showModal();
             });
 
             copy.addEventListener('click', function () {
@@ -118,7 +118,7 @@ export class WatchLinkCrud {
                 watchLinkFormProvider.value = provider;
                 watchLinkFormName.value = name;
                 watchLinkFormUrl.value = href;
-                self.displayForm(watchLinkFormContainer);
+                watchLinkFormDialog.showModal();
             });
         });
 
@@ -142,7 +142,7 @@ export class WatchLinkCrud {
             watchLinkFormName.value = self.buildWatchLabel(self.selectValue(watchLinkFormProvider), self.selectValue(watchLinkFormSaisonNumber));
         });
         watchLinkFormCancel.addEventListener('click', function () {
-            self.hideForm(watchLinkFormContainer);
+            watchLinkFormDialog.close();
         });
         watchLinkFormSubmit.addEventListener('click', function (event) {
             event.preventDefault();
@@ -191,7 +191,7 @@ export class WatchLinkCrud {
                 if (response.ok) {
                     const data = await response.json();
                     // console.log({data});
-                    self.hideForm(watchLinkFormContainer);
+                    watchLinkFormDialog.close();
                     const watchLinksDiv = document.querySelector('.watch-links');
                     if (type.value === 'create') {
                         /** @var {Link} link */
@@ -250,7 +250,7 @@ export class WatchLinkCrud {
                             watchLinkFormProvider.value = link.provider.id;
                             watchLinkFormName.value = link.name;
                             watchLinkFormUrl.value = link.url;
-                            self.displayForm(watchLinkFormContainer);
+                            watchLinkFormDialog.showModal();
                         });
                         edit.appendChild(editIcon);
                         watchLinkTools.appendChild(edit);
@@ -290,7 +290,7 @@ export class WatchLinkCrud {
                             watchLinkFormProvider.value = link.provider.id;
                             watchLinkFormName.value = link.name;
                             watchLinkFormUrl.value = link.url;
-                            self.displayForm(watchLinkFormContainer);
+                            watchLinkFormDialog.showModal();
                         });
                         watchLinkTools.appendChild(del);
                         self.toolTips.init(watchLinkTools);

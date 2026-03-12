@@ -289,18 +289,22 @@ Years: Années
 '%count% episodes have been removed from the series (%list%)': '%count% épisodes ont été supprimés de la série (%list%)'
 'An episode has been removed from the series (%id%)': 'Un épisode a été supprimé de la série (%id%)'
 'Episode %number% has been updated': "L'épisode %number% a été mis à jour"
+
 1 episode seen: 1 épisode vu
 A real binger!: Un vrai binge-watcher !
 A real marathoner!: Un vrai marathonien !
+Add a backdrop: Ajouter un arrière-plan
+Add a comment or reply to it for the episode: Ajouter un commentaire ou une réponse pour l'épisode
 Add a comment: Ajouter un commentaire
 Add a localized overview: Ajouter un aperçu localisé
 Add a re-edited version to this season: Ajouter une version rééditée à cette saison
 Add a video: Ajouter une vidéo
 Add a watch link: Ajouter un lien pour regarder
+Add all available backdrops from TMDB: Ajouter tous les arrière-plans disponibles de TMDB
+Add all available images: Ajouter tous les images disponibles
 Add an additional overview: Ajouter un aperçu supplémentaire
-Add images: Ajouter des images
-Add a comment or reply to it for the episode: Ajouter un commentaire ou une réponse pour l'épisode
 Add answer: Ajouter une réponse
+Add images: Ajouter des images
 Add someone to the cast: Ajouter quelqu'un au casting
 Add this series to your watchlist: Ajouter cette série à votre liste de suivi
 Add to favorites: Ajouter aux favoris
@@ -326,6 +330,7 @@ Back to the season: Retour à la saison
 Back to the series page: Retour à la page de la série
 Back to top: Retour en haut
 Backdrop added: Arrière-plan ajouté
+Backdrop count: Nombre d'arrière-plans
 Backdrop updated: Arrière-plan mis à jour
 Binge watcher badge unlocked: Badge de binge-watcher débloqué
 Broadcast delay: Décalage de diffusion
@@ -345,10 +350,10 @@ Copy: Copier
 Crew: Équipe
 Custom schedule: Horaire personnalisé
 Dailies Manager: Responsable des rushes
+Date added ascending: Date d'ajout croissant
+Date added descending: Date d'ajout décroissant
 Delay in days: Décalage en jour
 Delay: Décalage
-Date added descending: Date d'ajout décroissant
-Date added ascending: Date d'ajout croissant
 Delete watch link: Supprimer le lien
 Delete: Supprimer
 Desktop: Ordinateur de bureau
@@ -371,6 +376,7 @@ Expand all videos: Développer toutes les vidéos
 External sources: Sources externes
 Filming locations map: Carte des lieux de tournage
 First air date updated: Date de première diffusion mise à jour
+First day of the week → %day%': Premier jour de la semaine → %day%'
 Five days ago: Il y a cinq jours
 Fly to the location: Aller au lieu
 Four days ago: Il y a quatre jours
@@ -420,9 +426,11 @@ No date: Pas de date
 No episode seen: Aucun épisode vu
 No image currently selected for upload: Pas d'image actuellement sélectionnée pour le téléversement
 No image: Pas d'image
+No logo: Aucun logo
 No overview: Pas d'aperçu
 No picture: Pas d'image
 No poster: Pas d'affiche
+No selected days of week.: Aucun jour de semaine sélectionné.
 No still: Pas de vignette
 No votes: Pas de votes
 Not a valid file type. Update your selection: Type de fichier non valide. Mettez à jour votre sélection
@@ -433,6 +441,9 @@ Number of days after: Nombre de jours après
 Number of days before: Nombre de jours avant
 Number of episodes has changed: Le nombre d'épisodes a changé
 On Set Key Props: Accessoiriste sur le plateau
+One backdrop: Un arrière-plan
+One logo: Un logo
+One poster: Un poster
 Original Country: Pays d'origine
 Original language: Langue originale
 Original name updated: Nom original mis à jour
@@ -445,6 +456,7 @@ Paste your translation here: Collez (⌘ V / ⌃ V) votre traduction ici (depuis
 Pilot: Pilote
 Planned: Planifié
 Poster added: Affiche ajoutée
+Poster count: Nombre d'affiches
 Poster of the next series: Affiche de la série suivante
 Poster of the previous series: Affiche de la série précédente
 Poster updated: Affiche mise à jour
@@ -476,6 +488,7 @@ See all: Voir tout
 See on Google: Voir sur Google
 Select a provider: Sélectionnez une plateforme
 Select a source: Sélectionnez une source
+Selected days of the week → %days%': Jours de la semaine sélectionnés → %days%'
 Send your comment: Envoyez votre commentaire
 Series added to your watchlist: Série ajoutée à votre liste de suivi
 Series airing this week: Séries diffusées cette semaine
@@ -508,6 +521,7 @@ Tablet: Tablette
 Television: Télévision
 That's all!: C'est tout !
 That's all, Folks!: C'est tout, les amis !
+The first day of the week must be in the selected days of the week.: Le premier jour de la semaine doit être dans les jours de la semaine sélectionnés.
 The link has been copied to your clipboard: Le lien a été copié dans votre presse-papiers
 This field is required: Ce champ est requis
 This series belongs to your watch later list!: Cette série appartient à votre liste de suivi ultérieurement !
@@ -547,10 +561,11 @@ What to watch next?: Que regarder ensuite ?
 Where was "%name%" filmed?: Où a été filmé "%name%" ?
 Yesterday: Hier
 Your episodes have been updated according to the series information.: Vos épisodes ont été mis à jour selon les informations de la série.
+and: et
 available: disponible
+backdrops: arrière-plans
 day: jour
 days: jours
-and: et
 episode: épisode
 episodes seen: épisodes vus
 episodes: épisodes
@@ -560,13 +575,15 @@ image: image
 images: images
 in: Dans
 locations: lieux
+logos: logos
 minute: minute
 minutes: minutes
 network.not_found: réseau non trouvé
 new episodes have been added to the series: nouveaux épisodes ont été ajoutés à la série
 on: sur
-season: saison
+posters: posters
 season.number: la saison
+season: saison
 second: seconde
 seconds: secondes
 since: depuis
@@ -580,16 +597,6 @@ vote: vote
 votes: votes
 x star: x étoile
 x stars: x étoiles
-
-Add a backdrop: Ajouter un arrière-plan
-Add all available backdrops from TMDB: Ajouter tous les arrière-plans disponibles de TMDB
-Add all available images: Ajouter tous les images disponibles
-Poster count: Nombre d'affiches
-Backdrop count: Nombre d'arrière-plans
-The first day of the week must be in the selected days of the week.: Le premier jour de la semaine doit être dans les jours de la semaine sélectionnés.
-Selected days of the week → %days%': Jours de la semaine sélectionnés → %days%'
-First day of the week → %day%': Premier jour de la semaine → %day%'
-No selected days of week.: Aucun jour de semaine sélectionné.
 
 #Schedule form
 Override the Movie Database schedule: Remplacer l'horaire de The Movie Database

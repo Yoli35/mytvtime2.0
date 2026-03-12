@@ -64,28 +64,16 @@
     }
 }
 
-/*.watch-link-form,
-.keyword-translation-form {
-    background-color: hsla(from var(--ardoise-80) h s l / .9);
-    border-radius: 0.5rem 0 0 0.5rem;
-    border: 2px solid var(--orange-50);
-    border-right-width: 0;
-    display: none;
-    left: 0;
-    opacity: 0;
-    position: absolute;
-    right: 0;
-    top: 2rem;
-    transition: opacity 0.3s ease-in-out;
-    z-index: 1;
-}*/
+dialog.watch-link-dialog::backdrop {
+    background-color: hsl(from var(--orange-10) h s l / .75);
+}
 
 .biography-form,
 .delete-overview-form,
 .keyword-translation-form,
 .localized-name-form,
 .overview-form,
-.watch-link-form {
+.watch-link-dialog {
     background-color: hsla(from var(--ardoise-70) h s l / .9);
     border-radius: 1rem;
     border: 4px solid var(--orange-50);
@@ -96,7 +84,8 @@
     &:has(input[type="text"]),
     &:has(select),
     &:has(textarea) {
-        width: 50%;
+        max-width: 95%;
+        width: 40rem;
     }
 
     &.display {
