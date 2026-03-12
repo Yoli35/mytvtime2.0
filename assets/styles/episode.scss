@@ -110,7 +110,8 @@
             right: 2rem;
             position: absolute;
             top: 4rem;
-            width: 32rem;
+            transition: all 300ms ease-in-out;
+            width: 12rem;
 
             .add-this-episode, .remove-this-episode,
             .select-provider, .select-device, .select-vote,
@@ -173,6 +174,12 @@
         }
 
         .user-episode:hover {
+            width: 32rem;
+
+            .add-this-episode, .back-to-top, .back-to-series {
+                background-color: hsl(from var(--add-this-episode) h s l / 1);
+            }
+
             .add-this-episode {
                 border-radius: 5rem .25rem .25rem 5rem !important;
             }
