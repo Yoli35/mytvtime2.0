@@ -113,6 +113,10 @@
             transition: all 300ms ease-in-out;
             width: 12rem;
 
+            &:has(.remove-this-episode) {
+                width: 32rem;
+            }
+
             .add-this-episode, .remove-this-episode,
             .select-provider, .select-device, .select-vote,
             .comment-badge,
