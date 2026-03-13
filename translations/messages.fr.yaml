@@ -1578,6 +1578,7 @@ secondes: secondes
 # Admin
 Add a new point of interest: Ajouter un nouveau point d'intérêt
 Address: Adresse
+An error has occurred: Une erreur est survenue
 Are you sure you want to delete this message?: Êtes-vous sûr de vouloir supprimer ce message ?
 Back to messages: Retour aux messages
 Calculate: Calculer
@@ -1593,11 +1594,13 @@ Filming locations: Lieux de tournage
 Force update: Mise à jour forcée
 Generate find/zip command: Générer la commande find/zip
 Go to video page: Aller à la page de la vidéo
+Keywords updated successfully: Mise à jour des mots-clés réussie
 Last update: Dernière mise à jour
 Message details: Détails du message
 Messages: Messages
 Minutes passed since...: Minutes passées depuis...
 No messages: Aucun message
+Only one translation left!: Plus qu'une traduction restante !
 Points of interrest: Points d'intérêt
 Results: Résultats
 See the filming location description: Voir la description du lieu de tournage
