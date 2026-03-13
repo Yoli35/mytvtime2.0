@@ -103,6 +103,11 @@ class AdminController extends AbstractController
         $first = $request->query->get('first', 'a');
         $keywords = $this->keywordRepository->get($first);
         $missingTranslations = $this->keywordService->keywordsTranslation($keywords, $request->getLocale());
+        $translations = [
+            'An error has occurred' => $this->translator->trans('An error has occurred'),
+            'Keywords updated successfully' => $this->translator->trans('Keywords updated successfully'),
+            'Only one translation left!' => $this->translator->trans('Only one translation left!'),
+        ];
 
         return $this->render('admin/index.html.twig', [
             'first' => $first,
@@ -110,6 +115,7 @@ class AdminController extends AbstractController
             'keywords' => $keywords,
             'missingTranslations' => $missingTranslations,
             'language' => $request->getLocale(),
+            'translations' => $translations,
         ]);
     }
 

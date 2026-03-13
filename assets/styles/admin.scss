@@ -460,17 +460,22 @@
 
         &:has(span.missing-count[data-count="0"]) {
             padding: 0 1.3rem;
+
+            span.missing-text {
+                display: none;
+            }
         }
 
-        span.missing-translations {
+        span.missing-count[data-count="0"],
+        span.missing-count[data-count="1"] {
+            display: none;
+        }
+
+        span.missing-text {
             background-color: var(--orange-30);
             border-radius: 5rem;
             padding-block: .25rem;
             padding-inline: 1rem;
-
-            &:has(span.missing-count[data-count="0"]) {
-                display: none;
-            }
         }
     }
 

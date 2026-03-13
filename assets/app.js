@@ -1,5 +1,6 @@
 import './bootstrap.js';
 
+import {AdminKeyword} from "AdminKeyword";
 import {AdminMovieEdit} from "AdminMovieEdit";
 import {AdminPointsOfInterest} from "AdminPointsOfInterest";
 import {AdminSeriesUpdates} from "AdminSeriesUpdates";
@@ -47,18 +48,23 @@ window.addEventListener("DOMContentLoaded", () => {
 
     // Admin page
     const admin = document.querySelector(".admin");
-    const adminMovieEditDiv = admin?.querySelector(".admin__movie__edit");
-    const adminSeriesEditDiv = admin?.querySelector(".admin__series__edit");
-    const adminSeriesUpdatesDiv = admin?.querySelector(".admin__series__updates");
-    const adminPointsOfInterest = admin?.querySelector(".admin__points_of_interest");
-    if (adminMovieEditDiv || adminSeriesEditDiv) {
-        new AdminMovieEdit();
-    }
-    if (adminSeriesUpdatesDiv) {
-        new AdminSeriesUpdates();
-    }
-    if (adminPointsOfInterest) {
-        new AdminPointsOfInterest();
+    if (admin) {
+        if (admin.querySelector(".admin__keywords")) {
+            new AdminKeyword(flashMessage);
+            return;
+        }
+        if (admin.querySelector(".admin__movie__edit") || admin.querySelector(".admin__series__edit")) {
+            new AdminMovieEdit();
+            return;
+        }
+        if (admin.querySelector(".admin__points_of_interest")) {
+            new AdminPointsOfInterest();
+            return;
+        }
+        if (admin.querySelector(".admin__series__updates")) {
+            new AdminSeriesUpdates();
+            return;
+        }
     }
 
 // Home page

@@ -51,8 +51,9 @@ class ApiKeywords extends AbstractController
 
         if ($noUpdate) {
             return $this->json([
-                'ok' => true,
+                'success' => true,
                 'message' => 'Keywords updated successfully',
+                'keywords' => implode(", ", array_column($keywords, 'original')),
             ]);
         }
 
@@ -73,7 +74,7 @@ class ApiKeywords extends AbstractController
 
         // fetch response
         return $this->json([
-            'ok' => true,
+            'success' => true,
             'keywords' => $keywordBlock,
         ]);
     }

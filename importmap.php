@@ -19,6 +19,9 @@ return [
     'AddCast' => [
         'path' => './assets/js/series/AddCast.js',
     ],
+    'AdminKeyword' => [
+        'path' => './assets/js/admin/AdminKeyword.js',
+    ],
     'AdminMovieEdit' => [
         'path' => './assets/js/admin/AdminMovieEdit.js',
     ],

@@ -1,5 +1,11 @@
 {% set count = missingTranslations|length %}
-<h2>{{ 'Keywords'|trans }} ({{ keywords|length }}) <span class="missing-translations"><span class="missing-count" data-count="{{ count }}">{{ count }}</span> {{ 'missing translations'|trans }}</span></h2>
+<h2>
+    {{ 'Keywords'|trans }} ({{ keywords|length }})
+    <span class="missing-text">
+        <span class="missing-count" data-count="{{ count }}">{{ count }}</span>
+        <span class="missing-translations">{% if count > 1 %}{{ 'missing translations'|trans }}{% else %} {{ 'Only one translation left!'|trans }}{% endif %}</span>
+    </span>
+</h2>
 
 <div class="admin__keywords_firsts">
     {% for f in firsts %}
@@ -33,82 +39,13 @@
 </div>
 <div id="globs" style="display:none">
     {
-    "first": "{{ first }}",
-    "firsts": {{ firsts|json_encode(constant('JSON_PRETTY_PRINT'))|raw }}
+        "first": "{{ first }}",
+        "firsts": {{ firsts|json_encode(constant('JSON_PRETTY_PRINT'))|raw }},
+        "translations": {{ translations|json_encode(constant('JSON_PRETTY_PRINT'))|raw }},
+        "language": "{{ language }}"
     }
 </div>
 <div id="svgs" style="display:none">
     <div id="check">{{ ux_icon('mdi:check') }}</div>
+    <div id="svg-xmark">{{ ux_icon('mdi:close') }}</div>
 </div>
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        let firstArray = [];
-        const globs = document.querySelector('#globs').textContent;
-        const json = JSON.parse(globs);
-        const activeLetter = json['first'];
-        const firstInput = document.querySelector('.keyword__input');
-        if (firstInput) {
-            firstInput.focus();
-        }
-        const inputs = document.querySelectorAll('.keyword__input');
-        inputs.forEach(input => {
-            input.addEventListener('keydown', function (e) {
-                if (e.key === 'Enter') {
-                    if (input.value.length === 0) {
-                        return;
-                    }
-                    const translations = [{original: input.dataset.keyword, translated: input.value}];
-                    fetch('/api/keywords/save', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify({type: '', id: 0, noUpdate: 1, language: "{{ language }}", keywords: translations})
-                    })
-                        .then((response) => response.json())
-                        .then(data => {
-                            /*console.log(data);*/
-                            const keywordTranslationDiv = input.closest('.keyword__translation');
-                            const label = keywordTranslationDiv.querySelector('label');
-                            label.remove();
-                            const svgCheck = document.querySelector('#check').querySelector('svg').cloneNode(true);
-                            keywordTranslationDiv.appendChild(svgCheck);
-                            keywordTranslationDiv.appendChild(document.createTextNode(input.value));
-                            const missingCountSpan = document.querySelector('.missing-count');
-                            const missingCount = missingCountSpan.textContent - 1;
-                            missingCountSpan.dataset.count = missingCount.toString();
-                            missingCountSpan.textContent = missingCount.toString();
-                            const link = document.querySelector(`[data-letter="${activeLetter}"]`);
-                            link.title = missingCount.toString() + ' / ' + firstArray[activeLetter];
-                            const firstInput = document.querySelector('.keyword__input');
-                            if (firstInput) {
-                                firstInput.focus();
-                            }
-                        });
-                }
-            })
-        })
-
-        fetch('/api/keywords/check', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        })
-            .then((response) => response.json())
-            .then(data => {
-                /*console.log(data);*/
-                const links = document.querySelectorAll('.admin__keywords_firsts > a');
-                firstArray = data['firstArray'];
-                links.forEach(link => {
-                    const letter = link.dataset.letter;
-                    if (firstArray[letter] === 0) {
-                        link.classList.add('done');
-                    } else {
-                        link.title = firstArray[letter];
-                    }
-                })
-            });
-
-    });
-</script>
