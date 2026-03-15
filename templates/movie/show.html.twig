@@ -192,6 +192,7 @@
                                     </div>
                                 </div>
                             </div>
+                            {{ include('_blocks/_watch_links_popover.html.twig', {type: 'movie', media: movie}) }}
                         </div>
                         {% if movie.found == false %}
                             <div class="not-found">
