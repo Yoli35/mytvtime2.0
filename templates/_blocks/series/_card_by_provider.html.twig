@@ -1,0 +1,18 @@
+<div class="card">
+    {% set url = path('app_series_show', {'id': series.id, 'slug': series.slug }) %}
+    <a href="{{ url }}">
+        <div class="poster">
+            {% if series.poster_path %}
+                <img src="/series/posters{{ series.poster_path }}" alt="{{ series.display_name }}">
+            {% else %}
+                <div>{{ 'No poster'|trans }}</div>
+            {% endif %}
+        </div>
+        <div class="infos">
+            <div class="name">
+                {{ series.display_name }}
+            </div>
+{#            {{ include('_blocks/list/_tools.html.twig', {seriesId: series.tmdb_id, seriesName: series.sln_name, isSeriesInList: series.is_series_in_list}) }}#}
+        </div>
+    </a>
+</div>

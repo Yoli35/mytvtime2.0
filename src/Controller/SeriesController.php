@@ -374,6 +374,57 @@ class SeriesController extends AbstractController
         ]);
     }
 
+    #[IsGranted('ROLE_USER')]
+    #[Route('/by/privider/{provider}', name: 'by_provider', requirements: ['provider' => Requirement::DIGITS])]
+    public function seriesByProvider(#[CurrentUser] User $user, Request $request, int $provider): Response
+    {
+        $locale = $user->getPreferredLanguage() ?? $request->getLocale();
+
+        $settings = $this->settingsRepository->findOneBy(['user' => $user, 'name' => 'by provider']);
+        if (!$settings) {
+            $settings = new Settings($user, 'by provider', ['provider' => $provider]);
+        } else {
+            $data = $settings->getData();
+            $data['country'] = $provider;
+            $settings->setData($data);
+        }
+        $this->settingsRepository->save($settings, true);
+
+        $providers = $this->watchProviderRepository->getAllProviders();
+        $userProviders = $this->userSeriesRepository->userSeriesProviders($user);
+        $seriesWithoutProviders = $this->userSeriesRepository->userSeriesWithoutProvider($user, $locale);
+        $seriesByProvider = $this->userSeriesRepository->userSeriesByProvider($user, $provider, $locale);
+
+        $selectedProvider = array_find($providers, function ($p) use ($provider) {
+            return $p['provider_id'] == $provider;
+        });
+        if ($selectedProvider) {
+            $tmdbIds = array_column($seriesByProvider, 'tmdb_id');
+        } else {
+            $tmdbIds = array_column($seriesWithoutProviders, 'tmdb_id');;
+        }
+
+        dump([
+            'provider' => $provider,
+            'selectedProvider' => $selectedProvider, // Si null, on affiche la liste des séries sans provider
+            'tmdbIds' => $tmdbIds,
+            'providers' => $providers,
+            'userProviders' => $userProviders,
+            'seriesWithoutProviders' => $seriesWithoutProviders,
+            'seriesByProvider' => $seriesByProvider,
+        ]);
+
+        return $this->render('series/series_by_provider.html.twig', [
+            'provider' => $provider,
+            'selectedProvider' => $selectedProvider,
+            'tmdbIds' => $tmdbIds,
+            'providers' => $providers,
+            'userProviders' => $userProviders,
+            'seriesWithoutProviders' => $seriesWithoutProviders,
+            'seriesByProvider' => $seriesByProvider,
+        ]);
+    }
+
     #[Route('/tmdb/search', name: 'search')]
     public function search(Request $request): Response
     {

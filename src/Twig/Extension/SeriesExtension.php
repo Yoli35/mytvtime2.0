@@ -15,6 +15,7 @@ class SeriesExtension extends AbstractExtension
             new TwigFilter('seriesHistory', [SeriesExtensionRuntime::class, 'seriesHistory']),
             new TwigFilter('hasSeriesStartedAiring', [SeriesExtensionRuntime::class, 'hasSeriesStartedAiring']),
             new TwigFilter('getUserCountrySettings', [SeriesExtensionRuntime::class, 'getUserCountrySettings']),
+            new TwigFilter('getUserProviderSettings', [SeriesExtensionRuntime::class, 'getUserCProviderSettings']),
         ];
     }
 
@@ -24,6 +25,7 @@ class SeriesExtension extends AbstractExtension
             new TwigFunction('commentCountBySeries', [SeriesExtensionRuntime::class, 'commentCountBySeries']),
             new TwigFunction('seriesHistory', [SeriesExtensionRuntime::class, 'seriesHistory']),
             new TwigFunction('getUserCountrySettings', [SeriesExtensionRuntime::class, 'getUserCountrySettings']),
+            new TwigFunction('getUserProviderSettings', [SeriesExtensionRuntime::class, 'getUserProviderSettings']),
         ];
     }
 }

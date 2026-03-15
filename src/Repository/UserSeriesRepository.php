@@ -624,6 +624,85 @@ class UserSeriesRepository extends ServiceEntityRepository
         return $this->getAll($sql, $params, $types);
     }
 
+    public function userSeriesWithoutProvider(User $user, string $locale): array
+    {
+        $params = [
+            'id' => $user->getId(),
+            'locale' => $locale,
+        ];
+        $types = [
+            'id' => ParameterType::INTEGER,
+            'locale' => ParameterType::STRING,
+        ];
+        $sql = <<<SQL
+                SELECT
+                    DISTINCT us.`id` AS `user_series_id`,
+                    s.`id` AS id,
+                    s.`tmdb_id` AS tmdb_id,
+                    IF(sln.`id`, CONCAT(sln.`name`, ' - ', s.`name`), s.`name`) AS display_name,
+                    IF(sln.`id`, sln.`slug`, s.`slug`) AS slug,
+                    s.`poster_path` AS poster_path
+                FROM `user_episode` ue
+                    LEFT JOIN `user_series` us ON us.`id`=ue.`user_series_id`
+                    LEFT JOIN `series` s ON s.`id`=us.`series_id`
+                    LEFT JOIN `series_localized_name` sln ON sln.`series_id`=s.`id` AND sln.`locale`=:locale
+                WHERE ue.id=:id AND ue.`provider_id` IS NULL;
+                SQL;
+
+        return $this->getAll($sql, $params, $types);
+    }
+
+    public function userSeriesByProvider(User $user, int $provider, string $locale): array
+    {
+        $params = [
+            'id' => $user->getId(),
+            'provider' => $provider,
+            'locale' => $locale,
+        ];
+        $types = [
+            'id' => ParameterType::INTEGER,
+            'provider' => ParameterType::INTEGER,
+            'locale' => ParameterType::STRING,
+        ];
+        $sql = <<<SQL
+                SELECT
+                    DISTINCT us.`id`                                             AS `user_series_id`,
+                    s.`id`                                                       AS id,
+                    s.`tmdb_id`                                                  AS tmdb_id,
+                    IF(sln.`id`, CONCAT(sln.`name`, ' - ', s.`name`), s.`name`)  AS display_name,
+                    IF(sln.`id`, sln.`slug`, s.`slug`)                           AS slug,
+                    s.`poster_path`                                              AS poster_path,
+                    us.`last_watch_at`
+                FROM `user_episode` ue
+                    LEFT JOIN `user_series` us ON us.`id`=ue.`user_series_id`
+                    LEFT JOIN `series` s ON s.`id`=us.`series_id`
+                    LEFT JOIN `series_localized_name` sln ON sln.`series_id`=s.`id` AND sln.`locale`='fr'
+                WHERE  ue.`provider_id`=:provider
+                ORDER BY us.`last_watch_at` DESC;
+                SQL;
+
+        return $this->getAll($sql, $params, $types);
+    }
+
+    public function userSeriesProviders(User $user): array
+    {
+        $params = [
+            'id' => $user->getId(),
+        ];
+        $types = [
+            'id' => ParameterType::INTEGER,
+        ];
+        $sql = <<<SQL
+                    SELECT DISTINCT ue.`provider_id`, wp.`provider_name`, wp.`logo_path`
+                    FROM `user_episode` ue
+                        LEFT JOIN `watch_provider` wp ON wp.`provider_id`=ue.`provider_id`
+                    WHERE ue.`user_id`=:id
+                    ORDER BY wp.`provider_name`;
+                SQL;
+
+        return $this->getAll($sql, $params, $types);
+    }
+
     public function getAll(string $sql, array $params = [], array $types = []): array
     {
         try {

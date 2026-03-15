@@ -103,6 +103,17 @@ readonly class SeriesExtensionRuntime implements RuntimeExtensionInterface
         return $country;
     }
 
+    public function getUserProviderSettings(User $user): int
+    {
+        $settings = $this->settingsRepository->findOneBy(['user' => $user, 'name' => 'by provider']);
+        if ($settings) {
+            $provider = $settings->getData()['provider'];
+        } else {
+            $provider = 8;
+        }
+        return $provider;
+    }
+
     public function commentCountBySeries(): array
     {
         return $this->episodeCommentRepository->commentCountBySeries();

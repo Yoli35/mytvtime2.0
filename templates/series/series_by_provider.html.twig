@@ -1,0 +1,100 @@
+{% extends 'base.html.twig' %}
+{% set title = 'Series.by provider'|trans ~ (selectedProvider is not null ? ' - ' ~ selectedProvider.provider_name : '') %}
+{% block title %}my Tv Time → {{ title }}{% endblock %}
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('styles/home.scss') }}">
+    <link rel="stylesheet" href="{{ asset('styles/series.scss') }}">
+    <link rel="stylesheet" href="{{ asset('styles/card.scss') }}">
+{% endblock %}
+
+{% block body %}
+    {% include('_blocks/_menu.html.twig') %}
+    <div class="container-fluid series-by-country">
+        <h1>{{ title }}</h1>
+        <header>
+            {% if selectedProvider is not null %}
+                {% set seriesCount = seriesByProvider|length %}
+            {% else %}
+                {% set seriesCount = seriesWithoutProviders %}
+            {% endif %}
+            <h2>{{ seriesCount }} {{ (seriesCount > 1 ? 'seriess':'series')|trans }}</h2>
+            <label for="provider-select">Provider
+                <select id="provider-select">
+                    {% for option in userProviders %}
+                        <option value="{{ option.provider_id }}"{% if option.provider_id == provider %} selected{% endif %}>{{ option.provider_name }}</option>
+                    {% endfor %}
+                </select>
+            </label>
+            <script>
+                document.getElementById('provider-select').addEventListener('change', function () {
+                    window.location.href = "{{ path('app_series_by_provider', {provider: 1})|slice(0, -1) }}" + this.value;
+                });
+            </script>
+        </header>
+        <div class="series-group user">
+            <div class="wrapper">
+                <div class="content center">
+                    {% for series in seriesByProvider %}
+                        {{ include('_blocks/series/_card_by_provider.html.twig') }}
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        <div id="global-data" class="hidden">
+            {
+                "tmdbIds": {{ tmdbIds|json_encode|raw }},
+                "app_series_tmdb_check": "{{ path('app_series_tmdb_check') }}"
+            }
+        </div>
+        <div id="svgs" style="display: none">
+            <div id="svg-xmark">{{ ux_icon('mdi:close') }}</div>
+            <div id="svg-bookmark">{{ ux_icon('mdi:bookmark') }}</div>
+            <div id="svg-bookmark-outline">{{ ux_icon('mdi:bookmark-outline') }}</div>
+        </div>
+    </div>
+    {% include('_blocks/_footer.html.twig') %}
+{% endblock %}
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        window.addEventListener("DOMContentLoaded", init);
+
+        function init() {
+            const lang = document.documentElement.lang;
+            const filterByCountry = document.getElementById('filter-by-country');
+            filterByCountry.addEventListener('change', (e) => {
+                const country = e.target.value;
+                window.location.href = '/' + lang + '/series/by/country/' + country;
+            });
+            /** @type {HTMLInputElement} */
+            const filterByName = document.getElementById('filter-by-name');
+            filterByName.addEventListener('input', filterSeries);
+            filterByName.focus();
+            setTimeout(() => {
+                filterSeries({target: filterByName});
+            }, 1000);
+        }
+
+        function filterSeries(e) {
+            const filter = e.target.value.toLowerCase();
+            const series = document.querySelectorAll('.series-group.user .content .card');
+            series.forEach((s) => {
+                const title = s.querySelector('.name').textContent.toLowerCase();
+                if (title.includes(filter)) {
+                    s.style.display = "block";
+                    setTimeout(() => {
+                        s.style.opacity = "1";
+                        s.style.width = "15rem";
+                    }, 0);
+                } else {
+                    s.style.opacity = "0.125";
+                    s.style.width = "0";
+                    setTimeout(() => {
+                        s.style.display = "none";
+                    }, 300);
+                }
+            });
+        }
+    </script>
+{% endblock %}
