@@ -127,6 +127,7 @@ export class Menu {
         this.getAccentColor = this.getAccentColor.bind(this);
         this.getScheduleRange = this.getScheduleRange.bind(this);
         this.lang = document.documentElement.lang;
+        this.isMultiSearchOpen = false;
         this.initialPreviewSetting = null;
         this.posterUrl = null;
         this.profileUrl = null;
@@ -280,17 +281,27 @@ export class Menu {
         const multiSearchOptions = multiSearchOptionsMenu.querySelectorAll(".multi-search-option");
         const displayPosterToggler = multiSearchOptionsMenu.querySelector("#display-poster-toggler");
         const openInNewTabToggler = multiSearchOptionsMenu.querySelector("#new-tab-toggler");
+
+        document.addEventListener("keydown", e => {
+            if (e.key==='s' && this.isMultiSearchOpen === false) {
+                e.preventDefault();
+                magnifyingGlassSpan.click();
+            }
+        });
+
         magnifyingGlassSpan.addEventListener("click", () => {
             multiSearchDiv.classList.toggle("active");
             if (multiSearchDiv.classList.contains("active")) {
                 multiSearch.focus();
                 self.initialPreviewSetting = self.getPreview();
                 self.forcePreview(displayPosterToggler.checked);
+                self.isMultiSearchOpen = true;
             } else {
                 self.forcePreview(self.initialPreviewSetting);
                 multiSearchOptionsMenu.classList.remove("active");
                 multiSearch.value = "";
                 self.closeMultiSearchMenu(multiSearch);
+                self.isMultiSearchOpen = false;
             }
         });
         displayPosterToggler.addEventListener("change", () => {
@@ -724,7 +735,16 @@ export class Menu {
     }
 
     searchMenuNavigate(e) {
-        // movieSearch, tvSearch, tvSearchDb, personSearch or multiSearch
+        if (e.key === 'Escape') {
+            console.log('Escape key pressed')
+            e.preventDefault();
+            const navbar = document.querySelector(".navbar");
+            const multiSearchDiv = navbar.querySelector(".multi-search");
+            const magnifyingGlassSpan = multiSearchDiv.querySelector(".magnifying-glass");
+            magnifyingGlassSpan.click();
+            return;
+        }
+        // multiSearch
         const searchMenu = e.target;
         // console.log({e});
         const value = e.target.value;
