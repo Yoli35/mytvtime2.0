@@ -111,6 +111,7 @@ class ImageService extends AbstractController
         $filename = $file->getClientOriginalName();
         $isGoogleMapsImage = str_contains($filename, 'maps');
         $isAppleMapsImage = str_contains($filename, 'apple');
+        $isWikipediaImage = str_contains($filename, 'wiki');
         $extension = $file->guessExtension();
         $basename = $slugger->slug($title)->lower()->toString() . '-' . $slugger->slug($location)->lower()->toString();
         if ($seasonNumber != null) { // Season number  0 for specials
@@ -119,7 +120,7 @@ class ImageService extends AbstractController
         if ($episodeNumber != null) { // Episode number 0 for pilots
             $basename .= '-e' . str_pad((string)$episodeNumber, 2, '0', STR_PAD_LEFT);
         }
-        $basename .= '-' . ($isGoogleMapsImage ? 'maps-' : '') . ($isAppleMapsImage ? 'apple-' : '') . $n;
+        $basename .= '-' . ($isGoogleMapsImage ? 'maps-' : '') . ($isAppleMapsImage ? 'apple-' : '') . ($isWikipediaImage ? 'wiki-' : '') . $n;
         $tempName = $imageTempPath . $basename . '.' . $extension;
         $destination = $imageMapPath . $basename . '.webp';
 
@@ -469,12 +470,12 @@ class ImageService extends AbstractController
                 if (!$successfullyResampled) {
                     return null;
                 }
-                $successfullyConverted = $this->composeImage($newImage, $title, $destPath, $width, $height, $quality);
+                $successfullyConverted = $this->composeImage($newImage, $title, $destPath, $quality);
             } else {
-                $successfullyConverted = $this->composeImage($image, $title, $destPath, $width, $height, $quality);
+                $successfullyConverted = $this->composeImage($image, $title, $destPath, $quality);
             }
         } else {
-            $successfullyConverted = $this->composeImage($image, $title, $destPath, $sourceWidth, $sourceHeight, $quality);
+            $successfullyConverted = $this->composeImage($image, $title, $destPath, $quality);
         }
 
         if ($successfullyConverted && $removeOld) unlink($sourcePath);
@@ -538,63 +539,54 @@ class ImageService extends AbstractController
         ];
     }
 
-    private function composeImage(GdImage $gdImage, string $title, string $destPath, int $width, int $height, int $quality): bool
+    private function composeImage(GdImage $gdImage, string $title, string $destPath, int $quality): bool
     {
         $kernelProjectDir = $this->getProjectDir();
-        // If the filename ($destPath) contains "maps", add "Google Maps" on the image with a dark background
-        $this->markAsGoogleMaps($destPath, $kernelProjectDir, $gdImage, $width, $height);
-        // If the filename ($destPath) contains "apple", add "Apple Maps" on the image with a dark background
-        $this->markAsAppleMaps($destPath, $kernelProjectDir, $gdImage, $width, $height);
-        // If the title is not empty, add it on the image with a dark background
-        $this->addTitle($title, $kernelProjectDir, $gdImage, $height);
-        $successfullyConverted = imagewebp($gdImage, $destPath, $quality);
-        return $successfullyConverted;
+        $this->markImage($destPath, $kernelProjectDir, $gdImage);
+        $this->addTitle($title, $kernelProjectDir, $gdImage);
+
+        return imagewebp($gdImage, $destPath, $quality);
     }
 
-    private function markAsGoogleMaps(string $destPath, string $kernelProjectDir, GdImage $newImage, int $width, int $height): void
+    private function markImage(string $destPath, string $kernelProjectDir, GdImage $newImage): void
     {
-        // If the filename ($destPath) contains "maps", add "Google Maps" on the image with a dark background
-        if (str_contains($destPath, 'maps')) {
-            $font = $kernelProjectDir . '/public/fonts/google-sans/ProductSans-Regular.ttf';
-            $text = 'Google Maps';
-            $fontSize = 40;
-            $radius = 8;
-            $textColor = imagecolorallocate($newImage, 240, 240, 240);
-            $bbox = imagettfbbox($fontSize, 0, $font, $text);
-            $textWidth = $bbox[2] - $bbox[0];
-            $textHeight = $bbox[1] - $bbox[7];
-            // Draw a dark rectangle behind the text
-            $rectangleColor = imagecolorallocate($newImage, 10, 10, 10); // semi-transparent black
-            //imagefilledrectangle($newImage, $width - $textWidth - 30, $height - $textHeight - 30, $width - 10, $height - 10, $rectangleColor);
-            $this->ImageRoundFilledRectangle($newImage, $width - $textWidth - 60, $height - $textHeight - 30, $width - 20, $height - 10, $radius, $rectangleColor);
-            // Add the text
-            imagettftext($newImage, $fontSize, 0, $width - $textWidth - 40, $height - 30, $textColor, $font, $text);
+        $labels = [
+            'maps' => 'Google Maps',
+            'apple' => 'Apple Maps',
+            'wiki' => 'Wikipedia',
+        ];
+        // Does the filename contain 'apple', 'maps' or 'wiki'?
+        // Vérifier la présence de 'apple', 'maps' ou 'wiki'
+        if (preg_match('/(apple|maps|wiki)/i', $destPath, $matches)) {
+            $key = $matches[1]; // Récupère le mot trouvé
+            $text = $labels[$key] ?? '';
+        } else {
+            return;
         }
+
+        $width = imagesx($newImage);
+        $height = imagesy($newImage);
+        $font = $kernelProjectDir . '/public/fonts/google-sans/ProductSans-Regular.ttf';
+         $fontSize = 40;
+        $radius = 8;
+        $textColor = imagecolorallocate($newImage, 240, 240, 240);
+        $bbox = imagettfbbox($fontSize, 0, $font, $text);
+        $textWidth = $bbox[2] - $bbox[0];
+        $textHeight = $bbox[1] - $bbox[7];
+        // Draw a dark rectangle behind the text
+        $rectangleColor = imagecolorallocate($newImage, 10, 10, 10); // semi-transparent black
+        //imagefilledrectangle($newImage, $width - $textWidth - 30, $height - $textHeight - 30, $width - 10, $height - 10, $rectangleColor);
+        $this->ImageRoundFilledRectangle($newImage, $width - $textWidth - 60, $height - $textHeight - 30, $width - 20, $height - 10, $radius, $rectangleColor);
+        // Add the text
+        imagettftext($newImage, $fontSize, 0, $width - $textWidth - 40, $height - 30, $textColor, $font, $text);
     }
 
-    private function markAsAppleMaps(string $destPath, string $kernelProjectDir, GdImage $newImage, int $width, int $height): void
-    {
-        if (str_contains($destPath, 'apple')) {
-            $font = $kernelProjectDir . '/public/fonts/google-sans/ProductSans-Regular.ttf';
-            $text = 'Apple Maps';
-            $fontSize = 40;
-            $radius = 8;
-            $textColor = imagecolorallocate($newImage, 240, 240, 240);
-            $bbox = imagettfbbox($fontSize, 0, $font, $text);
-            $textWidth = $bbox[2] - $bbox[0];
-            $textHeight = $bbox[1] - $bbox[7];
-
-            $rectangleColor = imagecolorallocate($newImage, 10, 10, 10); // semi-transparent black
-            $this->ImageRoundFilledRectangle($newImage, $width - $textWidth - 60, $height - $textHeight - 30, $width - 20, $height - 10, $radius, $rectangleColor);
-            imagettftext($newImage, $fontSize, 0, $width - $textWidth - 40, $height - 30, $textColor, $font, $text);
-        }
-    }
-
-    private function addTitle(string $title, string $kernelProjectDir, GdImage $newImage, int $height): void
+    private function addTitle(string $title, string $kernelProjectDir, GdImage $newImage): void
     {
         if ($title === "") {
             return; // No title to add
         }
+        $height = imagesy($newImage);
         $font = $kernelProjectDir . '/public/fonts/google-sans/ProductSans-Regular.ttf';
         $fontSize = 40;
         $radius = 8;
