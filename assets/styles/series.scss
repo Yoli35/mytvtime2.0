@@ -5536,6 +5536,10 @@ h2 {
         transition: all 300ms ease-in-out;
         width: 100%;
 
+        &:has(.episode-vote[data-vote="12"]) {
+            height: 16rem;
+        }
+
         .episode-vote {
             align-items: center;
             display: flex;

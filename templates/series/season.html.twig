@@ -25,7 +25,6 @@
     <div class="container-fluid backgroundImageOverlay">
         <div id="series-season" class="series-show" data-theme="none">
             <div class="header">
-
                 {% if quickLinks.count > 1 %}
                     <div class="quick-episodes-top">
                         <div class="quick-episodes" data-season-number="{{ season.season_number }}" style="height: {{ 32 * quickLinks.lineCount + 4 * (quickLinks.lineCount - 1) + 20 }}px; width: {{ 32 * quickLinks.itemPerLine + 4 * (quickLinks.itemPerLine - 1) + 20 }}px;">
@@ -141,7 +140,7 @@
                 </div>
                 {% set episodeCount = season.progress.episodeCount %}
                 {% set episodeWatchedCount = season.progress.episodeWatchedCount %}
-                {% if episodeCount > 1 %} Les saisons à venir ont généralement un seul épisode au départ
+                {% if episodeCount > 1 %}
                     <div class="progress" data-value="{{ season.progress.value }}" data-title="{{ episodeWatchedCount }} / {{ episodeCount }}">
                         <div class="progress-bar"></div>
                     </div>

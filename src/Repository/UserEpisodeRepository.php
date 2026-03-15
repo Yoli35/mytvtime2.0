@@ -866,7 +866,7 @@ class UserEpisodeRepository extends ServiceEntityRepository
 
         if ($result) {
             return [
-                'value' => $result['episodeWatchedCount'] / $result['episodeCount'] * 100,
+                'value' => round($result['episodeWatchedCount'] / $result['episodeCount'] * 100, 2),
                 'episodeCount' => $result['episodeCount'],
                 'episodeWatchedCount' => intval($result['episodeWatchedCount']),
             ];
