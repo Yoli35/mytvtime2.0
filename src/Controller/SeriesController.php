@@ -860,6 +860,8 @@ class SeriesController extends AbstractController
         $tv['watch/providers'] = $this->watchProviders($tv, $country);
         $tv['status_css'] = $this->statusCss($tv);
 
+        $tv['seasons'] = $this->trimSeasons($tv['id'], $locale, $tv['seasons']);
+
         $series = $this->updateSeries($series, $tv, $seriesArr['images']);
 
         $userSeries = $this->updateUserSeries($userSeries, $tv);
@@ -1536,7 +1538,7 @@ class SeriesController extends AbstractController
                     $addedBackdropCount = 1;
                     $addedLogoCount = 0;
                     $addedPosterCount = 0;
-                } else  if ($type === 'logo') {
+                } else if ($type === 'logo') {
                     $this->imageService->saveImage("logos", $imagePath, $this->imageConfiguration->getUrl('logo_sizes', 5));
                     $addedBackdropCount = 0;
                     $addedLogoCount = 1;
@@ -1938,6 +1940,22 @@ class SeriesController extends AbstractController
         return $userSeries;
     }
 
+    public function trimSeasons(int $tvId, string $locale, array $seasons): array
+    {
+        return array_map(function ($season) use ($tvId, $locale) {
+            $tmdbSeason = json_decode($this->tmdbService->getTvSeason($tvId, $season['season_number'], $locale), true);
+            $finaleEpisode = array_find($tmdbSeason['episodes'] ?? [], function ($e) {
+                return ($e['episode_type'] ?? 'standard') === 'finale';
+            });
+            $finalEpisodeNumber = $finaleEpisode ? $finaleEpisode['episode_number'] : null;
+            // Filtrer les épisodes pour ne garder que ceux jusqu'à l'épisode final
+            if ($finalEpisodeNumber !== null) {
+                $season['episode_count'] = $finalEpisodeNumber;
+            }
+            return $season;
+        }, $seasons);
+    }
+
     public function getUserSeasons(Series $series, array $userEpisodes): array
     {
         $seasonArr = [];
@@ -1997,7 +2015,6 @@ class SeriesController extends AbstractController
         $user = $userSeries->getUser();
         $series = $userSeries->getSeries();
         $locale = $user->getPreferredLanguage() ?? 'fr';
-//        $userSeries = $this->userSeriesRepository->findOneBy(['user' => $user, 'series' => $series]);
         $logoUrl = $this->imageConfiguration->getUrl('logo_sizes', 5);
 
         foreach ($series->getSeriesBroadcastSchedules() as $schedule) {
