@@ -404,15 +404,15 @@ class SeriesController extends AbstractController
             $tmdbIds = array_column($seriesWithoutProviders, 'tmdb_id');;
         }
 
-        dump([
-            'provider' => $provider,
-            'selectedProvider' => $selectedProvider, // Si null, on affiche la liste des séries sans provider
-            'tmdbIds' => $tmdbIds,
-            'providers' => $providers,
-            'userProviders' => $userProviders,
-            'seriesWithoutProviders' => $seriesWithoutProviders,
-            'seriesByProvider' => $seriesByProvider,
-        ]);
+//        dump([
+//            'provider' => $provider,
+//            'selectedProvider' => $selectedProvider, // Si null, on affiche la liste des séries sans provider
+//            'tmdbIds' => $tmdbIds,
+//            'providers' => $providers,
+//            'userProviders' => $userProviders,
+//            'seriesWithoutProviders' => $seriesWithoutProviders,
+//            'seriesByProvider' => $seriesByProvider,
+//        ]);
 
         return $this->render('series/series_by_provider.html.twig', [
             'provider' => $provider,
