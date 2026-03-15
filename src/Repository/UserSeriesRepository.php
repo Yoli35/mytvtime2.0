@@ -646,7 +646,7 @@ class UserSeriesRepository extends ServiceEntityRepository
                     LEFT JOIN `user_series` us ON us.`id`=ue.`user_series_id`
                     LEFT JOIN `series` s ON s.`id`=us.`series_id`
                     LEFT JOIN `series_localized_name` sln ON sln.`series_id`=s.`id` AND sln.`locale`=:locale
-                WHERE ue.id=:id AND ue.`provider_id` IS NULL;
+                WHERE ue.user_id=:id AND ue.`provider_id` IS NULL;
                 SQL;
 
         return $this->getAll($sql, $params, $types);
@@ -677,7 +677,7 @@ class UserSeriesRepository extends ServiceEntityRepository
                     LEFT JOIN `user_series` us ON us.`id`=ue.`user_series_id`
                     LEFT JOIN `series` s ON s.`id`=us.`series_id`
                     LEFT JOIN `series_localized_name` sln ON sln.`series_id`=s.`id` AND sln.`locale`='fr'
-                WHERE  ue.`provider_id`=:provider
+                WHERE ue.user_id=:id AND ue.`provider_id`=:provider
                 ORDER BY us.`last_watch_at` DESC;
                 SQL;
 
