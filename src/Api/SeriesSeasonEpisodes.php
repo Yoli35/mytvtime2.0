@@ -254,10 +254,12 @@ class SeriesSeasonEpisodes extends AbstractController
         });
         $watchedAt = $userEpisode->getWatchAt();
         if ($watchedAt && $wpId = $userEpisode->getProviderId()) {
-            $providerPath = $this->providersInfos[$wpId]['path'];
-            $providerName = $this->providersInfos[$wpId]['name'];
-            $voteColorBackground = $this->providersInfos[$wpId]['vote_color_background'];
-            $voteColor = $this->providersInfos[$wpId]['vote_color'];
+            if (key_exists($wpId, $this->providersInfos)) {
+                $providerPath = $this->providersInfos[$wpId]['path'];
+                $providerName = $this->providersInfos[$wpId]['name'];
+                $voteColorBackground = $this->providersInfos[$wpId]['vote_color_background'];
+                $voteColor = $this->providersInfos[$wpId]['vote_color'];
+            }
         }
         if ($watchedAt) {
             $vote = $userEpisode->getVote();
