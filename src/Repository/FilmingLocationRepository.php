@@ -64,7 +64,7 @@ class FilmingLocationRepository extends ServiceEntityRepository
             $andWhere = " AND fl.season_number = $seasonNumber AND fl.episode_number = $episodeNumber";
         } elseif ($seasonNumber && !$episodeNumber) {
             $andWhere = " AND fl.season_number = $seasonNumber";
-        } elseif (!$seasonNumber && $episodeNumber) { // Devrait lever une exception
+        } elseif ($seasonNumber === null && $episodeNumber) { // Devrait lever une exception
             throw new \InvalidArgumentException('Episode number cannot be provided without season number');
         }
         $sql = "SELECT fl.*, fli.path as still_path
