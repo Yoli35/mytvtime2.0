@@ -385,15 +385,17 @@ class SeriesController extends AbstractController
             $settings = new Settings($user, 'by provider', ['provider' => $provider]);
         } else {
             $data = $settings->getData();
-            $data['country'] = $provider;
+            $data['provider'] = $provider;
             $settings->setData($data);
         }
         $this->settingsRepository->save($settings, true);
 
         $providers = $this->watchProviderRepository->getAllProviders();
         $userProviders = $this->userSeriesRepository->userSeriesProviders($user);
-        $seriesWithoutProviders = $this->userSeriesRepository->userSeriesWithoutProvider($user, $locale);
-        $seriesByProvider = $this->userSeriesRepository->userSeriesByProvider($user, $provider, $locale);
+        $seriesWithoutProvider = $this->userSeriesRepository->userSeriesWithoutProvider($user, $locale, 1, 50);
+        $seriesWithoutProviderCount = count($this->userSeriesRepository->userSeriesWithoutProviderCount($user, $locale));
+        $seriesByProvider = $this->userSeriesRepository->userSeriesByProvider($user, $provider, $locale, 1, 50);
+        $seriesByProviderCount = count($this->userSeriesRepository->userSeriesByProviderCount($user, $provider, $locale));
 
         $selectedProvider = array_find($providers, function ($p) use ($provider) {
             return $p['provider_id'] == $provider;
@@ -401,18 +403,20 @@ class SeriesController extends AbstractController
         if ($selectedProvider) {
             $tmdbIds = array_column($seriesByProvider, 'tmdb_id');
         } else {
-            $tmdbIds = array_column($seriesWithoutProviders, 'tmdb_id');;
+            $tmdbIds = array_column($seriesWithoutProvider, 'tmdb_id');;
         }
 
-//        dump([
-//            'provider' => $provider,
-//            'selectedProvider' => $selectedProvider, // Si null, on affiche la liste des séries sans provider
-//            'tmdbIds' => $tmdbIds,
-//            'providers' => $providers,
-//            'userProviders' => $userProviders,
-//            'seriesWithoutProviders' => $seriesWithoutProviders,
-//            'seriesByProvider' => $seriesByProvider,
-//        ]);
+        dump([
+            'provider' => $provider,
+            'selectedProvider' => $selectedProvider, // Si null, on affiche la liste des séries sans provider
+            'tmdbIds' => $tmdbIds,
+            'providers' => $providers,
+            'userProviders' => $userProviders,
+            'seriesWithoutProvider' => $seriesWithoutProvider,
+            'seriesWithoutProviderCount' => $seriesWithoutProviderCount,
+            'seriesByProvider' => $seriesByProvider,
+            'seriesByProviderCount' => $seriesByProviderCount,
+        ]);
 
         return $this->render('series/series_by_provider.html.twig', [
             'provider' => $provider,
@@ -420,8 +424,10 @@ class SeriesController extends AbstractController
             'tmdbIds' => $tmdbIds,
             'providers' => $providers,
             'userProviders' => $userProviders,
-            'seriesWithoutProviders' => $seriesWithoutProviders,
+            'seriesWithoutProvider' => $seriesWithoutProvider,
+            'seriesWithoutProviderCount' => $seriesWithoutProviderCount,
             'seriesByProvider' => $seriesByProvider,
+            'seriesByProviderCount' => $seriesByProviderCount,
         ]);
     }
 

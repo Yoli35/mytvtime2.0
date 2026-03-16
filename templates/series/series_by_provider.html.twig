@@ -10,25 +10,50 @@
 
 {% block body %}
     {% include('_blocks/_menu.html.twig') %}
-    <div class="container-fluid series-by-country">
-        <h1>{{ title }}</h1>
+    <div class="container-fluid series-by-provider">
+        <h1><span class="by">{{ title }}</span><span class="without">{{ 'With watched episodes without provider'|trans }}</span></h1>
         <header>
-            {% if selectedProvider is not null %}
-                {% set seriesCount = seriesByProvider|length %}
-            {% else %}
-                {% set seriesCount = seriesWithoutProviders %}
-            {% endif %}
-            <h2>{{ seriesCount }} {{ (seriesCount > 1 ? 'seriess':'series')|trans }}</h2>
-            <label for="provider-select">Provider
-                <select id="provider-select">
-                    {% for option in userProviders %}
-                        <option value="{{ option.provider_id }}"{% if option.provider_id == provider %} selected{% endif %}>{{ option.provider_name }}</option>
-                    {% endfor %}
-                </select>
-            </label>
+            <div id="withProvider" class="tab{% if selectedProvider is not null %} active{% endif %}">
+                <h2>{{ seriesByProviderCount }} {{ (seriesByProviderCount > 1 ? 'seriess':'series')|trans }}</h2>
+                <label for="provider-select">{{ 'Provider'|trans }}
+                    <select id="provider-select">
+                        {% for option in userProviders %}
+                            <option value="{{ option.provider_id }}"{% if option.provider_id == provider %} selected{% endif %}>{{ option.provider_name }}</option>
+                        {% endfor %}
+                    </select>
+                </label>
+            </div>
+            <div id="withoutProvider" class="tab{% if selectedProvider is null %} active{% endif %}">
+                <h2>{{ seriesWithoutProviderCount }} {{ (seriesWithoutProviderCount > 1 ? 'seriess':'series')|trans }}</h2>
+                <label for="new-provider-select">{{ 'Provider'|trans }}
+                    <select id="new-provider-select">
+                        <option value="">{{ 'Choose a provider'|trans }}</option>
+                        {% for option in providers %}
+                            <option value="{{ option.provider_id }}">{{ option.provider_name }}</option>
+                        {% endfor %}
+                    </select>
+                </label>
+            </div>
             <script>
                 document.getElementById('provider-select').addEventListener('change', function () {
                     window.location.href = "{{ path('app_series_by_provider', {provider: 1})|slice(0, -1) }}" + this.value;
+                });
+                document.getElementById('new-provider-select').addEventListener('change', function () {});
+                document.getElementById('withProvider').addEventListener('click', function () {
+                    document.getElementById('withProvider').classList.add('active');
+                    document.getElementById('withoutProvider').classList.remove('active');
+                    document.querySelector('h1').classList.remove('without');
+                    document.querySelectorAll('.series-group .wrapper').forEach(wrapper => {
+                        wrapper.style.transform = 'translateX(0%)';
+                    })
+                });
+                document.getElementById('withoutProvider').addEventListener('click', function () {
+                    document.getElementById('withProvider').classList.remove('active');
+                    document.getElementById('withoutProvider').classList.add('active');
+                    document.querySelector('h1').classList.add('without');
+                    document.querySelectorAll('.series-group .wrapper').forEach(wrapper => {
+                        wrapper.style.transform = 'translateX(-100%)';
+                    })
                 });
             </script>
         </header>
@@ -40,11 +65,18 @@
                     {% endfor %}
                 </div>
             </div>
+            <div class="wrapper">
+                <div class="content center">
+                    {% for series in seriesWithoutProvider %}
+                        {{ include('_blocks/series/_card_by_provider.html.twig') }}
+                    {% endfor %}
+                </div>
+            </div>
         </div>
         <div id="global-data" class="hidden">
             {
-                "tmdbIds": {{ tmdbIds|json_encode|raw }},
-                "app_series_tmdb_check": "{{ path('app_series_tmdb_check') }}"
+            "tmdbIds": {{ tmdbIds|json_encode|raw }},
+            "app_series_tmdb_check": "{{ path('app_series_tmdb_check') }}"
             }
         </div>
         <div id="svgs" style="display: none">
@@ -54,47 +86,4 @@
         </div>
     </div>
     {% include('_blocks/_footer.html.twig') %}
-{% endblock %}
-{% block javascripts %}
-    {{ parent() }}
-    <script>
-        window.addEventListener("DOMContentLoaded", init);
-
-        function init() {
-            const lang = document.documentElement.lang;
-            const filterByCountry = document.getElementById('filter-by-country');
-            filterByCountry.addEventListener('change', (e) => {
-                const country = e.target.value;
-                window.location.href = '/' + lang + '/series/by/country/' + country;
-            });
-            /** @type {HTMLInputElement} */
-            const filterByName = document.getElementById('filter-by-name');
-            filterByName.addEventListener('input', filterSeries);
-            filterByName.focus();
-            setTimeout(() => {
-                filterSeries({target: filterByName});
-            }, 1000);
-        }
-
-        function filterSeries(e) {
-            const filter = e.target.value.toLowerCase();
-            const series = document.querySelectorAll('.series-group.user .content .card');
-            series.forEach((s) => {
-                const title = s.querySelector('.name').textContent.toLowerCase();
-                if (title.includes(filter)) {
-                    s.style.display = "block";
-                    setTimeout(() => {
-                        s.style.opacity = "1";
-                        s.style.width = "15rem";
-                    }, 0);
-                } else {
-                    s.style.opacity = "0.125";
-                    s.style.width = "0";
-                    setTimeout(() => {
-                        s.style.display = "none";
-                    }, 300);
-                }
-            });
-        }
-    </script>
 {% endblock %}

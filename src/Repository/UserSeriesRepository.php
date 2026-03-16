@@ -624,45 +624,76 @@ class UserSeriesRepository extends ServiceEntityRepository
         return $this->getAll($sql, $params, $types);
     }
 
-    public function userSeriesWithoutProvider(User $user, string $locale): array
+    public function userSeriesWithoutProvider(User $user, string $locale, int $page, int $limit): array
     {
         $params = [
             'id' => $user->getId(),
             'locale' => $locale,
+            'offset' => ($page - 1) * $limit,
+            'limit' => $limit,
         ];
         $types = [
             'id' => ParameterType::INTEGER,
             'locale' => ParameterType::STRING,
+            'offset' => ParameterType::INTEGER,
+            'limit' => ParameterType::INTEGER,
         ];
         $sql = <<<SQL
                 SELECT
-                    DISTINCT us.`id` AS `user_series_id`,
-                    s.`id` AS id,
-                    s.`tmdb_id` AS tmdb_id,
+                    DISTINCT us.`id`                                            AS `user_series_id`,
+                    s.`id`                                                      AS id,
+                    s.`tmdb_id`                                                 AS tmdb_id,
+                    s.`first_air_date`                                          AS first_air_date,
                     IF(sln.`id`, CONCAT(sln.`name`, ' - ', s.`name`), s.`name`) AS display_name,
-                    IF(sln.`id`, sln.`slug`, s.`slug`) AS slug,
-                    s.`poster_path` AS poster_path
+                    IF(sln.`id`, sln.`slug`, s.`slug`)                          AS slug,
+                    s.`poster_path`                                             AS poster_path
                 FROM `user_episode` ue
                     LEFT JOIN `user_series` us ON us.`id`=ue.`user_series_id`
                     LEFT JOIN `series` s ON s.`id`=us.`series_id`
                     LEFT JOIN `series_localized_name` sln ON sln.`series_id`=s.`id` AND sln.`locale`=:locale
-                WHERE ue.user_id=:id AND ue.`provider_id` IS NULL;
+                WHERE ue.user_id=:id AND ue.`watch_at` IS NOT NULL AND ue.`provider_id` IS NULL
+                ORDER BY s.`first_air_date` DESC 
+                LIMIT :limit OFFSET :offset;
                 SQL;
 
         return $this->getAll($sql, $params, $types);
     }
 
-    public function userSeriesByProvider(User $user, int $provider, string $locale): array
+    public function userSeriesWithoutProviderCount(User $user): array
+    {
+        $params = [
+            'id' => $user->getId(),
+        ];
+        $types = [
+            'id' => ParameterType::INTEGER,
+        ];
+        $sql = <<<SQL
+                SELECT
+                    DISTINCT us.`id`
+                FROM `user_episode` ue
+                    LEFT JOIN `user_series` us ON us.`id`=ue.`user_series_id`
+                    LEFT JOIN `series` s ON s.`id`=us.`series_id`
+                WHERE ue.user_id=:id AND ue.`watch_at` IS NOT NULL AND ue.`provider_id` IS NULL;
+                SQL;
+
+        return $this->getAll($sql, $params, $types);
+    }
+
+    public function userSeriesByProvider(User $user, int $provider, string $locale, int $page, int $limit): array
     {
         $params = [
             'id' => $user->getId(),
             'provider' => $provider,
             'locale' => $locale,
+            'offset' => ($page - 1) * $limit,
+            'limit' => $limit,
         ];
         $types = [
             'id' => ParameterType::INTEGER,
             'provider' => ParameterType::INTEGER,
             'locale' => ParameterType::STRING,
+            'offset' => ParameterType::INTEGER,
+            'limit' => ParameterType::INTEGER,
         ];
         $sql = <<<SQL
                 SELECT
@@ -676,9 +707,32 @@ class UserSeriesRepository extends ServiceEntityRepository
                 FROM `user_episode` ue
                     LEFT JOIN `user_series` us ON us.`id`=ue.`user_series_id`
                     LEFT JOIN `series` s ON s.`id`=us.`series_id`
-                    LEFT JOIN `series_localized_name` sln ON sln.`series_id`=s.`id` AND sln.`locale`='fr'
+                    LEFT JOIN `series_localized_name` sln ON sln.`series_id`=s.`id` AND sln.`locale`=:locale
                 WHERE ue.user_id=:id AND ue.`provider_id`=:provider
-                ORDER BY us.`last_watch_at` DESC;
+                ORDER BY us.`last_watch_at` DESC
+                LIMIT :limit OFFSET :offset;
+                SQL;
+
+        return $this->getAll($sql, $params, $types);
+    }
+
+    public function userSeriesByProviderCount(User $user, int $provider): array
+    {
+        $params = [
+            'id' => $user->getId(),
+            'provider' => $provider,
+        ];
+        $types = [
+            'id' => ParameterType::INTEGER,
+            'provider' => ParameterType::INTEGER,
+        ];
+        $sql = <<<SQL
+                SELECT
+                    DISTINCT us.`id`
+                FROM `user_episode` ue
+                    LEFT JOIN `user_series` us ON us.`id`=ue.`user_series_id`
+                    LEFT JOIN `series` s ON s.`id`=us.`series_id`
+                WHERE ue.user_id=:id AND ue.`provider_id`=:provider;
                 SQL;
 
         return $this->getAll($sql, $params, $types);

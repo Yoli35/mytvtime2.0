@@ -12,7 +12,11 @@
             <div class="name">
                 {{ series.display_name }}
             </div>
-{#            {{ include('_blocks/list/_tools.html.twig', {seriesId: series.tmdb_id, seriesName: series.sln_name, isSeriesInList: series.is_series_in_list}) }}#}
+            <div class="series-tools-container" data-id="{{ series.id }}">
+                <label for="series-select-{{ series.id }}">
+                    <input type="checkbox" id="series-select-{{ series.id }}" switch>
+                </label>
+            </div>
         </div>
     </a>
 </div>
