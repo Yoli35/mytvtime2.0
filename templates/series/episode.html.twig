@@ -79,6 +79,9 @@
         </div>
     </div>
     {{ include('_blocks/series/_comment_image.html.twig') }}
+    {{ include('_blocks/series/_review_dialog.html.twig') }}
+    {{ include('_blocks/series/_select_provider.html.twig') }}
+
     <div class="episodes" style="display: none">
         <div class="episode-wrapper">
             <div class="episode" id="episode-{{ season.season_number }}-{{ episode.episode_number }}" data-ue-id="{{ episode.user_episode.id }}" data-episode-id="{{ episode.id }}">

@@ -350,25 +350,9 @@
             </div>
         </div>
     </div>
-    {#     Retirez-vous cet épisode ou le regardez-vous de nouveau ? #}
-    <dialog id="review-dialog">
-        <div class="content">
-            <form method="dialog">
-                <button value="remove">{{ 'Remove'|trans }}</button>
-                <button value="watch">{{ 'Watched again'|trans }}</button>
-                <button value="now">{{ 'Now'|trans }}</button>
-                <button value="cancel" autofocus>{{ 'Cancel'|trans }}</button>
-            </form>
-        </div>
-    </dialog>
-    <dialog id="select-provider-dialog">
-        <div class="content">
-            <form method="dialog">
-                <button value="cancel" autofocus>{{ 'Cancel'|trans }}</button>
-            </form>
-        </div>
-    </dialog>
 
+    {{ include('_blocks/series/_review_dialog.html.twig') }}
+    {{ include('_blocks/series/_select_provider.html.twig') }}
     {{ include('_blocks/forms/_edit_episode_infos_form.html.twig') }}
     {{ include('_blocks/series/_comment_image.html.twig') }}
 
