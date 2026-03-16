@@ -6944,6 +6944,10 @@ dialog, .side-panel {
         }
     }
 
+    button[class="danger"] {
+        margin-inline-end: auto;
+    }
+
     .location-images {
         display: flex;
         gap: .5rem;

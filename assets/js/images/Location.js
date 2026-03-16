@@ -43,9 +43,9 @@ export class Location {
         const inputGoogleMapsUrl = addLocationForm.querySelector('input[name="google-map-url"]');
         const inputLatitude = addLocationForm.querySelector('input[name="latitude"]');
         const inputLongitude = addLocationForm.querySelector('input[name="longitude"]');
-        const addLocationCancel = addLocationForm.querySelector('button[type="button"]');
+        const addLocationCancel = addLocationForm.querySelector('button[name="cancel"]');
         const addLocationSubmit = addLocationForm.querySelector('button[type="submit"]');
-        const addLocationDelete = addLocationForm.querySelector('button[type="button"].danger');
+        const addLocationDelete = addLocationForm.querySelector('button[name="delete"]');
         const imageInputs = addLocationForm.querySelectorAll('input[type="url"]');
         const submitRow = addLocationForm.querySelector('.form-row.submit-row');
         const scrollDownToSubmitDiv = addLocationDialog.querySelector('.scroll-down-to-submit');
