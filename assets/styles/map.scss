@@ -1,6 +1,6 @@
 .map-container {
-    border-radius: .5rem;
-    border: 2px solid var(--ardoise-50);
+    border-radius: 1rem;
+    /*border: 2px solid var(--ardoise-50);*/
     display: flex;
     flex-direction: column;
     justify-content: flex-end;
@@ -12,8 +12,8 @@
         --svgSize: 2rem;
 
         aspect-ratio: 4 / 3;
-        border: 2px solid var(--ardoise-50);
-        border-radius: .5rem;
+        border-radius: 1rem;
+        /*border: 2px solid var(--ardoise-50);*/
         overflow: hidden;
 
         .leaflet-popup-content-wrapper {
