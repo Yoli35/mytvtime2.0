@@ -45,9 +45,7 @@ export class PeopleShow {
             star.addEventListener("click", this.rate);
         });
 
-        const preferredNameForm = document.querySelector(".preferred-name");
-        const preferredNameSubmit = preferredNameForm.querySelector("button[type=submit]");
-        preferredNameSubmit.addEventListener("click", this.preferredName);
+        this.initPreferredName();
 
         /******************************************************************************
          * Menu to add a localized name or an overview and additional overview        *
@@ -150,7 +148,7 @@ export class PeopleShow {
         poster.classList.add("show");
     }
 
-    hidePoster(e) {
+    hidePoster() {
         const poster = document.querySelector(".person").querySelector(".poster-hover");
         poster.classList.remove("show");
     }
@@ -194,6 +192,34 @@ export class PeopleShow {
                 });
                 self.toolTips.init(ratingInfos);
             });
+    }
+
+    initPreferredName() {
+        const preferredNameForm = document.querySelector(".preferred-name");
+        const radios = preferredNameForm.querySelectorAll('input[type="radio"]');
+        const input = preferredNameForm.querySelector('input[name="new_name"]');
+        const submitButton = preferredNameForm.querySelector('button[type="submit"]');
+
+        radios.forEach(radio => {
+            radio.addEventListener('change', () => {
+                submitButton.disabled = !radio.checked && !input.value.trim();
+            })
+        });
+
+        input.addEventListener('input', function () {
+            const checkedRadio = preferredNameForm.querySelector('input[type="radio"]:checked');
+            const inputValue = input.value.trim();
+            const inputValueLength = inputValue.length;
+            // Disable radios if a new name is entered
+            if (radios.length) {
+                radios.forEach(radio => {
+                    radio.disabled = inputValueLength > 0;
+                });
+            }
+            submitButton.disabled = !inputValueLength && (!checkedRadio || !checkedRadio.checked);
+        });
+
+        submitButton.addEventListener("click", this.preferredName);
     }
 
     preferredName(e) {
