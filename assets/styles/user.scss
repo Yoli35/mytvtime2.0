@@ -479,6 +479,19 @@
                         }
                     }
                 }
+
+                .device-choice {
+                    align-items: center;
+                    background-color: hsl(from var(--orange) h s l /.25);
+                    border-radius: 5rem;
+                    border: 2px dashed var(--orange);
+                    display: flex;
+                    flex-wrap: wrap;
+                    gap: .5rem;
+                    height: 2.25rem;
+                    margin-block-start: 4px;
+                    padding-inline: 1rem;
+                }
             }
         }
 

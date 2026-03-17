@@ -61,6 +61,12 @@
                         {{ form_widget(form.preferredLanguage) }}
                     </label>
                 </div>
+                <div class="form-field">
+                    <label for="{{ form.preferredDevices.vars.id }}">
+                        {{ form.preferredDevices.vars.label|trans }}
+                        {{ form_widget(form.preferredDevices) }}
+                    </label>
+                </div>
             </div>
             <div class="form-row">
                 <div class="form-field">

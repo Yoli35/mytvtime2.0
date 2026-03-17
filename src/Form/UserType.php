@@ -2,7 +2,9 @@
 
 namespace App\Form;
 
+use App\Entity\Device;
 use App\Entity\User;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CountryType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
@@ -41,6 +43,19 @@ class UserType extends AbstractType
             ->add('timezone', TimezoneType::class, [
                 'empty_data' => '',
                 'label' => 'Timezone',
+                'required' => false,
+            ])
+            ->add('preferredDevices', EntityType::class, [
+                'attr' => ['class' => 'device-choice', 'data-title' => 'Select one or more devices that might be available to you if there is no way to predict which device you will use to watch the series'],
+                'choice_attr' => function ($device, $key, $index) {
+                    return ['switch'=>''];
+                },
+                'choice_label' => 'name',
+                'class' => Device::class,
+                'empty_data' => '',
+                'expanded' => true,
+                'label' => 'Device',
+                'multiple' => true,
                 'required' => false,
             ])
             ->add('avatarFile', FileType::class, [

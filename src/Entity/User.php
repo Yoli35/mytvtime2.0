@@ -142,6 +142,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(targetEntity: EpisodeComment::class, mappedBy: 'user', orphanRemoval: true)]
     private Collection $episodeComments;
 
+    /**
+     * @var Collection<int, Device>
+     */
+    #[ORM\ManyToMany(targetEntity: Device::class)]
+    private Collection $preferredDevices;
+
     public function __construct()
     {
         $this->history = new ArrayCollection();
@@ -160,6 +166,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->photos = new ArrayCollection();
         $this->userLists = new ArrayCollection();
         $this->episodeComments = new ArrayCollection();
+        $this->preferredDevices = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -825,5 +832,29 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function isGranted(string $role): bool
     {
         return in_array($role, $this->roles, true);
+    }
+
+    /**
+     * @return Collection<int, Device>
+     */
+    public function getPreferredDevices(): Collection
+    {
+        return $this->preferredDevices;
+    }
+
+    public function addPreferredDevice(Device $preferredDevice): static
+    {
+        if (!$this->preferredDevices->contains($preferredDevice)) {
+            $this->preferredDevices->add($preferredDevice);
+        }
+
+        return $this;
+    }
+
+    public function removePreferredDevice(Device $preferredDevice): static
+    {
+        $this->preferredDevices->removeElement($preferredDevice);
+
+        return $this;
     }
 }
