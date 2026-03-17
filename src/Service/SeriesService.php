@@ -40,6 +40,8 @@ readonly class SeriesService
         private Closure                       $addFlash,
         #[AutowireMethodOf(ControllerHelper::class)]
         private Closure                       $generateUrl,
+        #[AutowireMethodOf(ControllerHelper::class)]
+        private Closure                       $getUser,
         private DateService                   $dateService,
         private FilmingLocationRepository     $filmingLocationRepository,
         private ImageConfiguration            $imageConfiguration,
@@ -1086,7 +1088,7 @@ readonly class SeriesService
             'seasonPartFirstEpisode' => 1,
             'seasonPartEpisodeCount' => 1,
             'airAt' => "12:00",
-            'timezone' => $this->getUser()->getTimezone() ?? 'UTC',
+            'timezone' => ($this->getUser)()->getTimezone() ?? 'UTC',
             'firstAirDate' => $now,
             'frequency' => 0,
             'override' => false,
@@ -1196,7 +1198,7 @@ readonly class SeriesService
 
     public function now(): DateTimeImmutable
     {
-        $user = $this->getUser();
+        $user = ($this->getUser)();
         $timezone = $user?->getTimezone() ?? 'Europe/Paris';
         return $this->dateService->newDateImmutable('now', $timezone);
     }
