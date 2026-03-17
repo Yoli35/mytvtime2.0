@@ -22,33 +22,39 @@ use App\Repository\SettingsRepository;
 use App\Repository\SourceRepository;
 use App\Repository\UserEpisodeRepository;
 use App\Repository\UserSeriesRepository;
+use Closure;
 use DateMalformedStringException;
 use DateTimeImmutable;
 use Psr\Log\LoggerInterface as MonologLogger;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Bundle\FrameworkBundle\Controller\ControllerHelper;
+use Symfony\Component\DependencyInjection\Attribute\AutowireMethodOf;
 use Symfony\Component\String\Slugger\AsciiSlugger;
 use Symfony\Component\Uid\Uuid;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 /** @method User|null getUser() */
-class SeriesService extends AbstractController
+readonly class SeriesService
 {
     public function __construct(
-        private readonly DateService                   $dateService,
-        private readonly FilmingLocationRepository     $filmingLocationRepository,
-        private readonly ImageConfiguration            $imageConfiguration,
-        private readonly ImageService                  $imageService,
-        private readonly KeywordService                $keywordService,
-        private readonly MonologLogger                 $logger,
-        private readonly NetworkRepository             $networkRepository,
-        private readonly SeriesLocalizedNameRepository $seriesLocalizedNameRepository,
+        #[AutowireMethodOf(ControllerHelper::class)]
+        private Closure                       $addFlash,
+        #[AutowireMethodOf(ControllerHelper::class)]
+        private Closure                       $generateUrl,
+        private DateService                   $dateService,
+        private FilmingLocationRepository     $filmingLocationRepository,
+        private ImageConfiguration            $imageConfiguration,
+        private ImageService                  $imageService,
+        private KeywordService                $keywordService,
+        private MonologLogger                 $logger,
+        private NetworkRepository             $networkRepository,
+        private SeriesLocalizedNameRepository $seriesLocalizedNameRepository,
 //        private readonly SeriesLocalizedOverviewRepository $seriesLocalizedOverviewRepository,
-        private readonly SettingsRepository            $settingsRepository,
-        private readonly SourceRepository              $sourceRepository,
-        private readonly TMDBService                   $tmdbService,
-        private readonly TranslatorInterface           $translator,
-        private readonly UserEpisodeRepository         $userEpisodeRepository,
-        private readonly UserSeriesRepository          $userSeriesRepository,
+        private SettingsRepository            $settingsRepository,
+        private SourceRepository              $sourceRepository,
+        private TMDBService                   $tmdbService,
+        private TranslatorInterface           $translator,
+        private UserEpisodeRepository         $userEpisodeRepository,
+        private UserSeriesRepository          $userSeriesRepository,
     )
     {
     }
@@ -220,7 +226,7 @@ class SeriesService extends AbstractController
                 continue;
             }
             if ($episode['episode_number'] > $finaleEpisodeNumber) {
-                $this->addFlash('warning', "// Skip episode " . sprintf("S%02dE%02d", $tvSeason['season_number'], $episode['episode_number']) . " after a finale");
+                ($this->addFlash)('warning', "// Skip episode " . sprintf("S%02dE%02d", $tvSeason['season_number'], $episode['episode_number']) . " after a finale");
                 continue;
             }
             $newEpisodeCount += $this->addEpisodeToUser($userSeries, $episode, $seasonNumber);
@@ -242,9 +248,9 @@ class SeriesService extends AbstractController
 
         if ($removedEpisodeCount) {
             if ($removedEpisodeCount == 1) {
-                $this->addFlash('info', $this->translator->trans('An episode has been removed from the series (%id%)', ['%id%' => $removedEpisodeIds[0]]));
+                ($this->addFlash)('info', $this->translator->trans('An episode has been removed from the series (%id%)', ['%id%' => $removedEpisodeIds[0]]));
             } else {
-                $this->addFlash('info', $this->translator->trans('%count% episodes have been removed from the series (%list%)', ['%count%' => $removedEpisodeCount, '%list%' => implode(', ', $removedEpisodeIds)]));
+                ($this->addFlash)('info', $this->translator->trans('%count% episodes have been removed from the series (%list%)', ['%count%' => $removedEpisodeCount, '%list%' => implode(', ', $removedEpisodeIds)]));
             }
             $this->userEpisodeRepository->removeByEpisodeIds($userSeries, $removedEpisodeIds);
             $this->userEpisodeRepository->flush();
@@ -261,7 +267,7 @@ class SeriesService extends AbstractController
                         $dbUserEpisode->setAirDate($airDate);
                         $dbUserEpisode->setEpisodeNumber($episode['episode_number']);
                         $this->userEpisodeRepository->save($dbUserEpisode);
-                        $this->addFlash('info', $this->translator->trans('Episode %number% has been updated', ['%number%' => sprintf('S%02dE%02d', $seasonNumber, $episode['episode_number'])]));
+                        ($this->addFlash)('info', $this->translator->trans('Episode %number% has been updated', ['%number%' => sprintf('S%02dE%02d', $seasonNumber, $episode['episode_number'])]));
                     }
                 }
             }
@@ -306,7 +312,7 @@ class SeriesService extends AbstractController
             $this->userEpisodeRepository->flush();
             $userSeries->setNextUserEpisode($userEpisode);
             $this->userSeriesRepository->save($userSeries, true);
-            $this->addFlash('info', $this->translator->trans('Next episode to watch is %episode%', ['%episode%' => sprintf('S%02dE%02d', $seasonNumber, $episode['episode_number'])]));
+            ($this->addFlash)('info', $this->translator->trans('Next episode to watch is %episode%', ['%episode%' => sprintf('S%02dE%02d', $seasonNumber, $episode['episode_number'])]));
         }
         return 1;
     }
@@ -458,7 +464,7 @@ class SeriesService extends AbstractController
         ];
     }
 
-    public function getSeriesSeasonTranslations(): array
+    public function getSeasonShowTranslations(): array
     {
         return [
             'Add a comment' => $this->translator->trans('Add a comment'),
@@ -586,7 +592,7 @@ class SeriesService extends AbstractController
                 $slug = $slugger->slug($tv['translations']['data']['name'])->lower()->toString();
                 $newLocalizedName = new SeriesLocalizedName($series, $tv['translations']['data']['name'], $slug, $locale);
                 $this->seriesLocalizedNameRepository->save($newLocalizedName, true);
-                $this->addFlash('success', 'The series name “' . $newLocalizedName->getName() . '” has been added to the database.');
+                ($this->addFlash)('success', 'The series name “' . $newLocalizedName->getName() . '” has been added to the database.');
             }
         }
         return $newLocalizedName;
@@ -614,7 +620,7 @@ class SeriesService extends AbstractController
         if (!$ep) return null;
 
         $ep['still_path'] = $ep['still_path'] ? $this->imageConfiguration->getUrl('still_sizes', 2) . $ep['still_path'] : null;
-        $ep['url'] = $this->generateUrl('app_series_season_show', [
+        $ep['url'] = ($this->generateUrl)('app_series_season_show', [
                 'id' => $series->getId(),
                 'slug' => $series->getSlug(),
                 'seasonNumber' => $ep['season_number'],
@@ -651,14 +657,14 @@ class SeriesService extends AbstractController
                 $tmdbNetwork = json_decode($this->tmdbService->getNetworkDetails($id), true);
 
                 if (!$tmdbNetwork) {
-                    $this->addFlash('error', $this->translator->trans('network.not_found') . ' → ' . $tvNetwork['name'] . ' (ID: ' . $id . ')');
+                    ($this->addFlash)('error', $this->translator->trans('network.not_found') . ' → ' . $tvNetwork['name'] . ' (ID: ' . $id . ')');
                     continue;
                 }
                 $networkDb = new Network($tmdbNetwork['logo_path'], $tmdbNetwork['name'], $id, $tmdbNetwork['origin_country'], $now);
                 $networkDb->setHeadquarters($tmdbNetwork['headquarters']);
                 $networkDb->setHomepage($tmdbNetwork['homepage']);
                 $this->networkRepository->save($networkDb);
-                $this->addFlash('success', $this->translator->trans('network.added') . ' → ' . $networkDb->getName());
+                ($this->addFlash)('success', $this->translator->trans('network.added') . ' → ' . $networkDb->getName());
             } else {
                 $isUpdateNeed = false;
                 if (!$networkDb->getUpdatedAt()) {
@@ -673,7 +679,7 @@ class SeriesService extends AbstractController
                     $tmdbNetwork = json_decode($this->tmdbService->getNetworkDetails($networkDb->getNetworkId()), true);
 
                     if (!$tmdbNetwork) {
-                        $this->addFlash('error', $this->translator->trans('network.not_found') . ' → ' . $networkDb->getName() . ' (ID: ' . $networkDb->getNetworkId() . ')');
+                        ($this->addFlash)('error', $this->translator->trans('network.not_found') . ' → ' . $networkDb->getName() . ' (ID: ' . $networkDb->getNetworkId() . ')');
                         continue;
                     }
                     $networkDb->setHeadquarters($tmdbNetwork['headquarters']);
@@ -683,7 +689,7 @@ class SeriesService extends AbstractController
                     $networkDb->setOriginCountry($tmdbNetwork['origin_country']);
                     $networkDb->setUpdatedAt($now);
                     $this->networkRepository->save($networkDb);
-                    $this->addFlash('success', $this->translator->trans('network.updated') . ' → ' . $networkDb->getName());
+                    ($this->addFlash)('success', $this->translator->trans('network.updated') . ' → ' . $networkDb->getName());
                 }
             }
         }
@@ -733,7 +739,7 @@ class SeriesService extends AbstractController
         }, $series->getSeriesBroadcastSchedules()->toArray());
         foreach ($alternateSchedules as &$s) {
             $s['airDays'] = array_map(function ($day) use ($s, $series) {
-                $day['url'] = $this->generateUrl('app_series_season_show', [
+                $day['url'] = ($this->generateUrl)('app_series_season_show', [
                         'id' => $series->getId(),
                         'slug' => $series->getSlug(),
                         'seasonNumber' => $s['seasonNumber'],
@@ -985,7 +991,7 @@ class SeriesService extends AbstractController
     {
         if (!$selectedDayCount) {
             // No selected days of the week
-            $this->addFlash('error', $this->translator->trans('No selected days of week.'));
+            ($this->addFlash)('error', $this->translator->trans('No selected days of week.'));
             return false;
         }
 
@@ -999,7 +1005,7 @@ class SeriesService extends AbstractController
             }
             $selectedDaysString = rtrim($selectedDaysString, ', ');
             $firstDayString = $this->translator->trans($dayStrings[$firstDayOfWeek]);
-            $this->addFlash('error', $this->translator->trans('The first day of the week must be in the selected days of the week.')
+            ($this->addFlash)('error', $this->translator->trans('The first day of the week must be in the selected days of the week.')
                 . '<br>' . $this->translator->trans('Selected days of the week → %days%', ['%days%' => $selectedDaysString])
                 . '<br>' . $this->translator->trans('First day of the week → %day%', ['%day%' => $firstDayString]));
             return false;
