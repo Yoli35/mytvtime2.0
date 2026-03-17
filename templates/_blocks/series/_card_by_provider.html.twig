@@ -12,11 +12,13 @@
             <div class="name">
                 {{ series.display_name }}
             </div>
-            <div class="series-tools-container" data-id="{{ series.id }}">
-                <label for="series-select-{{ series.id }}">
-                    <input type="checkbox" id="series-select-{{ series.id }}" switch>
-                </label>
-            </div>
+            {% if selectSeries %}
+                <div class="series-tools-container" data-id="{{ series.id }}">
+                    <label for="series-select-{{ series.id }}">
+                        <input type="checkbox" id="series-select-{{ series.id }}" switch>
+                    </label>
+                </div>
+            {% endif %}
         </div>
     </a>
 </div>

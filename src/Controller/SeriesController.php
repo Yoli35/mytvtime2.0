@@ -45,6 +45,7 @@ use App\Service\DateService;
 use App\Service\ImageConfiguration;
 use App\Service\ImageService;
 use App\Service\KeywordService;
+use App\Service\ProviderService;
 use App\Service\SeriesService;
 use App\Service\SettingsAdvancedDbSearchService;
 use App\Service\TMDBService;
@@ -93,6 +94,7 @@ class SeriesController extends AbstractController
         private readonly MonologLogger                     $logger,
         private readonly NetworkRepository                 $networkRepository,
         private readonly PeopleUserPreferredNameRepository $peopleUserPreferredNameRepository,
+        private readonly ProviderService                   $providerService,
         private readonly SeasonLocalizedOverviewRepository $seasonLocalizedOverviewRepository,
         private readonly SeriesBroadcastDateRepository     $seriesBroadcastDateRepository,
         private readonly SeriesBroadcastScheduleRepository $seriesBroadcastScheduleRepository,
@@ -379,6 +381,10 @@ class SeriesController extends AbstractController
     public function seriesByProvider(#[CurrentUser] User $user, Request $request, int $provider): Response
     {
         $locale = $user->getPreferredLanguage() ?? $request->getLocale();
+        $page1 = $request->query->get('p1', 1);
+        $page2 = $request->query->get('p2', 1);
+        $tab = $request->query->get('t', 1);
+        $limit = 50;
 
         $settings = $this->settingsRepository->findOneBy(['user' => $user, 'name' => 'by provider']);
         if (!$settings) {
@@ -390,44 +396,36 @@ class SeriesController extends AbstractController
         }
         $this->settingsRepository->save($settings, true);
 
-        $providers = $this->watchProviderRepository->getAllProviders();
-        $userProviders = $this->userSeriesRepository->userSeriesProviders($user);
-        $seriesWithoutProvider = $this->userSeriesRepository->userSeriesWithoutProvider($user, $locale, 1, 50);
-        $seriesWithoutProviderCount = count($this->userSeriesRepository->userSeriesWithoutProviderCount($user, $locale));
-        $seriesByProvider = $this->userSeriesRepository->userSeriesByProvider($user, $provider, $locale, 1, 50);
-        $seriesByProviderCount = count($this->userSeriesRepository->userSeriesByProviderCount($user, $provider, $locale));
+        $providers = $this->providerService->get($user);
+        $seriesByProvider = $this->providerService->seriesByProvider($user, $provider, $locale, $page1, $limit);
+        $seriesWithoutProvider = $this->providerService->seriesWithoutProviders($user, $locale, $page2, $limit);
 
-        $selectedProvider = array_find($providers, function ($p) use ($provider) {
+        $selectedProvider = array_find($providers['userProviders'], function ($p) use ($provider) {
             return $p['provider_id'] == $provider;
         });
-        if ($selectedProvider) {
-            $tmdbIds = array_column($seriesByProvider, 'tmdb_id');
-        } else {
-            $tmdbIds = array_column($seriesWithoutProvider, 'tmdb_id');;
-        }
+        $selectedProvider['logo_path'] = $this->providerService->getProviderLogoFullPath($selectedProvider['logo_path'], $this->imageConfiguration->getUrl('logo_sizes', 5));
 
         dump([
             'provider' => $provider,
             'selectedProvider' => $selectedProvider, // Si null, on affiche la liste des séries sans provider
-            'tmdbIds' => $tmdbIds,
             'providers' => $providers,
-            'userProviders' => $userProviders,
             'seriesWithoutProvider' => $seriesWithoutProvider,
-            'seriesWithoutProviderCount' => $seriesWithoutProviderCount,
             'seriesByProvider' => $seriesByProvider,
-            'seriesByProviderCount' => $seriesByProviderCount,
+            'tab' => $tab,
+            'page tab 1' => $page1,
+            'page tab 2' => $page2,
+            'totalPages' => ceil(count($seriesByProvider) / $limit),
         ]);
+        $tmdbIds = array_column($seriesByProvider['results'], 'tmdb_id');
 
         return $this->render('series/series_by_provider.html.twig', [
+            'tab' => $tab,
             'provider' => $provider,
             'selectedProvider' => $selectedProvider,
             'tmdbIds' => $tmdbIds,
             'providers' => $providers,
-            'userProviders' => $userProviders,
             'seriesWithoutProvider' => $seriesWithoutProvider,
-            'seriesWithoutProviderCount' => $seriesWithoutProviderCount,
             'seriesByProvider' => $seriesByProvider,
-            'seriesByProviderCount' => $seriesByProviderCount,
         ]);
     }
 
@@ -1083,7 +1081,7 @@ class SeriesController extends AbstractController
             'series' => $series,
             'userSeries' => $userSeries,
             'tv' => $tv,
-            'translations' => $this->seriesService->getSeriesSeasonTranslations(),
+            'translations' => $this->seriesService->getSeasonShowTranslations(),
             'quickLinks' => $this->getQuickLinks($season['episodes']),
             'season' => $season,
             'today' => $this->now()->format('Y-m-d H:I:s'),

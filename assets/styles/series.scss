@@ -524,10 +524,19 @@ h2 {
     h1 {
         border-radius: 2rem 2rem 0 0;
         left: 3rem;
+        padding-block: 1rem .5rem;
         top: 6rem;
 
         span.by {
-            display: inline;
+            align-items: center;
+            display: inline-flex;
+            gap: 1rem;
+        }
+
+        img.logo {
+            aspect-ratio: 1;
+            border-radius: 50%;
+            height: 2.5rem;
         }
 
         span.without {
@@ -568,6 +577,26 @@ h2 {
             flex-grow: 1;
             gap: 1rem;
             padding: .5rem;
+
+            .pages {
+                display: flex;
+                gap: .5rem;
+                overflow-x: auto;
+
+                .page {
+                    align-items: center;
+                    background-color: var(--orange-40);
+                    border-radius: .25rem;
+                    display: flex;
+                    height: 2rem;
+                    justify-content: center;
+                    min-width: 2rem;
+
+                    &.active {
+                        background-color: var(--green);
+                    }
+                }
+            }
         }
 
         .tab#withProvider {

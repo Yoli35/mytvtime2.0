@@ -11,64 +11,63 @@
 {% block body %}
     {% include('_blocks/_menu.html.twig') %}
     <div class="container-fluid series-by-provider">
-        <h1><span class="by">{{ title }}</span><span class="without">{{ 'With watched episodes without provider'|trans }}</span></h1>
+        <h1{% if tab == 2 %} class="without"{% endif %}>
+            <span class="by">{{ title }}<img src="{{ selectedProvider.logo_path }}" class="logo" alt="{{ title }}"></span>
+            <span class="without">{{ 'With watched episodes without provider'|trans }}</span>
+        </h1>
         <header>
-            <div id="withProvider" class="tab{% if selectedProvider is not null %} active{% endif %}">
-                <h2>{{ seriesByProviderCount }} {{ (seriesByProviderCount > 1 ? 'seriess':'series')|trans }}</h2>
-                <label for="provider-select">{{ 'Provider'|trans }}
+            <div id="withProvider" class="tab{% if tab == 1 %} active{% endif %}">
+                <h2>{{ seriesByProvider.count }} {{ (seriesByProvider.count > 1 ? 'seriess':'series')|trans }}</h2>
+                {% if seriesByProvider.pages > 1 %}
+                    <label for="select-page-tab-2">
+                        <select id="select-page-tab-2">
+                            {% for p in 1..seriesByProvider.pages %}
+                                <option value="{{ p }}" {% if p == seriesByProvider.page %} selected{% endif %}>{{ p }}</option>
+                            {% endfor %}
+                        </select>
+                    </label>
+                {% endif %}
+                <label for="provider-select">
                     <select id="provider-select">
-                        {% for option in userProviders %}
+                        {% for option in providers.userProviders %}
                             <option value="{{ option.provider_id }}"{% if option.provider_id == provider %} selected{% endif %}>{{ option.provider_name }}</option>
                         {% endfor %}
                     </select>
                 </label>
             </div>
-            <div id="withoutProvider" class="tab{% if selectedProvider is null %} active{% endif %}">
-                <h2>{{ seriesWithoutProviderCount }} {{ (seriesWithoutProviderCount > 1 ? 'seriess':'series')|trans }}</h2>
-                <label for="new-provider-select">{{ 'Provider'|trans }}
+            <div id="withoutProvider" class="tab{% if tab == 2 %} active{% endif %}">
+                <h2>{{ seriesWithoutProvider.count }} {{ (seriesWithoutProvider.count > 1 ? 'seriess':'series')|trans }}</h2>
+                {% if seriesWithoutProvider.pages > 1 %}
+                    <label for="select-page-tab-2">
+                        <select id="select-page-tab-2">
+                            {% for p in 1..seriesWithoutProvider.pages %}
+                                <option value="{{ p }}" {% if p == seriesWithoutProvider.page %} selected{% endif %}>{{ p }}</option>
+                            {% endfor %}
+                        </select>
+                    </label>
+                {% endif %}
+                <label for="new-provider-select">
                     <select id="new-provider-select">
                         <option value="">{{ 'Choose a provider'|trans }}</option>
-                        {% for option in providers %}
+                        {% for option in providers.all %}
                             <option value="{{ option.provider_id }}">{{ option.provider_name }}</option>
                         {% endfor %}
                     </select>
                 </label>
             </div>
-            <script>
-                document.getElementById('provider-select').addEventListener('change', function () {
-                    window.location.href = "{{ path('app_series_by_provider', {provider: 1})|slice(0, -1) }}" + this.value;
-                });
-                document.getElementById('new-provider-select').addEventListener('change', function () {});
-                document.getElementById('withProvider').addEventListener('click', function () {
-                    document.getElementById('withProvider').classList.add('active');
-                    document.getElementById('withoutProvider').classList.remove('active');
-                    document.querySelector('h1').classList.remove('without');
-                    document.querySelectorAll('.series-group .wrapper').forEach(wrapper => {
-                        wrapper.style.transform = 'translateX(0%)';
-                    })
-                });
-                document.getElementById('withoutProvider').addEventListener('click', function () {
-                    document.getElementById('withProvider').classList.remove('active');
-                    document.getElementById('withoutProvider').classList.add('active');
-                    document.querySelector('h1').classList.add('without');
-                    document.querySelectorAll('.series-group .wrapper').forEach(wrapper => {
-                        wrapper.style.transform = 'translateX(-100%)';
-                    })
-                });
-            </script>
         </header>
         <div class="series-group user">
             <div class="wrapper">
                 <div class="content center">
-                    {% for series in seriesByProvider %}
-                        {{ include('_blocks/series/_card_by_provider.html.twig') }}
+                    {% for series in seriesByProvider.results %}
+                        {{ include('_blocks/series/_card_by_provider.html.twig', {selectSeries: false}) }}
                     {% endfor %}
                 </div>
             </div>
             <div class="wrapper">
                 <div class="content center">
-                    {% for series in seriesWithoutProvider %}
-                        {{ include('_blocks/series/_card_by_provider.html.twig') }}
+                    {% for series in seriesWithoutProvider.results %}
+                        {{ include('_blocks/series/_card_by_provider.html.twig', {selectSeries: true}) }}
                     {% endfor %}
                 </div>
             </div>
@@ -85,5 +84,33 @@
             <div id="svg-bookmark-outline">{{ ux_icon('mdi:bookmark-outline') }}</div>
         </div>
     </div>
+    <script>
+        {% if tab == 2 %}
+        document.querySelectorAll('.series-group .wrapper').forEach(wrapper => {
+            wrapper.style.transform = 'translateX(-100%)';
+        })
+        {% endif %}
+        document.getElementById('provider-select').addEventListener('change', function () {
+            window.location.href = "{{ path('app_series_by_provider', {provider: 1})|slice(0, -1) }}" + this.value + '?t=1&p2={{ seriesWithoutProvider.page }}';
+        });
+        document.getElementById('new-provider-select').addEventListener('change', function () {
+        });
+        document.getElementById('withProvider').addEventListener('click', function () {
+            document.getElementById('withProvider').classList.add('active');
+            document.getElementById('withoutProvider').classList.remove('active');
+            document.querySelector('h1').classList.remove('without');
+            document.querySelectorAll('.series-group .wrapper').forEach(wrapper => {
+                wrapper.style.transform = 'translateX(0%)';
+            })
+        });
+        document.getElementById('withoutProvider').addEventListener('click', function () {
+            document.getElementById('withProvider').classList.remove('active');
+            document.getElementById('withoutProvider').classList.add('active');
+            document.querySelector('h1').classList.add('without');
+            document.querySelectorAll('.series-group .wrapper').forEach(wrapper => {
+                wrapper.style.transform = 'translateX(-100%)';
+            })
+        });
+    </script>
     {% include('_blocks/_footer.html.twig') %}
 {% endblock %}
