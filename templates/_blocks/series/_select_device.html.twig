@@ -1,0 +1,16 @@
+<dialog id="select-device-dialog">
+    <div class="content">
+        <form method="dialog">
+            <div class="devices">
+                {% set userDeviceIds = app.user.preferredDevices|map(d => d.id) %}
+                {% for d in devices %}
+                    <div class="device{% if d.id in userDeviceIds %} active{% endif %}" data-id="{{ d.id }}">
+                        {{ ux_icon(d.svg) }}
+                        <div class="name">{{ d.name|trans }}</div>
+                    </div>
+                {% endfor %}
+            </div>
+            <button value="cancel" autofocus>{{ 'Cancel'|trans }}</button>
+        </form>
+    </div>
+</dialog>

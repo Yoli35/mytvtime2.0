@@ -12,9 +12,10 @@
 import JSConfetti from "js-confetti";
 import {SeasonComments} from "SeasonComments";
 
-
+let self;
 export class EpisodeActions {
     constructor(globs, flashMessage, toolTips, menu) {
+        self = this;
         this.lang = document.documentElement.lang;
         this.toolTips = toolTips;
         this.flashMessage = flashMessage;
@@ -163,7 +164,7 @@ export class EpisodeActions {
                     episode.setAttribute('data-views', '' + (views + 1));
                     episode.setAttribute('data-title', this.translations.now);
                     episode.setAttribute('data-time', now.toISOString());
-                    episode.addEventListener('mouseenter', this.updateRelativeTime);
+                    episode.addEventListener('mouseenter', self.updateRelativeTime);
                     return;
                 }
 
@@ -186,11 +187,11 @@ export class EpisodeActions {
                 newEpisode.setAttribute('data-s-number', seasonNumber);
                 newEpisode.setAttribute('data-last-episode', lastEpisode);
                 newEpisode.setAttribute('data-views', '' + (views + 1));
-                newEpisode.setAttribute('data-title', this.translations.now);
+                newEpisode.setAttribute('data-title', self.translations.now);
                 newEpisode.setAttribute('data-time', now.toISOString());
-                this.intervals[id] = setInterval(this.updateRelativeTime, 1000, {currentTarget: newEpisode});
-                newEpisode.addEventListener('click', this.removeOrReviewEpisode);
-                newEpisode.appendChild(this.getSvg('eye'));
+                self.intervals[id] = setInterval(self.updateRelativeTime, 1000, {currentTarget: newEpisode});
+                newEpisode.addEventListener('click', self.removeOrReviewEpisode);
+                newEpisode.appendChild(self.getSvg('eye'));
                 episode.replaceWith(newEpisode);
                 this.toolTips.init(newEpisode);/*episode.querySelector('.remove-this-episode'));*/
 
@@ -215,7 +216,7 @@ export class EpisodeActions {
                 commentSvg.removeAttribute("id");
                 commentBadge.appendChild(commentSvg);
                 userEpisode.insertBefore(commentBadge, backToTopLink);
-                const episodeGroup = this.seasonComments.createEpisodeGroup(seasonNumber, episodeNumber);
+                const episodeGroup = self.seasonComments.createEpisodeGroup(seasonNumber, episodeNumber);
                 episodesCommentsDiv.appendChild(episodeGroup);
 
                 const episodesDiv = userEpisode.closest('.episodes');
@@ -225,7 +226,7 @@ export class EpisodeActions {
                     const clone = previousProvider.cloneNode(true);
                     clone.setAttribute('data-id', id);
                     clone.setAttribute('data-ue-id', ueId);
-                    clone.addEventListener('click', this.selectProvider);
+                    clone.addEventListener('click', self.selectProvider);
                     userEpisode.insertBefore(clone, backToTopLink);
                 } else {
                     const bestProviderIds = data['bestProviderIds'];
@@ -242,8 +243,8 @@ export class EpisodeActions {
                             providerDiv.setAttribute('data-id', id);
                             providerDiv.setAttribute('data-ue-id', ueId);
                             providerDiv.setAttribute('data-provider-id', providerId);
-                            providerDiv.innerHTML = '<img src="' + this.providers.logos[providerId] + '" alt="' + this.providers.names[providerId] + '">';
-                            providerDiv.setAttribute('data-title', this.providers.names[providerId]);
+                            providerDiv.innerHTML = '<img src="' + self.providers.logos[providerId] + '" alt="' + self.providers.names[providerId] + '">';
+                            providerDiv.setAttribute('data-title', self.providers.names[providerId]);
                             providerDiv.addEventListener('click', () => {
                                 this.saveProvider(ueId, providerId);
                                 const deviceDiv = userEpisode.querySelector('.select-device');
@@ -254,7 +255,7 @@ export class EpisodeActions {
                                 });
                                 dialog.close();
                             });
-                            this.toolTips.init(providerDiv);
+                            self.toolTips.init(providerDiv);
                             form.insertBefore(providerDiv, cancelButton);
                         });
                         dialog.showModal();
@@ -266,14 +267,14 @@ export class EpisodeActions {
                         providerDiv.setAttribute('data-ue-id', ueId);
                         providerDiv.setAttribute('data-provider-id', providerId);
                         if (providerId) {
-                            providerDiv.innerHTML = '<img src="' + this.providers.logos[providerId] + '" alt="' + this.providers.names[providerId] + '">';
-                            providerDiv.setAttribute('data-title', this.providers.names[providerId]);
-                            this.toolTips.init(providerDiv);
+                            providerDiv.innerHTML = '<img src="' + self.providers.logos[providerId] + '" alt="' + self.providers.names[providerId] + '">';
+                            providerDiv.setAttribute('data-title', self.providers.names[providerId]);
+                            self.toolTips.init(providerDiv);
                         } else {
-                            providerDiv.setAttribute('data-title', this.translations.provider);
-                            providerDiv.appendChild(this.getSvg('plus'));
+                            providerDiv.setAttribute('data-title', self.translations.provider);
+                            providerDiv.appendChild(self.getSvg('plus'));
                         }
-                        providerDiv.addEventListener('click', this.selectProvider);
+                        providerDiv.addEventListener('click', self.selectProvider);
                         userEpisode.insertBefore(providerDiv, backToTopLink);
                     }
                 }
@@ -284,7 +285,7 @@ export class EpisodeActions {
                     const clone = previousDevice.cloneNode(true);
                     clone.setAttribute('data-id', id);
                     clone.setAttribute('data-ue-id', ueId);
-                    clone.addEventListener('click', this.selectDevice);
+                    clone.addEventListener('click', self.selectDevice);
                     userEpisode.insertBefore(clone, backToTopLink);
                 } else {
                     const deviceDiv = document.createElement('div');
@@ -293,16 +294,29 @@ export class EpisodeActions {
                     deviceDiv.setAttribute('data-ue-id', ueId);
                     deviceDiv.setAttribute('data-device-id', deviceId);
                     if (deviceId) {
-                        const deviceName = this.getDeviceName(deviceId);
+                        const deviceName = self.getDeviceName(deviceId);
                         deviceDiv.innerHTML = '';
-                        deviceDiv.appendChild(this.getSvg('device-' + deviceId));
-                        deviceDiv.setAttribute('data-title', this.translations[deviceName]);
-                        this.toolTips.init(deviceDiv);
+                        deviceDiv.appendChild(self.getSvg('device-' + deviceId));
+                        deviceDiv.setAttribute('data-title', self.translations[deviceName]);
+                        self.toolTips.init(deviceDiv);
                     } else {
-                        deviceDiv.setAttribute('data-title', this.translations.device);
-                        deviceDiv.appendChild(this.getSvg('plus'));
+                        deviceDiv.setAttribute('data-title', self.translations.device);
+                        deviceDiv.appendChild(self.getSvg('plus'));
+
+                        const dialog = document.querySelector("#select-device-dialog");
+                        const cancelButton = dialog.querySelector('button[value="cancel"]');
+                        cancelButton.addEventListener('click', () => {
+                            dialog.close();
+                        });
+                        const deviceButtons = dialog.querySelectorAll('.device');
+                        deviceButtons.forEach(button => {
+                            button.addEventListener('click', () => {
+                                self.saveDevice(ueId, button.dataset.id, deviceDiv, button);
+                            });
+                        });
+                        dialog.showModal();
                     }
-                    deviceDiv.addEventListener('click', this.selectDevice);
+                    deviceDiv.addEventListener('click', self.selectDevice);
                     userEpisode.insertBefore(deviceDiv, backToTopLink);
                 }
 
@@ -310,9 +324,9 @@ export class EpisodeActions {
                 vote.classList.add('select-vote');
                 vote.setAttribute('data-id', id);
                 vote.setAttribute('data-ue-id', ueId);
-                vote.setAttribute('data-title', this.translations.rating);
-                vote.appendChild(this.getSvg('plus'));
-                vote.addEventListener('click', this.selectVote);
+                vote.setAttribute('data-title', self.translations.rating);
+                vote.appendChild(self.getSvg('plus'));
+                vote.addEventListener('click', self.selectVote);
                 // vote.addEventListener('wheel', this.wheelVote);
                 userEpisode.insertBefore(vote, backToTopLink);
             });
@@ -766,7 +780,7 @@ export class EpisodeActions {
         });
     }
 
-    saveDevice(episodeId, deviceId, selectDeviceDiv = null) {
+    saveDevice(episodeId, deviceId, selectDeviceDiv = null, button = null) {
         fetch('/api/episode/device/' + episodeId, {
             method: 'POST',
             headers: {
@@ -780,15 +794,22 @@ export class EpisodeActions {
             if (response.ok) {
                 if (selectDeviceDiv) {
                     if (deviceId === -1) {
-                        const svgPlus = this.getSvg('plus');
+                        const svgPlus = self.getSvg('plus');
                         selectDeviceDiv.innerHTML = '';
-                        selectDeviceDiv.setAttribute('data-title', this.translations.device);
+                        selectDeviceDiv.setAttribute('data-title', self.translations.device);
                         selectDeviceDiv.appendChild(svgPlus);
-                        this.toolTips.init(selectDeviceDiv);
+                        self.toolTips.init(selectDeviceDiv);
                     } else {
                         selectDeviceDiv.innerHTML = '';
-                        selectDeviceDiv.appendChild(this.getSvg('device-' + deviceId));
+                        selectDeviceDiv.appendChild(self.getSvg('device-' + deviceId));
                     }
+                }
+                if (button) {
+                    const deviceId = button.dataset.id;
+                    selectDeviceDiv.setAttribute('data-device-id', deviceId);
+                    selectDeviceDiv.setAttribute('data-title', button.querySelector('.name').textContent);
+                    self.toolTips.init(selectDeviceDiv);
+                    button.closest('dialog').close();
                 }
             }
         });

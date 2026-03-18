@@ -6009,7 +6009,8 @@ h2 {
     background-color: #1f1f1fcf;
 }
 
-#select-provider-dialog {
+#select-provider-dialog,
+#select-device-dialog {
     border: 2px solid var(--orange-50);
     border-radius: .5rem;
     margin-block: auto;
@@ -6032,6 +6033,7 @@ h2 {
                 background-color: var(--orange-50);
                 border-radius: .25rem;
                 color: var(--ardoise-10);
+                cursor: pointer;
                 font-size: 1.25rem;
                 font-weight: 300;
                 padding-block: .25rem;
@@ -6041,7 +6043,44 @@ h2 {
     }
 }
 
-#select-provider-dialog::backdrop {
+#select-device-dialog {
+    width: 42rem;
+
+    .devices {
+        display: flex;
+        gap: 1rem;
+
+        .device {
+            --svgSize: 4rem;
+            align-items: center;
+            background-color: hsl(from var(--orange-40) h s l / .5);
+            border-radius: .5rem;
+            border: 2px solid transparent;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding-block: .5rem;
+            width: 6rem;
+
+            .name {
+                text-align: center;
+            }
+
+            &:hover {
+                background-color: var(--orange-40);
+                border-color: var(--orange-90);
+            }
+
+            &.active {
+                background-color: var(--orange-50);
+            }
+        }
+    }
+}
+
+#select-provider-dialog::backdrop,
+#select-device-dialog::backdrop {
     background-color: #1f1f1fcf;
 }
 
