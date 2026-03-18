@@ -1205,7 +1205,7 @@ readonly class SeriesService
 
     public function date(string $dateString, bool $allDays = false): DateTimeImmutable
     {
-        $user = $this->getUser();
+        $user = ($this->getUser)();
         $timezone = $user ? $user->getTimezone() : 'Europe/Paris';
         return $this->dateService->newDateImmutable($dateString, $timezone, $allDays);
     }
