@@ -235,7 +235,8 @@ class UserEpisodeRepository extends ServiceEntityRepository
         $sql = null;
         if ($list == 'series') {
             $sql = <<<SQL
-                SELECT s.id                            AS id,
+                SELECT DISTINCT 
+                       s.id                            AS id,
                        ue.episode_id                   AS episodeId,
                        s.`poster_path`                 AS posterPath,
                        us.`last_episode`               AS episodeNumber,
@@ -262,7 +263,8 @@ class UserEpisodeRepository extends ServiceEntityRepository
         }
         if ($list == 'episode') {
             $sql = <<<SQL
-                SELECT s.id                                   AS id,
+                SELECT DISTINCT
+                       s.id                                   AS id,
                        s.`poster_path`                        AS posterPath,
                        ue.episode_id                          AS episodeId,
                        ue.episode_number                      AS episodeNumber,
