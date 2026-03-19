@@ -282,22 +282,6 @@ h2 {
             }
         }
 
-        label:has(select)::after {
-            border-bottom: 6px solid var(--ardoise-20);
-            border-left: 6px solid transparent;
-            border-right: 6px solid var(--ardoise-20);
-            border-top: 6px solid transparent;
-            content: "";
-            display: block;
-            height: 6px;
-            position: absolute;
-            right: 1rem;
-            top: 20%;
-            transform: rotate(45deg);
-            width: 6px;
-            z-index: 2;
-        }
-
         .radio-group {
             align-items: center;
             display: flex;

@@ -306,18 +306,15 @@ label:has(select) {
     }
 
     &::after {
-        border-bottom: 4px solid var(--ardoise-20);
-        border-left: 4px solid transparent;
-        border-right: 4px solid var(--ardoise-20);
-        border-top: 4px solid transparent;
-        content: "";
+        border: 6px solid transparent;
+        border-top-color: var(--orange-90);
+        content: '';
         display: block;
-        height: .5em;
+        height: 6px;
         position: absolute;
-        right: .75em;
-        top: 62%;
-        transform: rotate(45deg);
-        width: .5em;
+        right: 1rem;
+        top: 1rem;
+        width: 6px;
         z-index: 2;
     }
 }
@@ -327,10 +324,6 @@ label:has(select) {
         select {
             margin-inline-start: auto;
             width: unset;
-        }
-
-        &::after {
-            top: 20%;
         }
     }
 }
