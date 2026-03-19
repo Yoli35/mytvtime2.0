@@ -12,6 +12,7 @@ use App\Service\DateService;
 use App\Service\ImageConfiguration;
 use App\Service\ImageService;
 use App\Service\TMDBService;
+use App\Service\WhatNextSettingsService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -33,6 +34,7 @@ class HomeController extends AbstractController
         private readonly UserSeriesRepository    $userSeriesRepository,
         private readonly TMDBService             $tmdbService,
         private readonly TranslatorInterface     $translator,
+        private readonly WhatNextSettingsService $whatNextSettingsService,
         private readonly WatchProviderRepository $watchProviderRepository,
     )
     {
@@ -55,7 +57,6 @@ class HomeController extends AbstractController
         if ($user) {
             // Dernières séries ajoutées
             /** @var UserSeries[] $series */
-//            $series = $this->userSeriesRepository->getLastAddedSeries($user);
             $userSeries = $this->userSeriesRepository->getUserSeries($user, $user->getPreferredLanguage() ?? $request->getLocale());
             $userSeriesCount = $this->userSeriesRepository->count(['user' => $user]);
 
@@ -86,13 +87,19 @@ class HomeController extends AbstractController
                 $series['released'] = true;
                 return $series;
             }, $uniqueEpisodes);
+
             // Épisodes à voir parmi les séries commencées
+            $settings = $this->whatNextSettingsService->getSettings($user);
+            $filters = ['page' => 1, 'limit' => $settings['limit'], 'sort' => $settings['sort'], 'order' => $settings['order'], 'network' => 'all'];
+            $localisation = ['language' => 'fr_FR', 'country' => 'FR', 'timezone' => 'Europe/Paris', 'locale' => 'fr'];
+            $episodesToWatch = $this->userSeriesRepository->getAllSeries($user, $localisation, $filters, true);
             $episodesToWatch = array_map(function ($series) {
-                $series['posterPath'] = $series['posterPath'] ? '/series/posters' . $series['posterPath'] : null;
-                $series['sln_name'] = $series['localizedName'] ?: $series['name'];
-                $series['released'] = true;
+                $series['posterPath'] = $series['poster_path'] ? '/series/posters' . $series['poster_path'] : null;
+                $series['seasonNumber'] = $series['next_episode_season_number'];
+                $series['episodeNumber'] = $series['next_episode_season_number'];
                 return $series;
-            }, $this->userEpisodeRepository->episodesToWatch($user, $language));
+            }, $episodesToWatch);
+
             // Dernières séries ajoutées
             $lastAddedSeries = array_map(function ($series) {
 //                $s = $serie->homeArray();
@@ -102,6 +109,7 @@ class HomeController extends AbstractController
                 $series['localized_slug'] = $series['localizedSlug'];
                 return $series;
             }, $this->userEpisodeRepository->lastAddedSeries($user, $language, 1, 50));
+
             // Historique des séries vues
             $historySeries = array_map(function ($series) {
                 $series['posterPath'] = $series['posterPath'] ? '/series/posters' . $series['posterPath'] : null;
@@ -111,6 +119,7 @@ class HomeController extends AbstractController
                 $series['released'] = true;
                 return $series;
             }, $this->userEpisodeRepository->historySeries($user, $language, 1, 20));
+
             // Historique des épisodes vus pendant les 2 semaines passées
             $cookieDayCount = $_COOKIE['mytvtime_2_day_count'] ?? 7;
             $dayCount = $request->query->get('daycount', $cookieDayCount);

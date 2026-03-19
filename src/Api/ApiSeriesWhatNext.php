@@ -2,12 +2,11 @@
 
 namespace App\Api;
 
-use App\Entity\Settings;
 use App\Entity\User;
-use App\Repository\SettingsRepository;
 use App\Repository\UserSeriesRepository;
 use App\Service\ImageConfiguration;
 use App\Service\TMDBService;
+use App\Service\WhatNextSettingsService;
 use Closure;
 use Symfony\Bundle\FrameworkBundle\Controller\ControllerHelper;
 use Symfony\Component\DependencyInjection\Attribute\AutowireMethodOf;
@@ -23,14 +22,14 @@ readonly class ApiSeriesWhatNext
 {
     public function __construct(
         #[AutowireMethodOf(ControllerHelper::class)]
-        private Closure              $getUser,
+        private Closure                 $getUser,
         #[AutowireMethodOf(ControllerHelper::class)]
-        private Closure              $renderView,
-        private ImageConfiguration   $imageConfiguration,
-        private TMDBService          $tmdbService,
-        private UserSeriesRepository $userSeriesRepository,
-        private SettingsRepository   $settingsRepository,
-        private TranslatorInterface  $translator,
+        private Closure                 $renderView,
+        private ImageConfiguration      $imageConfiguration,
+        private TMDBService             $tmdbService,
+        private UserSeriesRepository    $userSeriesRepository,
+        private TranslatorInterface     $translator,
+        private WhatNextSettingsService $whatNextSettingsService,
     )
     {
     }
@@ -39,7 +38,7 @@ readonly class ApiSeriesWhatNext
     public function next(Request $request): JsonResponse
     {
         $user = ($this->getUser)();
-        $settings = $this->getSettings($user);
+        $settings = $this->whatNextSettingsService->getSettings($user);
 
         $filters = ['page' => 1, 'limit' => $settings['limit'], 'sort' => $settings['sort'], 'order' => $settings['order'], 'network' => 'all'];
         $localisation = ['language' => 'fr_FR', 'country' => 'FR', 'timezone' => 'Europe/Paris', 'locale' => 'fr'];
@@ -100,25 +99,6 @@ readonly class ApiSeriesWhatNext
             'limitOption' => $settings['limit'],
             'linkOption' => $settings['link_to'],
         ]);
-    }
-
-    public function getSettings(User $user): array
-    {
-        $settings = $this->settingsRepository->findOneBy(['user' => $user, 'name' => 'seriesWhatNext']);
-        if (!$settings) {
-            $settings = new Settings($user, 'seriesWhatNext', [
-                'default_limit' => 20,
-                'default_order' => 'DESC',
-                'default_sort' => 'lastWatched',
-                'default_link_to' => 'series',
-                'limit' => 20,
-                'order' => 'DESC',
-                'sort' => 'lastWatched',
-                'link_to' => 'series',
-            ]);
-            $this->settingsRepository->save($settings, true);
-        }
-        return $settings->getData();
     }
 
     private function optionStrings(): array

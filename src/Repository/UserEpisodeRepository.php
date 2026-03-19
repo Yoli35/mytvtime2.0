@@ -126,7 +126,7 @@ class UserEpisodeRepository extends ServiceEntityRepository
             'offset' => ParameterType::INTEGER,
         ];
         $sql = <<<SQL
-            SELECT 
+            SELECT DISTINCT 
                 s.`id`                               AS id,
                 s.`name`                             AS name,
                 s.`poster_path`                      AS posterPath, 
@@ -140,6 +140,7 @@ class UserEpisodeRepository extends ServiceEntityRepository
                 us.`last_episode`                    AS episodeNumber,
                 us.`last_season`                     AS seasonNumber, 
                 us.`progress`                        AS progress,
+                us.`added_at`                        AS addedAt,
                 (SELECT COUNT(*)
                        FROM `user_list_series` uls
                            INNER JOIN `user_list` ul ON ul.`user_id` = :userId AND uls.`user_list_id`=ul.`id`
@@ -170,7 +171,8 @@ class UserEpisodeRepository extends ServiceEntityRepository
             'offset' => ParameterType::INTEGER,
         ];
         $sql = <<<SQL
-            SELECT s.id                            AS id,
+            SELECT DISTINCT 
+                   s.id                            AS id,
                    s.tmdb_id                       AS tmdbId,
                    s.`name`                        AS name,
                    s.`slug`                        AS slug,
@@ -182,6 +184,7 @@ class UserEpisodeRepository extends ServiceEntityRepository
                    us.`progress`                   AS progress,
                    us.`last_episode`               AS episodeNumber,
                    us.`last_season`                AS seasonNumber,
+                   us.`last_watch_at`              AS lastWatchAt,
                    (SELECT count(*)
                     FROM user_episode ue
                         LEFT JOIN series_broadcast_schedule sbs ON s.id = sbs.series_id AND IF(sbs.multi_part, ue.episode_number BETWEEN sbs.season_part_first_episode AND (sbs.season_part_first_episode + sbs.season_part_episode_count - 1), 1)
@@ -637,7 +640,8 @@ class UserEpisodeRepository extends ServiceEntityRepository
             'locale' => ParameterType::STRING,
         ];
         $sql = <<<SQL
-            SELECT s.id                            AS id,
+            SELECT DISTINCT
+                   s.id                            AS id,
                    s.tmdb_id                       AS tmdbId,
                    IF(sln.`id`, CONCAT(sln.`name`, ' - ', s.`name`), s.`name`) AS name,
                    IF(sln.`id`, sln.`slug`, s.`slug`)                          AS slug,

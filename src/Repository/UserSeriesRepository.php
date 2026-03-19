@@ -67,13 +67,14 @@ class UserSeriesRepository extends ServiceEntityRepository
             "limit" => ParameterType::INTEGER,
         ];
         $sql = <<<SQL
-                SELECT 
+                SELECT DISTINCT
                     s.`id`                              AS id,
                     s.`name`                            AS name,
                     s.`poster_path`                     AS poster_path, 
                     s.`tmdb_id`                         AS tmdbId,
                     s.`slug`                            AS slug,
                     s.status                            AS status,
+                    s.`first_air_date`                  AS first_air_date,
                     (s.first_air_date <= NOW())         AS released,
                     us.`user_id`                        AS user_id, 
                     us.`progress`                       AS progress,
@@ -335,7 +336,7 @@ class UserSeriesRepository extends ServiceEntityRepository
         $lastEpisodeInnerJoin = !$includeFirstEpisode ? " INNER JOIN `user_episode` lue ON lue.`id`=us.`last_user_episode_id` " : " LEFT JOIN `user_episode` lue ON lue.`id`=us.`last_user_episode_id` ";
 
         $sql = <<<SQL
-                SELECT
+                SELECT DISTINCT
                     s.`id`                                         AS id,
                     s.`name`                                       AS name,
                     s.`poster_path`                                AS poster_path, 
@@ -347,6 +348,7 @@ class UserSeriesRepository extends ServiceEntityRepository
                     us.`added_at`                                  AS added_at,
                     us.`progress`                                  AS progress,
                     us.`favorite`                                  AS favorite, 
+                    us.`last_watch_at`                             AS last_watched_at, 
                     sln.`name`                                     AS sln_name,
                     sln.`slug`                                     AS sln_slug,
                     nue.air_date                                   AS next_episode_air_date,
