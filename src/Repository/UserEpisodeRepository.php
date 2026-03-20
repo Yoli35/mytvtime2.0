@@ -592,7 +592,7 @@ class UserEpisodeRepository extends ServiceEntityRepository
             'locale' => ParameterType::STRING,
         ];
         $sql = <<<SQL
-            SELECT
+            SELECT DISTINCT
                 IF(sbd.id, DATE(sbd.date), ue.air_date) AS airDate,
                 sbs.`override`                          AS override,
                 'series'                                AS type,
@@ -609,9 +609,17 @@ class UserEpisodeRepository extends ServiceEntityRepository
                 wp.provider_name                        AS providerName,
                 wp.logo_path                            AS providerLogoPath,
                 ((SELECT COUNT(*)
-                FROM `user_episode` ue1
-                WHERE ue1.`user_series_id`=ue.`user_series_id` AND ue1.`season_number`=ue.`season_number`) = ue.`episode_number`)
-                                                        AS last_episode  
+                  FROM `user_episode` ue1
+                  WHERE ue1.`user_series_id`=ue.`user_series_id` AND ue1.`season_number`=ue.`season_number`) = ue.`episode_number`)
+                                                        AS last_episode,
+                ((SELECT ue2.`id`
+                  FROM `user_episode` ue2
+                  WHERE ue2.`id`=us.`next_user_episode_id`
+                      AND ue2.`season_number`=ue.`season_number`
+                      AND ue2.`episode_number`=ue.`episode_number`
+                      AND ue.`episode_number`>1
+                      AND IF(sbd.id, DATE(sbd.date) >= DATE(NOW()), ue.air_date >= DATE(NOW()))) IS NOT NULL) AS future_up_to_date,
+                (ue.`watch_at` IS NOT NULL) AS past_up_to_date
             FROM series s 
                  INNER JOIN user_series us ON s.id = us.series_id 
                  INNER JOIN user_episode ue ON us.id = ue.user_series_id 
@@ -623,7 +631,7 @@ class UserEpisodeRepository extends ServiceEntityRepository
             WHERE us.user_id = :userId
                  AND IF(sbd.id, DATE(sbd.date) >= :startDate, ue.air_date >= :startDate)
                  AND IF(sbd.id, DATE(sbd.date) <= :endDate,   ue.air_date <= :endDate)
-            ORDER BY name, seasonNumber, episodeNumber
+            ORDER BY airDate, airAt, seasonNumber, episodeNumber;
         SQL;
 
         return $this->getAll($sql, $params, $types);

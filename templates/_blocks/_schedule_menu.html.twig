@@ -34,6 +34,9 @@
                             {% if eotd.premiere %}
                                 {{ ux_icon('mdi:new-box', {'data-title': 'Premiere'|trans, height: '16px', width: '16px'}) }}
                             {% endif %}
+                            {% if eotd.upToDate %}
+                                {{ ux_icon('mdi:thumb-up', {'data-title': 'Up to date!'|trans, height: '16px', width: '16px'}) }}
+                            {% endif %}
                         </div>
                         {% if eotd.type == 'series' %}
                             <div class="time">{{ eotd.airAt|slice(0,5) }}</div>

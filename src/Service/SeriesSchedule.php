@@ -134,6 +134,7 @@ readonly class SeriesSchedule
                 $item['episodeIds'] = implode('-', $episodeIdArr);
                 $item['display'] = $item['name'] . ' ' . $display;
                 $item['episodeCount'] = count($episodeIdArr);
+                $item['upToDate'] = $item['future_up_to_date'] || $item['past_up_to_date'];
 
                 $dayArr[$key] = $item;
             }
@@ -195,6 +196,7 @@ readonly class SeriesSchedule
                     'progress' => 100 * $item['episodesWatched'] / $item['episodeCount'],
                     'seasonNumber' => $item['seasonNumber'],
                     'premiere' => $item['seasonNumber'] === 1 && $item['firstEpisodeNumber'] === 1,
+                    'upToDate' => $item['upToDate'],
                     'last_episode' => $item['last_episode'] ?? false,
                 ];
             }, array_values($itemArr));

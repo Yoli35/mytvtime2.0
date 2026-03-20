@@ -519,6 +519,7 @@ export class Menu {
                 blockDiv.innerHTML = block;
                 const newScheduleMenuDiv = blockDiv.querySelector(".schedule-menu");
                 scheduleMenuDiv.replaceWith(newScheduleMenuDiv);
+                self.tooltips.init(document.querySelector(".schedule-menu"));
                 self.posterPreview();
             })
             .catch(err => {
