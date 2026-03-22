@@ -856,6 +856,10 @@ export class Season {
     }
 
     adjustVoteColors() {
+        const voteGraphDiv = document.querySelector('.vote-graph');
+        if (!voteGraphDiv) {
+            return;
+        }
         const body = document.querySelector("body");
         const url = body.style.backgroundImage.slice(5, -2);
         const img = document.createElement("img");
@@ -865,7 +869,6 @@ export class Season {
         console.log({color});
         /* Luminosité de l'espace de couleur LCH */
         if (Math.floor(color.lch.l) > 50) {
-            const voteGraphDiv = document.querySelector('.vote-graph');
             voteGraphDiv.classList.add('dark');
         }
     }
