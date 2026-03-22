@@ -26,14 +26,18 @@
     <div class="container-fluid backgroundImageOverlay">
         <div class="episode-show" data-theme="none">
             <header>
-                {% if episode.still_path %}
-                    <div class="still">
+                <div class="still">
+                    {#                        <img src="{{ episode.still_path }}" alt="{{ episode.name }} still image"> #}
+                    {% if episode.still_path %}
                         <img src="{{ episode.still_path }}" alt="{{ episode.name }} still image">
-                        {% if episode.episode_type == "finale" %}
-                            <div class="finale season-finale"></div>
-                        {% endif %}
-                    </div>
-                {% endif %}
+                    {% elseif episode.stills|length %}{# is defined and ue.still #}
+                        {% set still = episode.stills|last %}
+                        <img src="/series/stills/{{ still.path }}" alt="{{ episode.name }} custom still image">
+                    {% endif %}
+                    {% if episode.episode_type == "finale" %}
+                        <div class="finale season-finale"></div>
+                    {% endif %}
+                </div>
                 <div class="infos">
                     <h1>{{ episode.episode_number }} / {{ season.episodes|length }}. {{ episode.user_episode.substitute_name ?: episode.name }}</h1>
                     {{ include('_blocks/series/_episode_air_date.html.twig', {episode: episode, ue: episode.user_episode, ues: episode.user_episodes}) }}
