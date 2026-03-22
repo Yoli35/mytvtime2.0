@@ -19,8 +19,10 @@ use App\Repository\UserSeriesRepository;
 use App\Service\DateService;
 use App\Service\ImageService;
 use App\Service\TMDBService;
+use Closure;
 use DateTimeImmutable;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Bundle\FrameworkBundle\Controller\ControllerHelper;
+use Symfony\Component\DependencyInjection\Attribute\AutowireMethodOf;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -28,31 +30,42 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Routing\Requirement\Requirement;
+use Symfony\Component\Security\Http\Attribute\CurrentUser;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 /** @method User|null getUser() */
 #[Route('/api/episode', name: 'api_episode_')]
-class ApiSeriesEpisode extends AbstractController
+readonly class ApiSeriesEpisode
 {
     public function __construct(
-        private readonly DateService                        $dateService,
-        private readonly EpisodeSubstituteNameRepository    $episodeSubstituteNameRepository,
-        private readonly EpisodeLocalizedOverviewRepository $episodeLocalizedOverviewRepository,
-        private readonly EpisodeStillRepository             $episodeStillRepository,
-        private readonly ImageService                       $imageService,
-        private readonly SeriesBroadcastDateRepository      $seriesBroadcastDateRepository,
-        private readonly SeriesRepository                   $seriesRepository,
-        private readonly SettingsRepository                 $settingsRepository,
-        private readonly TmdbService                        $tmdbService,
-        private readonly TranslatorInterface                $translator,
-        private readonly UserEpisodeRepository              $userEpisodeRepository,
-        private readonly UserSeriesRepository               $userSeriesRepository,
+        #[AutowireMethodOf(ControllerHelper::class)]
+        private Closure                            $addFlash,
+        #[AutowireMethodOf(ControllerHelper::class)]
+        private Closure                            $getParameter,
+        #[AutowireMethodOf(ControllerHelper::class)]
+        private Closure                            $json,
+        #[AutowireMethodOf(ControllerHelper::class)]
+        private Closure                            $renderView,
+        private DateService                        $dateService,
+        private EpisodeSubstituteNameRepository    $episodeSubstituteNameRepository,
+        private EpisodeLocalizedOverviewRepository $episodeLocalizedOverviewRepository,
+        private EpisodeStillRepository             $episodeStillRepository,
+        private ImageService                       $imageService,
+        private SeriesBroadcastDateRepository      $seriesBroadcastDateRepository,
+        private SeriesRepository                   $seriesRepository,
+        private SettingsRepository                 $settingsRepository,
+        private TmdbService                        $tmdbService,
+        private TranslatorInterface                $translator,
+        private UserEpisodeRepository              $userEpisodeRepository,
+        private UserSeriesRepository               $userSeriesRepository,
     )
     {
     }
 
+    #[IsGranted('ROLE_USER')]
     #[Route('/add/{id}', name: 'add', requirements: ['id' => Requirement::DIGITS], methods: ['POST'])]
-    public function add(Request $request, int $id): Response
+    public function add(#[CurrentUser] User $user, Request $request, int $id): Response
     {
         $inputBag = $request->getPayload();
 
@@ -66,14 +79,13 @@ class ApiSeriesEpisode extends AbstractController
 
         $messages = [];
 
-        $user = $this->getUser();
         $series = $this->seriesRepository->findOneBy(['tmdbId' => $showId]);
         $userSeries = $this->userSeriesRepository->findOneBy(['user' => $user, 'series' => $series]);
         $userSeriesEpisodes = $this->userEpisodeRepository->findBy(['userSeries' => $userSeries], ['seasonNumber' => 'ASC', 'episodeNumber' => 'ASC']);
         $userEpisode = $this->userEpisodeRepository->findOneBy(['id' => $ueId]);
         $userEpisodes = $this->userEpisodeRepository->findBy(['userSeries' => $userSeries, 'episodeId' => $id], ['id' => 'ASC']);
 
-        $now = $this->now();
+        $now = $this->now($user);
         if ($userEpisode->getWatchAt()) { // Si l'épisode a déjà été vu
             $userEpisode = new UserEpisode($userSeries, $id, $seasonNumber, $episodeNumber, $now);
             $userEpisode->setPreviousOccurrence($userEpisodes[count($userEpisodes) - 1]);
@@ -201,13 +213,13 @@ class ApiSeriesEpisode extends AbstractController
             return $ue;
         }, $arr);
 
-        $airDateBlock = $this->renderView('_blocks/series/_episode_air_date.html.twig', [
+        $airDateBlock = ($this->renderView)('_blocks/series/_episode_air_date.html.twig', [
             'episode' => ['id' => $id, 'air_date' => $airDate->format('Y-m-d')],
             'ue' => $ue, //['watch_at' => $userEpisode->getWatchAt()->format('Y-m-d')],
             'ues' => $ues,
         ]);
 
-        return $this->json([
+        return ($this->json)([
             'ok' => true,
             'airDateBlock' => $airDateBlock,
             'new' => $new,
@@ -221,15 +233,16 @@ class ApiSeriesEpisode extends AbstractController
         ]);
     }
 
+    #[IsGranted('ROLE_USER')]
     #[Route('/touch/{id}', name: 'touch_episode', requirements: ['id' => Requirement::DIGITS], methods: ['POST'])]
-    public function touch(Request $request, UserEpisode $userEpisode): Response
+    public function touch(#[CurrentUser] User $user, Request $request, UserEpisode $userEpisode): Response
     {
         $data = json_decode($request->getContent(), true);
 
         if (key_exists('date', $data) && $data['date']) {
-            $now = $this->date($data['date']);
+            $now = $this->date($user, $data['date']);
         } else {
-            $now = $this->now();
+            $now = $this->now($user);
         }
         $seasonNumber = $userEpisode->getEpisodeNumber();
         $episodeNumber = $userEpisode->getSeasonNumber();
@@ -258,12 +271,12 @@ class ApiSeriesEpisode extends AbstractController
         $svg = '<svg viewBox="0 0 576 512" height="18px" width="18px" aria-hidden="true"><path fill="currentColor" d="M288 32c-80.8 0-145.5 36.8-192.6 80.6C48.6 156 17.3 208 2.5 243.7c-3.3 7.9-3.3 16.7 0 24.6C17.3 304 48.6 356 95.4 399.4C142.5 443.2 207.2 480 288 480s145.5-36.8 192.6-80.6c46.8-43.5 78.1-95.4 93-131.1c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C433.5 68.8 368.8 32 288 32M144 256a144 144 0 1 1 288 0a144 144 0 1 1-288 0m144-64c0 35.3-28.7 64-64 64c-7.1 0-13.9-1.2-20.3-3.3c-5.5-1.8-11.9 1.6-11.7 7.4c.3 6.9 1.3 13.8 3.2 20.7c13.7 51.2 66.4 81.6 117.6 67.9s81.6-66.4 67.9-117.6c-11.1-41.5-47.8-69.4-88.6-71.1c-5.8-.2-9.2 6.1-7.4 11.7c2.1 6.4 3.3 13.2 3.3 20.3"></path></svg>';
         $viewedAt = $this->translator->trans('Today') . ', ' . $now->format('H:i');
 
-        $watchedAtBlock = $this->renderView('_blocks/series/_watched_at.html.twig', [
+        $watchedAtBlock = ($this->renderView)('_blocks/series/_watched_at.html.twig', [
             'episode' => ['id' => $userEpisode->getEpisodeId()],
             'e' => $ue,
         ]);
 
-        return $this->json([
+        return ($this->json)([
             'ok' => true,
             'viewedAt' => $svg . ' ' . $viewedAt,
             'dataViewedAt' => $now->format('Y-m-d H:i:s'),
@@ -271,8 +284,9 @@ class ApiSeriesEpisode extends AbstractController
         ]);
     }
 
+    #[IsGranted('ROLE_USER')]
     #[Route('/remove', name: 'remove', methods: ['POST'])]
-    public function remove(Request $request): Response
+    public function remove(#[CurrentUser] User $user, Request $request): Response
     {
         $data = json_decode($request->getContent(), true);
         $showId = $data['showId'];
@@ -281,7 +295,6 @@ class ApiSeriesEpisode extends AbstractController
         $episodeNumber = $data['episodeNumber'];
         $locale = $request->getLocale();
 
-        $user = $this->getUser();
         $series = $this->seriesRepository->findOneBy(['tmdbId' => $showId]);
         $userSeries = $this->userSeriesRepository->findOneBy(['user' => $user, 'series' => $series]);
 
@@ -296,7 +309,7 @@ class ApiSeriesEpisode extends AbstractController
                 $userSeries->setLastSeason($lastWatchedEpisode->getSeasonNumber());
                 $this->userSeriesRepository->save($userSeries, true);
                 $this->userEpisodeRepository->remove($userEpisode);
-                return $this->json([
+                return ($this->json)([
                     'ok' => true,
                     'progress' => $userSeries->getProgress(),
                 ]);
@@ -326,7 +339,7 @@ class ApiSeriesEpisode extends AbstractController
                         $userSeries->setProgress(($viewedEpisodes - 1) / $numberOfEpisode * 100);
                         $userSeries->setBinge(false);
                         $this->userSeriesRepository->save($userSeries, true);
-                        return $this->json([
+                        return ($this->json)([
                             'ok' => true,
                             'progress' => $this->userEpisodeRepository->seasonProgress($userSeries, $seasonNumber),
                         ]);
@@ -343,7 +356,7 @@ class ApiSeriesEpisode extends AbstractController
             $userSeries->setProgress(0);
         }
         $this->userSeriesRepository->save($userSeries, true);
-        return $this->json([
+        return ($this->json)([
             'ok' => true,
             'progress' => $this->userEpisodeRepository->seasonProgress($userSeries, $seasonNumber),
         ]);
@@ -383,9 +396,8 @@ class ApiSeriesEpisode extends AbstractController
     }
 
     #[Route('/height/{userSeriesId}', name: 'height', requirements: ['id' => Requirement::DIGITS], methods: ['POST'])]
-    public function height(Request $request, int $userSeriesId): Response
+    public function height(#[CurrentUser] User $user, Request $request, int $userSeriesId): Response
     {
-        $user = $this->getUser();
         $episodeSizeSettings = $this->settingsRepository->findOneBy(['user' => $user, 'name' => 'episode_div_size_' . $userSeriesId]);
         $settings = $episodeSizeSettings->getData();
 
@@ -396,7 +408,7 @@ class ApiSeriesEpisode extends AbstractController
         $episodeSizeSettings->setData($settings);
         $this->settingsRepository->save($episodeSizeSettings, true);
 
-        return $this->json([
+        return ($this->json)([
             'ok' => true,
         ]);
     }
@@ -414,7 +426,7 @@ class ApiSeriesEpisode extends AbstractController
             if ($esn) {
                 if (strlen($content) === 0) {
                     $this->episodeSubstituteNameRepository->remove($esn, true);
-                    return $this->json([
+                    return ($this->json)([
                         'ok' => true,
                     ]);
                 }
@@ -429,7 +441,7 @@ class ApiSeriesEpisode extends AbstractController
             if ($elo) {
                 if (strlen($content) === 0) {
                     $this->episodeLocalizedOverviewRepository->remove($elo, true);
-                    return $this->json([
+                    return ($this->json)([
                         'ok' => true,
                     ]);
                 }
@@ -440,7 +452,7 @@ class ApiSeriesEpisode extends AbstractController
             $this->episodeLocalizedOverviewRepository->save($elo, true);
         }
 
-        return $this->json([
+        return ($this->json)([
             'ok' => true,
         ]);
     }
@@ -507,7 +519,7 @@ class ApiSeriesEpisode extends AbstractController
         if ($updatedOverviewCount) {
             $message .= "Updated overviews: $updatedOverviewCount";
         }
-        $this->addFlash('success', $message);
+        ($this->addFlash)('success', $message);
         return new JsonResponse([
             'ok' => true,
             'createdTitleCount' => $createdTitleCount,
@@ -522,12 +534,12 @@ class ApiSeriesEpisode extends AbstractController
     {
         /** @var UploadedFile $uploadedFile */
         $uploadedFile = $request->files->get('file');
-        $seriesName = $request->get('name');
-        $seasonNumber = $request->get('seasonNumber');
-        $episodeNumber = $request->get('episodeNumber');
+        $seriesName = $request->query->get('name');
+        $seasonNumber = $request->query->get('seasonNumber');
+        $episodeNumber = $request->query->get('episodeNumber');
 
         $basename = $uploadedFile->getClientOriginalName();
-        $projectDir = $this->getParameter('kernel.project_dir');
+        $projectDir = ($this->getParameter)('kernel.project_dir');
         $imageTempPath = $projectDir . '/public/images/temp/';
         $tempName = $imageTempPath . $basename;
         $stillPath = $projectDir . '/public/series/stills/' . $basename . '.webp';
@@ -541,7 +553,7 @@ class ApiSeriesEpisode extends AbstractController
         try {
             $uploadedFile->move($imageTempPath, $basename);
         } catch (FileException $e) {
-            return $this->json([
+            return ($this->json)([
                 'ok' => false,
                 'message' => $e->getMessage(),
             ]);
@@ -557,7 +569,7 @@ class ApiSeriesEpisode extends AbstractController
                 $imagePath = null;
             }
         } catch (FileException $e) {
-            return $this->json([
+            return ($this->json)([
                 'ok' => false,
                 'message' => $e->getMessage(),
             ]);
@@ -569,7 +581,7 @@ class ApiSeriesEpisode extends AbstractController
             $copy = true;
         }
 
-        return $this->json([
+        return ($this->json)([
             'ok' => $copy,
             'image' => $imagePath,
         ]);
@@ -640,17 +652,15 @@ class ApiSeriesEpisode extends AbstractController
         return $isBinge;
     }
 
-    private function now(): DateTimeImmutable
+    private function now(User $user): DateTimeImmutable
     {
-        $user = $this->getUser();
-        $timezone = $user ? $user->getTimezone() : 'Europe/Paris';
+        $timezone = $user->getTimezone() ?? 'Europe/Paris';
         return $this->dateService->newDateImmutable('now', $timezone);
     }
 
-    private function date(string $dateString): DateTimeImmutable
+    private function date(User $user, string $dateString): DateTimeImmutable
     {
-        $user = $this->getUser();
-        $timezone = $user ? $user->getTimezone() : 'Europe/Paris';
+        $timezone = $user->getTimezone() ?? 'Europe/Paris';
         return $this->dateService->newDateImmutable($dateString, $timezone);
     }
 }
