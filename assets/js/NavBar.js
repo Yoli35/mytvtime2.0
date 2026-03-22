@@ -36,10 +36,16 @@ export class NavBar {
         });*/
         const multiSearchDiv = navbar.querySelector('.multi-search');
         if (multiSearchDiv) {
+            const labels = {
+                'en': 'Summer',
+                'fr': 'Été',
+                'ko': '여름'
+            }
+            const label = labels[document.documentElement.lang];
             const countDownDiv = document.createElement('div');
             countDownDiv.classList.add('count-down');
             navbar.insertBefore(countDownDiv, multiSearchDiv);
-            const initialDate = new Date('2026-03-16T20:00:00.000Z');
+            const initialDate = new Date('2026-06-21T08:24:30.000Z');
             const countDownInterval = setInterval(() => {
                 const currentDate = new Date();
                 const timeDifference = initialDate - currentDate;
@@ -53,7 +59,7 @@ export class NavBar {
                 const minutes = Math.floor((timeDifference % (1000 * 60 * 60)) / (1000 * 60));
                 const seconds = Math.floor((timeDifference % (1000 * 60)) / 1000);
                 // Affiche le temps restant au format DD:HH:MM:SS
-                countDownDiv.textContent = `${days.toString().padStart(2, '0')}:${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+                countDownDiv.textContent = label + ' → ' + `${days.toString().padStart(2, '0')}:${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
             }, 1000);
         }
     }
