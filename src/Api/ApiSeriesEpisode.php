@@ -534,9 +534,10 @@ readonly class ApiSeriesEpisode
     {
         /** @var UploadedFile $uploadedFile */
         $uploadedFile = $request->files->get('file');
-        $seriesName = $request->query->get('name');
-        $seasonNumber = $request->query->get('seasonNumber');
-        $episodeNumber = $request->query->get('episodeNumber');
+        $payload = $request->getPayload();
+        $seriesName = $payload->get('name');
+        $seasonNumber = $payload->get('seasonNumber');
+        $episodeNumber = $payload->get('episodeNumber');
 
         $basename = $uploadedFile->getClientOriginalName();
         $projectDir = ($this->getParameter)('kernel.project_dir');
