@@ -1,0 +1,24 @@
+<div class="menu last-additions-menu" data-id="{{ lastItemId }}">
+    <ul>
+        {% for item in list %}
+            <li class="last-addition-item">
+                <a href="{{ item.url }}">
+                    <div class="poster" data-title="{{ item.name }}">
+                        {% if item.poster_path %}
+                            <img src="{{ item.poster_path }}" alt="{{ item.name }}">
+                        {% else %}
+                            {{ 'No poster'|trans }}
+                        {% endif %}
+                    </div>
+                    <div class="infos">
+                        <div class="name">{{ item.name }}</div>
+                        {% for c in item.origin_country %}
+                            <div class="country">{{ getEmojiFlag(c) }}</div>
+                        {% endfor %}
+                        <div class="date">{{ item.date|format_datetime('relative_medium', 'short') }}</div>
+                    </div>
+                </a>
+            </li>
+        {% endfor %}
+    </ul>
+</div>

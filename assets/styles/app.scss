@@ -64,17 +64,17 @@ a {
 body {
     align-items: center;
     background: var(--background) linear-gradient(
-                    45deg,
-                    var(--background-gradient-0) 0%,
-                    var(--background-gradient-11) 11%,
-                    var(--background-gradient-22) 22%,
-                    var(--background-gradient-33) 33%,
-                    var(--background-gradient-44) 44%,
-                    var(--background-gradient-56) 56%,
-                    var(--background-gradient-67) 67%,
-                    var(--background-gradient-78) 78%,
-                    var(--background-gradient-89) 89%,
-                    var(--background-gradient-100) 100%
+            45deg,
+            var(--background-gradient-0) 0%,
+            var(--background-gradient-11) 11%,
+            var(--background-gradient-22) 22%,
+            var(--background-gradient-33) 33%,
+            var(--background-gradient-44) 44%,
+            var(--background-gradient-56) 56%,
+            var(--background-gradient-67) 67%,
+            var(--background-gradient-78) 78%,
+            var(--background-gradient-89) 89%,
+            var(--background-gradient-100) 100%
     ) fixed;
     color: var(--ardoise-10);
     box-shadow: 0 0 2rem hsl(0 0% 0% / .5) inset;
@@ -716,6 +716,66 @@ label:has(input[type="text"]) {
             }
         }
 
+        .menu.last-additions-menu {
+            ul {
+                .last-addition-item {
+                    border-radius: .5rem;
+                    color: var(--navbar-color-hover);
+                    padding-block: 2px;
+                    padding-inline: 2px .5rem;
+
+                    &:hover {
+                        background-color: var(--orange-50);
+                        color: var(--orange-90);
+                    }
+
+                    a {
+                        align-items: center;
+                        display: flex;
+                        gap: 0.5rem;
+
+                        .poster {
+                            height: 5rem;
+
+                            &:not(:has(img)) {
+                                align-items: center;
+                                background-color: var(--green-30);
+                                border-radius: 0.375rem;
+                                display: flex;
+                                font-size: .5rem;
+                                justify-content: center;
+                                text-align: center;
+                            }
+
+                            img {
+                                aspect-ratio: 2 / 3;
+                                border-radius: 0.375rem;
+                                height: 100%;
+                            }
+                        }
+
+                        .infos {
+                            align-items: center;
+                            display: flex;
+                            flex-grow: 1;
+                            gap: 1rem;
+                            height: 5rem;
+
+                            .name {
+                            }
+
+                            .country {
+                            }
+
+                            .date {
+                                margin-inline-start: auto;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
         .menu.main {
             .separation {
                 display: flex;
@@ -1230,6 +1290,7 @@ label:has(input[type="text"]) {
     }
 
     .menu.debug-comment-menu,
+    .menu.last-additions-menu,
     .menu.main,
     .menu.user /*,
     .menu.users,
@@ -1271,6 +1332,7 @@ label:has(input[type="text"]) {
     .menu.map,
         /*.menu.menu-notifications,*/
     .menu.debug-comment-menu,
+    .menu.last-additions-menu,
     .menu.main,
         /*.menu.users,*/
     .menu.user {

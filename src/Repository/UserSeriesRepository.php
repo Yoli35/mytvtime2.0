@@ -759,6 +759,36 @@ class UserSeriesRepository extends ServiceEntityRepository
         return $this->getAll($sql, $params, $types);
     }
 
+    public function lastAdditions(User $user, string $date, string $locale): array
+    {
+        $params = [
+            'id' => $user->getId(),
+            'date' => $date,
+            'locale' => $locale,
+        ];
+        $types = [
+            'id' => ParameterType::INTEGER,
+            'date' => ParameterType::STRING,
+            'locale' => ParameterType::STRING,
+        ];
+        $sql = <<<SQL
+                SELECT 
+                    s.`id`                             AS id,
+                    IF(sln.`id`, sln.`name`, s.`name`) AS name,
+                    IF(sln.`id`, sln.`slug`, s.`slug`) AS slug,
+                    s.`poster_path`                    AS poster_path,
+                    us.`added_at`                      AS date,
+                    s.`origin_country`                 AS origin_country,
+                    'series'                           AS type
+                FROM `user_series` us
+                    LEFT JOIN `series` s ON s.`id`=us.`series_id`
+                     LEFT JOIN `series_localized_name` sln ON sln.`series_id`=s.`id` AND sln.`locale` = :locale
+                WHERE us.`user_id` = :id AND us.`added_at` > :date
+                ORDER BY us.`id` DESC;
+            SQL;
+        return $this->getAll($sql, $params, $types);
+    }
+
     public function getAll(string $sql, array $params = [], array $types = []): array
     {
         try {

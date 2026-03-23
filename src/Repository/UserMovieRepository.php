@@ -89,6 +89,35 @@ class UserMovieRepository extends ServiceEntityRepository
         return $this->getAll($sql, $params, $types);
     }
 
+    public function lastAdditions(User $user, string $date, string $locale): array
+    {
+        $params = [
+            'id' => $user->getId(),
+            'date' => $date,
+            'locale' => $locale,
+        ];
+        $types = [
+            'id' => ParameterType::INTEGER,
+            'date' => ParameterType::STRING,
+            'locale' => ParameterType::STRING,
+        ];
+        $sql = <<<SQL
+                SELECT 
+                    um.`id`                             AS id,
+                    IF(mln.`id`, mln.`name`, m.`title`) AS name,
+                    m.`poster_path`                     AS poster_path,
+                    um.`created_at`                     AS date,
+                    m.`origin_country`                  AS origin_country,
+                    'movie'                             AS type
+                FROM `user_movie` um
+                    LEFT JOIN `movie` m ON m.`id`=um.`movie_id`
+                    LEFT JOIN `movie_localized_name` mln ON mln.`movie_id`=m.`id` AND mln.`locale` = :locale
+                WHERE um.user_id = :id AND um.`created_at` > :date
+                ORDER BY um.`id` DESC;
+            SQL;
+        return $this->getAll($sql, $params, $types);
+    }
+
     public function getAll($sql, array $params = [], array $types = []): array
     {
         try {

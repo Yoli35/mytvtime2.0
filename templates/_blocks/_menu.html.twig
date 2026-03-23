@@ -217,6 +217,15 @@
             {% endif %}
         {% endif %}
 
+        {% if app.user %}
+            <div class="navbar-item">
+                <div class="debug-comment-anchor">{{ ux_icon('mdi:add-bold') }}</div>
+                <div class="menu last-additions-menu" data-id="-1">
+                    <ul></ul>
+                </div>
+            </div>
+        {% endif %}
+
         {% set p = '' %}
         {% if parameters|length %}
             {% for key, value in parameters %}

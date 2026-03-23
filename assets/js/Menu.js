@@ -251,6 +251,9 @@ export class Menu {
                 if (menu.classList.contains("debug-comment-menu")) {
                     self.updateCommentMenu(item, menu);
                 }
+                if (menu.classList.contains("last-additions-menu")) {
+                    self.updateLastAdditionsMenu(item, menu);
+                }
                 if (menu.classList.contains("main")) {
                     self.updateMainMenu();
                 }
@@ -594,6 +597,36 @@ export class Menu {
                 const ul = blockDiv.querySelector("ul");
                 menu.querySelector("ul").replaceWith(ul);
                 menu.setAttribute("data-id", res['lastCommentId']);
+            })
+            .catch(err => {
+                console.log(err);
+            });
+    }
+
+    updateLastAdditionsMenu(navbarItem, menu) {
+        const lastAdditionsMenuDiv = document.querySelector(".last-additions-menu");
+        const lastItemId = lastAdditionsMenuDiv.getAttribute("data-id") || "-1";
+        const apiUrl = '/api/last/additions/menu/update';
+        const options = {
+            method: 'POST',
+            headers: {
+                accept: 'application/json'
+            },
+            body: JSON.stringify({lastCommentId : lastItemId}),
+        };
+
+        fetch(apiUrl, options)
+            .then(res => res.json())
+            .then(res => {
+                if (res['update'] === false) return;
+                console.log('last additions menu updated');
+                const block = res['block'];
+                const blockDiv = document.createElement('div');
+                blockDiv.innerHTML = block;
+                const ul = blockDiv.querySelector("ul");
+                menu.querySelector("ul").replaceWith(ul);
+                menu.setAttribute("data-id", res['lastItemId']);
+                self.tooltips.init(ul);
             })
             .catch(err => {
                 console.log(err);
