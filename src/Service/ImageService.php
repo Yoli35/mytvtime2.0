@@ -567,7 +567,7 @@ class ImageService extends AbstractController
         $width = imagesx($newImage);
         $height = imagesy($newImage);
         $font = $kernelProjectDir . '/public/fonts/google-sans/ProductSans-Regular.ttf';
-         $fontSize = 40;
+        $fontSize = $this->fontSizeFromImageWidth($width);
         $radius = 8;
         $textColor = imagecolorallocate($newImage, 240, 240, 240);
         $bbox = imagettfbbox($fontSize, 0, $font, $text);
@@ -586,9 +586,10 @@ class ImageService extends AbstractController
         if ($title === "") {
             return; // No title to add
         }
+        $width = imagesx($newImage);
         $height = imagesy($newImage);
         $font = $kernelProjectDir . '/public/fonts/google-sans/ProductSans-Regular.ttf';
-        $fontSize = 40;
+        $fontSize = $this->fontSizeFromImageWidth($width);
         $radius = 8;
         $textColor = imagecolorallocate($newImage, 240, 240, 240); // #f0f0f0
         $bbox = imagettfbbox($fontSize, 0, $font, $title);
@@ -600,6 +601,17 @@ class ImageService extends AbstractController
         $this->ImageRoundFilledRectangle($newImage, 20, $height - $textHeight - 40, $textWidth + 60, $height - 10, $radius, $rectangleColor);
         // Add the text
         imagettftext($newImage, $fontSize, 0, 40, $height - 30, $textColor, $font, $title);
+    }
+
+    private function fontSizeFromImageWidth(int $width): int
+    {
+        if ($width >= 1920) {
+            return 40;
+        }
+        if ($width >= 1280) {
+            return 30;
+        }
+        return 20;
     }
 
     /**
