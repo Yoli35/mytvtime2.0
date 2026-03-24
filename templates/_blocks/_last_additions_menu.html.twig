@@ -13,7 +13,7 @@
                     <div class="infos">
                         <div class="name">{{ item.name }}</div>
                         {% for c in item.origin_country %}
-                            <div class="country">{{ getEmojiFlag(c) }}</div>
+                            <div class="country" data-title="{{ c|country_name }}">{{ getEmojiFlag(c) }}</div>
                         {% endfor %}
                         <div class="date">{{ item.date|format_datetime('relative_medium', 'short') }}</div>
                     </div>
