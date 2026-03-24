@@ -114,6 +114,11 @@ export class AdminKeyword {
         const textarea = document.createElement('textarea');
         const cancelButton = document.createElement('button');
         const saveButton = document.createElement('button');
+        cancelButton.setAttribute('type', 'button');
+        cancelButton.addEventListener('click', () => {
+            dialog.close();
+            dialog.remove();
+        });
         saveButton.setAttribute('type', 'submit');
         formRow1.classList.add('form-row');
         formField1.classList.add('form-field');
@@ -129,12 +134,30 @@ export class AdminKeyword {
         form.append(formRow2);
         form.setAttribute('data-keyword', input.dataset.keyword);
         form.addEventListener('submit', self.save);
+        form.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' && e.target.tagName === 'TEXTAREA') {
+                e.preventDefault();
+                self.save(e);
+            }
+            if (e.key === 'Escape') {
+                dialog.close();
+                dialog.querySelector('form').reset();
+                dialog.querySelector('form').remove();
+                dialog.remove();
+            }
+        });
         dialog.append(form);
         dialog.classList.add('dialog');
         dialog.classList.add('edit-keyword-dialog');
         dialog.classList.add('active');
         document.querySelector('.admin').append(dialog);
         dialog.showModal();
+        textarea.addEventListener('input', (e) => {
+            const field = e.currentTarget;
+            if (field.scrollHeight > field.clientHeight) {
+                field.style.height = `${field.scrollHeight}px`;
+            }
+        });
         textarea.value = text;
         textarea.focus();
         textarea.select();

@@ -3175,6 +3175,15 @@ dialog.user-list-dialog {
 
 }
 
+dialog.edit-keyword-dialog {
+    width: 40rem;
+
+    textarea {
+        min-height: 10rem;
+        resize: vertical;
+    }
+}
+
 .copy-badge {
     align-items: center;
     color: var(--green-10);
