@@ -107,6 +107,8 @@ class AdminController extends AbstractController
             'An error has occurred' => $this->translator->trans('An error has occurred'),
             'Keywords updated successfully' => $this->translator->trans('Keywords updated successfully'),
             'Only one translation left!' => $this->translator->trans('Only one translation left!'),
+            'Cancel' => $this->translator->trans('Cancel'),
+            'Save' => $this->translator->trans('Save'),
         ];
 
         return $this->render('admin/index.html.twig', [

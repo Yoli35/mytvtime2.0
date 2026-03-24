@@ -24,7 +24,8 @@ export class AdminKeyword {
 
         const inputs = document.querySelectorAll('.keyword__input');
         inputs.forEach(input => {
-            input.addEventListener('keydown', this.save)
+            input.addEventListener('keydown', this.save);
+            input.addEventListener('paste', this.edit);
         });
 
         this.check();
@@ -32,11 +33,24 @@ export class AdminKeyword {
 
     save(e) {
         const input = e.target;
-        if (self.saving || e.key !== 'Enter' || input.value.length === 0) {
+        if (e.type !== 'submit' && (self.saving || e.key !== 'Enter' || input.value.length === 0)) {
             return;
         }
         self.saving = true;
-        const translations = [{original: input.dataset.keyword, translated: input.value}];
+        let originalText, translatedText;
+        if (e.type === 'submit') {
+            const textarea = e.target.closest('form').querySelector('textarea');
+            originalText = input.dataset.keyword;
+            translatedText = textarea.value
+                .replace(/\r?\n/g, '<br/> ')
+                .replace(/\[\d+]/g, '')
+                .replace(/\s{2,}/g, ' ')
+                .trim();
+        } else {
+            originalText = input.dataset.keyword;
+            translatedText = input.value;
+        }
+        const translations = [{original: originalText, translated: translatedText}];
         fetch('/api/keywords/save', {
             method: 'POST',
             headers: {
@@ -51,12 +65,17 @@ export class AdminKeyword {
                     return;
                 }
                 self.flashMessage.add('success', self.translations[data['message']], data['keywords']);
+                if (e.type === 'submit') {
+                    const dialog = document.querySelector('.edit-keyword-dialog');
+                    dialog.close();
+                    dialog.remove();
+                }
                 const keywordTranslationDiv = input.closest('.keyword__translation');
                 const label = keywordTranslationDiv.querySelector('label');
                 label.remove();
                 const svgCheck = document.querySelector('#check').querySelector('svg').cloneNode(true);
                 keywordTranslationDiv.appendChild(svgCheck);
-                keywordTranslationDiv.appendChild(document.createTextNode(input.value));
+                keywordTranslationDiv.appendChild(document.createTextNode(translatedText));
                 const missingCountSpan = document.querySelector('.missing-count');
                 const missingTranslationSpan = document.querySelector('.missing-translations');
                 const missingCount = missingCountSpan.textContent - 1;
@@ -78,6 +97,49 @@ export class AdminKeyword {
                 console.error(error);
                 self.saving = false;
             });
+    }
+
+    edit(e) {
+        const text = e.clipboardData.getData('text');
+        if (text.length < 32) {
+            return;
+        }
+        const input = e.target;
+        const dialog = document.createElement('dialog');
+        const form = document.createElement('form');
+        const formRow1 = document.createElement('div');
+        const formRow2 = document.createElement('div');
+        const formField1 = document.createElement('div');
+        const formField2 = document.createElement('div');
+        const textarea = document.createElement('textarea');
+        const cancelButton = document.createElement('button');
+        const saveButton = document.createElement('button');
+        saveButton.setAttribute('type', 'submit');
+        formRow1.classList.add('form-row');
+        formField1.classList.add('form-field');
+        formRow2.classList.add('form-row');
+        formField2.classList.add('form-field');
+        formField1.appendChild(textarea);
+        formField2.appendChild(cancelButton);
+        formField2.appendChild(saveButton);
+        formRow1.appendChild(formField1);
+        formRow2.appendChild(formField2);
+        form.classList.add('form');
+        form.append(formRow1);
+        form.append(formRow2);
+        form.setAttribute('data-keyword', input.dataset.keyword);
+        form.addEventListener('submit', self.save);
+        dialog.append(form);
+        dialog.classList.add('dialog');
+        dialog.classList.add('edit-keyword-dialog');
+        dialog.classList.add('active');
+        document.querySelector('.admin').append(dialog);
+        dialog.showModal();
+        textarea.value = text;
+        textarea.focus();
+        textarea.select();
+        cancelButton.textContent = self.translations['Cancel'];
+        saveButton.textContent = self.translations['Save'];
     }
 
     check() {
