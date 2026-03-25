@@ -784,7 +784,9 @@ label:has(input[type="text"]) {
 
                 &.today {
                     background-color: var(--orange-40);
-                    font-weight: 600;
+                    font-size: 1.375rem;
+                    font-weight: 400;
+                    padding-block: .5rem;
                 }
             }
 
