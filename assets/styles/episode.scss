@@ -51,6 +51,22 @@
             .episode-air-date-component, .episode-stats-container {
                 margin-inline-start: auto;
             }
+
+            .episode-stats-container .finale {
+                background-color: var(--orange-50);
+                border-radius: 5rem;
+                border: 4px solid hsla(from var(--ardoise-20) h s l / .25);
+                color: var(--ardoise-10);
+                font-size: 1.25rem;
+                font-weight: 500;
+                padding-block: .25rem;
+                padding-inline: 1.5rem;
+
+                &.watched {
+                    background-color: var(--green-60);
+                    color: var(--green-10);
+                }
+            }
         }
 
         .navigation {

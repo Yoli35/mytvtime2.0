@@ -1,10 +1,14 @@
-{% if episode.runtime or episode.vote_average %}
+{% if episode.runtime or episode.vote_average or episode.episode_type == "finale" %}
     <div class="episode-stats-container">
         {% if episode.runtime %}
             <div class="runtime">{{ episode.runtime }} {{ 'minutes'|trans }}</div>
         {% endif %}
         {% if episode.vote_average %}
             <div class="vote-average">{{ episode.vote_average }} / 10 - {{ episode.vote_count }} {{ (episode.vote_count > 1 ? 'votes':'vote')|trans }}</div>
+        {% endif %}
+        {% if episode.episode_type == "finale" %}
+            {% set ue = episode.user_episode %}
+            <div class="finale{% if ue and ue.watch_at %} watched{% endif %}">{{ 'Season finale'|trans }}</div>
         {% endif %}
     </div>
 {% endif %}

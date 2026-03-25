@@ -34,9 +34,6 @@
                         {% set still = episode.stills|last %}
                         <img src="/series/stills/{{ still.path }}" alt="{{ episode.name }} custom still image">
                     {% endif %}
-                    {% if episode.episode_type == "finale" %}
-                        <div class="finale season-finale"></div>
-                    {% endif %}
                 </div>
                 <div class="infos">
                     <h1>{{ episode.episode_number }} / {{ season.episodes|length }}. {{ episode.user_episode.substitute_name ?: episode.name }}</h1>
