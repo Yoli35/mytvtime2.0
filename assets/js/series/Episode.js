@@ -1,5 +1,6 @@
 import {AddCast} from 'AddCast';
 import {EpisodeActions} from "EpisodeActions";
+import {FetchEpisodeCards} from "FetchEpisodeCards";
 import {Location} from "Location";
 import {SeasonComments} from "SeasonComments";
 import {WhatNext} from "WhatNext";
@@ -94,6 +95,11 @@ export class Episode {
          * user actions                                                               *
          ******************************************************************************/
         this.episodeActions.init();
+
+        /******************************************************************************
+         * Fetch episode stills for each season.                                      *
+         ******************************************************************************/
+        new FetchEpisodeCards(this.toolTips);
 
         /******************************************************************************
          * mapbox gl                                                                  *

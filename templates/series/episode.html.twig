@@ -70,6 +70,7 @@
             </header>
             <main>
                 <div class="episodes-comments"></div>
+                <div class="episode__cards" data-id="{{ series.id }}" data-tmdb-id="{{ series.tmdbId }}" data-season-number="{{ season.season_number }}" data-series-slug="{{ season.series_localized_name.slug ?? series.slug }}"></div>
                 {% if addWatchNextDiv is defined %}
                     <div class="what-to-watch-next"></div>
                 {% endif %}

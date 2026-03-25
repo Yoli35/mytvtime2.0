@@ -1,6 +1,7 @@
 import {AddCast} from 'AddCast';
 import {CopyName} from "CopyName";
 import {Diaporama} from 'Diaporama';
+import {FetchEpisodeCards} from "FetchEpisodeCards";
 import {FlashMessage} from "FlashMessage";
 import {Keyword} from 'Keyword';
 import {Location} from "Location";
@@ -192,8 +193,7 @@ export class Show {
         /******************************************************************************
          * Fetch episode stills for each season.                                      *
          ******************************************************************************/
-        const episodeCardDivs = document.querySelectorAll('.episode__cards');
-        this.fetchEpisodeCards(episodeCardDivs, 0, episodeCardDivs.length);
+        new FetchEpisodeCards(this.toolTips);
 
         /******************************************************************************
          * Old series added?                                                          *
@@ -662,26 +662,6 @@ export class Show {
                 index++;
                 if (index < length) self.fetchSeasonOverviews(seriesId, seasonDivs, index, length);
             })
-    }
-
-    fetchEpisodeCards(cards, index, length) {
-        if (!length) return;
-        const episodeCardDiv = cards.item(index);
-        const id = episodeCardDiv.getAttribute('data-id');
-        const tmdbId = episodeCardDiv.getAttribute('data-tmdb-id');
-        const seasonNumber = episodeCardDiv.getAttribute('data-season-number');
-        const seriesSlug = episodeCardDiv.getAttribute('data-series-slug');
-        fetch('/api/series/season/episode/stills/' + id + '/' + tmdbId + '/' + seasonNumber + '/' + seriesSlug, {method: 'GET'})
-            .then(function (response) {
-                return response.json();
-            })
-            .then(function (data) {
-                episodeCardDiv.innerHTML = data['episodeCards'];
-                self.toolTips.init(episodeCardDiv);
-                index++;
-                if (index < length) self.fetchEpisodeCards(cards, index, length);
-            })
-            .catch(err => console.log(err));
     }
 
     fetchSeriesImages(dialog, tmdbId, backdrops, logos, posters) {

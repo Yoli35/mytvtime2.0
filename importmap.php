@@ -55,6 +55,9 @@ return [
     'EpisodeActions' => [
         'path' => './assets/js/series/EpisodeActions.js',
     ],
+    'FetchEpisodeCards' => [
+        'path' => './assets/js/series/FetchEpisodeCards.js',
+    ],
     'FlashMessage' => [
         'path' => './assets/js/FlashMessage.js',
     ],

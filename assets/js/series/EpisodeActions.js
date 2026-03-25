@@ -10,6 +10,7 @@
  * @property {Translations} text
  */
 import JSConfetti from "js-confetti";
+import {FetchEpisodeCards} from "FetchEpisodeCards";
 import {SeasonComments} from "SeasonComments";
 
 let self;
@@ -867,6 +868,12 @@ export class EpisodeActions {
                                 voteAverageDiv.innerHTML = this.translations['No votes'];
                             }
                         }
+
+                        /******************************************************************************
+                         * Fetch episode stills for each season.                                      *
+                         ******************************************************************************/
+                        new FetchEpisodeCards(this.toolTips);
+
                         // If finale, confetti!!
                         const episodeDiv = selectVoteDiv.closest(".episode") || selectVoteDiv.closest("header");
                         if (episodeDiv.querySelector(".finale.season-finale")) {
