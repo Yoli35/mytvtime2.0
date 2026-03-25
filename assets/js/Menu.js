@@ -545,7 +545,7 @@ export class Menu {
                     const a = document.createElement("a");
                     a.href = item['href'];
                     const suggestionDiv = document.createElement("div");
-                    suggestionDiv.classList.add("suggestion");
+                    suggestionDiv.classList.add("item");
                     suggestionDiv.setAttribute("data-title", item['name']);
                     const img = document.createElement("img");
                     img.src = "/series/posters" + item['poster_path'];
