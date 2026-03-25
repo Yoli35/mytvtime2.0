@@ -8,7 +8,7 @@
         {% endif %}
         {% if episode.episode_type == "finale" %}
             {% set ue = episode.user_episode %}
-            <div class="finale{% if ue and ue.watch_at %} watched{% endif %}">{{ 'Season finale'|trans }}</div>
+            <div class="finale season-finale{% if ue and ue.watch_at %} watched{% endif %}">{{ 'Season finale'|trans }}</div>
         {% endif %}
     </div>
 {% endif %}
