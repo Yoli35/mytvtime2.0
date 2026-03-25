@@ -5,8 +5,6 @@ export class FetchEpisodeCards {
     constructor(toolTips) {
         self = this;
         this.toolTips = toolTips;
-
-        this.init();
     }
 
     init() {
@@ -16,18 +14,27 @@ export class FetchEpisodeCards {
 
     load(cards, index, length) {
         if (!length) return;
-        const episodeCardDiv = cards.item(index);
-        const id = episodeCardDiv.getAttribute('data-id');
-        const tmdbId = episodeCardDiv.getAttribute('data-tmdb-id');
-        const seasonNumber = episodeCardDiv.getAttribute('data-season-number');
-        const seriesSlug = episodeCardDiv.getAttribute('data-series-slug');
+        const episodeCardsDiv = cards.item(index);
+        const scrollX = episodeCardsDiv.scrollLeft;
+        const id = episodeCardsDiv.getAttribute('data-id');
+        const tmdbId = episodeCardsDiv.getAttribute('data-tmdb-id');
+        const seasonNumber = episodeCardsDiv.getAttribute('data-season-number');
+        const seriesSlug = episodeCardsDiv.getAttribute('data-series-slug');
         fetch('/api/series/season/episode/stills/' + id + '/' + tmdbId + '/' + seasonNumber + '/' + seriesSlug, {method: 'GET'})
             .then(function (response) {
                 return response.json();
             })
             .then(function (data) {
-                episodeCardDiv.innerHTML = data['episodeCards'];
-                self.toolTips.init(episodeCardDiv);
+                const newEpisodeCardsDiv = document.createElement('div');
+                newEpisodeCardsDiv.classList.add('episode__cards');
+                newEpisodeCardsDiv.setAttribute('data-id', id);
+                newEpisodeCardsDiv.setAttribute('data-tmdb-id', tmdbId);
+                newEpisodeCardsDiv.setAttribute('data-season-number', seasonNumber);
+                newEpisodeCardsDiv.setAttribute('data-series-slug', seriesSlug);
+                newEpisodeCardsDiv.innerHTML = data['episodeCards'];
+                episodeCardsDiv.replaceWith(newEpisodeCardsDiv);
+                newEpisodeCardsDiv.scrollLeft = scrollX;
+                self.toolTips.init(newEpisodeCardsDiv);
                 index++;
                 if (index < length) self.load(cards, index, length);
             })

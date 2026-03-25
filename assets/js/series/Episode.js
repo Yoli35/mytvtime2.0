@@ -75,6 +75,8 @@ export class Episode {
         this.menu = menu;
         this.episodeActions = new EpisodeActions({...this.globs, ...this.globsMap}, flashMessage, toolTips, menu);
 
+        this.fetchEpisodeCards = new FetchEpisodeCards(this.toolTips);
+
         this.backToSeason = this.backToSeason.bind(this);
     }
 
@@ -99,7 +101,7 @@ export class Episode {
         /******************************************************************************
          * Fetch episode stills for each season.                                      *
          ******************************************************************************/
-        new FetchEpisodeCards(this.toolTips);
+        this.fetchEpisodeCards.init();
 
         /******************************************************************************
          * mapbox gl                                                                  *

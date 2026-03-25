@@ -105,6 +105,7 @@ export class Show {
         this.lang = document.documentElement.lang;
         this.toolTips = new ToolTips();
         this.flashMessage = new FlashMessage();
+        this.fetchEpisodeCards = new FetchEpisodeCards(this.toolTips);
     }
 
     init(menu) {
@@ -193,7 +194,7 @@ export class Show {
         /******************************************************************************
          * Fetch episode stills for each season.                                      *
          ******************************************************************************/
-        new FetchEpisodeCards(this.toolTips);
+        this.fetchEpisodeCards.init();
 
         /******************************************************************************
          * Old series added?                                                          *

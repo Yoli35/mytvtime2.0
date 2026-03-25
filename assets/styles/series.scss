@@ -3609,7 +3609,7 @@ h2 {
     width: 100%;
 
     a {
-        height: 100%;
+        display: inline-flex;
         scroll-snap-align: start;
 
         .episode-card {

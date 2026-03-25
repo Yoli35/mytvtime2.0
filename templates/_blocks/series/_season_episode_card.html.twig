@@ -2,7 +2,7 @@
     <div class="episode-card">
         <div class="episode-still"{% if episode.overview|length %} data-title="{{ episode.overview }}"{% else %} data-title="{{ episode.name }}"{% endif %}>
             {% if episode.still %}
-                <img src="{{ episode.still }}" alt="{{ episode.name }}" loading="lazy">
+                <img src="{{ episode.still }}" alt="{{ episode.name }}">
             {% else %}
                 <div class="no-image">{{ 'No image'|trans }}</div>
             {% endif %}

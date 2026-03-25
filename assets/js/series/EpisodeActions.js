@@ -33,6 +33,8 @@ export class EpisodeActions {
 
         this.seasonComments = new SeasonComments(this.user, this.seriesId, this.seasonNumber, this.translations);
 
+        this.fetchEpisodeCards = new FetchEpisodeCards(this.toolTips);
+
         this.setProgress = this.setProgress.bind(this);
         this.addEpisode = this.addEpisode.bind(this);
         this.removeEpisode = this.removeEpisode.bind(this);
@@ -330,6 +332,11 @@ export class EpisodeActions {
                 vote.addEventListener('click', self.selectVote);
                 // vote.addEventListener('wheel', this.wheelVote);
                 userEpisode.insertBefore(vote, backToTopLink);
+
+                /******************************************************************************
+                 * Fetch episode stills for each season.                                      *
+                 ******************************************************************************/
+                self.fetchEpisodeCards.init();
             });
     }
 
@@ -776,6 +783,11 @@ export class EpisodeActions {
                     } else {
                         selectProviderDiv.innerHTML = '<img src="' + this.providers.logos[providerId] + '" alt="' + this.providers.names[providerId] + '">';
                     }
+
+                    /******************************************************************************
+                     * Fetch episode stills for each season.                                      *
+                     ******************************************************************************/
+                    self.fetchEpisodeCards.init();
                 }
             }
         });
@@ -812,6 +824,11 @@ export class EpisodeActions {
                     self.toolTips.init(selectDeviceDiv);
                     button.closest('dialog').close();
                 }
+
+                /******************************************************************************
+                 * Fetch episode stills for each season.                                      *
+                 ******************************************************************************/
+                self.fetchEpisodeCards.init();
             }
         });
     }
@@ -872,7 +889,7 @@ export class EpisodeActions {
                         /******************************************************************************
                          * Fetch episode stills for each season.                                      *
                          ******************************************************************************/
-                        new FetchEpisodeCards(this.toolTips);
+                        self.fetchEpisodeCards.init();
 
                         // If finale, confetti!!
                         const episodeDiv = selectVoteDiv.closest(".episode") || selectVoteDiv.closest("header");
