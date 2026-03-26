@@ -18,6 +18,240 @@
                 </div>
             </div>
             <div class="site-update glowing-border">
+                <h2>73ᵉ mise à jour : 26/03/2026</h2>
+                <ul>
+                    <li>
+                        <div class="change">→ Add focus and highlight for specific episode cards</div>
+                        <div class="details">Allows direct targeting and automatic highlighting of an episode card, improving navigation and usability. Enhances the visibility and context of selected episodes for a more user-friendly experience.</div>
+                    </li>
+                    <li>
+                        <div class="change">→ Improve dynamic loading for episode stills</div>
+                        <div class="details">Enhances the dynamic loading mechanism for episode stills across various views, ensuring smoother updates and improved user experience. Refactors the logic for better maintainability and consistency when fetching and rendering episode content.</div>
+                    </li>
+                    <li>
+                        <div class="change">→ Add dynamic loading for episode stills</div>
+                        <div class="details">Replaces static loading logic with a reusable class for fetching and rendering episode stills dynamically. Improves maintainability and ensures a smoother, more efficient user experience across various views.</div>
+                    </li>
+                    <li>
+                        <div class="change">→ Fix confetti trigger for season finale episodes</div>
+                        <div class="details">Ensures confetti animation correctly triggers for season finales by adjusting the condition logic. Improves celebratory feedback for users when viewing finale episodes.</div>
+                    </li>
+                    <li>
+                        <div class="change">→ Add season finale badge to episode stats</div>
+                        <div class="details">Displays a "Season finale" badge in the episode statistics for finale episodes, with dynamic styling for watched status. Improves clarity and highlights significant episodes to enhance user engagement and experience.</div>
+                    </li>
+                    <li>
+                        <div class="change">→ Refactor episode display and styling for improved consistency</div>
+                        <div class="details">Unifies the layout and styles for today's episodes and related sections. Enhances visual coherence and ensures a more seamless user experience across different parts of the app.</div>
+                    </li>
+                    <li>
+                        <div class="change">→ Improve keyword editing dialog with better input handling</div>
+                        <div class="details">Adds cancel functionality, expands textarea dynamically, and supports keyboard shortcuts for better usability. Enhances user experience by making the editing process more intuitive and efficient.</div>
+                    </li>
+                    <li>
+                        <div class="change">→ Enable keyword editing via paste and add dialog for long inputs</div>
+                        <div class="details">Allows users to edit keywords directly by pasting long texts, with a dialog for easier input. Enhances efficiency and usability in managing translations.</div>
+                    </li>
+                    <li>
+                        <div class="change">→ Add tooltips to UI elements in navbar and last additions menu</div>
+                        <div class="details">Improves clarity by adding descriptive tooltips to icons and country flags. Enhances user experience by providing additional context for interactive elements.</div>
+                    </li>
+                    <li>
+                        <div class="change">→ Add "Last Additions" menu to navbar</div>
+                        <div class="details">Introduces a dynamic menu showing recently added movies and series. Enhances user experience by providing quick access to the latest content updates directly from the navbar.</div>
+                    </li>
+                    <li>
+                        <div class="change">→ Adjust font size dynamically based on image width</div>
+                        <div class="details">Improves text readability by scaling the font size proportionally to the width of the image. Ensures consistent visual quality across various image sizes.</div>
+                    </li>
+                    <li>
+                        <div class="change">→ Add fallback for episode stills display</div>
+                        <div class="details">Ensures a fallback still image is shown when an episode's primary still is unavailable. Improves user experience by providing consistent visuals even when some image data is missing.</div>
+                    </li>
+                    <li>
+                        <div class="change">→ Switch request handling to use payload data</div>
+                        <div class="details">Replaces query parameters with payload-based data retrieval in file uploads. Improves data consistency and prepares for enhanced request handling in future updates.</div>
+                    </li>
+                    <li>
+                        <div class="change">→ Add localized countdown label to navbar</div>
+                        <div class="details">Introduces a countdown timer with a localized seasonal label based on the user's language setting. Enhances clarity and user experience by dynamically displaying the remaining time in an easily understandable format.</div>
+                    </li>
+                    <li>
+                        <div class="change">→ Introduce user-based timezone handling across API</div>
+                        <div class="details">Ensures all date and time responses respect the user's timezone settings. Improves accuracy and personalization by aligning timestamps with individual user preferences.</div>
+                    </li>
+                    <li>
+                        <div class="change">→ Add 'Up-to-Date' indicator to schedule menu</div>
+                        <div class="details">Introduces a visual indicator for episodes that are fully caught up or upcoming. Enhances clarity and provides users with a quick overview of their viewing progress.</div>
+                    </li>
+                    <li>
+                        <div class="change">→ Ensure distinct series and episodes in user lists</div>
+                        <div class="details">Adds distinct selection to queries for series and episode lists. Prevents duplicate entries, improving data accuracy and the user experience when browsing lists.</div>
+                    </li>
+                    <li>
+                        <div class="change">→ Add device selection dialog to episodes</div>
+                        <div class="details">Introduces a new dialog for selecting devices in the episode view. Improves usability by allowing users to make quick device choices directly within the interface.</div>
+                    </li>
+                    <li>
+                        <div class="change">→ Update dropdown indicator styles</div>
+                        <div class="details">Unifies dropdown indicator appearance and position for better visual consistency. Adjusts styling to ensure alignment and compatibility across components.</div>
+                    </li>
+                    <li>
+                        <div class="change">→ Add personalized settings for 'What Next' feature</div>
+                        <div class="details">Enables users to customize their 'What Next' recommendations with specific preferences like sorting, limits, and order. Enhances personalization and usability by tailoring content suggestions to individual user settings.</div>
+                    </li>
+                    <li>
+                        <div class="change">→ Update date formatting in schedule menu</div>
+                        <div class="details">Improves date display in the schedule menu by using a more descriptive format with capitalization. Enhances readability and provides a better user experience with clearer date presentation.</div>
+                    </li>
+                    <li>
+                        <div class="change">→ Add device selection dialog to episodes</div>
+                        <div class="details">Introduces a new dialog for selecting devices when adding or editing episodes. Enhances user experience by providing a clear, interactive interface for device selection and customization.</div>
+                    </li>
+                    <li>
+                        <div class="change">→ Remove countdown timer on expiration</div>
+                        <div class="details">Removes the countdown timer element when it expires. Reduces visual clutter and enhances user experience by removing non-functional elements.</div>
+                    </li>
+                    <li>
+                        <div class="change">→ Refactor SeriesService to use closures for flash messages and URL generation</div>
+                        <div class="details">Simplifies flash messaging and URL generation by replacing direct method calls with closures. Improves dependency injection usage and enhances code readability and maintainability.</div>
+                    </li>
+                    <li>
+                        <div class="change">→ Add preferred devices selection to user profile</div>
+                        <div class="details">Allows users to select and manage their preferred devices directly from their profile. Enhances personalization and usability by providing a straightforward interface for device preferences.</div>
+                    </li>
+                    <li>
+                        <div class="change">→ Add dynamic pagination to series filtering tabs</div>
+                        <div class="details">Introduces pagination for series filtered by provider or without a provider. Improves usability for large datasets by allowing users to navigate through pages while maintaining clarity and responsiveness.</div>
+                    </li>
+                    <li>
+                        <div class="change">→ Update preferred name form behavior</div>
+                        <div class="details">Refactors the preferred name form to improve responsiveness and clarity. Ensures buttons and options are dynamically enabled or disabled based on user input for a smoother, more intuitive experience.</div>
+                    </li>
+                    <li>
+                        <div class="change">→ Update provider icon in series menu</div>
+                        <div class="details">Replaces the provider icon in the menu with a more fitting design, enhancing visual clarity and alignment with its purpose.</div>
+                    </li>
+                    <li>
+                        <div class="change">→ Validate season and episode number consistency in queries</div>
+                        <div class="details">Prevents an episode number from being provided without a season number. Improves error handling and ensures logical query constraints for data integrity.</div>
+                    </li>
+                    <li>
+                        <div class="change">→ Add provider-based series filtering with tabs</div>
+                        <div class="details">Introduces a tab-based interface for filtering series by provider or without a provider. Enhances navigation and clarity while allowing dynamic filtering with counts for each category.</div>
+                    </li>
+                    <li>
+                        <div class="change">→ Extract dialogs into reusable components for clarity</div>
+                        <div class="details">Moves review and provider dialogs into dedicated templates, simplifying maintenance and improving readability. Ensures consistent dialog usage across series and episode pages for better user experience and easier updates.</div>
+                    </li>
+                    <li>
+                        <div class="change">→ Adjust layout and button behavior in location forms</div>
+                        <div class="details">Refines button alignment and naming consistency in location forms. Improves layout styling and ensures clearer button roles for better usability and visual clarity.</div>
+                    </li>
+                    <li>
+                        <div class="change">→ Add series filtering by provider - wip</div>
+                        <div class="details">Introduces the ability to filter series by streaming provider, with dynamic settings and easy navigation. Enhances user control and simplifies finding series based on availability on specific providers.</div>
+                    </li>
+                    <li>
+                        <div class="change">→ Add watch links popover for movies</div>
+                        <div class="details">Provides a popover with watch links tailored to movies, improving usability and quick access to streaming or purchase options directly from the movie page.</div>
+                    </li>
+                    <li>
+                        <div class="change">→ Trim episode lists to season finales</div>
+                        <div class="details">Ensures season episode counts reflect only episodes up to the finale. Improves accuracy of season data presented to users, aligning with actual broadcast episode progression.</div>
+                    </li>
+                    <li>
+                        <div class="change">→ Refine layout and progress tracking visuals</div>
+                        <div class="details">Improves the layout of series pages by adjusting element alignment and spacing. Enhances progress bar precision by increasing calculation accuracy, providing clearer feedback on user progress.</div>
+                    </li>
+                    <li>
+                        <div class="change">→ Fix conditional check for provider information</div>
+                        <div class="details">Ensures proper handling of missing provider information, preventing potential errors when data is unavailable. Improves reliability and safeguards against edge cases in episode handling logic.</div>
+                    </li>
+                    <li>
+                        <div class="change">→ Enable keyboard shortcuts for multi-search toggle</div>
+                        <div class="details">Adds shortcut key support for opening and closing the multi-search with "s" and "Escape" keys. Improves accessibility and provides a faster, more convenient way to interact with the multi-search feature.</div>
+                    </li>
+                    <li>
+                        <div class="change">→ Add Wikipedia label support for images</div>
+                        <div class="details">Adds automated "Wikipedia" labeling to images containing "wiki" in the filename. Enhances consistency by unifying map and label handling logic for images.</div>
+                    </li>
+                    <li>
+                        <div class="change">→ Add keyword translation updates and UI improvements</div>
+                        <div class="details">Enhances keyword translation features with dynamic messages and visual updates for missing translations. Improves admin page usability and provides clearer feedback for translation progress, creating a more user-friendly experience.</div>
+                    </li>
+                    <li>
+                        <div class="change">→ Adjust series and episode layouts and improve forms</div>
+                        <div class="details">Refines spacing and dimensions in series and episode sections for better usability. Updates form styles for consistency and improved accessibility, enhancing the overall user experience.</div>
+                    </li>
+                    <li>
+                        <div class="change">→ Enhance season progress tracking and display</div>
+                        <div class="details">Updates the season progress logic to include detailed tracking of watched episodes. Improves the progress display for a more accurate and user-friendly experience.</div>
+                    </li>
+                    <li>
+                        <div class="change">→ Switch watch links form to popover</div>
+                        <div class="details">Replaces the modal dialog with a popover for managing watch links. Enhances the interface's accessibility and maintains context by keeping interactions inline with the current page.</div>
+                    </li>
+                    <li>
+                        <div class="change">→ Add modal dialog for managing watch links</div>
+                        <div class="details">Replaces the previous popover form with a modal dialog for adding and editing watch links. Improves usability and ensures better visibility and focus during interactions.</div>
+                    </li>
+                    <li>
+                        <div class="change">→ Add logos and enhance image management UI</div>
+                        <div class="details">Introduces support for series logo images alongside posters and backdrops. Refines image display and upload dialogs for a better-organized, user-friendly experience.</div>
+                    </li>
+                </ul>
+            </div>
+            <div class="site-update glowing-border">
+                <h2>72ᵉ mise à jour : 05/03/2026</h2>
+                <ul>
+                    <li>
+                        <div class="change">→ Add dedicated episode stats and air date components</div>
+                        <div class="details">Reorganizes the display of episode runtime, vote stats, and air date into distinct, reusable components. Enhances layout clarity and consistency across series and episode pages.</div>
+                    </li>
+                    <li>
+                        <div class="change">→ Adjust season overview text styling</div>
+                        <div class="details">Standardizes font size, weight, and line height for the season overview text. Improves readability and visual balance for a more consistent user experience.</div>
+                    </li>
+                    <li>
+                        <div class="change">→ Add HSL color conversion for custom video categories</div>
+                        <div class="details">Enhances category color customization by converting HEX values to HSL. Improves visual consistency and user control when creating new video categories.</div>
+                    </li>
+                    <li>
+                        <div class="change">→ Add theme toggler for text color</div>
+                        <div class="details">Introduces a toggle to switch text color themes on series and episode pages. Enhances accessibility and customization with dynamic light and dark mode options.</div>
+                    </li>
+                    <li>
+                        <div class="change">→ Add ability to create custom video categories</div>
+                        <div class="details">Allows users to create and assign custom categories to videos directly from the video page. Improves organization and personalization by enabling dynamic category management with user-defined names and colors.</div>
+                    </li>
+                    <li>
+                        <div class="change">→ Add disabled state to message navigation buttons</div>
+                        <div class="details">Introduces a visual disabled state for message navigation buttons when no next or previous message is available. Improves user experience by clearly indicating unavailable navigation options.</div>
+                    </li>
+                    <li>
+                        <div class="change">→ Add "watch later" flash message for series</div>
+                        <div class="details">Displays a notification for series in the "watch later" list when viewed. Includes a link for quick access to the first episode, enhancing user engagement and convenience.</div>
+                    </li>
+                    <li>
+                        <div class="change">→ Add dynamic progress indicators to keyword groups</div>
+                        <div class="details">Enhances the admin keywords section by adding real-time progress indicators for each letter group. Displays the count of missing translations or marks groups as completed, improving usability and providing better translation management insights.</div>
+                    </li>
+                    <li>
+                        <div class="change">→ Add dynamic missing translations badge</div>
+                        <div class="details">Improves the admin keywords section with a dynamic badge displaying the count of missing translations. Automatically updates as translations are completed, enhancing usability and providing real-time feedback for administrators.</div>
+                    </li>
+                    <li>
+                        <div class="change">→ Add dynamic update to the comment menu</div>
+                        <div class="details">Improves the comment menu to dynamically fetch and display updates in real-time. Enhances user experience by ensuring the menu reflects the latest comments without requiring a page refresh.</div>
+                    </li>
+                    <li>
+                        <div class="change">→ Add keywords section to admin panel</div>
+                        <div class="details">Introduces a new keywords section in the admin panel, allowing easy browsing, translation, and management of keywords. Enhances administrative functionality and improves support for multilingual content.</div>
+                    </li>
+                </ul>
+            </div>
+            <div class="site-update glowing-border">
                 <h2>71ᵉ mise à jour : 05/03/2026</h2>
                 <ul>
                     <li>
