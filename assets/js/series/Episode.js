@@ -37,6 +37,7 @@ import {WhatNext} from "WhatNext";
  * @typedef Globs
  * @type {Object}
  * @property {number} seriesId
+ * @property {number} episodeId
  * @property {string} seriesName
  * @property {number} seasonNumber
  * @property {number} episodeNumber
@@ -74,7 +75,7 @@ export class Episode {
         this.flashMessage = flashMessage;
         this.menu = menu;
         this.episodeActions = new EpisodeActions({...this.globs, ...this.globsMap}, flashMessage, toolTips, menu);
-
+        this.episodeId = this.globs.episodeId;
         this.fetchEpisodeCards = new FetchEpisodeCards(this.toolTips);
 
         this.backToSeason = this.backToSeason.bind(this);
@@ -101,7 +102,7 @@ export class Episode {
         /******************************************************************************
          * Fetch episode stills for each season.                                      *
          ******************************************************************************/
-        this.fetchEpisodeCards.init();
+        this.fetchEpisodeCards.init(this.episodeId);
 
         /******************************************************************************
          * mapbox gl                                                                  *

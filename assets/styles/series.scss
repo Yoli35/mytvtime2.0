@@ -3604,7 +3604,7 @@ h2 {
     gap: .5rem;
     overflow-x: auto;
     overscroll-behavior: contain;
-    padding-block-end: 1rem;
+    padding-block: 1.5rem;
     scroll-snap-type: x mandatory;
     width: 100%;
 
@@ -3747,6 +3747,12 @@ h2 {
                         }
                     }
                 }
+            }
+
+            &.this-is-my-page {
+                background-color: var(--orange);
+                border-radius: 1.25rem;
+                border: 4px solid hsla(from var(--ardoise-20) h s l / .25);
             }
         }
     }

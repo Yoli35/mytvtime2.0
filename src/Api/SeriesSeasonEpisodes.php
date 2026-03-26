@@ -109,6 +109,7 @@ class SeriesSeasonEpisodes extends AbstractController
             return [
                 'air_date' => $episode['air_date'] ? ucfirst($this->dateService->formatDateRelativeLong($episode['air_date'], 'UTC', $this->locale)) : $this->translator->trans('No date'),
                 'episode_number' => $episode['episode_number'],
+                'id' => $episode['id'],
                 'link' => $baseLink . $episode['episode_number'],
                 'name' => $episode['name'],
                 'overview' => $episode['overview'],

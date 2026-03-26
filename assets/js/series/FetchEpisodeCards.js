@@ -7,12 +7,12 @@ export class FetchEpisodeCards {
         this.toolTips = toolTips;
     }
 
-    init() {
+    init(targetId = -1) {
         const episodeCardDivs = document.querySelectorAll('.episode__cards');
-        this.load(episodeCardDivs, 0, episodeCardDivs.length);
+        this.load(episodeCardDivs, 0, episodeCardDivs.length, targetId);
     }
 
-    load(cards, index, length) {
+    load(cards, index, length, targetId) {
         if (!length) return;
         const episodeCardsDiv = cards.item(index);
         const scrollX = episodeCardsDiv.scrollLeft;
@@ -35,8 +35,15 @@ export class FetchEpisodeCards {
                 episodeCardsDiv.replaceWith(newEpisodeCardsDiv);
                 newEpisodeCardsDiv.scrollLeft = scrollX;
                 self.toolTips.init(newEpisodeCardsDiv);
+                if (targetId !== -1) {
+                    const targetEpisodeCard = newEpisodeCardsDiv.querySelector(`[data-episode-id="${targetId}"]`);
+                    if (targetEpisodeCard) {
+                        targetEpisodeCard.classList.add('this-is-my-page');
+                        targetEpisodeCard.scrollIntoView({ behavior: 'instant', block: 'nearest' });
+                    }
+                }
                 index++;
-                if (index < length) self.load(cards, index, length);
+                if (index < length) self.load(cards, index, length, targetId);
             })
             .catch(err => console.log(err));
     }

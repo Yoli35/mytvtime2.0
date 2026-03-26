@@ -14,6 +14,7 @@ import {FetchEpisodeCards} from "FetchEpisodeCards";
 import {SeasonComments} from "SeasonComments";
 
 let self;
+
 export class EpisodeActions {
     constructor(globs, flashMessage, toolTips, menu) {
         self = this;
@@ -336,7 +337,7 @@ export class EpisodeActions {
                 /******************************************************************************
                  * Fetch episode stills for each season.                                      *
                  ******************************************************************************/
-                self.fetchEpisodeCards.init();
+                self.fetchEpisodeCards.init(parseInt(id));
             });
     }
 
@@ -344,6 +345,7 @@ export class EpisodeActions {
         const selector = '.remove-this-episode[data-id="' + episodeId + '"]';
         const episode = document.querySelector(selector);
         const sId = episode.getAttribute('data-show-id');
+        const id = episode.getAttribute('data-id');
         const episodeNumber = episode.getAttribute('data-e-number');
         const seasonNumber = episode.getAttribute('data-s-number');
         const lastEpisode = episode.getAttribute('data-last-episode');
@@ -368,8 +370,10 @@ export class EpisodeActions {
 
                 const episodeContainer = episode.closest('.episode') || episode.closest('.episode-show');
                 const numberDiv = episodeContainer.querySelector('.number');
-                numberDiv.setAttribute('data-title', "x" + views);
-                this.toolTips.init(numberDiv);
+                if (numberDiv) {
+                    numberDiv.setAttribute('data-title', "x" + views);
+                    this.toolTips.init(numberDiv);
+                }
                 if (views > 0) {
                     return;
                 }
@@ -388,12 +392,12 @@ export class EpisodeActions {
                 const quickEpisodeLinks = document.querySelectorAll('.quick-episode[data-number="' + episodeNumber + '"]');
                 quickEpisodeLinks.forEach((q) => q.classList.remove('watched'));
 
-                numberDiv.classList.remove('watched');
+                if (numberDiv) numberDiv.classList.remove('watched');
 
-                const substituteNameDiv = episode.closest('.episode').querySelector('.substitute');
+                const substituteNameDiv = episodeContainer.querySelector('.substitute');
                 if (substituteNameDiv) substituteNameDiv.classList.add('watched');
 
-                const episodeWatchLinks = episode.closest('.episode').querySelector('.watch-links');
+                const episodeWatchLinks = episodeContainer.querySelector('.watch-links');
                 if (episodeWatchLinks) episodeWatchLinks.closest('.user-actions').classList.remove('d-none');
 
                 const newEpisode = document.createElement('div');
@@ -426,6 +430,11 @@ export class EpisodeActions {
                 episode.parentElement.appendChild(backToTopSeries);
 
                 episode.remove();
+
+                /******************************************************************************
+                 * Fetch episode stills for each season.                                      *
+                 ******************************************************************************/
+                self.fetchEpisodeCards.init(parseInt(id));
             });
     }
 
@@ -787,7 +796,7 @@ export class EpisodeActions {
                     /******************************************************************************
                      * Fetch episode stills for each season.                                      *
                      ******************************************************************************/
-                    self.fetchEpisodeCards.init();
+                    self.fetchEpisodeCards.init(parseInt(selectProviderDiv.dataset.id));
                 }
             }
         });
@@ -828,7 +837,7 @@ export class EpisodeActions {
                 /******************************************************************************
                  * Fetch episode stills for each season.                                      *
                  ******************************************************************************/
-                self.fetchEpisodeCards.init();
+                self.fetchEpisodeCards.init(parseInt(selectDeviceDiv.dataset.id));
             }
         });
     }
@@ -886,11 +895,6 @@ export class EpisodeActions {
                             }
                         }
 
-                        /******************************************************************************
-                         * Fetch episode stills for each season.                                      *
-                         ******************************************************************************/
-                        self.fetchEpisodeCards.init();
-
                         // If finale, confetti!!
                         const episodeDiv = selectVoteDiv.closest(".episode") || selectVoteDiv.closest("header");
                         if (episodeDiv.querySelector(".finale.season-finale")) {
@@ -919,6 +923,11 @@ export class EpisodeActions {
                             }
                         }
                     }
+
+                    /******************************************************************************
+                     * Fetch episode stills for each season.                                      *
+                     ******************************************************************************/
+                    self.fetchEpisodeCards.init(parseInt(selectVoteDiv.dataset.id));
                 }
             }
         });
