@@ -286,7 +286,15 @@ export class Menu {
         const openInNewTabToggler = multiSearchOptionsMenu.querySelector("#new-tab-toggler");
 
         document.addEventListener("keydown", e => {
-            if (e.key==='s' && this.isMultiSearchOpen === false) {
+            const active = document.activeElement;
+            const isTyping =
+                active &&
+                (
+                    active.tagName === 'INPUT' ||
+                    active.tagName === 'TEXTAREA' ||
+                    active.isContentEditable
+                );
+            if (e.key==='s' && this.isMultiSearchOpen === false && !isTyping) {
                 e.preventDefault();
                 magnifyingGlassSpan.click();
             }
