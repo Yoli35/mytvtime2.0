@@ -10,7 +10,7 @@
         APP_ENV=prod APP_DEBUG=0 php bin/console cache:clear;
         zip -r Archives.zip bin composer.json composer.lock config importmap.php package.json src symfony.lock templates translations var vendor;
 
- >>     find ./public/ -type f -mmin -9181 -exec zip -n .png:.webp:.jpg:.jpeg:.mp4 public.zip {} \;
+        find './public/' -type f -mmin -23260 -exec zip -n .png:.webp:.jpg:.jpeg:.mp4 public.zip {} \;
 
         cons asset-map:compile
         zip -r assets.zip ./public/assets;
@@ -56,3 +56,5 @@
 
 11- 'Penser à connecter le domaine au dossier "/public"'
 12- ionos > Espace web > Utiliser l'espace web > Connecter le domaine au dossier "/public"
+13- .env: APP_ENV: dev
+14- composer u
