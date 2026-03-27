@@ -137,6 +137,36 @@ body:has(dialog[open]) {
     overflow: hidden;
 }
 
+.wip {
+    align-items: center;
+    background-color: hsl(from #f3db00 h s l / .95); /* Pluribus poster background color */
+    border-radius: 1rem;
+    bottom: 1rem;
+    color: #000100; /* Pluribus poster text color */
+    display: flex;
+    flex-direction: column;
+    height: 12rem;
+    justify-content: center;
+    left: 1rem;
+    position: fixed;
+    width: 24rem;
+
+    .header {
+        border-block-end: 4px solid;
+        font-size: 2rem;
+        font-weight: 600;
+        letter-spacing: 0.25em;
+        padding-block-end: 1rem;
+    }
+
+    .content {
+        font-size: 1.5rem;
+        font-weight: 300;
+        padding-block-start: 1rem;
+        text-align: center;
+    }
+}
+
 .d-none {
     display: none !important;
 }
