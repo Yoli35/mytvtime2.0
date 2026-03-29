@@ -239,7 +239,7 @@ readonly class ApiSeriesEpisode
     {
         $data = json_decode($request->getContent(), true);
 
-        if (key_exists('date', $data) && $data['date']) {
+        if ($data && key_exists('date', $data) && $data['date']) {
             $now = $this->date($user, $data['date']);
         } else {
             $now = $this->now($user);
