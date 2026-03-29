@@ -337,7 +337,7 @@ export class EpisodeActions {
                 /******************************************************************************
                  * Fetch episode stills for each season.                                      *
                  ******************************************************************************/
-                self.fetchEpisodeCards.init(parseInt(id));
+                self.fetchEpisodeCards.init(parseInt(id), true);
             });
     }
 
@@ -434,7 +434,7 @@ export class EpisodeActions {
                 /******************************************************************************
                  * Fetch episode stills for each season.                                      *
                  ******************************************************************************/
-                self.fetchEpisodeCards.init(parseInt(id));
+                self.fetchEpisodeCards.init(parseInt(id), true);
             });
     }
 
@@ -796,7 +796,7 @@ export class EpisodeActions {
                     /******************************************************************************
                      * Fetch episode stills for each season.                                      *
                      ******************************************************************************/
-                    self.fetchEpisodeCards.init(parseInt(selectProviderDiv.dataset.id));
+                    self.fetchEpisodeCards.init(parseInt(selectProviderDiv.dataset.id), true);
                 }
             }
         });
@@ -837,7 +837,7 @@ export class EpisodeActions {
                 /******************************************************************************
                  * Fetch episode stills for each season.                                      *
                  ******************************************************************************/
-                self.fetchEpisodeCards.init(parseInt(selectDeviceDiv.dataset.id));
+                self.fetchEpisodeCards.init(parseInt(selectDeviceDiv.dataset.id), true);
             }
         });
     }
@@ -927,7 +927,7 @@ export class EpisodeActions {
                     /******************************************************************************
                      * Fetch episode stills for each season.                                      *
                      ******************************************************************************/
-                    self.fetchEpisodeCards.init(parseInt(selectVoteDiv.dataset.id));
+                    self.fetchEpisodeCards.init(parseInt(selectVoteDiv.dataset.id), true);
                 }
             }
         });
