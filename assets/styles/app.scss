@@ -821,6 +821,7 @@ label:has(input[type="text"]) {
             }
 
             .today-s-episodes, .suggestions {
+                display: flex;
                 flex-grow: 0;
                 max-width: 100%;
 
@@ -828,6 +829,7 @@ label:has(input[type="text"]) {
                     display: flex;
                     gap: .25rem;
                     height: 0;
+                    margin-inline: auto;
                     overflow-x: auto;
                     padding-block-end: .5rem;
                     transition: height 300ms ease-in-out;
