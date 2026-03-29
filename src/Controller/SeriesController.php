@@ -1104,12 +1104,17 @@ class SeriesController extends AbstractController
         $locale = $user->getPreferredLanguage() ?? $request->getLocale();
         $countries = ['fr' => 'FR', 'en' => 'US', 'ko' => 'KR'];
         $country = $user->getCountry() ?? $countries[$locale] ?? 'FR';
+        $status = null;
 
         $this->logger->info('showEpisode', ['series' => $series->getId(), 'season' => $seasonNumber, 'episode' => $episodeNumber, 'slug' => $slug]);
 
         $userSeries = $this->userSeriesRepository->findOneBy(['user' => $user, 'series' => $series]);
         $season = json_decode($this->tmdbService->getTvSeason($series->getTmdbId(), $seasonNumber, $locale, ['credits', 'watch/providers']), true);
         $episode = json_decode($this->tmdbService->getTvEpisode($series->getTmdbId(), $seasonNumber, $episodeNumber, $locale, ['credits', 'watch/providers']), true);
+        if ($episode['episode_type'] === 'finale') {
+            $tv = json_decode($this->tmdbService->getTv($series->getTmdbId(), $locale), true);
+            $status = $tv['status'];
+        }
 
         $finaleEpisodeNumber = $this->seriesService->getFinaleEpisodeNumber($season);
         $userEpisodes = $this->userEpisodeRepository->getUserEpisodesDB($userSeries->getId(), $season['season_number'], $locale, true);
@@ -1143,6 +1148,7 @@ class SeriesController extends AbstractController
             'season' => $season,
             'episode' => $episode,
             'slug' => $slug,
+            'status' => $status,
             'language' => $locale . '-' . $country,
             'locations' => $filmingLocationsWithBounds['filmingLocations'],
             'locationsBounds' => $filmingLocationsWithBounds['bounds'],
