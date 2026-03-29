@@ -300,6 +300,7 @@
 
             &:not(:has(.comment)) {
                 display: flex;
+                min-height: 8.75rem;
             }
 
             .episode-group:not(:has(.comment)) {

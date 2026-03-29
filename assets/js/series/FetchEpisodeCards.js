@@ -1,5 +1,5 @@
-
 let self = null;
+
 export class FetchEpisodeCards {
 
     constructor(toolTips) {
@@ -32,6 +32,7 @@ export class FetchEpisodeCards {
                 newEpisodeCardsDiv.setAttribute('data-season-number', seasonNumber);
                 newEpisodeCardsDiv.setAttribute('data-series-slug', seriesSlug);
                 newEpisodeCardsDiv.innerHTML = data['episodeCards'];
+                newEpisodeCardsDiv.style.opacity = "0";
                 episodeCardsDiv.replaceWith(newEpisodeCardsDiv);
                 newEpisodeCardsDiv.scrollLeft = scrollX;
                 self.toolTips.init(newEpisodeCardsDiv);
@@ -39,9 +40,12 @@ export class FetchEpisodeCards {
                     const targetEpisodeCard = newEpisodeCardsDiv.querySelector(`[data-episode-id="${targetId}"]`);
                     if (targetEpisodeCard) {
                         targetEpisodeCard.classList.add('this-is-my-page');
-                        targetEpisodeCard.scrollIntoView({ behavior: 'instant', block: 'nearest' });
+                        targetEpisodeCard.scrollIntoView({behavior: 'instant', block: 'nearest'});
                     }
                 }
+                setTimeout(function () {
+                    newEpisodeCardsDiv.style.opacity = 1;
+                }, 0);
                 index++;
                 if (index < length) self.load(cards, index, length, targetId);
             })
