@@ -2818,14 +2818,26 @@ section:has(.pages) {
                 align-items: flex-start;
                 display: flex;
                 flex-direction: column;
-                gap: .25rem;
+                gap: 1rem;
 
-                > a > div {
-                    background-color: var(--orange);
-                    border-radius: 5rem;
-                    margin-block-start: 1rem;
-                    margin-inline-start: auto;
-                    padding: .25rem 1.5rem;
+                .buttons {
+                    display: flex;
+                    width: 100%;
+
+                    > a, > button {
+                        border-radius: 5rem;
+                        padding: .25rem 1.5rem;
+                    }
+
+                    > a {
+                        background-color: var(--orange);
+                        margin-inline-start: auto;
+                    }
+
+                    > button {
+                        cursor: pointer;
+                        background-color: var(--remove-this-series);
+                    }
                 }
             }
         }

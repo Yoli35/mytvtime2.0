@@ -50,6 +50,8 @@ export class FlashMessage {
      * @property {string} content
      * @property {string} link
      * @property {string} link_text
+     * @property {string} remove_link
+     * @property {string} remove_link_text
      */
 
     /**
@@ -66,6 +68,9 @@ export class FlashMessage {
         const flashMessageDiv = document.createElement('div');
         flashMessageDiv.classList.add('flash-message');
         flashMessageDiv.classList.add(status);
+        flashMessageDiv.addEventListener('click', (e) => {
+            e.stopPropagation();
+        });
 
         if (status ==='update' || status === 'series-to-watch-later') {
             flashMessagesDiv.classList.add(status);
@@ -94,12 +99,38 @@ export class FlashMessage {
             infosDiv.appendChild(contentDiv);
 
             if (status === 'series-to-watch-later') {
-                const a = document.createElement('a');
-                a.href = message.link;
-                const div = document.createElement('div');
-                div.innerText = message.link_text;
-                a.appendChild(div);
-                infosDiv.appendChild(a);
+                const buttonsDiv = document.createElement('div');
+                buttonsDiv.classList.add('buttons');
+                const removeButton = document.createElement('button');
+                removeButton.classList.add('remove');
+                removeButton.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    fetch(message.remove_link, {
+                        method: 'GET',
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            flashMessageDiv.remove();
+                            console.log(data);
+                            self.add('success', data.message);
+                        } else {
+                            console.log(data);
+                            self.add('error', data.message);
+                        }
+                    });
+                });
+                removeButton.innerText = message.remove_link_text;
+                buttonsDiv.appendChild(removeButton);
+
+                const aGo = document.createElement('a');
+                aGo.href = message.link;
+                const divGo = document.createElement('div');
+                divGo.innerText = message.link_text;
+                aGo.appendChild(divGo);
+                buttonsDiv.appendChild(aGo);
+                infosDiv.appendChild(buttonsDiv);
             }
             flashMessageDiv.appendChild(infosDiv);
 

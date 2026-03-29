@@ -27,7 +27,7 @@ readonly class ApiSeriesList
         private Closure             $getUser,
         private TranslatorInterface $translator,
         private SeriesRepository    $seriesRepository,
-        private SettingsRepository $settingsRepository,
+        private SettingsRepository  $settingsRepository,
         private UserListRepository  $userListRepository,
         private UserListService     $userListService,
     )
@@ -264,6 +264,37 @@ readonly class ApiSeriesList
 
         return ($this->json)([
             'ok' => true,
+        ]);
+    }
+
+    #[Route('/remove', name: 'remove_from_watch_later', methods: ['GET'])]
+    public function remove(Request $request): Response
+    {
+        $user = ($this->getUser)();
+        $seeLaterList = $this->userListRepository->findOneBy(['user' => $user, 'mainMenu' => true]);
+        if (!$seeLaterList) {
+            return ($this->json)([
+                'success' => false,
+                'message' => $this->translator->trans('See later list not found'),
+            ]);
+        }
+
+        $seriesId = $request->query->getInt('s');
+        $series = $this->seriesRepository->findOneBy(['id' => $seriesId]);
+        if (!$series) {
+            return ($this->json)([
+                'success' => false,
+                'series_id' => $seriesId,
+                'message' => $this->translator->trans('Series not found'),
+            ]);
+        }
+
+        $seeLaterList->removeSeriesList($series);
+        $this->userListRepository->save($seeLaterList, true);
+
+        return ($this->json)([
+            'success' => true,
+            'message' => $this->translator->trans('Series removed from watch later list'),
         ]);
     }
 }

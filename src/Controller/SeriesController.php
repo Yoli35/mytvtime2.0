@@ -957,6 +957,8 @@ class SeriesController extends AbstractController
                     'poster_path' => $series->getPosterPath(),
                     'link' => $this->generateUrl('app_series_episode_show', ['_locale' => $locale, 'id' => $series->getId(), 'seasonNumber' => 1, 'episodeNumber' => 1, 'slug' => $slug]),
                     'link_text' => 'Go',
+                    'remove_link' => $this->generateUrl('api_series_list_remove_from_watch_later', ['s' => $series->getId()]),
+                    'remove_link_text' => $this->translator->trans('Remove this series'),
                 ]
             ];
         }

@@ -141,18 +141,18 @@ class UserList
         return $this->seriesList;
     }
 
-    public function addSeriesList(Series $seriesList): static
+    public function addSeriesList(Series $series): static
     {
-        if (!$this->seriesList->contains($seriesList)) {
-            $this->seriesList->add($seriesList);
+        if (!$this->seriesList->contains($series)) {
+            $this->seriesList->add($series);
         }
 
         return $this;
     }
 
-    public function removeSeriesList(Series $seriesList): static
+    public function removeSeriesList(Series $series): static
     {
-        $this->seriesList->removeElement($seriesList);
+        $this->seriesList->removeElement($series);
 
         return $this;
     }
