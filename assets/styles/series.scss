@@ -6014,15 +6014,13 @@ h2 {
 
 #review-dialog {
     border: 2px solid var(--orange-50);
-    border-radius: .5rem;
+    border-radius: 1rem;
     margin-block: auto;
     margin-inline: auto;
     width: 16rem;
 
     .content {
-        background-color: hsla(from var(--ardoise-80) h s l / .5);
         color: var(--ardoise-10);
-        padding: 1rem 2rem;
 
         form {
             display: flex;
@@ -6031,12 +6029,17 @@ h2 {
             button {
                 appearance: none;
                 background-color: var(--orange-50);
-                border-radius: .25rem;
+                border-radius: 5rem;
                 color: var(--ardoise-10);
+                cursor: pointer;
                 font-size: 1.25rem;
                 font-weight: 300;
                 padding-block: .25rem;
                 padding-inline: 1rem;
+
+                &:hover {
+                    background-color: var(--orange-40);
+                }
             }
         }
     }

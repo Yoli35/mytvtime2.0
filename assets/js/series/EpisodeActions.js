@@ -351,6 +351,7 @@ export class EpisodeActions {
         const lastEpisode = episode.getAttribute('data-last-episode');
         const seriesId = episode.getAttribute('data-series-id');
         let views = parseInt(episode.getAttribute('data-views'));
+
         fetch('/api/episode/remove', {
             method: 'POST',
             headers: {
@@ -396,6 +397,9 @@ export class EpisodeActions {
 
                 const substituteNameDiv = episodeContainer.querySelector('.substitute');
                 if (substituteNameDiv) substituteNameDiv.classList.add('watched');
+
+                const finaleDivs = episodeContainer.querySelectorAll('.finale');
+                finaleDivs.forEach(f => f.classList.remove('watched'));
 
                 const episodeWatchLinks = episodeContainer.querySelector('.watch-links');
                 if (episodeWatchLinks) episodeWatchLinks.closest('.user-actions').classList.remove('d-none');
