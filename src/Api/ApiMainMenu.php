@@ -55,13 +55,14 @@ readonly class ApiMainMenu
             ]);
         }
 
-        $settings = $this->settingsRepository->findOneBy(['user' => $user, 'name' => 'schedule_range']);
+        $settings = $this->settingsRepository->findOneBy(['user' => $user, 'name' => 'schedule_menu_settings']);
         if (!$settings) {
-            $settings = new Settings($user, 'schedule_range', ['start' => "-2", 'end' => "2", 'default_start' => "-2", 'default_end' => "2"]);
+            $settings = new Settings($user, 'schedule_menu_settings', ['start' => "-2", 'end' => "2", 'default_start' => "-2", 'default_end' => "2", 'link_to' => 'series', 'default_link_to' => 'series']);
             $this->settingsRepository->save($settings, true);
         }
         $startDay = (int)$settings->getData()['start'];
         $endDay = (int)$settings->getData()['end'];
+        $linkTo = $settings->getData()['link_to'];
         $start = $startDay . " day";;
         $end = $endDay . " day";
         $locale = $inputBag->getAlpha("locale", "fr");
@@ -76,7 +77,8 @@ readonly class ApiMainMenu
                     'interval' => $interval,
                     'startDay' => $startDay,
                     'endDay' => $endDay,
-                ]
+                ],
+                'linkTo' => $linkTo,
             ]),
         ]);
     }

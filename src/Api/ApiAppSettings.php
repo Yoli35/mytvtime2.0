@@ -79,7 +79,7 @@ readonly class ApiAppSettings
         ]);
     }
 
-    #[Route('/schedule-range/read', name: 'schedule_range_read', methods: ['GET'])]
+    #[Route('/schedule-range/read', name: 'schedule_menu_settings_read', methods: ['GET'])]
     public function SRRead(Request $request): Response
     {
         $user = ($this->getUser)();
@@ -92,34 +92,38 @@ readonly class ApiAppSettings
 
         $type = $request->query->getAlpha('t', 'values');
 
-        $settings = $this->settingsRepository->findOneBy(['user' => $user, 'name' => 'schedule_range']);
+        $settings = $this->settingsRepository->findOneBy(['user' => $user, 'name' => 'schedule_menu_settings']);
         if (!$settings) {
-            $settings = new Settings($user, 'schedule_range', ['start' => "-2", 'end' => "2", 'default_start' => "-2", 'default_end' => "2"]);
+            $settings = new Settings($user, 'schedule_menu_settings', ['start' => "-2", 'end' => "2", 'default_start' => "-2", 'default_end' => "2", 'link_to' => 'series', 'default_link_to' => 'series']);
             $this->settingsRepository->save($settings, true);
         }
         if ($type === 'default') {
             $start = $settings->getData()['default_start'] ?? "-2";
             $end = $settings->getData()['default_end'] ?? "2";
+            $linkTo = $settings->getData()['default_link_to'] ?? 'series';
 
             return ($this->json)([
                 'ok' => true,
                 'read' => true,
                 'start' => $start,
                 'end' => $end,
+                'link_to' => $linkTo,
             ]);
         }
         $start = $settings->getData()['start'] ?? "-2";
         $end = $settings->getData()['end'] ?? "2";
+        $linkTo = $settings->getData()['link_to'] ?? 'series';
 
         return ($this->json)([
             'ok' => true,
             'read' => true,
             'start' => $start,
             'end' => $end,
+            'link_to' => $linkTo,
         ]);
     }
 
-    #[Route('/schedule-range/update', name: 'schedule_range_update', methods: ['POST'])]
+    #[Route('/schedule-range/update', name: 'schedule_menu_settings_update', methods: ['POST'])]
     public function SRUpdate(Request $request): Response
     {
         $inputBag = $request->getPayload();
@@ -131,13 +135,15 @@ readonly class ApiAppSettings
             ]);
         }
 
-        $settings = $this->settingsRepository->findOneBy(['user' => $user, 'name' => 'schedule_range']);
+        $settings = $this->settingsRepository->findOneBy(['user' => $user, 'name' => 'schedule_menu_settings']);
         $start = $inputBag->get("start", "-2");
         $end = $inputBag->get("end", "2");
+        $linkTo = $inputBag->get("link_to", 'series');
 
         $data = $settings->getData();
         $data['start'] = $start;
         $data['end'] = $end;
+        $data['link_to'] = $linkTo;
         $settings->setData($data);
         $this->settingsRepository->save($settings, true);
 

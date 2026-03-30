@@ -113,7 +113,7 @@ export class Menu {
         this.userMenu = document.querySelector(".menu.user");
         this.userConnected = this.userMenu.getAttribute("data-user-connected") === "true";
         this.accentColor = this.userMenu.querySelector(".accent-color-settings");
-        this.scheduleRange = this.userMenu.querySelector(".schedule-range-settings");
+        this.scheduleMenuSettings = this.userMenu.querySelector(".schedule-range-settings");
         this.whatNext = this.userMenu.querySelector(".what-next-settings");
         this.menuPreview = this.userMenu.querySelector(".menu-preview-settings");
         this.menuThemes = this.userMenu.querySelectorAll(".menu-theme");
@@ -125,7 +125,7 @@ export class Menu {
         this.setTheme = this.setTheme.bind(this);
         this.checkTheme = this.checkTheme.bind(this);
         this.getAccentColor = this.getAccentColor.bind(this);
-        this.getScheduleRange = this.getScheduleRange.bind(this);
+        this.getScheduleMenuSettings = this.getScheduleMenuSettings.bind(this);
         this.lang = document.documentElement.lang;
         this.isMultiSearchOpen = false;
         this.initialPreviewSetting = null;
@@ -495,7 +495,7 @@ export class Menu {
     initOptions() {
         if (this.userConnected) {
             this.accentColor.addEventListener("click", this.setAccentColor);
-            this.scheduleRange.addEventListener("click", this.setScheduleRange);
+            this.scheduleMenuSettings.addEventListener("click", this.setScheduleMenuSettings);
             this.whatNext.addEventListener("click", this.setWhatNext);
             this.menuPreview.addEventListener("click", this.togglePreview);
             this.initPreview();
@@ -964,57 +964,62 @@ export class Menu {
             });
     }
 
-    setScheduleRange() {
+    setScheduleMenuSettings() {
         document.documentElement.click();
         /** @type HTMLDialogElement */
-        const scheduleRangeDialog = document.querySelector("#scheduleRangeDialog");
-        const submitButton = scheduleRangeDialog.querySelector("button[type=submit]");
-        const resetButton = scheduleRangeDialog.querySelector("button[type=reset]");
-        const cancelButton = scheduleRangeDialog.querySelector("button[type=button]");
-        const startInput = scheduleRangeDialog.querySelector("input[id=schedule-menu-range-start]");
-        const endInput = scheduleRangeDialog.querySelector("input[id=schedule-menu-range-end]");
+        const scheduleMenuSettingsDialog = document.querySelector("#scheduleMenuSettingsDialog");
+        const submitButton = scheduleMenuSettingsDialog.querySelector("button[type=submit]");
+        const resetButton = scheduleMenuSettingsDialog.querySelector("button[type=reset]");
+        const cancelButton = scheduleMenuSettingsDialog.querySelector("button[type=button]");
+        const startInput = scheduleMenuSettingsDialog.querySelector("input[id=schedule-menu-settings-start]");
+        const endInput = scheduleMenuSettingsDialog.querySelector("input[id=schedule-menu-settings-end]");
 
-        self.getScheduleRange('values');
+        self.getScheduleMenuSettings('values');
 
         cancelButton.addEventListener("click", () => {
-            scheduleRangeDialog.close();
+            scheduleMenuSettingsDialog.close();
         });
         resetButton.addEventListener("click", () => {
-            self.getScheduleRange('default');
+            self.getScheduleMenuSettings('default');
             localStorage.setItem("schedule_range_updated", "true")
         });
         submitButton.addEventListener("click", () => {
-            self.updateScheduleRange(startInput.value, endInput.value);
-            localStorage.setItem("schedule_range_updated", "true")
-            scheduleRangeDialog.close();
+            const linkToSelected = scheduleMenuSettingsDialog.querySelector('input[name="schedule_menu_settings_link_to"]:checked').value;
+            self.updateScheduleRange(startInput.value, endInput.value, linkToSelected);
+            scheduleMenuSettingsDialog.close();
+            localStorage.setItem("schedule_range_updated", "true");
         });
-        scheduleRangeDialog.showModal();
+        scheduleMenuSettingsDialog.showModal();
     }
 
-    getScheduleRange(type) {
+    getScheduleMenuSettings(type) {
         fetch("/api/settings/schedule-range/read?t=" + type)
             .then(response => response.json())
             .then(data => {
                 /*console.log(data);*/
-                const scheduleRangeDialog = document.querySelector("#scheduleRangeDialog");
-                const startInput = scheduleRangeDialog.querySelector("input[id=schedule-menu-range-start]");
-                const endInput = scheduleRangeDialog.querySelector("input[id=schedule-menu-range-end]");
-
+                const scheduleMenuSettingsDialog = document.querySelector("#scheduleMenuSettingsDialog");
+                const startInput = scheduleMenuSettingsDialog.querySelector("input[id=schedule-menu-settings-start]");
+                const endInput = scheduleMenuSettingsDialog.querySelector("input[id=schedule-menu-settings-end]");
+                const valueToSet = type === 'default' ? data['default_link_to'] : data['link_to'];
+                const radio = document.querySelector(
+                    `input[name="schedule_menu_settings_link_to"][value="${valueToSet}"]`
+                );
                 startInput.value = data['start'];
                 endInput.value = data['end'];
+                if (radio) radio.checked = true;
             })
             .catch((error) => {
                 console.log(error);
             });
     }
 
-    updateScheduleRange(start, end) {
+    updateScheduleRange(start, end, linkTo) {
         fetch("/api/settings/schedule-range/update", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
             },
-            body: JSON.stringify({start: start, end: end})
+            body: JSON.stringify({start: start, end: end, link_to: linkTo})
         })
             .then(response => response.json())
             .then(data => {
@@ -1039,7 +1044,7 @@ export class Menu {
             whatNextDialog.close();
         });
         resetButton.addEventListener("click", () => {
-            self.getWhatNextSettings('defaut');
+            self.getWhatNextSettings('default');
         });
         submitButton.addEventListener("click", self.updateWhatNextSettings);
         whatNextDialog.showModal();
@@ -1224,10 +1229,13 @@ export class Menu {
 
         if (optionId === 'vote' || optionId === 'device' || optionId === 'provider') {
             lis.forEach((item) => {
-                if (historyOption.checked) {
-                    item.querySelector('.' + optionId)?.classList.remove('hidden');
-                } else {
-                    item.querySelector('.' + optionId)?.classList.add('hidden');
+                const element = item.querySelector('.' + optionId);
+                if (element) {
+                    if (historyOption.checked) {
+                        element.classList.remove('hidden');
+                    } else {
+                        element.classList.add('hidden');
+                    }
                 }
             });
             //TODO: save options
@@ -1376,7 +1384,7 @@ export class Menu {
     }
 
     reloadLog(lastId) {
-        // api url : /api/log/load
+        // api url → /api/log/load
         const logList = document.querySelector("#log-list");
         const ul = logList.querySelector("ul");
         const loadingDiv = logList.querySelector(".menu-item:has(.loading)");

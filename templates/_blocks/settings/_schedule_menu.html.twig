@@ -1,0 +1,30 @@
+<dialog id="scheduleMenuSettingsDialog" class="schedule-menu-settings-dialog" closedby="any">
+    <form>
+        <label for="schedule-menu-menu-settings-start">
+            {{ 'Number of days before'|trans }}
+            <input type="number" id="schedule-menu-settings-start" min="-7" max="0" step="1" value=""/>
+        </label>
+        <label for="schedule-menu-menu-settings-end">
+            {{ 'Number of days after'|trans }}
+            <input type="number" id="schedule-menu-settings-end" min="0" max="7" step="1" value=""/>
+        </label>
+        <fieldset>
+            <legend>{{ 'Links to'|trans }}</legend>
+
+            <label for="schedule_menu_settings_series">
+                <input type="radio" id="schedule_menu_settings_series" name="schedule_menu_settings_link_to" value="series"/> {{ 'Series page'|trans }}
+            </label>
+            <label for="schedule_menu_settings_season">
+                <input type="radio" id="schedule_menu_settings_season" name="schedule_menu_settings_link_to" value="season"/> {{ 'Season page'|trans }}
+            </label>
+            <label for="schedule_menu_settings_episode">
+                <input type="radio" id="schedule_menu_settings_episode" name="schedule_menu_settings_link_to" value="episode"/> {{ 'Episode page'|trans }}
+            </label>
+        </fieldset>
+        <div class="row">
+            <button type="reset">{{ 'Reset'|trans }}</button>
+            <button type="button">{{ 'Cancel'|trans }}</button>
+            <button type="submit">{{ 'Close'|trans }}</button>
+        </div>
+    </form>
+</dialog>
