@@ -1093,6 +1093,7 @@ class SeriesController extends AbstractController
             'changes' => $this->getChanges($season['id']),
             'now' => $this->now()->format('Y-m-d H:i O'),
             'episodeDiv' => $this->getEpisodeDivSize($userSeries),
+            'status' => $tv['status'],
             'providers' => $providers,
             'devices' => $devices,
 //            'externals' => $this->getExternals($series, $tvKeywords['results'] ?? [], $tvExternalIds, $request->getLocale()),
