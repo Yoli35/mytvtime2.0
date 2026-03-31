@@ -1108,6 +1108,7 @@ class SeriesController extends AbstractController
         $countries = ['fr' => 'FR', 'en' => 'US', 'ko' => 'KR'];
         $country = $user->getCountry() ?? $countries[$locale] ?? 'FR';
         $status = null;
+        $statusTitle = null;
 
         $this->logger->info('showEpisode', ['series' => $series->getId(), 'season' => $seasonNumber, 'episode' => $episodeNumber, 'slug' => $slug]);
 
@@ -1116,7 +1117,16 @@ class SeriesController extends AbstractController
         $episode = json_decode($this->tmdbService->getTvEpisode($series->getTmdbId(), $seasonNumber, $episodeNumber, $locale, ['credits', 'watch/providers']), true);
         if ($episode['episode_type'] === 'finale') {
             $tv = json_decode($this->tmdbService->getTv($series->getTmdbId(), $locale), true);
-            $status = $tv['status'];
+            if (key_exists($seasonNumber + 1, $tv['seasons'])) {
+                $status = 'More episodes to come';
+                $nextSeasonEpisodeCount = $tv['seasons'][$seasonNumber]['episode_count'];/* saison suivante (number + 1) - 1 */
+                if ($nextSeasonEpisodeCount > 1) {
+                    $statusTitle = $this->translator->trans('count new episodes are now available in season number', ['count' => $nextSeasonEpisodeCount, 'number' => $seasonNumber + 1]);
+                }
+            }
+            if ($status === null) {
+                $status = $tv['status'];
+            }
         }
 
         $finaleEpisodeNumber = $this->seriesService->getFinaleEpisodeNumber($season);
@@ -1152,6 +1162,7 @@ class SeriesController extends AbstractController
             'episode' => $episode,
             'slug' => $slug,
             'status' => $status,
+            'statusTitle' => $statusTitle,
             'language' => $locale . '-' . $country,
             'locations' => $filmingLocationsWithBounds['filmingLocations'],
             'locationsBounds' => $filmingLocationsWithBounds['bounds'],
