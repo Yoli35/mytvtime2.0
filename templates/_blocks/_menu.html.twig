@@ -149,6 +149,9 @@
             }
         });
     </script>
+    {% if app.environment == 'dev' and app.user %}
+        <div class="screen-size"></div>
+    {% endif %}
     {% if app.user %}
         <div class="multi-search">
             <label for="multi-search">

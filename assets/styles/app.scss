@@ -1567,7 +1567,7 @@ label:has(input[type="text"]) {
         width: 1.5rem;
     }
 
-    .count-down {
+    .screen-size, .count-down {
         align-items: center;
         border: 2px solid var(--orange-50);
         border-radius: 5rem;
@@ -1879,7 +1879,7 @@ label:has(input[type="text"]) {
 
         .debug {
             position: absolute;
-            right: 0;
+            left: 1rem;
             top: 4rem;
         }
 
@@ -2073,6 +2073,18 @@ label:has(input[type="text"]) {
                     }
                 }
             }
+        }
+
+        .count-down {
+            display: none;
+        }
+
+        .avatar img {
+            aspect-ratio: 1/1;
+            border: none;
+            border-radius: 0;
+            height: 3rem;
+            width: 3rem;
         }
     }
 }
