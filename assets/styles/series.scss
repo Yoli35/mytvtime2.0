@@ -1176,10 +1176,9 @@ h2 {
             bottom: 1rem;
             color: transparent;
             height: 1rem;
-            left: 1rem;
+            left: 2rem;
             position: absolute;
-            /*right: 1rem;*/
-            width: min(15rem, 50%); /*calc(100% - 2rem);*/
+            right: 2rem;
 
             &.full {
                 background-color: var(--green-80);
@@ -3005,7 +3004,7 @@ h2 {
         gap: 0;
 
         .poster {
-            bottom: 2rem;
+            bottom: 3rem;
             height: calc(5rem * calc(117 / 78));
             position: absolute;
             right: 2rem;
