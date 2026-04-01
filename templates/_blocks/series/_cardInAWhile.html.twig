@@ -1,5 +1,5 @@
 <div class="card">
-    {% set url = path('app_series_show', {'id': series.id, 'slug': series.slug }) %}
+    {% set url = path('app_show_series', {'id': series.id, 'slug': series.slug }) %}
     <a href="{{ url }}">
         <div class="poster">
             {% if series.poster_path is defined %}

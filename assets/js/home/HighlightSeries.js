@@ -8,7 +8,7 @@ import {ToolTips} from "ToolTips";
  * @property {Array} highlightedSeries
  * @property {Array} watchProviders
  * @property {Array} app_home_load_provider_series
- * @property {String} app_series_tmdb
+ * @property {String} app_show_tmdb
  */
 
 export class HighlightSeries {
@@ -34,7 +34,7 @@ export class HighlightSeries {
     /** @param {Globs} globs */
     init(globs) {
         this.series = globs.highlightedSeries;
-        this.app_series_tmdb = globs.app_series_tmdb;
+        this.app_show_tmdb = globs.app_show_tmdb;
         this.count = this.series.length;
         this.root = document.documentElement;
         this.home = document.querySelector(".home");
@@ -103,7 +103,7 @@ export class HighlightSeries {
         const overviewDiv = this.highlightDiv.querySelector(".overview");
         const providerDiv = this.highlightDiv.querySelector(".providers").querySelector(".wrapper");
         const series = this.series[this.seriesIndex];
-        const link = this.app_series_tmdb + series['id'] + "-" + series['slug'];
+        const link = this.app_show_tmdb + series['id'] + "-" + series['slug'];
 
         poster.style.rotate = (5 * (Math.random() - .5)) + "deg";
 
@@ -188,7 +188,7 @@ export class HighlightSeries {
                     const thumb = document.createElement("div");
                     const img = document.createElement("img");
                     const count = document.createElement("div");
-                    a.href = this.app_series_tmdb + series['id'] + "-" + series['slug'];
+                    a.href = this.app_show_tmdb + series['id'] + "-" + series['slug'];
                     div.classList.add('item');
                     thumb.classList.add('poster-item');
                     thumb.id = "thumb-" + series['id'];

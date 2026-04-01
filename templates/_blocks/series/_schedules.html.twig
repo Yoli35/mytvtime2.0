@@ -40,7 +40,7 @@ Mandatory variables:
                             <div class="local-air">{{ schedule.airAt }}</div>
                             {% set d = schedule.before %}
                             <div class="remaining"
-                                 data-target-ts="{{ schedule.targetTS }}"
+                                 data-target-ts="{{ schedule.targetTimestamp }}"
                                  data-season-completed="{{ schedule.seasonCompleted ? 1 : 0 }}"
                                  data-up-to-date="{{ schedule.upToDate ? 1 : 0 }}"
                             >

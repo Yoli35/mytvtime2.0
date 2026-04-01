@@ -24,7 +24,7 @@
             body.style.backgroundImage = "url(" + bd + ")";
         </script>
     {% endif %}
-    {% include '_blocks/_menu.html.twig' %}
+    {% include '../_blocks/_menu.html.twig' %}
     <div class="container-fluid {# backgroundImageOverlay #}">
         <div class="series-show user-series-show" data-theme="none">
             <div class="header">
@@ -181,7 +181,7 @@
                 <div class="series">
                     {% if series.seriesAround.previous %}
                         {% set previousSeries = series.seriesAround.previous %}
-                        <a href="{{ path('app_series_show', {id: previousSeries.id, slug: previousSeries.slug}) }}"
+                        <a href="{{ path('app_show_series', {id: previousSeries.id, slug: previousSeries.slug}) }}"
                            class="previous-series" data-title="{{ 'Previous series'|trans }}">
                             {{ ux_icon('mdi:arrow-left-bold') }}
                             {{ previousSeries.name }} ({{ previousSeries.progress|format_number({max_fraction_digit:2}) }}%)
@@ -192,7 +192,7 @@
                     {% endif %}
                     {% if series.seriesAround.next %}
                         {% set nextSeries = series.seriesAround.next %}
-                        <a href="{{ path('app_series_show', {id: nextSeries.id, slug: nextSeries.slug}) }}"
+                        <a href="{{ path('app_show_series', {id: nextSeries.id, slug: nextSeries.slug}) }}"
                            class="next-series" data-title="{{ 'Next series'|trans }}">
                             {{ nextSeries.name }} ({{ nextSeries.progress|format_number({max_fraction_digit:2}) }}%)
                             {{ ux_icon('mdi:arrow-right-bold') }}
@@ -293,7 +293,7 @@
                             {% for season in series.seasons %}
                                 {% set viewedEpisodes = userSeries.userEpisodes|filter(ue => ue.seasonNumber == season.season_number and ue.watchAt)|length %}
                                 <div class="season" data-season-number="{{ season.season_number }}">
-                                    <a href="{{ path('app_series_season_show', {id: series.id, seasonNumber: season.season_number, slug: (series.localizedName ?? series.name)|slug|lower}) }}"
+                                    <a href="{{ path('app_show_season', {id: series.id, seasonNumber: season.season_number, slug: (series.localizedName ?? series.name)|slug|lower}) }}"
                                        class="poster" data-title="{{ "Season poster"|trans }}">
                                         {% if season.poster_path %}
                                             <img src="{{ season.poster_path }}" alt="{{ season.name }}">

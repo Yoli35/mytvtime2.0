@@ -6,6 +6,7 @@ use App\Entity\FilmingLocation;
 use App\Entity\Network;
 use App\Entity\Series;
 use App\Entity\SeriesBroadcastSchedule;
+use App\Entity\SeriesImage;
 use App\Entity\SeriesLocalizedName;
 
 //use App\Entity\SeriesLocalizedOverview;
@@ -15,9 +16,11 @@ use App\Entity\UserEpisode;
 use App\Entity\UserSeries;
 use App\Repository\FilmingLocationRepository;
 use App\Repository\NetworkRepository;
+use App\Repository\SeriesImageRepository;
 use App\Repository\SeriesLocalizedNameRepository;
 
 //use App\Repository\SeriesLocalizedOverviewRepository;
+use App\Repository\SeriesRepository;
 use App\Repository\SettingsRepository;
 use App\Repository\SourceRepository;
 use App\Repository\UserEpisodeRepository;
@@ -49,8 +52,10 @@ readonly class SeriesService
         private KeywordService                $keywordService,
         private MonologLogger                 $logger,
         private NetworkRepository             $networkRepository,
+        private SeriesImageRepository         $seriesImageRepository,
         private SeriesLocalizedNameRepository $seriesLocalizedNameRepository,
 //        private readonly SeriesLocalizedOverviewRepository $seriesLocalizedOverviewRepository,
+        private SeriesRepository              $seriesRepository,
         private SettingsRepository            $settingsRepository,
         private SourceRepository              $sourceRepository,
         private TMDBService                   $tmdbService,
@@ -146,6 +151,119 @@ readonly class SeriesService
 //
 //        return $tv;
 //    }
+
+    public function updateSeries(Series $series, array $tv, array $seriesImages): Series
+    {
+        $slugger = new AsciiSlugger();
+        $series->setUpdates([]);
+        if ($tv['name'] != $series->getName()) {
+            $series->setName($tv['name']);
+            $series->setSlug($slugger->slug($tv['name']));
+            $series->addUpdate($this->translator->trans('Name updated'));
+        }
+        $slug = $slugger->slug($tv['name'])->lower()->toString();
+        if ($series->getSlug() != $slug) {
+            $series->setSlug($slugger->slug($slug));
+            $series->addUpdate($this->translator->trans('Slug updated'));
+        }
+
+        if ($tv['original_name'] != $series->getOriginalName()) {
+            $series->setOriginalName($tv['original_name']);
+            $series->addUpdate($this->translator->trans('Original name updated'));
+        }
+        if ($tv['first_air_date'] && !$series->getFirstAirDate()) {
+            $series->setFirstAirDate($this->dateService->newDateImmutable($tv['first_air_date'], "Europe/Paris", true));
+//            $series->setFirstAirDate(new DatePoint($tv['first_air_date']));
+            $series->addUpdate($this->translator->trans('First air date updated'));
+        }
+
+        if (strlen($tv['overview']) && strcmp($tv['overview'], $series->getOverview())) {
+            $series->setOverview($tv['overview']);
+            $series->addUpdate($this->translator->trans('Overview updated'));
+        }
+
+        if ($tv['status'] != $series->getStatus()) {
+            $series->setStatus($tv['status']);
+            $series->addUpdate($this->translator->trans('New status') . ' → ' . $this->translator->trans($tv['status']));
+        }
+
+        $dbNextEpisodeAirDate = $series->getNextEpisodeAirDate()?->format('Y-m-d');
+        if ($tv['next_episode_to_air'] && $tv['next_episode_to_air']['air_date']) {
+            $tvNextEpisodeAirDate = $tv['next_episode_to_air']['air_date'];
+        } else {
+            $tvNextEpisodeAirDate = null;
+        }
+        if ($tvNextEpisodeAirDate != $dbNextEpisodeAirDate) {
+            $nextEpisodeAirDate = $tvNextEpisodeAirDate ? $this->date($tvNextEpisodeAirDate . " 00:00:00") : null;
+            $series->setNextEpisodeAirDate($nextEpisodeAirDate);
+            $series->addUpdate($this->translator->trans('Next episode air date updated') . ' → ' . $nextEpisodeAirDate?->format('d-m-Y'));
+        }
+
+        if (count($seriesImages)) {
+            $sizes = ['backdrops' => 3, 'logos' => 5, 'posters' => 5];
+            /*$seriesImages = $series->getSeriesImages()->toArray();*/
+            foreach ($seriesImages as $seriesImage) {
+                $type = $seriesImage->getType();
+                $imageConfigType = $type . '_sizes';
+                $type .= 's';
+                $url = $this->imageConfiguration->getUrl($imageConfigType, $sizes[$type]);
+                $this->imageService->saveImage($type, $seriesImage->getImagePath(), $url);
+            }
+
+            if (!$this->inImages($tv['poster_path'], $seriesImages)) {
+                $this->addSeriesImage($series, $tv['poster_path'], "poster", $this->imageConfiguration->getUrl("poster_sizes", $sizes["posters"]));
+            }
+            if (!$this->inImages($tv['backdrop_path'], $seriesImages)) {
+                $this->addSeriesImage($series, $tv['backdrop_path'], "backdrop", $this->imageConfiguration->getUrl("backdrop_sizes", $sizes["backdrops"]));
+            }
+
+            foreach (['backdrops', 'logos', 'posters'] as $type) {
+                $dbType = substr($type, 0, -1);
+                $imageConfigType = $dbType . '_sizes';
+                $url = $this->imageConfiguration->getUrl($imageConfigType, $sizes[$type]);
+                foreach ($tv['images'][$type] as $img) {
+                    if (!$this->inImages($img['file_path'], $seriesImages)) {
+                        $this->addSeriesImage($series, $img['file_path'], $dbType, $url);
+                    }
+                }
+                $tv['images'][$type] = array_map(function ($image) use ($type, $sizes, $imageConfigType) {
+                    return '/series/' . $type . $image['file_path'];
+                }, $tv['images'][$type]);
+            }
+        }
+
+        if ($tv['poster_path'] != $series->getPosterPath()) {
+            $series->setPosterPath($tv['poster_path']);
+            $series->addUpdate($this->translator->trans('Poster updated'));
+        }
+        if ($tv['backdrop_path'] != $series->getBackdropPath()) {
+            $series->setBackdropPath($tv['backdrop_path']);
+            $series->addUpdate($this->translator->trans('Backdrop updated'));
+        }
+        if (!$series->getNumberOfEpisode() || $tv['number_of_episodes'] != $series->getNumberOfEpisode()) {
+            $series->setNumberOfEpisode($tv['number_of_episodes']);
+            $series->setNumberOfSeason($tv['number_of_seasons']);
+        }
+
+        $series->setVisitNumber($series->getVisitNumber() + 1);
+        $this->seriesRepository->save($series, true);
+
+        return $series;
+    }
+
+    public function inImages(?string $image, array $images): bool
+    {
+        if (!$image) return true;
+        return array_any($images, fn($img) => $img->getimagePath() == $image);
+    }
+
+    public function addSeriesImage(Series $series, string $imagePath, string $imageType, string $imageUrl): void
+    {
+        $seriesImage = new SeriesImage($series, $imageType, $imagePath);
+        $this->seriesImageRepository->save($seriesImage, true);
+        $this->imageService->saveImage($imageType . "s", $imagePath, $imageUrl);
+        $series->addUpdate($this->translator->trans(ucfirst($imageType) . ' added'));
+    }
 
     /**
      * Synchronise les saisons basées sur les premiers épisodes.
@@ -622,7 +740,7 @@ readonly class SeriesService
         if (!$ep) return null;
 
         $ep['still_path'] = $ep['still_path'] ? $this->imageConfiguration->getUrl('still_sizes', 2) . $ep['still_path'] : null;
-        $ep['url'] = ($this->generateUrl)('app_series_season_show', [
+        $ep['url'] = ($this->generateUrl)('app_show_season', [
                 'id' => $series->getId(),
                 'slug' => $series->getSlug(),
                 'seasonNumber' => $ep['season_number'],
@@ -741,7 +859,7 @@ readonly class SeriesService
         }, $series->getSeriesBroadcastSchedules()->toArray());
         foreach ($alternateSchedules as &$s) {
             $s['airDays'] = array_map(function ($day) use ($s, $series) {
-                $day['url'] = ($this->generateUrl)('app_series_season_show', [
+                $day['url'] = ($this->generateUrl)('app_show_season', [
                         'id' => $series->getId(),
                         'slug' => $series->getSlug(),
                         'seasonNumber' => $s['seasonNumber'],
@@ -1095,7 +1213,7 @@ readonly class SeriesService
             'providerId' => null,
             'providerName' => null,
             'providerLogo' => null,
-            'targetTS' => null,
+            'targetTimestamp' => null,
             'before' => null,
             'dayList' => [],
             'dayArr' => $dayArrEmpty,

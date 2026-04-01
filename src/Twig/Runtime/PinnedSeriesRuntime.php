@@ -6,13 +6,14 @@ use App\Controller\SeriesController;
 use App\Entity\User;
 use App\Repository\UserPinnedSeriesRepository;
 use App\Service\ImageConfiguration;
+use App\Service\ProviderService;
 use Twig\Extension\RuntimeExtensionInterface;
 
 readonly class PinnedSeriesRuntime implements RuntimeExtensionInterface
 {
     public function __construct(
         private ImageConfiguration         $imageConfiguration,
-        private SeriesController           $seriesController,
+        private ProviderService            $providerService,
         private UserPinnedSeriesRepository $userPinnedSeriesRepository
     )
     {
@@ -28,7 +29,7 @@ readonly class PinnedSeriesRuntime implements RuntimeExtensionInterface
         $logoUrl = $this->imageConfiguration->getUrl('logo_sizes', 2);
         return array_map(function ($series) use ($logoUrl, $posterUrl) {
             $series['posterPath'] = $series['posterPath'] ? $posterUrl. $series['posterPath'] : null;
-            $series['providerLogoPath'] = $this->seriesController->getProviderLogoFullPath($series['providerLogoPath'], $logoUrl);
+            $series['providerLogoPath'] = $this->providerService->getProviderLogoFullPath($series['providerLogoPath'], $logoUrl);
             return $series;
         }, $this->userPinnedSeriesRepository->getPinnedSeriesByUser($user, $locale));
     }

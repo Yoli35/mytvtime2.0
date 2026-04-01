@@ -276,13 +276,13 @@ export class Show {
             const span1 = remaining.querySelector('span:first-child');
             const span1Value = span1.textContent;
             const span2 = remaining.querySelector('span:last-child');
-            const targetTS = remaining.getAttribute('data-target-ts') * 1000;
+            const targetTimestamp = remaining.getAttribute('data-target-ts') * 1000;
             const seasonCompleted = remaining.getAttribute('data-season-completed');
             const upToDate = remaining.getAttribute('data-up-to-date');
             /*const interval = */
             setInterval(() => {
                 const now = (new Date().getTime());
-                const distance = targetTS - now;
+                const distance = targetTimestamp - now;
                 const distanceAbs = Math.abs(distance);
                 const d = Math.floor(distanceAbs / (1000 * 60 * 60 * 24));
                 const h = /*(d === 1 ? 24 : 0) +*/ Math.floor((distanceAbs % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
@@ -294,7 +294,7 @@ export class Show {
                 const secondes = (s < 10 ? "0" : "") + s;
                 const elapsedTime = '<code>' + hours + minutes + secondes + '</code>';
 
-                const airDate = new Date(targetTS);
+                const airDate = new Date(targetTimestamp);
                 const currentDate = new Date();
 
                 const airDay = airDate.getTime();

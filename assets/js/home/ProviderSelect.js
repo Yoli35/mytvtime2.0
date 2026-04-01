@@ -4,7 +4,7 @@
  * @property {Array} highlightedSeries
  * @property {Array} watchProviders
  * @property {Array} app_home_load_provider_series
- * @property {String} app_series_tmdb
+ * @property {String} app_show_tmdb
  */
 
 /**

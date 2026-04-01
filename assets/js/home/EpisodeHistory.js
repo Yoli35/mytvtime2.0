@@ -5,7 +5,7 @@
  * @property {Array} watchProviders
  * @property {Array} app_home_load_provider_series
  * @property {Array} app_home_load_episode_history
- * @property {String} app_series_tmdb
+ * @property {String} app_show_tmdb
  */
 
 /**

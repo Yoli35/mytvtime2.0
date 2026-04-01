@@ -71,7 +71,7 @@
                 {% for key,l in fl %}
                     <div class="series-locations" data-tmdb-id="{{ key }}" data-country="{{ l.country.0 }}">
                         <div class="series-location-header">
-                            <a href="{{ path('app_series_tmdb', { 'id': key, slug: l.locations.0.title|slug }) }}" target="_blank">
+                            <a href="{{ path('app_show_tmdb', { 'id': key, slug: l.locations.0.title|slug }) }}" target="_blank">
                                 {{ l.locations.0.title }} ({{ l.locations|length }})
                             </a>
                             <div class="zoom-to">

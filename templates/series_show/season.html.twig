@@ -21,7 +21,7 @@
         body.style.backgroundAttachment = "fixed";
         body.style.backgroundImage = "url(" + bd + ")";
     </script>
-    {{ include('_blocks/_menu.html.twig', {seriesName: season.series_localized_name ? season.series_localized_name.name:series.name, seriesLink: path('app_series_show', {id: series.id, slug: season.series_localized_name.slug ?? series.slug}) }) }}
+    {{ include('_blocks/_menu.html.twig', {seriesName: season.series_localized_name ? season.series_localized_name.name:series.name, seriesLink: path('app_show_series', {id: series.id, slug: season.series_localized_name.slug ?? series.slug}) }) }}
     <div class="container-fluid backgroundImageOverlay">
         <div id="series-season" class="series-show" data-theme="none">
             <div class="header">
@@ -147,13 +147,13 @@
                 {% endif %}
                 {% if series.posterPath %}
                     <div class="poster" id="top">
-                        <a href="{{ path('app_series_show', {id: series.id, slug: season.series_localized_name.slug ?? series.slug}) }}">
+                        <a href="{{ path('app_show_series', {id: series.id, slug: season.series_localized_name.slug ?? series.slug}) }}">
                             <img src="/series/posters{{ series.posterPath }}" alt="{{ series.name }}">
                         </a>
                     </div>
                 {% else %}
                     <div class="series-back">
-                        <a href="{{ path('app_series_show', {id: series.id, slug: season.series_localized_name.slug ?? series.slug}) }}">
+                        <a href="{{ path('app_show_series', {id: series.id, slug: season.series_localized_name.slug ?? series.slug}) }}">
                             <div class="series-back-link">
                                 {{ ux_icon('mdi:arrow-left') }}
                                 <span>{{ 'Back to series'|trans }}</span>
@@ -233,7 +233,7 @@
                                 {% set air_date = episode.air_date %}
                                 {% if air_date and air_date <= now %}
                                     <div class="episode" id="episode-{{ season.season_number }}-{{ episode.episode_number }}" data-ue-id="{{ ue.id }}" data-episode-id="{{ episode.id }}">
-                                        <a href="{{ path('app_series_episode_show', {id: series.id, slug: series.slug, seasonNumber: season.season_number, episodeNumber: episode.episode_number}) }}">
+                                        <a href="{{ path('app_show_episode', {id: series.id, slug: series.slug, seasonNumber: season.season_number, episodeNumber: episode.episode_number}) }}">
                                         <div class="still"
                                              data-title="{{ episode.name }}{% if ue.substitute_name %} - {{ ue.substitute_name }}{% endif %}"
                                              data-series-id="{{ series.tmdbId }}"

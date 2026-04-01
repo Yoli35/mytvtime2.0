@@ -110,7 +110,7 @@
                                             {% set url = path('app_movie_tmdb', {id: media.id}) %}
                                         {% endif %}
                                         {% if media.media_type == "tv" %}
-                                            {% set url = path('app_series_tmdb', {id: media.id, slug: media.slug}) %}
+                                            {% set url = path('app_show_tmdb', {id: media.id, slug: media.slug}) %}
                                         {% endif %}
                                         <div class="poster{% if media.added %} added{% endif %}">
                                             {% if url|length %}
@@ -155,7 +155,7 @@
                                                 {% set url = "" %}
                                             {% endif %}
                                             {% if prod.media_type == "tv" %}
-                                                {% set url = path('app_series_tmdb', {id: prod.id, slug: prod.slug}) %}
+                                                {% set url = path('app_show_tmdb', {id: prod.id, slug: prod.slug}) %}
                                             {% endif %}
                                             {% if prod.media_type == "movie" %}
                                                 {% set url = path('app_movie_tmdb', {id: prod.id}) %} {# , slug: prod.slug #}
@@ -262,7 +262,7 @@
                                                     {% set url = path('app_movie_tmdb', {id: sub_prod.id}) %}
                                                 {% endif %}
                                                 {% if sub_prod.media_type == "tv" %}
-                                                    {% set url = path('app_series_tmdb', {id: sub_prod.id, slug: sub_prod.slug}) %}
+                                                    {% set url = path('app_show_tmdb', {id: sub_prod.id, slug: sub_prod.slug}) %}
                                                 {% endif %}
                                                 <a href="{{ url }}">
                                                     <div class="title">
