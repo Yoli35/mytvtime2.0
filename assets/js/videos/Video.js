@@ -1,5 +1,4 @@
 import {RgbToHsl} from "RgbToHsl";
-import {ToolTips} from "ToolTips";
 
 let self = null;
 
@@ -15,7 +14,7 @@ export class Video {
      * @property {Array<Comment>} replies
      */
 
-    constructor() {
+    constructor(toolTips) {
         self = this;
         const globs = JSON.parse(document.querySelector("#global-data").textContent);
         this.app_video_details = globs['app_video_details'];
@@ -28,8 +27,9 @@ export class Video {
         this.commentInfos = {comments: [], nextPageToken: null};
         this.svgs = document.querySelector('#svgs');
         this.videoCategories = [];
-        this.tooltips = new ToolTips();
-        this.init = this.init.bind(this);
+        this.tooltips = toolTips;
+
+        this.init();
     }
 
     init() {
@@ -39,51 +39,48 @@ export class Video {
     }
 
     initCategories() {
+        const videoShare = document.querySelector('.video-share');
+        if (videoShare) {
+            return;
+        }
         const videoPage = document.querySelector('.video-page');
         const categorySelect = document.querySelector('select[id="categories"]');
         const newCategoryInput = document.querySelector('input[id="new-category"]');
         const newCategoryColor = document.querySelector('input[id="new-category-color"]');
+        const newCategoryButton = document.querySelector('button[id="new-category-button"]');
 
         this.initCategorySelect(categorySelect, videoPage);
 
-        if (newCategoryInput) {
-            const videoId = videoPage.getAttribute('data-id');
-            newCategoryInput.addEventListener('keydown', (event) => {
-                if (event.key === 'Enter') {
-                    const newCategory = newCategoryInput.value.trim();
-                    const categoryHexColor = newCategoryColor.value;
-                    // convert #FFFFFF to rgb
-                    const rgb = self.hexToRgb(categoryHexColor);
-                    const hsl = new RgbToHsl(rgb);
-                    const categoryColor = `hsl(${hsl.h}, ${hsl.s}%, ${hsl.l}%)`;
-                    if (newCategory) {
-                        fetch('/api/video/category/new',
-                            {
-                                method: 'POST',
-                                body: JSON.stringify({video_id: videoId, category_name: newCategory, category_color: categoryColor}),
-                                headers: {
-                                    'Content-Type': 'application/json',
-                                    'X-Requested-With': 'XMLHttpRequest'
-                                }
-                            }).then(r => r.json())
-                            .then(data => {
-                                if (data.success) {
-                                    const selectCategoriesDiv = document.querySelector('.select-categories');
-                                    const temp = document.createElement('div');
-                                    temp.innerHTML = data.block;
-                                    selectCategoriesDiv.replaceWith(temp.querySelector('.select-categories'));
-                                    self.initCategorySelect(document.querySelector('.select-categories'), videoPage);
-                                } else {
-                                    console.error('Failed to add category:', data.error);
-                                }
-                            });
-                    }
-                }
-            });
-            // newCategoryColor.addEventListener('change', (event) => {
-            //     console.log(event.target.value)
-            // })
-        }
+        const videoId = videoPage.getAttribute('data-id');
+        newCategoryButton.addEventListener('click', (event) => {
+            const newCategory = newCategoryInput.value.trim();
+            const categoryHexColor = newCategoryColor.value;
+            const rgb = self.hexToRgb(categoryHexColor);
+            const hsl = new RgbToHsl(rgb);
+            const categoryColor = `hsl(${hsl.h}, ${hsl.s}%, ${hsl.l}%)`;
+            if (newCategory && newCategory.length > 0) {
+                fetch('/api/video/category/new',
+                    {
+                        method: 'POST',
+                        body: JSON.stringify({video_id: videoId, category_name: newCategory, category_color: categoryColor}),
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-Requested-With': 'XMLHttpRequest'
+                        }
+                    }).then(r => r.json())
+                    .then(data => {
+                        if (data.success) {
+                            const selectCategoriesDiv = document.querySelector('.select-categories');
+                            const temp = document.createElement('div');
+                            temp.innerHTML = data.block;
+                            selectCategoriesDiv.replaceWith(temp.querySelector('.select-categories'));
+                            self.initCategories();
+                        } else {
+                            console.error('Failed to add category:', data.error);
+                        }
+                    });
+            }
+        });
     }
 
     initCategorySelect(categorySelect, videoPage) {

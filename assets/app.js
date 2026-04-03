@@ -260,8 +260,7 @@ window.addEventListener("DOMContentLoaded", () => {
 
     const videoPage = document.querySelector(".video-page");
     if (videoPage) {
-        const video = new Video();
-        video.init();
+        new Video(toolTips);
     }
 
     const videosPage = document.querySelector(".videos-page");

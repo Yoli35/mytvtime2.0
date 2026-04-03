@@ -4,8 +4,8 @@ namespace App\Controller;
 
 use App\Entity\User;
 use App\Entity\UserVideo;
-use App\Entity\Video;
-use App\Entity\VideoChannel;
+use App\Entity\Video as AppVideo;
+use App\Entity\VideoChannel as AppVideoChannel;
 use App\Repository\UserVideoRepository;
 use App\Repository\VideoCategoryRepository;
 use App\Repository\VideoChannelRepository;
@@ -28,6 +28,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\CurrentUser;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
@@ -64,9 +65,8 @@ final class VideoController extends AbstractController
 
     #[IsGranted('ROLE_USER')]
     #[Route('/list', name: 'index')]
-    public function index(Request $request): Response
+    public function index(#[CurrentUser] User $user, Request $request): Response
     {
-        $user = $this->getUser();
         $now = $this->dateService->getNowImmutable($user->getTimezone() ?? 'Europe/Paris');
         $page = $request->query->getInt('page', 1);
         $limit = 10;
@@ -132,9 +132,8 @@ final class VideoController extends AbstractController
 
     #[IsGranted('ROLE_USER')]
     #[Route('/show/{id}', name: 'show')]
-    public function show(Request $request, UserVideo $userVideo): Response
+    public function show(#[CurrentUser] User $user, Request $request, UserVideo $userVideo): Response
     {
-        $user = $this->getUser();
         $video = $userVideo->getVideo();
         $page = $request->query->getInt('page', 1);
         $categoryId = $request->query->getInt('category');
@@ -161,10 +160,9 @@ final class VideoController extends AbstractController
     }
 
     #[Route('/share/{id}', name: 'share')]
-    public function share(Request $request, ?Video $video): Response
+    public function share(Request $request, ?AppVideo $video): Response
     {
         if (!$video) {
-            $user = $this->getUser();
             $this->addFlash('error', 'Video not found');
             return $this->redirectToRoute('app_home_index', ['_locale' => $request->getLocale()]);
         }
@@ -178,7 +176,7 @@ final class VideoController extends AbstractController
     }
 
     #[Route('/details/{id}', name: 'details', methods: ['POST'])]
-    public function details(Request $request, ?Video $video): JsonResponse
+    public function details(Request $request, ?AppVideo $video): JsonResponse
     {
         if (!$request->isMethod('POST')) {
             return new JsonResponse(['error' => 'Invalid request method'], Response::HTTP_BAD_REQUEST);
@@ -186,13 +184,10 @@ final class VideoController extends AbstractController
         if (!$video) {
             throw $this->createNotFoundException('Video not found');
         }
-        $youtubeVideo = $this->getYouTubeVideo($video->getLink());
 
-        $channel = $video->getChannel()->toArray();
-
-        // Get comments
         $link = $video->getLink();
-
+        $youtubeVideo = $this->getYouTubeVideo($link);
+        $channel = $video->getChannel()->toArray();
         $results = $this->getComments($link, null);
 
         return new JsonResponse([
@@ -301,7 +296,7 @@ final class VideoController extends AbstractController
         $video = $this->videoRepository->findOneBy(['link' => $link]);
         if (!$video) {
             $youtubeVideo = $this->getYouTubeVideo($link);
-            $video = new Video($youtubeVideo->getItems()[0]['snippet']['title'], $link);
+            $video = new AppVideo($youtubeVideo->getItems()[0]['snippet']['title'], $link);
             $this->checkVideo($video, $now);
         }
         $userVideo = $this->userVideoRepository->findOneBy(['user' => $this->getUser(), 'video' => $video]);
@@ -314,7 +309,7 @@ final class VideoController extends AbstractController
         return $userVideo->getId();
     }
 
-    private function checkVideo(?Video $video, DateTimeImmutable $now): void
+    private function checkVideo(?AppVideo $video, DateTimeImmutable $now): void
     {
         if (!$video) {
             return;
@@ -333,7 +328,7 @@ final class VideoController extends AbstractController
         $video->setDurationString($this->formatDuration($video->getDuration()));
     }
 
-    private function video(VideoListResponse $youtubeVideo, Video $video, DateTimeImmutable $now): void
+    private function video(VideoListResponse $youtubeVideo, AppVideo $video, DateTimeImmutable $now): void
     {
         $channelId = $youtubeVideo->getItems()[0]['snippet']['channelId'];
         $channel = $this->checkChannel($channelId);
@@ -344,14 +339,10 @@ final class VideoController extends AbstractController
 
         if (array_key_exists('high', $thumbnails) && $thumbnails['high']['url']) {
             $thumbnailUrl = $thumbnails['high']['url'];
-        } else {
-            if (array_key_exists('medium', $thumbnails) && $thumbnails['medium']['url']) {
-                $thumbnailUrl = $thumbnails['medium']['url'];
-            } else {
-                if (array_key_exists('default', $thumbnails) && $thumbnails['default']['url']) {
-                    $thumbnailUrl = $thumbnails['default']['url'];
-                }
-            }
+        } elseif (array_key_exists('medium', $thumbnails) && $thumbnails['medium']['url']) {
+            $thumbnailUrl = $thumbnails['medium']['url'];
+        } elseif (array_key_exists('default', $thumbnails) && $thumbnails['default']['url']) {
+            $thumbnailUrl = $thumbnails['default']['url'];
         }
         if ($thumbnailUrl) {
             $url = pathinfo($thumbnailUrl);
@@ -367,9 +358,9 @@ final class VideoController extends AbstractController
         $this->videoRepository->save($video, true);
     }
 
-    private function checkChannel(string $channelId): VideoChannel
+    private function checkChannel(string $channelId): AppVideoChannel
     {
-        /** @var VideoChannel|null $channel */
+        /** @var AppVideoChannel|null $channel */
         $channel = $this->channelRepository->findOneBy(['youTubeId' => $channelId]);
 
         $user = $this->getUser();
@@ -404,7 +395,7 @@ final class VideoController extends AbstractController
             }
 
             if ($channel == null) {
-                $channel = new VideoChannel($item['id'], $snippet['title'], $snippet['customUrl'], $basename, $now);
+                $channel = new AppVideoChannel($item['id'], $snippet['title'], $snippet['customUrl'], $basename, $now);
             } else {
                 $channel->setYouTubeId($item['id']);
                 $channel->setTitle($snippet['title']);
@@ -502,7 +493,7 @@ final class VideoController extends AbstractController
             $customUrl = preg_replace('/^https?:\/\/(www\.)?youtube\.com\//', '', $customUrl);
         }
 
-        $channel = new VideoChannel($channelId, $title, $customUrl, $basename, $now);
+        $channel = new AppVideoChannel($channelId, $title, $customUrl, $basename, $now);
         $this->channelRepository->save($channel, true);
         return $basename;
     }
@@ -596,7 +587,7 @@ final class VideoController extends AbstractController
         ];
     }
 
-    public function sharedVideoFormatDate(Video $video): string
+    public function sharedVideoFormatDate(AppVideo $video): string
     {
         $publishedDate = $video->getPublishedAt()->format('Y-m-d H:i:s');
 
@@ -629,7 +620,6 @@ final class VideoController extends AbstractController
     private function getSeconds2human(int $count, int $secondes): string
     {
         if ($secondes) {
-            // convert total runtime ($total in secondes) in years, months, days, hours, minutes, secondes
             $now = new DateTimeImmutable();
             try {
                 // past = now - total
