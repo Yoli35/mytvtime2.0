@@ -957,4 +957,23 @@ class UserEpisodeRepository extends ServiceEntityRepository
         }
         return true;
     }
+
+    public function removeSeason(UserSeries $userSeries, int $seasonNumber): bool
+    {
+        $sql = "DELETE FROM user_episode WHERE user_series_id=:userSeriesId AND season_number=:seasonNumber";
+        $params = [
+            'userSeriesId' => $userSeries->getId(),
+            'seasonNumber' => $seasonNumber,
+        ];
+        $types = [
+            'userSeriesId' => ParameterType::INTEGER,
+            'seasonNumber' => ParameterType::INTEGER,
+        ];
+        try {
+            $this->em->getConnection()->executeStatement($sql, $params, $types);
+        } catch (Exception $e) {
+            return false;
+        }
+        return true;
+    }
 }

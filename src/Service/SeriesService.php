@@ -396,8 +396,18 @@ readonly class SeriesService
         return [$newEpisodeCount, $reloadUserEpisodes];
     }
 
+    public function removeUserEpisodes(UserSeries $userSeries, int $seasonNumber): void
+    {
+        if (!$this->userEpisodeRepository->removeSeason($userSeries, $seasonNumber)) {
+            ($this->addFlash)('error', $this->translator->trans('Failed to remove season %number% from user series', ['%number%' => $seasonNumber]));
+            return;
+        }
+        $this->userEpisodeRepository->flush();
+}
+
     public function getFinaleEpisodeNumber(array $tvSeason): int
     {
+        dump($tvSeason);
         $finaleEpisodeNumber = count($tvSeason['episodes']);
         foreach ($tvSeason['episodes'] as $episode) {
             if (key_exists("episode_type", $episode)) {

@@ -333,10 +333,10 @@ final class SeriesShowController extends AbstractController
             $lastEpisode = $this->userEpisodeRepository->findOneBy(['userSeries' => $userSeries, 'seasonNumber' => $previousSeasonNumber], ['episodeNumber' => 'DESC']);
             $season['episodes'][0]['user_episode']['provider_id'] = $providerId = $lastEpisode->getProviderId();
             $season['episodes'][0]['user_episode']['provider_logo_path'] = $providerId ? $providers['logos'][$providerId] : null;
-//            $season['episodes'][0]['user_episode']['device_id'] = $deviceId = $lastEpisode->getDeviceId();
+            $season['episodes'][0]['user_episode']['device_id'] = $deviceId = $lastEpisode->getDeviceId();
             if ($firstEpisode->getProviderId() != $providerId) {
                 $firstEpisode->setProviderId($providerId);
-//                $firstEpisode->setDeviceId($deviceId);
+                $firstEpisode->setDeviceId($deviceId);
                 $this->userEpisodeRepository->save($firstEpisode, true);
             }
         }
@@ -394,8 +394,18 @@ final class SeriesShowController extends AbstractController
 
         $userSeries = $this->userSeriesRepository->findOneBy(['user' => $user, 'series' => $series]);
         $season = json_decode($this->tmdbService->getTvSeason($series->getTmdbId(), $seasonNumber, $locale, ['credits', 'watch/providers']), true);
+        if (key_exists('error', $season)) {
+            $this->seriesService->removeUserEpisodes($userSeries, $seasonNumber);
+            $this->addFlash('error', $this->translator->trans('The season could not be loaded'));
+            return $this->redirectToRoute('app_show_series', ['_locale' => $locale, 'id'=> $series->getId(), 'slug' => $series->getSlug()]);
+        }
         $episode = json_decode($this->tmdbService->getTvEpisode($series->getTmdbId(), $seasonNumber, $episodeNumber, $locale, ['credits', 'watch/providers']), true);
-        if ($episode['episode_type'] === 'finale') {
+        if (key_exists('error', $episode)) {
+            $this->addFlash('error', $this->translator->trans('The episode could not be loaded'));
+            return $this->redirectToRoute('app_show_season', ['_locale' => $locale, 'id'=> $series->getId(), 'slug' => $series->getSlug(), 'seasonNumber' => $seasonNumber]);
+        }
+        dump($season, $episode);
+        if (key_exists('episode_type', $episode) && $episode['episode_type'] === 'finale') {
             $tv = json_decode($this->tmdbService->getTv($series->getTmdbId(), $locale), true);
             if (key_exists($seasonNumber + 1, $tv['seasons'])) {
                 $status = 'More episodes to come';
