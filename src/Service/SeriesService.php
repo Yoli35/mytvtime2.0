@@ -376,7 +376,7 @@ readonly class SeriesService
             $this->userEpisodeRepository->flush();
             $reloadUserEpisodes = true;
 
-            // Get TMDB infos for remaining episodes
+            // Get TMDB info for remaining episodes
             foreach ($updatedEpisodeIds as $episodeId) {
                 /** @var UserEpisode $dbUserEpisode */
                 $dbUserEpisode = array_find($userEpisodes, fn($e) => $e->getEpisodeId() == $episodeId);
