@@ -86,6 +86,8 @@
     .content {
         font-size: 1.25rem;
         line-height: 1.5;
+        margin-inline: auto;
+        max-width: 64rem;
         padding: 2rem;
     }
 }
