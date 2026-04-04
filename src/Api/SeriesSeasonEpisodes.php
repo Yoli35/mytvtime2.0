@@ -58,7 +58,7 @@ class SeriesSeasonEpisodes extends AbstractController
         $this->logoUrl = $this->imageConfiguration->getUrl('logo_sizes', 2);
         $this->stillUrl = $this->imageConfiguration->getUrl('still_sizes', 3);
         $this->locale = $request->getLocale();
-        $this->timezone = $user?->getTimezone() ?? 'Europe/Paris';
+        $this->timezone = 'UTC';//$user?->getTimezone() ?? 'Europe/Paris';
 
         $season = json_decode($this->tmdbService->getTvSeason($tmdbId, $seasonNumber, $user->getPreferredLanguage() ?? $request->getLocale()), true);
         $this->seasonUS = json_decode($this->tmdbService->getTvSeason($tmdbId, $seasonNumber, 'en-US'), true);
