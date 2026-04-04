@@ -8,6 +8,13 @@
         {% if l %}
             <div class="separation  {% if relativeDay == 0 %} today{% endif %}">
                 <div class="relative-date">{{ relativeDayStrings(relativeDay) }} ({{ l }} {{ (l > 1 ? 'episodes':'episode')|trans }})</div>
+                {% if relativeDay <= 0 %}
+                    <div class="complete-list">
+                        {% for eotd in eotdList.results %}
+                            <div class="item{% if eotd.progress == 100 %} complete{% endif %}"></div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
                 <div class="date">{{ eotdList.date|format_date("full")|capitalize }}</div>
             </div>
             {% if relativeDay %}

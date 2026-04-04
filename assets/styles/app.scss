@@ -821,6 +821,27 @@ label:has(input[type="text"]) {
                     margin-block-start: .5rem;
                     padding-block: .5rem;
                 }
+
+                .complete-list {
+                    align-items: center;
+                    display: flex;
+                    gap: .25rem;
+                    height: 1.5rem;
+                    margin-inline-end: auto;
+                    margin-inline-start: .5rem;
+
+                    .item {
+                        border: 2px solid var(--orange-70);
+                        border-radius: 5rem;
+                        height: .75rem;
+                        width: .75rem;
+
+                        &.complete {
+                            background-color: var(--green-30);
+                            border-color: var(--green-30);
+                        }
+                    }
+                }
             }
 
             .today-s-episodes, .suggestions {
