@@ -261,14 +261,19 @@
         }
 
         .user-episode:hover {
-            width: 32rem;
+            /*width: 32rem;*/
 
-            .add-this-episode, .back-to-top, .back-to-series {
+            .add-this-episode {
                 background-color: hsl(from var(--add-this-episode) h s l / 1);
             }
 
+            /*.add-this-episode, .back-to-top, .back-to-series {
+                background-color: hsl(from var(--add-this-episode) h s l / 1);
+            }*/
+
             .add-this-episode {
-                border-radius: 5rem .25rem .25rem 5rem !important;
+                border-radius: 5rem !important;
+                /*border-radius: 5rem .25rem .25rem 5rem !important;*/
             }
 
             .add-this-episode, .remove-this-episode,
@@ -276,15 +281,18 @@
                 overflow: visible;
             }
 
-            .back-to-top, .back-to-series {
-                height: 3rem;
-                margin-block-start: unset;
-                opacity: 1;
-                width: 100%;
+            &:has(.remove-this-episode) {
+                .back-to-top, .back-to-series {
+                    background-color: hsl(from var(--add-this-episode) h s l / 1);
+                    height: 3rem;
+                    margin-block-start: unset;
+                    opacity: 1;
+                    width: 100%;
 
-                svg {
-                    height: 2rem;
-                    width: 2rem;
+                    svg {
+                        height: 2rem;
+                        width: 2rem;
+                    }
                 }
             }
 
