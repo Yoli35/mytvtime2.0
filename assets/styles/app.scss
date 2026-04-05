@@ -836,6 +836,10 @@ label:has(input[type="text"]) {
                         height: .75rem;
                         width: .75rem;
 
+                        &.partial {
+                            background-color: var(--orange-70);
+                        }
+
                         &.complete {
                             background-color: var(--green-30);
                             border-color: var(--green-30);

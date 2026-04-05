@@ -11,7 +11,7 @@
                 {% if relativeDay <= 0 %}
                     <div class="complete-list">
                         {% for eotd in eotdList.results %}
-                            <div class="item{% if eotd.progress == 100 %} complete{% endif %}"></div>
+                            <div class="item{% if eotd.progress == 100 %} complete{% elseif eotd.progress > 0 %} partial{% endif %}" data-title="{{ eotd.display }}"></div>
                         {% endfor %}
                     </div>
                 {% endif %}
