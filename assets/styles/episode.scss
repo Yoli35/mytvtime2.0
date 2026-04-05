@@ -38,9 +38,72 @@
                 text-align: right;
             }
 
-            .overview {
-                font-size: max(1.2vw, 1.2vh);
-                line-height: 1.5;
+            .overview-block {
+                display: flex;
+                gap: 1rem;
+
+                .overview {
+                    font-size: max(1.2vw, 1.2vh);
+                    line-height: 1.5;
+                }
+
+                .overview-edit {
+                    align-items: center;
+                    background-color: var(--orange);
+                    border-radius: 50%;
+                    color: var(--ardoise-10);
+                    cursor: pointer;
+                    display: flex;
+                    height: 2rem;
+                    justify-content: center;
+                    margin-inline-start: auto;
+                    transition: background-color 300ms ease-in-out, transform 300ms ease-in-out;
+                    width: 2rem;
+
+                    &:hover {
+                        background-color: var(--orange-30);
+                        transform: scale(1.5);
+                    }
+                }
+
+                .episode-overview-form {
+                    display: flex;
+                    flex-direction: column;
+                    gap: 1rem;
+                    padding: 1rem;
+
+                    .form-row {
+                        display: flex;
+                        gap: 1rem;
+
+                        label {
+                            display: flex;
+                            flex-direction: column;
+                            gap: .5rem;
+                            width: 100%;
+
+                            textarea {
+                                border-radius: 1rem;
+                                padding: 1rem;
+                                width: 100%;
+                            }
+                        }
+
+                        &:has(button) {
+                            justify-content: flex-end;
+
+                            button {
+                                background-color: var(--orange);
+                                border-radius: 5rem;
+                                color: var(--orange-90);
+                                font-size: 1.25rem;
+                                font-weight: 500;
+                                padding-block: .25rem;
+                                padding-inline: 1.5rem;
+                            }
+                        }
+                    }
+                }
             }
 
             &:hover {

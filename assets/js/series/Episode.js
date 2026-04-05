@@ -85,6 +85,7 @@ export class Episode {
         const user = this.globs.user;
         const seriesId = this.globs.seriesId;
         const seriesName = this.globs.seriesName;
+        const episodeId = this.globs.episodeId;
         const seasonNumber = this.globs.seasonNumber;
         const translations = this.globs.translations;
 
@@ -116,6 +117,11 @@ export class Episode {
             seriesName: seriesName
         };
         new Location('loc', data, fieldList);
+
+        /******************************************************************************
+         * Overview                                                                   *
+         ******************************************************************************/
+        this.initEditOverview();
 
         /******************************************************************************
          * Comments                                                                   *
@@ -166,5 +172,45 @@ export class Episode {
         e.preventDefault();
         const backLink = document.querySelector('.episode-show > header > .navigation #back-to-season');
         window.location.href = backLink.getAttribute("href") + '#episode-' + this.globs.seasonNumber + '-' + this.globs.episodeNumber;
+    }
+
+    initEditOverview() {
+        const overviewDialog = document.querySelector('.episode-overview-dialog');
+        const form = overviewDialog.querySelector('form');
+        const buttonCancel = overviewDialog.querySelector('button[name="cancel"]');
+
+        buttonCancel.addEventListener('click', function () {
+            overviewDialog.hidePopover();
+        });
+
+        form.addEventListener('submit', function (e) {
+            e.preventDefault();
+            self.saveOverview(e);
+        });
+    }
+
+    saveOverview(e) {
+        const overview = document.querySelector('.overview');
+        const overviewDialog = document.querySelector('.episode-overview-dialog');
+        const textarea = overviewDialog.querySelector('textarea');
+
+        fetch('/api/episode/update/info/' + self.episodeId,
+            {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    content: textarea.value,
+                    type: 'overview'
+                })
+            }
+        )
+            .then(function (response) {
+                if (response.ok) {
+                    overview.innerHTML = textarea.value;
+                    overviewDialog.hidePopover();
+                }
+            });
     }
 }
