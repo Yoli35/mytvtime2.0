@@ -50,20 +50,20 @@
 
                 .overview-edit {
                     align-items: center;
-                    background-color: var(--orange-30);
+                    background-color: hsl(from var(--orange-30) h s l / .25);
                     border-radius: 50%;
                     color: var(--ardoise-10);
                     cursor: pointer;
                     display: flex;
                     flex-shrink: 0;
-                    height: 2rem;
+                    height: 2.5rem;
                     justify-content: center;
                     margin-inline-start: auto;
                     transition: background-color 300ms ease-in-out, transform 300ms ease-in-out;
-                    width: 2rem;
+                    width: 2.5rem;
 
                     &:hover {
-                        background-color: var(--orange);
+                        background-color: hsl(from var(--orange) h s l / .5);
                         transform: scale(1.5);
                     }
                 }

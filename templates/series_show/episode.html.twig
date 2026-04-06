@@ -42,7 +42,9 @@
                     <div class="overview-block">
                         {% set overview = episode.user_episode.localized_overview ?: episode.overview %}
                         <div class="overview">{{ overview }}</div>
-                        <button class="overview-edit" popovertarget="episode-overview-edit" popovertargetaction="show">{{ ux_icon('mdi:pen') }}</button>
+                        <button class="overview-edit" popovertarget="episode-overview-edit" popovertargetaction="show" data-title="{{ 'Edit episode overview'|trans }}">
+                            {{ ux_icon('mdi:pencil', {height: '24px', width: '24px'}) }}
+                        </button>
                         <dialog class="episode-overview-dialog" id="episode-overview-edit" popover="auto">
                             <form class="episode-overview-form">
                                 <div class="form-row">
