@@ -49,11 +49,12 @@
 
                 .overview-edit {
                     align-items: center;
-                    background-color: var(--orange);
+                    background-color: var(--orange-30);
                     border-radius: 50%;
                     color: var(--ardoise-10);
                     cursor: pointer;
                     display: flex;
+                    flex-shrink: 0;
                     height: 2rem;
                     justify-content: center;
                     margin-inline-start: auto;
@@ -61,7 +62,7 @@
                     width: 2rem;
 
                     &:hover {
-                        background-color: var(--orange-30);
+                        background-color: var(--orange);
                         transform: scale(1.5);
                     }
                 }
