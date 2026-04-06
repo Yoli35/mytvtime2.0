@@ -1179,7 +1179,7 @@ readonly class SeriesService
         return $this->reorderDayIndexArr($dayIndexArr, $firstDayOfWeek);
     }
 
-    function reorderDayIndexArr(array $dayIndexArr, int $firstDayOfWeek): array
+    private function reorderDayIndexArr(array $dayIndexArr, int $firstDayOfWeek): array
     {
         $first = ($firstDayOfWeek % 7 + 7) % 7;
         // normaliser en 0..6
