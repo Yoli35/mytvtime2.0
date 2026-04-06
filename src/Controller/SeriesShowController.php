@@ -275,8 +275,6 @@ final class SeriesShowController extends AbstractController
         $userSeries = $this->userSeriesRepository->findOneBy(['user' => $user, 'series' => $series]);
         $this->adjustNextEpisodeToWatch($userSeries, null);
 
-        $seriesImages = $series->getSeriesImages()->toArray();
-
         $season = json_decode($this->tmdbService->getTvSeason($series->getTmdbId(), $seasonNumber, $request->getLocale(), ['credits', 'watch/providers']), true);
         if (!$season) {
             return $this->redirectToRoute('app_show_series', [
@@ -293,18 +291,12 @@ final class SeriesShowController extends AbstractController
         }
         //$tv = $this->seriesService->getTvMini($series);
 
-        if ($season['poster_path']) {
-            if (!$this->seriesService->inImages($season['poster_path'], $seriesImages)) {
-                $this->seriesService->addSeriesImage($series, $season['poster_path'], 'poster', $this->imageConfiguration->getUrl('poster_sizes', 5));
-            }
-        } else {
-            $season['poster_path'] = $series->getPosterPath();
-        }
+        $season['poster_path'] = $this->seriesService->cacheSeasonPoster($season, $series);
         $season['backdrop_path'] = $series->getBackdropPath();
         $season['blurred_poster_path'] = $this->imageService->blurPoster($season['poster_path'], 'series', 8);
 
         $season['deepl'] = null;//$this->seasonLocalizedOverview($series, $season, $seasonNumber, $request);
-        $season['episodes'] = $this->seasonEpisodes($season, $userSeries);
+        $season['episodes'] = $this->seasonEpisodes($season, $userSeries, $this->seriesService->getFinaleEpisodeNumber($season));
         $season['progress'] = $this->userEpisodeRepository->seasonProgress($userSeries, $seasonNumber);
         $season['air_date'] = $this->adjustSeasonAirDate($user, $season, 'date');
         $season['air_date_string'] = $this->adjustSeasonAirDate($user, $season, 'string');
@@ -404,7 +396,6 @@ final class SeriesShowController extends AbstractController
             $this->addFlash('error', $this->translator->trans('The episode could not be loaded'));
             return $this->redirectToRoute('app_show_season', ['_locale' => $locale, 'id'=> $series->getId(), 'slug' => $series->getSlug(), 'seasonNumber' => $seasonNumber]);
         }
-        dump($season, $episode);
         if (key_exists('episode_type', $episode) && $episode['episode_type'] === 'finale') {
             $tv = json_decode($this->tmdbService->getTv($series->getTmdbId(), $locale), true);
             if (key_exists($seasonNumber + 1, $tv['seasons'])) {
@@ -428,7 +419,8 @@ final class SeriesShowController extends AbstractController
         $peopleUserPreferredNames = $this->getPreferredNames($user);
         $episode['guest_stars'] = $this->episodeGuestStars($episode, new AsciiSlugger(), $series, $profileUrl, $peopleUserPreferredNames);
 
-        $season['episodes'] = $this->seasonEpisodes($season, $userSeries);
+        $season['poster_path'] = $this->seriesService->cacheSeasonPoster($season, $series);
+        $season['episodes'] = $this->seasonEpisodes($season, $userSeries, $finaleEpisodeNumber);
         $season['watch/providers'] = $this->watchProviders($season, $country);
         $season['credits'] = $this->castAndCrew($season, $series);
         $season['series_localized_name'] = $series->getLocalizedName($request->getLocale());
@@ -591,7 +583,7 @@ final class SeriesShowController extends AbstractController
         return $firstEpisode['air_date'];
     }
 
-    private function seasonEpisodes(array $season, UserSeries $userSeries): array
+    private function seasonEpisodes(array $season, UserSeries $userSeries, int $finaleEpisodeNumber): array
     {
         $user = $userSeries->getUser();
         $series = $userSeries->getSeries();
@@ -605,7 +597,7 @@ final class SeriesShowController extends AbstractController
         $episodeIds = array_column($userEpisodes, 'episode_id');
         $stills = $this->episodeStillRepository->getSeasonStills($episodeIds);
 
-        $finaleEpisodeNumber = $this->seriesService->getFinaleEpisodeNumber($season);
+        /*$finaleEpisodeNumber = $this->seriesService->getFinaleEpisodeNumber($season);*/
         if (count($season['episodes']) > $finaleEpisodeNumber) {
             $surplus = count($season['episodes']) - $finaleEpisodeNumber;
             array_splice($season['episodes'], $finaleEpisodeNumber, $surplus);

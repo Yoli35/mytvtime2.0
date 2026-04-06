@@ -407,7 +407,6 @@ readonly class SeriesService
 
     public function getFinaleEpisodeNumber(array $tvSeason): int
     {
-        dump($tvSeason);
         $finaleEpisodeNumber = count($tvSeason['episodes']);
         foreach ($tvSeason['episodes'] as $episode) {
             if (key_exists("episode_type", $episode)) {
@@ -417,6 +416,20 @@ readonly class SeriesService
             }
         }
         return $finaleEpisodeNumber;
+    }
+
+    public function cacheSeasonPoster(array $season, Series $series): ?string
+    {
+        $seriesImages = $series->getSeriesImages()->toArray();
+        if ($season['poster_path']) {
+            if (!$this->inImages($season['poster_path'], $seriesImages)) {
+                $this->addSeriesImage($series, $season['poster_path'], 'poster', $this->imageConfiguration->getUrl('poster_sizes', 5));
+            }
+        } else {
+            $season['poster_path'] = $series->getPosterPath();
+        }
+
+        return $season['poster_path'];
     }
 
     public function getDefaultRegion(string $locale): string
