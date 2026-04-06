@@ -108,7 +108,7 @@ final class SeriesShowController extends AbstractController
             $this->seriesRepository->save($series, true);
             $localizedName = $series->getLocalizedName($locale);
             $localizedOverview = $series->getLocalizedOverview($locale);
-            $overview = $localizedOverview->getOverview();
+            $overview = $localizedOverview?->getOverview() ?? null;
         } else {
             $localization = $this->localizeSeries($tv);
             $localizedName = $localization['localizedName'];
@@ -123,7 +123,7 @@ final class SeriesShowController extends AbstractController
                 return $item['iso_639_1'] == 'en';
             });
             $tv['overview'] = $enTranslations['data']['overview'] ?? '';
-            $this->addFlash('info', 'The series overview is missing. "' . ($enTranslations['data']['overview'] ?? 'null') . '" found.');
+//            $this->addFlash('info', 'The series overview is missing. "' . ($enTranslations['data']['overview'] ?? 'null') . '" found.');
         }
         $this->imageService->saveImage("posters", $tv['poster_path'], $this->imageConfiguration->getUrl('poster_sizes', 5));
         $this->imageService->saveImage("backdrops", $tv['backdrop_path'], $this->imageConfiguration->getUrl('backdrop_sizes', 3));
@@ -296,7 +296,7 @@ final class SeriesShowController extends AbstractController
         $season['blurred_poster_path'] = $this->imageService->blurPoster($season['poster_path'], 'series', 8);
 
         $season['deepl'] = null;//$this->seasonLocalizedOverview($series, $season, $seasonNumber, $request);
-        $season['episodes'] = $this->seasonEpisodes($season, $userSeries, $this->seriesService->getFinaleEpisodeNumber($season));
+        $season['episodes'] = $this->seasonEpisodes($season, $userSeries, $this->seriesService->getFinaleEpisodeNumber($season), $country);
         $season['progress'] = $this->userEpisodeRepository->seasonProgress($userSeries, $seasonNumber);
         $season['air_date'] = $this->adjustSeasonAirDate($user, $season, 'date');
         $season['air_date_string'] = $this->adjustSeasonAirDate($user, $season, 'string');
@@ -396,6 +396,7 @@ final class SeriesShowController extends AbstractController
             $this->addFlash('error', $this->translator->trans('The episode could not be loaded'));
             return $this->redirectToRoute('app_show_season', ['_locale' => $locale, 'id'=> $series->getId(), 'slug' => $series->getSlug(), 'seasonNumber' => $seasonNumber]);
         }
+        $episode['language_query'] = $locale . '-' . $country;
         if (key_exists('episode_type', $episode) && $episode['episode_type'] === 'finale') {
             $tv = json_decode($this->tmdbService->getTv($series->getTmdbId(), $locale), true);
             if (key_exists($seasonNumber + 1, $tv['seasons'])) {
@@ -420,7 +421,7 @@ final class SeriesShowController extends AbstractController
         $episode['guest_stars'] = $this->episodeGuestStars($episode, new AsciiSlugger(), $series, $profileUrl, $peopleUserPreferredNames);
 
         $season['poster_path'] = $this->seriesService->cacheSeasonPoster($season, $series);
-        $season['episodes'] = $this->seasonEpisodes($season, $userSeries, $finaleEpisodeNumber);
+        $season['episode_count'] = $finaleEpisodeNumber;
         $season['watch/providers'] = $this->watchProviders($season, $country);
         $season['credits'] = $this->castAndCrew($season, $series);
         $season['series_localized_name'] = $series->getLocalizedName($request->getLocale());
@@ -583,7 +584,7 @@ final class SeriesShowController extends AbstractController
         return $firstEpisode['air_date'];
     }
 
-    private function seasonEpisodes(array $season, UserSeries $userSeries, int $finaleEpisodeNumber): array
+    private function seasonEpisodes(array $season, UserSeries $userSeries, int $finaleEpisodeNumber, string $country): array
     {
         $user = $userSeries->getUser();
         $series = $userSeries->getSeries();
@@ -606,6 +607,7 @@ final class SeriesShowController extends AbstractController
 
 //            $episode['substitute_name'] = $this->userEpisodeRepository->getSubstituteName($episode['id']);
             $episode['locale'] = $locale;
+            $episode['language_query'] = $locale . '-' . $country;
             $episodeArr[] = $this->seasonEpisode($episode, $userSeries, $userEpisodes, $season['season_number'], $finaleEpisodeNumber, $stills);
         }
         $profileUrl = $this->imageConfiguration->getUrl('profile_sizes', 2);
@@ -661,9 +663,6 @@ final class SeriesShowController extends AbstractController
 
     private function seasonEpisode(array $episode, UserSeries $userSeries, array $userEpisodes, int $seasonNumber, int $finaleEpisodeNumber, array $stills): array
     {
-//        if (key_exists('episode_type', $episode) && $episode['episode_type'] == 'finale') {
-//            $finaleEpisodeNumber = $episode['episode_number'];
-//        }
         $user = $userSeries->getUser();
         if ($episode['episode_number'] > $finaleEpisodeNumber) {
             $this->addFlash('warning', "// Skip episode " . sprintf("S%02dE%02d", $seasonNumber, $episode['episode_number']) . " after a finale");
@@ -723,6 +722,17 @@ final class SeriesShowController extends AbstractController
         $episode['user_episode'] = $userEpisode;
         $episode['user_episodes'] = $userEpisodeList;
 
+        $language = $episode['language_query'];
+        $noOverview = !strlen($episode['overview'])  && !strlen($userEpisode['localized_overview']);
+        $noFRName = $language === 'fr-FR' && str_starts_with($episode['name'], 'Épisode ') && !$userEpisode['substitute_name'];
+
+        if (($noOverview || $noFRName) && $language !== 'en-US') {
+            $episodeUS = json_decode($this->tmdbService->getTvEpisode($series->getTmdbId(), $episode['season_number'], $episode['episode_number'], 'en-US'), true);
+            $episode['overview'] = $episodeUS['overview'];
+            if ($noFRName) {
+                $episode['name'] = $episodeUS['name'];
+            }
+        }
         return $episode;
     }
 
@@ -1212,6 +1222,7 @@ final class SeriesShowController extends AbstractController
             'localizedSlug' => $localizedSlug,
         ];
     }
+
     private function castAndCrew(?array $tv, ?Series $series): array
     {
         if (!$tv) {

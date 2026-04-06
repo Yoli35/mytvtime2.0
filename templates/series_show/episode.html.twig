@@ -36,17 +36,18 @@
                     {% endif %}
                 </div>
                 <div class="infos">
-                    <h1>{{ episode.episode_number }} / {{ season.episodes|length }}. {{ episode.user_episode.substitute_name ?: episode.name }}</h1>
+                    <h1>{{ episode.episode_number }} / {{ season.episode_count }}. {{ episode.user_episode.substitute_name ?: episode.name }}</h1>
                     {{ include('_blocks/series/_episode_air_date.html.twig', {episode: episode, ue: episode.user_episode, ues: episode.user_episodes}) }}
                     {{ include('_blocks/series/_episode_stats.html.twig', {episode: episode}) }}
                     <div class="overview-block">
-                        <div class="overview">{{ episode.user_episode.localized_overview ?: episode.overview }}</div>
+                        {% set overview = episode.user_episode.localized_overview ?: episode.overview %}
+                        <div class="overview">{{ overview }}</div>
                         <button class="overview-edit" popovertarget="episode-overview-edit" popovertargetaction="show">{{ ux_icon('mdi:pen') }}</button>
                         <dialog class="episode-overview-dialog" id="episode-overview-edit" popover="auto">
                             <form class="episode-overview-form">
                                 <div class="form-row">
                                     <label for="overview-textarea">{{ 'Episode overview'|trans }}
-                                        <textarea id="overview-textarea" class="overview-textarea" rows="4" cols="50" placeholder="{{ 'Write your overview here'|trans }}">{{ episode.user_episode.localized_overview ?: episode.overview }}</textarea>
+                                        <textarea id="overview-textarea" class="overview-textarea" rows="4" cols="50" placeholder="{{ 'Write your overview here'|trans }}">{{ overview }}</textarea>
                                     </label>
                                 </div>
                                 <div class="form-row">
