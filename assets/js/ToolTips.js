@@ -82,9 +82,11 @@ export class ToolTips {
         }
         const text = currentTarget.getAttribute("data-title");
         const titleBg = currentTarget.getAttribute("data-title-bg");
+        const titleWidth = currentTarget.getAttribute("data-title-width");
         const img = currentTarget.querySelector("img");
         const body = this.bodyElement;
         const tail = this.tailElement;
+        body.style.width = titleWidth ? titleWidth : '';
         if (!img || !previewImage) {
             body.innerHTML = text;
         } else {
