@@ -3758,6 +3758,11 @@ h2 {
             &.this-is-my-page {
                 background-color: var(--orange);
                 border-color: hsla(from var(--ardoise-20) h s l / .25);
+                transition: border-color 0.3s ease-in-out;
+
+                &.update {
+                    border-color: var(--orange-90);
+                }
             }
         }
     }

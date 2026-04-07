@@ -189,7 +189,7 @@ export class Episode {
         });
     }
 
-    saveOverview(e) {
+    saveOverview() {
         const overview = document.querySelector('.overview');
         const overviewDialog = document.querySelector('.episode-overview-dialog');
         const textarea = overviewDialog.querySelector('textarea');
@@ -210,6 +210,18 @@ export class Episode {
                 if (response.ok) {
                     overview.innerHTML = textarea.value;
                     overviewDialog.hidePopover();
+
+                    const episodeCard = document.querySelector('.episode-card[data-episode-id="' + self.episodeId + '"]');
+                    setTimeout(function () {
+                        episodeCard.classList.add('update');
+                        setTimeout(function () {
+                            episodeCard.classList.remove('update');
+                        }, 300);
+                    }, 300);
+                    const stillDiv = episodeCard.querySelector('.episode-still');
+                    if (stillDiv) {
+                        stillDiv.setAttribute("data-title", textarea.value);
+                    }
                 }
             });
     }
