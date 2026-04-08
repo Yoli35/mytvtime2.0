@@ -41,11 +41,12 @@ export class FetchEpisodeCards {
                     if (targetEpisodeCard) {
                         targetEpisodeCard.classList.add('this-is-my-page');
                         targetEpisodeCard.scrollIntoView({behavior: 'instant', block: 'nearest'});
+                        document.querySelector('.episode-show').scrollIntoView({inline: "center"});
                     }
                 }
                 if (simpleUpdate) return;
                 setTimeout(function () {
-                    newEpisodeCardsDiv.style.opacity = 1;
+                    newEpisodeCardsDiv.style.opacity = "1";
                 }, 0);
                 index++;
                 if (index < length) self.load(cards, index, length, targetId, simpleUpdate);

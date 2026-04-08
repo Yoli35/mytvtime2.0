@@ -87,7 +87,7 @@
                 {{ include('_blocks/series/_user_episode.html.twig', {ue: episode.user_episode, episode: episode, series: series, season: season}) }}
                 {{ include('_blocks/series/_watch_links.html.twig', {watchLinks: series.seriesWatchLinks, seasonNumber: season.season_number, hidden: (episode.user_episode.watch_at != null)}) }}
             </header>
-            <main>
+            <aside>
                 <div class="episode__cards" data-id="{{ series.id }}" data-tmdb-id="{{ series.tmdbId }}" data-season-number="{{ season.season_number }}" data-series-slug="{{ season.series_localized_name.slug ?? series.slug }}">
                     <div class="episode-loader on">
                         <div class="blue-light" style="--delay: 0"></div>
@@ -99,6 +99,8 @@
                         <div class="blue-light" style="--delay: 600ms"></div>
                     </div>
                 </div>
+            </aside>
+            <main>
                 <div class="episodes-comments"></div>
                 {% if addWatchNextDiv is defined %}
                     <div class="what-to-watch-next"></div>
