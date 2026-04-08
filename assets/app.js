@@ -104,101 +104,101 @@ window.addEventListener("DOMContentLoaded", () => {
         const globs = JSON.parse(document.querySelector("#global-data").textContent);
         index.init(globs, menu);
     }
-    const seriesShow = document.querySelector(".series-show");
-    if (seriesShow) {
-        const isSeasonPage = document.querySelector("#series-season");
-        let img;
-        if (isSeasonPage) {
-            img = seriesShow.querySelector(".backdrop")?.querySelector("img");
-            if (!img) {
-                img = seriesShow.querySelector(".series-back")?.querySelector("img");
-            }
-            if (!img) {
-                img = seriesShow.querySelector(".header-back")?.querySelector("img");
-            }
-        } else {
-            img = seriesShow.querySelector(".poster")?.querySelector("img") ?? seriesShow.querySelector(".backdrop")?.querySelector("img");
+    const seriesPage = document.querySelector(".series-show.user-series-show");
+    const seasonPage = document.querySelector(".series-show#series-season");
+    const episodePage = document.querySelector(".episode-show");
+    let img;
+    if (seriesPage) {
+        img = seriesPage.querySelector(".poster")?.querySelector("img") ?? seriesPage.querySelector(".backdrop")?.querySelector("img");
+    } else if (seasonPage) {
+        img = seasonPage.querySelector(".backdrop")?.querySelector("img");
+        if (!img) {
+            img = seasonPage.querySelector(".series-back")?.querySelector("img");
         }
-        if (img) {
-            const averageColor = new AverageColor();
-            const color = averageColor.getColor(img);
+        if (!img) {
+            img = seasonPage.querySelector(".header-back")?.querySelector("img");
+        }
+    } else if (episodePage) {
+        const body = document.querySelector("body");
+        if (body.style.backgroundImage.startsWith("url(")) {
+            const blurredPosterImg = document.createElement("img");
+            blurredPosterImg.src = body.style.backgroundImage.slice(5, -2);
+            img = blurredPosterImg;
+        }
+    }
+
+    if (img) {
+        const averageColor = new AverageColor();
+        const color = averageColor.getColor(img);
+        const hsl = averageColor.rgbToHsl(color);
+        hsl.l *= .8;
+        hsl.s = 20;
+        if (hsl.l > 100) {
+            hsl.l = 100;
+        }
+        navBar.navBarColor(hsl);
+        if (seriesPage) {
             const seasonInfosDivs = document.querySelectorAll(".seasons .season .infos");
-            /*const commentDiv = document.querySelector(".episodes-comments");*/
             const keywordDivs = document.querySelectorAll(".series-show .block-infos .keywords .keyword");
-            const hasPoster = seriesShow.querySelector(".poster")?.querySelector("img");
+            const hasPoster = seriesPage.querySelector(".poster")?.querySelector("img");
             if (!hasPoster) {
                 const body = document.querySelector("body");
                 body.style.backgroundImage = "unset";
-                body.style.backgroundColor = "oklch(" + color.lch.l / 100 + " " + color.lch.c / 100 + " " + ((color.lch.h+180) % 360) + ")"
+                body.style.backgroundColor = "oklch(" + color.lch.l / 100 + " " + color.lch.c / 100 + " " + ((color.lch.h + 180) % 360) + ")"
             }
             if (color.lch.l > 50) {
-                seriesShow.style.color = "hsl(202, 18%, 10%)";
+                seriesPage.style.color = "hsl(202, 18%, 10%)";
                 if (keywordDivs) {
                     keywordDivs.forEach(div => {
                         div.classList.add("dark");
                     });
                 }
-                /*if (commentDiv) commentDiv.style.backgroundColor = "hsl(0 0 90% /.25)";*/
                 if (seasonInfosDivs) seasonInfosDivs.forEach(seasonInfosDiv => {
                     seasonInfosDiv.style.color = "hsl(202, 18%, 10%)";
                 });
             } else {
-                seriesShow.style.color = "hsl(202, 18%, 90%)";
+                seriesPage.style.color = "hsl(202, 18%, 90%)";
                 if (keywordDivs) {
                     keywordDivs.forEach(div => {
                         div.classList.add("light");
                     });
                 }
-                /*if (commentDiv) commentDiv.style.backgroundColor = "hsl(0 0 10% /.25)";*/
                 if (seasonInfosDivs) seasonInfosDivs.forEach(seasonInfosDiv => {
                     seasonInfosDiv.style.color = "hsl(202, 18%, 90%)";
                 });
             }
-            const hsl = averageColor.rgbToHsl(color);
-            hsl.l *= .8;
-            // hsl.s *= 1.25;
-            hsl.s = 20;
-            if (hsl.l > 100) {
-                hsl.l = 100;
-            }
-            navBar.navBarColor(hsl);
         }
+    }
 
-        const seasonOrderBadge = document.querySelector(".season-order-badge");
-        seasonOrderBadge?.addEventListener("click", () => {
-            const seasonList = seasonOrderBadge.closest(".content").querySelector(".seasons");
-            seasonList.classList.toggle("reverse");
-            seasonOrderBadge.classList.toggle("reversed");
-            /*if (seasonList.classList.contains("reverse")) {
-                const arrowUp = document.querySelector(".svgs #arrow-up").querySelector("svg").cloneNode(true);
-                seasonOrderBadge.innerHTML = arrowUp.outerHTML;
-            } else {
-                const arrowDown = document.querySelector(".svgs #arrow-down").querySelector("svg").cloneNode(true);
-                seasonOrderBadge.innerHTML = arrowDown.outerHTML;
-            }*/
-        });
-
-        if (isSeasonPage) {
-            const season = new Season(menu);
-            season.init();
+    const seasonOrderBadge = document.querySelector(".season-order-badge");
+    seasonOrderBadge?.addEventListener("click", () => {
+        const seasonList = seasonOrderBadge.closest(".content").querySelector(".seasons");
+        seasonList.classList.toggle("reverse");
+        seasonOrderBadge.classList.toggle("reversed");
+        /*if (seasonList.classList.contains("reverse")) {
+            const arrowUp = document.querySelector(".svgs #arrow-up").querySelector("svg").cloneNode(true);
+            seasonOrderBadge.innerHTML = arrowUp.outerHTML;
         } else {
-            new UserList(flashMessage, toolTips, document.querySelectorAll(".action.toggle-bookmark-series"))
-        }
-    }
+            const arrowDown = document.querySelector(".svgs #arrow-down").querySelector("svg").cloneNode(true);
+            seasonOrderBadge.innerHTML = arrowDown.outerHTML;
+        }*/
+    });
 
-    const userLists = document.querySelector(".user-lists");
-    if (userLists) {
-        new UserList(flashMessage, toolTips, null);
+    if (seasonPage) {
+        const season = new Season(menu);
+        season.init();
     }
-
-    const userSeriesShow = document.querySelector(".user-series-show");
-    if (userSeriesShow) {
+    if (seriesPage) {
+        new UserList(flashMessage, toolTips, document.querySelectorAll(".action.toggle-bookmark-series"));
         const show = new Show();
         show.init(menu);
     }
 
-    const episodeShow = document.querySelector(".episode-show");
-    if (episodeShow) {
+    const userListPage = document.querySelector(".user-lists");
+    if (userListPage) {
+        new UserList(flashMessage, toolTips, null);
+    }
+    if (episodePage) {
         const episode = new Episode(flashMessage, toolTips, menu);
         episode.init();
     }
@@ -248,7 +248,7 @@ window.addEventListener("DOMContentLoaded", () => {
     }
 
     const seriesMap = document.querySelector(".series-map");
-    if (seriesMap && !seriesShow) {
+    if (seriesMap && !seriesPage && !seasonPage && !episodePage) {
         navBar.navBarColor({h: 32, s: 76, l: 30});
     }
 
