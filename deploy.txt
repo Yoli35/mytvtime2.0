@@ -8,13 +8,13 @@
         rm -R var/cache/dev;
         composer install --no-dev --optimize-autoloader;
         APP_ENV=prod APP_DEBUG=0 php bin/console cache:clear;
-        zip -r Archives.zip bin composer.json composer.lock config importmap.php package.json src symfony.lock templates translations var vendor;
+        zip -rq Archives.zip bin composer.json composer.lock config importmap.php package.json src symfony.lock templates translations var vendor;
 
-        find './public/' -type f -mmin -23260 -exec zip -n .png:.webp:.jpg:.jpeg:.mp4 public.zip {} \;
+        find './public/' -type f -mmin -13240 -exec zip -nq .png:.webp:.jpg:.jpeg:.mp4 public.zip {} \;
 
         cons asset-map:compile
-        zip -r assets.zip ./public/assets;
-        zip -r Archives.zip assets.zip public.zip;
+        zip -rq assets.zip ./public/assets;
+        zip -rq Archives.zip assets.zip public.zip;
         rm assets.zip public.zip;
         scp /Users/iboy/Sites/mytvtime2.0/Archives.zip u109355875@access922206626.webspace-data.io:/
 
@@ -58,3 +58,4 @@
 12- ionos > Espace web > Utiliser l'espace web > Connecter le domaine au dossier "/public"
 13- .env: APP_ENV: dev
 14- composer u
+15- rm Archives.zip
