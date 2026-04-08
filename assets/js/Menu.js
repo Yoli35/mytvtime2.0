@@ -755,6 +755,14 @@ export class Menu {
                     const titleDiv = document.createElement("div");
                     titleDiv.classList.add("title");
                     titleDiv.innerHTML = result[self.resultNames[type]];
+                    if (type === 'tv' && result['first_air_date']) {
+                        const date = new Date(result['first_air_date']).toLocaleDateString(self.lang, {year: 'numeric', month: 'long', day: 'numeric'});
+                        titleDiv.innerHTML += ` (${date})`;
+                    }
+                    if (type === 'movie' && result['release_date']) {
+                        const date = new Date(result['release_date']).toLocaleDateString(self.lang, {year: 'numeric', month: 'long', day: 'numeric'});
+                        titleDiv.innerHTML += ` (Release: ${date})`;
+                    }
                     aDiv.appendChild(titleDiv);
                     li.appendChild(aDiv);
                     ul.appendChild(li);
