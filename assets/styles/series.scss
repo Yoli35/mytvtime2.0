@@ -5166,7 +5166,7 @@ h2 {
 }
 
 .episodes-comments {
-    background-color: hsl(0 0% 50% / .25);
+    background-color: hsl(0 0% 20% / .25);
     border-radius: 1rem;
     color: var(--orange-90);
     display: flex;
@@ -5175,7 +5175,7 @@ h2 {
     padding: 1rem;
 
     .episode-group {
-        background-color: hsl(from var(--green) h s l / .05);
+        background-color: hsl(from var(--orange-20) h s l / .5);
         border-radius: 1rem;
         box-shadow: 0 0 1rem hsla(from var(--orange-10) h s l / .25) inset;
         padding: .5rem;
