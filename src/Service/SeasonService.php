@@ -4,15 +4,12 @@ namespace App\Service;
 
 use App\Entity\SeasonPoster;
 use App\Repository\SeasonPosterRepository;
-use Closure;
-use Symfony\Bundle\FrameworkBundle\Controller\ControllerHelper;
-use Symfony\Component\DependencyInjection\Attribute\AutowireMethodOf;
 
-class SeasonService
+readonly class SeasonService
 {
     public function __construct(
-        private readonly ImageService           $imageService,
-        private readonly SeasonPosterRepository $seasonPosterRepository,
+        private ImageService           $imageService,
+        private SeasonPosterRepository $seasonPosterRepository,
     )
     {
     }
