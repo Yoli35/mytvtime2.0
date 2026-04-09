@@ -31,7 +31,7 @@ class SeasonPosterCommand
     {
     }
 
-    public function __invoke(SymfonyStyle $io, #[Option(shortcut: 's')] ?int $seriesId = null, #[Option(shortcut: 'o')] ?int $offset = null, #[Option(shortcut: 'l')] bool $list = false, #[Option(shortcut: 'f')] bool $force = false): int
+    public function __invoke(SymfonyStyle $io, #[Option(shortcut: 's')] ?int $seriesId = null, #[Option(shortcut: 'o')] ?int $offset = null, #[Option(shortcut: 'y')] int $yearOnly = 0, #[Option(shortcut: 'f')] bool $force = false): int
     {
         $this->io = $io;
 
@@ -51,14 +51,20 @@ class SeasonPosterCommand
             }
             $firstAirDate = $series->getFirstAirDate();
             $year = intval($firstAirDate?->format('Y'));
-            if ($year && $year != 2025 ) {
-                continue;
+            if ($yearOnly > 0) {
+                if ($year && $year != $yearOnly ) {
+                    continue;
+                }
             }
             $this->io->writeln(sprintf('Series: %s (%d)', $series->getName(), $series->getId()));
             $n++;
             $seriesId = $series->getId();
             $tvId = $series->getTmdbId();
             $tv = json_decode($this->tmdbService->getTv($tvId, 'en-US'), true);
+            if (key_exists('error', $tv)) {
+                $this->io->error(sprintf('Error fetching TV data for series %s (%d): %s', $series->getName(), $series->getId(), $tv['error']));
+                continue;
+            }
             $this->seasonService->posters($tv['seasons'], $seriesId, $tvId, $posterUrl);
         }
 
