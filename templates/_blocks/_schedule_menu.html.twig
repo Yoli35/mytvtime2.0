@@ -65,7 +65,9 @@
                         </a>
                         <div id="eotd-preview-1-{{ eotd.id }}" class="episode-of-the-day-preview">
                             <a href="{{ url }}">
-                                {% if eotd.posterPath %}
+                                {% if eotd.seasonPosterPath %}
+                                    <img src="{{ eotd.seasonPosterPath }}" alt="{{ eotd.name }}">
+                                {% elseif eotd.posterPath %}
                                     <img src="{{ eotd.posterPath }}" alt="{{ eotd.name }}">
                                 {% else %}
                                     {{ eotd.name }}
@@ -95,7 +97,9 @@
                                    data-episode-count="{{ eotd.episodeCount }}"
                                    data-first-episode-number="{{ eotd.firstEpisodeNumber }}">
                                     <div class="poster">
-                                        {% if eotd.posterPath %}
+                                        {% if eotd.seasonPosterPath %}
+                                            <img src="{{ eotd.seasonPosterPath }}" alt="{{ eotd.name }}">
+                                        {% elseif eotd.posterPath %}
                                             <img src="{{ eotd.posterPath }}" alt="{{ eotd.name }}">
                                         {% else %}
                                             {{ eotd.name }}

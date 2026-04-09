@@ -608,6 +608,7 @@ class UserEpisodeRepository extends ServiceEntityRepository
                 sbd.date                                AS customDate,
                 wp.provider_name                        AS providerName,
                 wp.logo_path                            AS providerLogoPath,
+                sp.poster_path                          AS seasonPosterPath,
                 ((SELECT COUNT(*)
                   FROM `user_episode` ue1
                   WHERE ue1.`user_series_id`=ue.`user_series_id` AND ue1.`season_number`=ue.`season_number`) = ue.`episode_number`)
@@ -628,6 +629,7 @@ class UserEpisodeRepository extends ServiceEntityRepository
                  LEFT JOIN series_broadcast_date sbd ON sbd.series_broadcast_schedule_id = sbs.id AND sbd.episode_id = ue.episode_id
                  LEFT JOIN series_watch_link swl ON s.id = swl.`series_id`
                  LEFT JOIN watch_provider wp ON wp.provider_id = IF(sbs.`id`, sbs.provider_id, swl.`provider_id`)
+                 LEFT JOIN season_poster sp ON sp.series_id = s.id AND sp.season_number = ue.season_number
             WHERE us.user_id = :userId
                  AND IF(sbd.id, DATE(sbd.date) >= :startDate, ue.air_date >= :startDate)
                  AND IF(sbd.id, DATE(sbd.date) <= :endDate,   ue.air_date <= :endDate)

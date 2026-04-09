@@ -139,6 +139,21 @@ class ImageService extends AbstractController
         return $image;
     }
 
+    public function seasonPosterToWebp(string $poster_path, string $base_url): ?string
+    {
+        $kernelProjectDir = $this->getParameter('kernel.project_dir');
+        $source = $base_url . $poster_path;
+
+        $destination = pathinfo($poster_path, PATHINFO_FILENAME) . '.webp';
+        $tempFile = $kernelProjectDir . '/public/images/temp'.$poster_path;
+        $imagePath = $kernelProjectDir . '/public/series/season_posters/';
+
+        $this->saveImageFromUrl($source, $tempFile, true);
+        $webp = $this->webpImage("", $tempFile, $imagePath . $destination, 100, 780, 1170);
+
+        return $webp ? $destination : null;
+    }
+
     public function photoExists(UploadedFile $file, int $userId, string $path = '/public/albums/'): ?string
     {
         $kernelProjectDir = $this->getParameter('kernel.project_dir');
@@ -443,10 +458,10 @@ class ImageService extends AbstractController
         if ($width > 0) {
             if ($sourceWidth > $width || $sourceHeight > $height) {
                 $destRatio = $width / $height;
-                $sourceRation = $sourceWidth / $sourceHeight;
+                $sourceRatio = $sourceWidth / $sourceHeight;
                 $sourceX = 0;
                 $sourceY = 0;
-                if ($sourceRation > $destRatio) {
+                if ($sourceRatio > $destRatio) {
                     $sourceWidth = $sourceHeight * $destRatio;
                     $sourceX = ($info[0] - $sourceWidth) / 2;
                 } else {

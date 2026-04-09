@@ -73,6 +73,9 @@ readonly class SeriesSchedule
             if (!$this->seriesInArray($seriesArr[$index], $item, $seriesSeasonIndex)) {
                 $item['episodes'] = [$item['episodeNumber']];
                 $item['episodeIds'] = [$item['episodeId']];
+                if ($item['seasonPosterPath']) {
+                    $item['seasonPosterPath'] = '/series/season_posters/' . $item['seasonPosterPath'];
+                }
                 if ($item['posterPath'] === null) {
                     $item['posterPath'] = $this->seriesController->getAlternatePosterPath($item['id']);
                 }
@@ -157,6 +160,7 @@ readonly class SeriesSchedule
             $item['customDate'] = null;
             $item['airAt'] = "00:00:00";
             $item['seasonNumber'] = null;
+            $item['seasonPosterPath'] = null;
             $item['episodeCount'] = 1;
             $item['firstEpisodeNumber'] = 1;
             $movieArr[$item['id']] = $item;
@@ -195,6 +199,7 @@ readonly class SeriesSchedule
                     'providerName' => $item['providerName'],
                     'progress' => 100 * $item['episodesWatched'] / $item['episodeCount'],
                     'seasonNumber' => $item['seasonNumber'],
+                    'seasonPosterPath' => $item['seasonPosterPath'],
                     'premiere' => $item['seasonNumber'] === 1 && $item['firstEpisodeNumber'] === 1,
                     'upToDate' => $item['upToDate'],
                     'last_episode' => $item['last_episode'] ?? false,

@@ -52,6 +52,7 @@ readonly class SeriesService
         private KeywordService                $keywordService,
         private MonologLogger                 $logger,
         private NetworkRepository             $networkRepository,
+        private SeasonService                 $seasonService,
         private SeriesImageRepository         $seriesImageRepository,
         private SeriesLocalizedNameRepository $seriesLocalizedNameRepository,
 //        private readonly SeriesLocalizedOverviewRepository $seriesLocalizedOverviewRepository,
@@ -107,7 +108,7 @@ readonly class SeriesService
 
         $tv['overview'] = $this->buildOverview($tv);
 
-        $tv['seasons'] = $this->seasonsPosterPath($tv['seasons']);
+        $tv['seasons'] = $this->seasonService->posters($tv['seasons'], $series->getId(), $tv['id'], $posterUrl);
         $tv['additional_overviews'] = $series->getSeriesAdditionalLocaleOverviews($locale);
         $tv['translations'] = $this->getTranslations($tv['translations']['translations'], $country, $locale);
         $tv['localized_name'] = $this->getTvLocalizedName($tv, $series, $locale);
@@ -477,10 +478,8 @@ readonly class SeriesService
 
     public function seasonsPosterPath(array $seasons): array
     {
-        /*$slugger = new AsciiSlugger();*/
         $posterUrl = $this->imageConfiguration->getUrl('poster_sizes', 5);
-        return array_map(function ($season) use (/*$slugger,*/ $posterUrl) {
-//            $season['slug'] = $slugger->slug($season['name'])->lower()->toString();
+        return array_map(function ($season) use ($posterUrl) {
             $season['poster_path'] = $season['poster_path'] ? $posterUrl . $season['poster_path'] : null;
             return $season;
         }, $seasons);
