@@ -3601,10 +3601,10 @@ h2 {
     display: flex;
     flex-shrink: 0;
     gap: .5rem;
-    height: 22rem;
+    height: 23rem;
     overflow-x: auto;
     overscroll-behavior: contain;
-    padding-block: 1.5rem;
+    padding-block: .5rem 1.5rem;
     scroll-snap-type: x mandatory;
     transition: opacity 0.6s ease-in-out;
     width: 100%;
