@@ -98,10 +98,15 @@
                                 background-color: var(--orange);
                                 border-radius: 5rem;
                                 color: var(--orange-90);
+                                cursor: pointer;
                                 font-size: 1.25rem;
                                 font-weight: 500;
                                 padding-block: .25rem;
                                 padding-inline: 1.5rem;
+
+                                &:hover {
+                                    background-color: var(--orange-60);
+                                }
                             }
                         }
                     }
