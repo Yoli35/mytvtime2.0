@@ -178,7 +178,16 @@ export class Episode {
         const overviewDialog = document.querySelector('.episode-overview-dialog');
         const form = overviewDialog.querySelector('form');
         const buttonCancel = overviewDialog.querySelector('button[name="cancel"]');
+        const textarea = document.getElementById('overview-textarea');
 
+        overviewDialog.addEventListener('toggle', () => {
+            if (overviewDialog.matches(':popover-open')) {
+                setTimeout(() => {
+                    textarea.focus();
+                    textarea.select();
+                }, 0);
+            }
+        });
         buttonCancel.addEventListener('click', function () {
             overviewDialog.hidePopover();
         });
