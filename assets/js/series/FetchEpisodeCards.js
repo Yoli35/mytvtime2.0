@@ -40,8 +40,8 @@ export class FetchEpisodeCards {
                     const targetEpisodeCard = newEpisodeCardsDiv.querySelector(`[data-episode-id="${targetId}"]`);
                     if (targetEpisodeCard) {
                         targetEpisodeCard.classList.add('this-is-my-page');
-                        targetEpisodeCard.scrollIntoView({behavior: 'instant', block: 'nearest'});
-                        document.querySelector('.episode-show').scrollIntoView({inline: "center"});
+                        targetEpisodeCard.scrollIntoView({behavior: 'instant', block: 'nearest', inline: 'center'});
+                        document.querySelector('.episode-show').scrollIntoView({block: "nearest", inline: "center"});
                     }
                 }
                 if (simpleUpdate) return;
