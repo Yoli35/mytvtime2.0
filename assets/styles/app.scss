@@ -1552,7 +1552,7 @@ label:has(input[type="text"]) {
     }
 
     .menu.main {
-        max-width: min(40rem, calc(100vw - 2rem));
+        max-width: min(45rem, calc(100vw - 2rem));
         overflow-x: auto;
         overflow-y: auto;
 
