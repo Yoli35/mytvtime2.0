@@ -81,7 +81,7 @@
                         </a>
                     {% else %}
                         {% set addWatchNextDiv = true %}
-                        <div class="what-s-next" data-id="{{ series.tmdbId }}" data-language="{{ language }}" data-title="{{ 'What else to watch?'|trans }}">{{ ux_icon('mdi:eye-plus-outline') }}</div>
+                        <div class="what-s-next" data-id="{{ series.tmdbId }}" data-language="{{ language }}" data-title="{{ 'What else to watch?'|trans }}">{{ ux_icon('mdi:chevron-right-last') }}</div>
                     {% endif %}
                 </div>
                 {{ include('_blocks/series/_user_episode.html.twig', {ue: episode.user_episode, episode: episode, series: series, season: season}) }}
