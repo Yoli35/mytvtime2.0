@@ -925,6 +925,17 @@ label:has(input[type="text"]) {
                             .poster {
                                 position: relative;
 
+                                &:not(:has(img)) {
+                                    align-items: center;
+                                    aspect-ratio: 2 / 3;
+                                    background-color: var(--green-60);
+                                    border-radius: .5rem .5rem 0 0;
+                                    display: flex;
+                                    height: 15rem;
+                                    justify-content: center;
+                                    text-align: center;
+                                }
+
                                 img {
                                     aspect-ratio: 2 / 3;
                                     border-radius: .25rem .25rem 0 0;
