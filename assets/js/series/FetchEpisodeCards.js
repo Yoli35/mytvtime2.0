@@ -32,22 +32,25 @@ export class FetchEpisodeCards {
                 newEpisodeCardsDiv.setAttribute('data-season-number', seasonNumber);
                 newEpisodeCardsDiv.setAttribute('data-series-slug', seriesSlug);
                 newEpisodeCardsDiv.innerHTML = data['episodeCards'];
-                if (simpleUpdate === false)   newEpisodeCardsDiv.style.opacity = "0";
+                if (simpleUpdate === false) newEpisodeCardsDiv.style.opacity = "0";
                 episodeCardsDiv.replaceWith(newEpisodeCardsDiv);
                 newEpisodeCardsDiv.scrollLeft = scrollX;
                 self.toolTips.init(newEpisodeCardsDiv);
                 if (targetId !== -1) {
                     const targetEpisodeCard = newEpisodeCardsDiv.querySelector(`[data-episode-id="${targetId}"]`);
                     if (targetEpisodeCard) {
-                        targetEpisodeCard.classList.add('this-is-my-page');
-                        targetEpisodeCard.scrollIntoView({behavior: 'instant', block: 'nearest', inline: 'center'});
-                        document.querySelector('.episode-show').scrollIntoView({block: "nearest", inline: "center"});
+                        setTimeout(function () {
+                            targetEpisodeCard.classList.add('this-is-my-page');
+                            targetEpisodeCard.scrollIntoView({behavior: 'instant', block: 'nearest', inline: 'center'});
+                            document.querySelector('.episode-show').scrollIntoView({block: "nearest", inline: "center"});
+                            document.querySelector(".user-episode").scrollIntoView({block: "end"});
+                        }, 0);
                     }
                 }
                 if (simpleUpdate) return;
                 setTimeout(function () {
                     newEpisodeCardsDiv.style.opacity = "1";
-                }, 0);
+                }, 100);
                 index++;
                 if (index < length) self.load(cards, index, length, targetId, simpleUpdate);
             })
