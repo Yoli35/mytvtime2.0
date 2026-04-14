@@ -7,12 +7,12 @@ export class FetchEpisodeCards {
         this.toolTips = toolTips;
     }
 
-    init(targetId = -1, simpleUpdate = false) {
+    init(targetId = -1, simpleUpdate = false, episodeActions = null) {
         const episodeCardDivs = document.querySelectorAll('.episode__cards');
-        this.load(episodeCardDivs, 0, episodeCardDivs.length, targetId, simpleUpdate);
+        this.load(episodeCardDivs, 0, episodeCardDivs.length, targetId, simpleUpdate, episodeActions);
     }
 
-    load(cards, index, length, targetId, simpleUpdate) {
+    load(cards, index, length, targetId, simpleUpdate, episodeActions = null) {
         if (!length) return;
         const episodeCardsDiv = cards.item(index);
         const scrollX = episodeCardsDiv.scrollLeft;
@@ -47,6 +47,17 @@ export class FetchEpisodeCards {
                         }, 0);
                     }
                 }
+
+                const episodeVoteBlocks = document.querySelectorAll('.episode-vote-block');
+                episodeVoteBlocks.forEach(block => {
+                    const episodeId = block.getAttribute('data-id');
+                    const selectVote = block.querySelector('select');
+                    selectVote.addEventListener('change', (e) => {
+                        const selectVoteDiv = document.querySelector('header .user-episode .select-vote');
+                        episodeActions.saveVote(episodeId, selectVote.value, selectVoteDiv);
+                    });
+                });
+
                 if (simpleUpdate) return;
                 setTimeout(function () {
                     newEpisodeCardsDiv.style.opacity = "1";

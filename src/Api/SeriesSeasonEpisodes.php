@@ -13,6 +13,7 @@ use App\Repository\WatchProviderRepository;
 use App\Service\DateService;
 use App\Service\ImageConfiguration;
 use App\Service\TMDBService;
+use DateTimeImmutable;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -26,6 +27,8 @@ class SeriesSeasonEpisodes extends AbstractController
     private string $logoUrl;
     private string $stillUrl;
     private string $locale;
+    private string $nowDate;
+    private string $nowTime;
     private string $timezone;
     private array $seasonUS;
     private array $episodeIds;
@@ -37,11 +40,11 @@ class SeriesSeasonEpisodes extends AbstractController
     private array $providersInfos;
 
     public function __construct(
-        private readonly EpisodeStillRepository             $episodeStillRepository,
+        private readonly DateService                        $dateService,
         private readonly EpisodeLocalizedOverviewRepository $episodeLocalizedOverviewRepository,
+        private readonly EpisodeStillRepository             $episodeStillRepository,
         private readonly EpisodeSubstituteNameRepository    $episodeSubstituteNameRepository,
         private readonly ImageConfiguration                 $imageConfiguration,
-        private readonly DateService                        $dateService,
         private readonly SeriesBroadcastDateRepository      $seriesBroadcastDateRepository,
         private readonly TMDBService                        $tmdbService,
         private readonly TranslatorInterface                $translator,
@@ -59,6 +62,9 @@ class SeriesSeasonEpisodes extends AbstractController
         $this->stillUrl = $this->imageConfiguration->getUrl('still_sizes', 3);
         $this->locale = $request->getLocale();
         $this->timezone = 'UTC';//$user?->getTimezone() ?? 'Europe/Paris';
+        $now = $this->dateService->getNow($user?->getTimezone() ?? 'Europe/Paris');
+        $this->nowDate = $now->format('Y-m-d');
+        $this->nowTime = $now->format('Y-m-d H:i');
 
         $season = json_decode($this->tmdbService->getTvSeason($tmdbId, $seasonNumber, $user->getPreferredLanguage() ?? $request->getLocale()), true);
         $this->seasonUS = json_decode($this->tmdbService->getTvSeason($tmdbId, $seasonNumber, 'en-US'), true);
@@ -107,6 +113,8 @@ class SeriesSeasonEpisodes extends AbstractController
                 $episode['air_date'] = $this->dbBroadcastDateArray[$episode['id']];
             }
             return [
+                'airing' => $episode['air_date'] && key_exists($episode['id'], $this->dbBroadcastDateArray) ? ($episode['air_date'] <= $this->nowTime) : ($episode['air_date'] <= $this->nowDate),
+                'air_date_original' => $episode['air_date'],
                 'air_date' => $episode['air_date'] ? ucfirst($this->dateService->formatDateRelativeLong($episode['air_date'], 'UTC', $this->locale)) : $this->translator->trans('No date'),
                 'episode_number' => $episode['episode_number'],
                 'id' => $episode['id'],
@@ -119,6 +127,7 @@ class SeriesSeasonEpisodes extends AbstractController
                 'vote_color' => $userInfos['voteColor'],
                 'runtime' => $episode['runtime'] ?? $season['episode_run_time'][0] ?? $seasonUS['episode_run_time'][0] ?? null,
                 'still' => $episode['still_path'],
+                'userEpisodeId' => $userInfos['userEpisodeId'],
                 'vote' => $userInfos['vote'],
                 'watchedAt' => $userInfos['watchedAt'] ? ucfirst($this->dateService->formatDateRelativeLong($userInfos['watchedAt']->format("Y-m-d H:i"), $this->timezone, $this->locale)) : null,
             ];
@@ -148,11 +157,13 @@ class SeriesSeasonEpisodes extends AbstractController
     private function getProvidersInfos(): array
     {
         $providersInfos = [];
-        $providerIds = array_unique(array_map(function ($ue) {
-            return $ue->getProviderId();
-        }, array_filter($this->userEpisodes, function ($ue) {
-            return $ue->getProviderId() !== null;
-        })));
+        $providerIds = array_filter($this->userEpisodes, function ($ue) {
+                return $ue->getProviderId() !== null;
+            })
+                |> (fn($x) => array_map(function ($ue) {
+                    return $ue->getProviderId();
+                }, $x))
+                |> array_unique(...);
         if (count($providerIds) > 0) {
             $watchProviders = $this->watchProviderRepository->findBy(['providerId' => $providerIds]);
             foreach ($watchProviders as $wp) {
@@ -235,6 +246,7 @@ class SeriesSeasonEpisodes extends AbstractController
     {
         if (count($this->userEpisodes) === 0) {
             return [
+                'userEpisodeId' => null,
                 'watchedAt' => null,
                 'providerPath' => null,
                 'providerName' => null,
@@ -267,6 +279,7 @@ class SeriesSeasonEpisodes extends AbstractController
         }
 
         return [
+            'userEpisodeId' => $userEpisode->getId(),
             'watchedAt' => $watchedAt,
             'providerPath' => $providerPath,
             'providerName' => $providerName,
@@ -286,15 +299,16 @@ class SeriesSeasonEpisodes extends AbstractController
      * colors and finding the most popular ones.
      *
      * @param string $image - Path to the image file
-     * @param int $level - Sampling rate (higher = faster but less accurate)
-     *                     1 = check every pixel (slow but accurate)
-     *                     5 = check every 5th pixel (faster, still accurate)
-     *                     10 = check every 10th pixel (very fast, less accurate)
      *
      * @return array|bool - Array of hex bgcolor / color codes, or true on error
      */
-    private function detectColors(string $image, int $level = 5): array|bool
+    private function detectColors(string $image): array|bool
     {
+        // Sampling rate (higher = faster but less accurate)
+        // 1 = check every pixel (slow but accurate)
+        // 5 = check every 5th pixel (faster, still accurate)
+        // 10 = check every 10th pixel (very fast, less accurate)
+        $level = 5;
         // This array will store colors as keys and their frequency as values
         // Example: ['FF0000' => 150, '00FF00' => 89, '0000FF' => 234]
         $palette = [];
@@ -326,7 +340,7 @@ class SeriesSeasonEpisodes extends AbstractController
          * on the $level parameter.
          *
          * For a 1000x1000 image:
-         * - $level = 1: checks 1,000,000 pixels (slow but comprehensive)
+         * - $level = 1: checks one million pixels (slow but comprehensive)
          * - $level = 5: checks 40,000 pixels (much faster, still accurate)
          * - $level = 10: checks 10,000 pixels (very fast)
          */

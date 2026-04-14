@@ -103,7 +103,7 @@ export class Episode {
         /******************************************************************************
          * Fetch episode stills for each season.                                      *
          ******************************************************************************/
-        this.fetchEpisodeCards.init(this.episodeId);
+        this.fetchEpisodeCards.init(this.episodeId, false, this.episodeActions);
 
         /******************************************************************************
          * mapbox gl                                                                  *

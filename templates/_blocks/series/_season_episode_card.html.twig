@@ -20,13 +20,29 @@
                     {% if episode.runtime %}{{ episode.runtime }} {{ 'minutes'|trans }}{% endif %}
                 </div>
             </div>
-            <div class="line-3">
+            <div class="line-3{% if episode.airing %} airing"{% endif %}">
                 {% if episode.watchedAt %}
                     <div class="episode-watched-at">{{ ux_icon('mdi:eye') }} {{ episode.watchedAt }}</div>
                 {% endif %}
-                {% if episode.vote %}
-                    <div class="episode-vote"{% if episode.vote_color_background %} style="background-color: {{ episode.vote_color_background }};color: {{ episode.vote_color }};"{% endif %}>{{ episode.vote }} / 10</div>
-                {% endif %}
+                <div class="episode-vote"{% if episode.vote_color_background %} style="background-color: {{ episode.vote_color_background }};color: {{ episode.vote_color }};"{% endif %}>
+                    {% if episode.vote %}{{ episode.vote }}{% else %}—{% endif %} / 10
+                    <div class="episode-vote-block" data-id="{{ episode.userEpisodeId }}">
+                        <label for="episode-vote-select-{{ episode.userEpisodeId }}"></label>
+                        <select id="episode-vote-select-{{ episode.userEpisodeId }}">
+                            <option value=""{% if episode.vote is null %} selected{% endif %}></option>
+                            <option value="1"{% if episode.vote == 1 %} selected{% endif %}>1</option>
+                            <option value="2"{% if episode.vote == 2 %} selected{% endif %}>2</option>
+                            <option value="3"{% if episode.vote == 3 %} selected{% endif %}>3</option>
+                            <option value="4"{% if episode.vote == 4 %} selected{% endif %}>4</option>
+                            <option value="5"{% if episode.vote == 5 %} selected{% endif %}>5</option>
+                            <option value="6"{% if episode.vote == 6 %} selected{% endif %}>6</option>
+                            <option value="7"{% if episode.vote == 7 %} selected{% endif %}>7</option>
+                            <option value="8"{% if episode.vote == 8 %} selected{% endif %}>8</option>
+                            <option value="9"{% if episode.vote == 9 %} selected{% endif %}>9</option>
+                            <option value="10"{% if episode.vote == 10 %} selected{% endif %}>10</option>
+                        </select>
+                    </div>
+                </div>
                 {% if episode.provider_path %}
                     <div class="provider-logo" data-title="{{ episode.provider_name }}">
                         <img src="{{ episode.provider_path }}" alt="{{ episode.provider_name }}">
