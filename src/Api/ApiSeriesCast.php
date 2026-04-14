@@ -47,7 +47,7 @@ readonly class ApiSeriesCast
         $characterName = $inputBag->get('characterName');
         $series = $this->seriesRepository->findOneBy(['id' => $id]);
         $seriesLocalizedName = $series->getLocalizedName($request->getLocale());
-        $seriesName = $seriesLocalizedName->getName() ?? $series->getName();
+        $seriesName = $seriesLocalizedName?->getName() ?? $series->getName();
 
         // TODO: implement cast editing
         $people = json_decode($this->tmdbService->getPerson($peopleId, 'en-US'), true);
