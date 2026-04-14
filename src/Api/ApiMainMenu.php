@@ -98,7 +98,7 @@ readonly class ApiMainMenu
         $locale = $request->query->getAlpha("locale", "fr");
         $suggestions = array_map(function ($s) use ($locale) {
             return [
-                'href' => '/' . $locale . '/series/show/' . $s['id'] . '-' . ($s['localized_slug'] ?: $s['slug']),
+                'href' => '/' . $locale . '/show/series/' . $s['id'] . '-' . ($s['localized_slug'] ?: $s['slug']),
                 'id' => $s['id'],
                 'name' => ($s['localized_name'] ?: $s['name']) . '(' . $s['air_year'] . ')',
                 'poster_path' => $s['poster_path'],
