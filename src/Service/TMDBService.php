@@ -8,10 +8,12 @@ use Throwable;
 class TMDBService
 {
     private HttpClientInterface $client;
+    private string $bearer;
 
-    public function __construct(HttpClientInterface $client)
+    public function __construct(HttpClientInterface $client, string $bearer)
     {
         $this->client = $client;
+        $this->bearer = $bearer;
     }
 
     public function imageConfiguration(): ?string
@@ -249,6 +251,6 @@ class TMDBService
 
     public function getBearer(): string
     {
-        return $_ENV['TMDB_BEARER'];
+        return $this->bearer;
     }
 }
