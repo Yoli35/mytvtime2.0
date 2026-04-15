@@ -93,7 +93,7 @@ export class EpisodeActions {
 
     setProgress(progress) {
         console.log(progress);
-        const progressDiv = document.querySelector('.progress');
+        const progressDiv = document.querySelector('.header .progress');
         if (progressDiv) {
             const progressBarDiv = document.querySelector('.progress-bar');
             progressDiv.setAttribute('data-value', progress.value);
