@@ -5,15 +5,13 @@ namespace App\Service;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 use Throwable;
 
-class TMDBService
+readonly class TMDBService
 {
-    private HttpClientInterface $client;
-    private string $bearer;
-
-    public function __construct(HttpClientInterface $client, string $bearer)
+    public function __construct(
+        private HttpClientInterface $client,
+        private string              $bearer
+    )
     {
-        $this->client = $client;
-        $this->bearer = $bearer;
     }
 
     public function imageConfiguration(): ?string
