@@ -62,19 +62,7 @@ readonly class ApiLocation
                 }
             }
         }
-        if ($data['location'] == 'test') {
-            // "image-url" => "blob:https://localhost:8000/71698467-714e-4b2e-b6b3-a285619ea272"
-            $testUrl = $data['image-url'];
-            if (str_starts_with($testUrl, 'blob')) {
-                $this->imageService->blobToWebp2($data['image-url-blob'], $data['title'], $data['location'], 100);
-            }
 
-            return ($this->json)([
-                'ok' => true,
-                'testMode' => true,
-                'message' => 'Test location',
-            ]);
-        }
         $data = array_filter($data, fn($key) => $key != "google-map-url", ARRAY_FILTER_USE_KEY);
 
         $crudType = $data['crud-type'];
@@ -167,7 +155,7 @@ readonly class ApiLocation
                 $filmingLocationImage = new FilmingLocationImage($filmingLocation, $image, $now);
                 $this->filmingLocationImageRepository->save($filmingLocationImage, true);
 
-                if ($key === 'image-file') { // la vignette
+                if ($key === 'thumbnail') { // la vignette
                     $filmingLocation->setStill($filmingLocationImage);
                     $this->filmingLocationRepository->save($filmingLocation, true);
                 }

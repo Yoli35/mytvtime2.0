@@ -7028,36 +7028,75 @@ dialog, .side-panel {
                     flex-direction: column;
                     gap: .5rem;
                     list-style-type: none;
-                    padding-inline: 0;
+                    padding: 3rem;
                     width: 100%;
 
                     li {
-                        align-items: center;
-                        display: flex;
-                        gap: 1rem;
-                        width: 100%;
+                        position: relative;
 
-                        > div {
+                        input[type="radio"] {
+                            position: absolute;
+                            opacity: 0;
+                            pointer-events: none;
+                        }
+
+                        label.thumbnail-choice {
                             align-items: center;
+                            background-color: var(--orange-10);
+                            border-radius: 1rem;
+                            border: 2px solid var(--orange-30);
+                            cursor: pointer;
                             display: flex;
-                            overflow-x: auto;
-                            text-wrap: balance;
-                            width: calc(100% - 10rem);
+                            flex-direction: row;
+                            gap: .75rem;
+                            padding: .5rem;
+                            transition: all .2s ease;
+                            width: 100%;
 
-                            &:has(span.error) {
-                                align-items: flex-start;
-                                flex-direction: column;
-                                padding-block: .5rem;
-                                width: 100%;
+                            span {
+                                background-color: var(--orange-30);
+                                border-radius: .25rem;
+                                color: var(--orange-90);
+                                padding: .25rem .5rem;
+                            }
+
+                            .selected {
+                                display: none;
                             }
                         }
 
-                        img {
-                            /*aspect-ratio: 16/9;*/
-                            border-radius: .5rem;
-                            /*object-fit: cover;*/
-                            width: 15rem;
+                        input[type="radio"]:checked + label.thumbnail-choice {
+                            background-color: var(--orange-50);
+                            border-color: var(--orange-90);
+                            color: var(--orange-10);
+                            font-weight: 600;
+                            box-shadow: 0 0 0 2px hsl(from var(--orange-50) h s l / .25);
+
+                            span {
+                                background-color: var(--orange-10);
+                            }
+
+                            .selected {
+                                display: block;
+                            }
                         }
+
+                        label.thumbnail-choice img {
+                            border-radius: .5rem;
+                            flex-shrink: 0;
+                            height: 9rem;
+                            margin-inline-start: auto;
+                            object-fit: cover;
+                            width: auto;
+                        }
+                    }
+
+                    li:hover label.thumbnail-choice {
+                        border-color: var(--orange-60);
+                    }
+
+                    li:has(input[type="radio"]:checked) label.thumbnail-choice {
+                        transform: scale(1.05);
                     }
                 }
 

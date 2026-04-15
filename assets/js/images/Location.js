@@ -172,7 +172,7 @@ export class Location {
                     // la première image ("image-url") est requise, mais peut être remplacée par un fichier (image-file)
                     // en mode création
                     if (input.name === 'image-url') {
-                        if (!input.value && !input.closest('.form-row').querySelector('input[name="image-file"]').value) {
+                        if (!input.value && !input.closest('.form-row').querySelector('input[name="image-files"]').files.length) {
                             input.nextElementSibling.textContent = self.translations['This field is required'];
                             emptyInput = true;
                         } else {
@@ -256,9 +256,6 @@ export class Location {
             });
         });
 
-        // https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/file
-        const imageFile = addLocationForm.querySelector('input[name="image-file"]');
-        imageFile.addEventListener("change", updateImageDisplay);
         const imageFiles = addLocationForm.querySelector('input[name="image-files"]');
         imageFiles.addEventListener("change", updateImageDisplay);
 
@@ -280,18 +277,37 @@ export class Location {
             const list = document.createElement("ol");
             preview.appendChild(list);
 
+            let index = 0;
             for (const file of curFiles) {
                 const listItem = document.createElement("li");
-                const div = document.createElement("div");
                 if (validFileType(file)) {
-                    div.textContent = `${file.name}, ${returnFileSize(file.size)}`;
+                    const radio = document.createElement("input");
+                    radio.id = "thumbnail-" + index;
+                    radio.type = "radio";
+                    radio.name = "thumbnail";
+                    radio.value = file.name;
+                    if (index === 0) radio.checked = true;
+                    const label = document.createElement("label");
+                    label.classList.add("thumbnail-choice");
+                    label.setAttribute("for", "thumbnail-" + index);
+                    const span = document.createElement("span");
+                    span.textContent = file.name + " (" + returnFileSize(file.size) + ")";
+                    const div = document.createElement("div");
+                    div.classList.add('selected');
+                    div.innerText = "Vignette";
                     const image = document.createElement("img");
                     image.src = URL.createObjectURL(file);
                     image.alt = image.title = file.name;
 
-                    listItem.appendChild(div);
-                    listItem.appendChild(image);
+                    label.appendChild(span);
+                    label.appendChild(div);
+                    label.appendChild(image);
+
+                    listItem.appendChild(radio);
+                    listItem.appendChild(label);
+                    index += 1;
                 } else {
+                    const div = document.createElement("div");
                     div.innerHTML = `${file.name}<span class="error">${self.translations['Not a valid file type. Update your selection']}.</span>`;
                     listItem.appendChild(div);
                 }
@@ -360,27 +376,27 @@ export class Location {
             }
         });
 
-        const imageUrlInputs = form.querySelectorAll('input[name*="image-url"]');
-        const imageFileInput = form.querySelector('input[name="image-file"]');
-        const imageFilesInput = form.querySelector('input[name*="image-files"]');
+        /** @type {HTMLInputElement | null} */
+        const imageFilesInput = form.querySelector('input[name="image-files"]');
+        /** @type {HTMLInputElement | null} */
+        const thumbnailInput = form.querySelector('input[type="radio"][name="thumbnail"]:checked');
 
-        imageUrlInputs.forEach(function (input) {
-            formData.append(input.name, input.value);
-            if (input.value.includes('blob:')) {
-                const blobPreviewDiv = input.closest('.form-field').querySelector('.blob-preview');
-                const blobPreview = blobPreviewDiv.querySelector('img');
-                const file = blobPreview.src;
-                formData.append(input.name + '-blob', file);
-            }
-        });
-        if (imageFileInput.files.length)
-            formData.append(imageFileInput.name, imageFileInput.files[0]);
-        const files = imageFilesInput.files;
-        if (!files) {
-            return formData;
+        /** @type {File[]} */
+        const files = imageFilesInput ? Array.from(imageFilesInput.files || []) : [];
+        const thumbnailFile = thumbnailInput
+            ? files.find(file => file.name === thumbnailInput.value)
+            : null;
+
+        if (thumbnailFile) {
+            formData.append('thumbnail', thumbnailFile, thumbnailFile.name);
         }
+
         let index = 0;
         for (const file of files) {
+            if (thumbnailFile && file.name === thumbnailFile.name) {
+                continue;
+            }
+
             formData.append(`additional-image-${index}`, file, file.name);
             index += 1;
         }
