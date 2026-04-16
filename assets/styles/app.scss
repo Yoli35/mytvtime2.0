@@ -1623,6 +1623,14 @@ label:has(input[type="text"]) {
         &:hover {
             color: var(--orange-90);
         }
+
+        & + div {
+            margin-inline-start: 0;
+        }
+
+        &:has(+ div), + div {
+            margin-inline-end: 0;
+        }
     }
 }
 
