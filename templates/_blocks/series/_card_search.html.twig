@@ -1,0 +1,19 @@
+<div class="card tmdb">
+    <a href="{{ path('app_show_tmdb', {'id': series.id, 'slug': series.slug|length ? series.slug : 'no-slug' }) }}" {% if target is defined %} target="{{ target }}"{% endif %}>
+        <div class="poster">
+            {% if series.poster_path %}
+                <img src="{{ series.poster_path }}" alt="{{ series.name }}">
+            {% else %}
+                <div>{{ 'No poster'|trans }}</div>
+            {% endif %}
+            {% if series.first_air_date|length %}
+                <div class="first-air-date">{{ series.first_air_date|format_date('relative_full')|capitalize }}</div>
+            {% endif %}
+        </div>
+        <div class="infos">
+            <div class="name">
+                {{ series.name }}
+            </div>
+        </div>
+    </a>
+</div>

@@ -64,6 +64,16 @@
                 top: .25rem;
             }
 
+            .first-air-date {
+                background-color: var(--orange-40);
+                border-radius: 5rem;
+                bottom: 1rem;
+                color: var(--orange-90);
+                font-weight: 600;
+                padding: .25rem .75rem;
+                position: absolute;
+            }
+
             .series-infos {
                 align-items: center;
                 bottom: 2rem;

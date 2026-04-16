@@ -463,7 +463,7 @@ class SeriesController extends AbstractController
 
         $searchString = "query=$query&include_adult=false&page=$page";
         if (strlen($firstAirDateYear)) $searchString .= "&first_air_date_year=$firstAirDateYear";
-        if (strlen($language)) $searchString .= "&language=$language";
+        /*if (strlen($language)) $searchString .= "&language=$language";*/
 
         return json_decode($this->tmdbService->searchTv($searchString), true);
     }
@@ -1479,15 +1479,9 @@ class SeriesController extends AbstractController
                     $name = $tvUS['name'];
                 }
             }
+            $tv['slug'] = $slug;
 
-            return [
-                'tmdb' => true,
-                'id' => $tv['id'],
-                'name' => $name,
-                'air_date' => $tv['first_air_date'],
-                'slug' => $slug,
-                'poster_path' => $tv['poster_path'],
-            ];
+            return $tv;
         }, $searchResult['results'] ?? []);
     }
 

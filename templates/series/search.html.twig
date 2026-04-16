@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="{{ asset('styles/home.scss') }}">
     <link rel="stylesheet" href="{{ asset('styles/series.scss') }}">
     <link rel="stylesheet" href="{{ asset('styles/series_search.scss') }}">
+    <link rel="stylesheet" href="{{ asset('styles/card.scss') }}">
 {% endblock %}
 {% block body %}
     <div class="container-fluid">
@@ -34,7 +35,7 @@
             <div class="series-search-result">
                 <div class="wrapper">
                     {% for series in seriesList %}
-                        {{ include('_blocks/series/_card.html.twig') }}
+                        {{ include('_blocks/series/_card_search.html.twig') }}
                     {% endfor %}
                 </div>
             </div>
