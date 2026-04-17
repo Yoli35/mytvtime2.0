@@ -457,13 +457,11 @@ class SeriesController extends AbstractController
     public function handleSearch($simpleSeriesSearch): mixed
     {
         $query = $simpleSeriesSearch->getQuery();
-        $language = $simpleSeriesSearch->getLanguage();
         $page = $simpleSeriesSearch->getPage();
         $firstAirDateYear = $simpleSeriesSearch->getFirstAirDateYear();
 
         $searchString = "query=$query&include_adult=false&page=$page";
-        if (strlen($firstAirDateYear)) $searchString .= "&first_air_date_year=$firstAirDateYear";
-        /*if (strlen($language)) $searchString .= "&language=$language";*/
+        if ($firstAirDateYear && strlen($firstAirDateYear)) $searchString .= "&first_air_date_year=$firstAirDateYear";
 
         return json_decode($this->tmdbService->searchTv($searchString), true);
     }
