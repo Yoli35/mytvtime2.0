@@ -262,7 +262,7 @@ class UserSeriesRepository extends ServiceEntityRepository
         ];
 
         $sql = <<<SQL
-                SELECT
+                SELECT DISTINCT 
                     s.id                                                                      AS `id`,
                     s.tmdb_id                                                                 AS `tmdb_id`,
                     IF(sln.`name` IS NOT NULL, CONCAT(sln.`name`, ' - ', s.`name`), s.`name`) AS `name`,
