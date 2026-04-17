@@ -413,7 +413,7 @@ class UserEpisodeRepository extends ServiceEntityRepository
         }
 
         $sql = <<<SQL
-            SELECT
+            SELECT DISTINCT
                 ue.id                                               AS episode_id,
                 s.id                                                AS id,
                 s.tmdb_id                                           AS tmdb_id,

@@ -2,8 +2,8 @@
     {% set upToDate = series.up_to_date is defined and series.up_to_date == 1 %}
     {% set start = series.progress==0 %}
     {% set ended = series.progress==100 %}
-    {% if  upToDate %}
-        {% if loop is not defined or (loop is defined and loop.index == 1) %}
+    {% if upToDate %}
+        {% if multi == 0 or (multi == 1 and loop.index == 1) %}
             {% if ended %}
                 {% set title = 'That\'s all, Folks!'|trans %}
             {% else %}

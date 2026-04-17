@@ -97,12 +97,6 @@ class SeriesController extends AbstractController
         $logoUrl = $this->imageConfiguration->getUrl('logo_sizes', 4);
         $posterUrl = $this->imageConfiguration->getUrl('poster_sizes', 5);
 
-        $arr = $this->userEpisodeRepository->episodesOfTheDay($user, $locale);
-        // LEFT JOIN watch_links peut générer plusieurs résultats pour une même série, à cause de différents liens de streaming (link_name, provider_logo_path, "provider_name).
-        $episodesOfTheDay = [];
-        foreach ($arr as $ue) {
-            $episodesOfTheDay[$ue['episode_id']] = $ue;
-        }
         $AllEpisodesOfTheDay = array_map(function ($ue) use ($posterUrl, $logoUrl) {
             $this->imageService->saveImage("posters", $ue['poster_path'], $posterUrl);
             $ue['episode_of_the_day'] = true;
@@ -119,7 +113,7 @@ class SeriesController extends AbstractController
             $ue['remaining_episodes'] = $ue['aired_episode_count'] - $ue['watched_aired_episode_count'];
             $ue['watch_providers'] = $ue['provider_id'] ? [['logo_path' => $this->providerService->getProviderLogoFullPath($ue['provider_logo_path'], $logoUrl), 'provider_name' => $ue['provider_name']]] : [];
             return $ue;
-        }, $episodesOfTheDay);
+        }, $this->userEpisodeRepository->episodesOfTheDay($user, $locale));
 
         $tmdbIds = array_column($AllEpisodesOfTheDay, 'tmdb_id');
 
