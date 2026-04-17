@@ -4,7 +4,7 @@
             <img src="/series/backdrops{{ series.backdrop_path }}" alt="{{ series.name }}">
         {% endif %}
     </div>
-    {% set url = path('app_show_series', {'id': series.id, 'slug': series.slug }) %}
+    {% set url = path('app_tv_series', {'id': series.id, 'slug': series.slug }) %}
     <a href="{{ url }}">
         <div class="poster">
             {% if series.poster_path is defined %}

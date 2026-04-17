@@ -50,7 +50,7 @@ use Symfony\Component\String\Slugger\AsciiSlugger;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Twig\Extra\Intl\IntlExtension;
 
-#[Route('/{_locale}/show', name: 'app_show_', requirements: ['_locale' => 'fr|en|ko'])]
+#[Route('/{_locale}/tv', name: 'app_tv_', requirements: ['_locale' => 'fr|en|ko'])]
 final class SeriesShowController extends AbstractController
 {
     private bool $reloadUserEpisodes = false;
@@ -91,7 +91,7 @@ final class SeriesShowController extends AbstractController
         $userSeries = $series ? $this->userSeriesRepository->findOneBy(['user' => $user, 'series' => $series]) : null;
 
         if ($userSeries) {
-            return $this->redirectToRoute('app_show_series', [
+            return $this->redirectToRoute('app_tv_series', [
                 'id' => $series->getId(),
                 'slug' => $series->getSlug(),
                 'oldSeriesAdded' => 'false',
@@ -235,7 +235,7 @@ final class SeriesShowController extends AbstractController
                     'localized_name' => $tv['localized_name']?->getName(),
                     'name' => $seriesArr['name'],
                     'poster_path' => $series->getPosterPath(),
-                    'link' => $this->generateUrl('app_show_episode', ['_locale' => $locale, 'id' => $series->getId(), 'seasonNumber' => 1, 'episodeNumber' => 1, 'slug' => $slug]),
+                    'link' => $this->generateUrl('app_tv_episode', ['_locale' => $locale, 'id' => $series->getId(), 'seasonNumber' => 1, 'episodeNumber' => 1, 'slug' => $slug]),
                     'link_text' => 'Go',
                     'remove_link' => $this->generateUrl('api_series_list_remove_from_watch_later', ['s' => $series->getId()]),
                     'remove_link_text' => $this->translator->trans('Remove this series'),
@@ -277,14 +277,14 @@ final class SeriesShowController extends AbstractController
 
         $season = json_decode($this->tmdbService->getTvSeason($series->getTmdbId(), $seasonNumber, $request->getLocale(), ['credits', 'watch/providers']), true);
         if (!$season) {
-            return $this->redirectToRoute('app_show_series', [
+            return $this->redirectToRoute('app_tv_series', [
                 'id' => $series->getId(),
                 'slug' => $series->getSlug(),
             ]);
         }
         if (key_exists('error', $season)) {
             $this->addFlash('warning', 'Season not found on TMDB. You tried to access season ' . $seasonNumber . ' but the series "' . $series->getName() . '" has only ' . $series->getNumberOfSeason() . ' seasons.');
-            return $this->redirectToRoute('app_show_series', [
+            return $this->redirectToRoute('app_tv_series', [
                 'id' => $series->getId(),
                 'slug' => $series->getSlug(),
             ]);
@@ -389,12 +389,12 @@ final class SeriesShowController extends AbstractController
         if (key_exists('error', $season)) {
             $this->seriesService->removeUserEpisodes($userSeries, $seasonNumber);
             $this->addFlash('error', $this->translator->trans('The season could not be loaded'));
-            return $this->redirectToRoute('app_show_series', ['_locale' => $locale, 'id'=> $series->getId(), 'slug' => $series->getSlug()]);
+            return $this->redirectToRoute('app_tv_series', ['_locale' => $locale, 'id'=> $series->getId(), 'slug' => $series->getSlug()]);
         }
         $episode = json_decode($this->tmdbService->getTvEpisode($series->getTmdbId(), $seasonNumber, $episodeNumber, $locale, ['credits', 'watch/providers']), true);
         if (key_exists('error', $episode)) {
             $this->addFlash('error', $this->translator->trans('The episode could not be loaded'));
-            return $this->redirectToRoute('app_show_season', ['_locale' => $locale, 'id'=> $series->getId(), 'slug' => $series->getSlug(), 'seasonNumber' => $seasonNumber]);
+            return $this->redirectToRoute('app_tv_season', ['_locale' => $locale, 'id'=> $series->getId(), 'slug' => $series->getSlug(), 'seasonNumber' => $seasonNumber]);
         }
         $episode['language_query'] = $locale . '-' . $country;
         if (key_exists('episode_type', $episode) && $episode['episode_type'] === 'finale') {

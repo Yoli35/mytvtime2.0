@@ -762,7 +762,7 @@ readonly class SeriesService
         if (!$ep) return null;
 
         $ep['still_path'] = $ep['still_path'] ? $this->imageConfiguration->getUrl('still_sizes', 2) . $ep['still_path'] : null;
-        $ep['url'] = ($this->generateUrl)('app_show_season', [
+        $ep['url'] = ($this->generateUrl)('app_tv_season', [
                 'id' => $series->getId(),
                 'slug' => $series->getSlug(),
                 'seasonNumber' => $ep['season_number'],
@@ -881,7 +881,7 @@ readonly class SeriesService
         }, $series->getSeriesBroadcastSchedules()->toArray());
         foreach ($alternateSchedules as &$s) {
             $s['airDays'] = array_map(function ($day) use ($s, $series) {
-                $day['url'] = ($this->generateUrl)('app_show_season', [
+                $day['url'] = ($this->generateUrl)('app_tv_season', [
                         'id' => $series->getId(),
                         'slug' => $series->getSlug(),
                         'seasonNumber' => $s['seasonNumber'],

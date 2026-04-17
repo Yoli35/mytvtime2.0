@@ -22,7 +22,7 @@
         body.style.backgroundAttachment = "fixed";
         body.style.backgroundImage = "url(" + bd + ")";
     </script>
-    {{ include('_blocks/_menu.html.twig', {seriesName: season.series_localized_name ? season.series_localized_name.name:series.name, seriesLink: path('app_show_series', {id: series.id, slug: season.series_localized_name.slug ?? series.slug}) }) }}
+    {{ include('_blocks/_menu.html.twig', {seriesName: season.series_localized_name ? season.series_localized_name.name:series.name, seriesLink: path('app_tv_series', {id: series.id, slug: season.series_localized_name.slug ?? series.slug}) }) }}
     <div class="container-fluid backgroundImageOverlay">
         <div class="episode-show" data-theme="none">
             <header>
@@ -62,11 +62,11 @@
                 </div>
                 <div class="navigation">
                     {% if episode.episode_number > 1 %}
-                        <a href="{{ path("app_show_episode", {id: series.id, slug: slug, seasonNumber: season.season_number, episodeNumber: episode.episode_number - 1}) }}">
+                        <a href="{{ path("app_tv_episode", {id: series.id, slug: slug, seasonNumber: season.season_number, episodeNumber: episode.episode_number - 1}) }}">
                             <div class="previous-episode" data-title="{{ 'Previous episode'|trans }}">{{ ux_icon('mdi:arrow-left') }}</div>
                         </a>
                     {% endif %}
-                    <a id="back-to-season" href="{{ path('app_show_season', {id: series.id, slug: season.series_localized_name.slug ?? series.slug, seasonNumber: season.season_number}) }}">
+                    <a id="back-to-season" href="{{ path('app_tv_season', {id: series.id, slug: season.series_localized_name.slug ?? series.slug, seasonNumber: season.season_number}) }}">
                         <div class="back" data-title="{{ 'Back to season'|trans }}">
                             {% if season.season_number %}
                                 {{ 'Season'|trans }} {{ season.season_number }}
@@ -76,7 +76,7 @@
                         </div>
                     </a>
                     {% if episode.next_episode_is_available %}
-                        <a href="{{ path("app_show_episode", {id: series.id, slug: slug, seasonNumber: season.season_number, episodeNumber: episode.episode_number + 1}) }}">
+                        <a href="{{ path("app_tv_episode", {id: series.id, slug: slug, seasonNumber: season.season_number, episodeNumber: episode.episode_number + 1}) }}">
                             <div class="next-episode" data-title="{{ 'Next episode'|trans }}">{{ ux_icon('mdi:arrow-right') }}</div>
                         </a>
                     {% else %}

@@ -23,7 +23,7 @@
         <div class="series-show">
             <div class="header">
                 <div class="poster">
-                    <a href="{{ path('app_show_series', {'id': series.id, 'slug': series.slug}) }}">
+                    <a href="{{ path('app_tv_series', {'id': series.id, 'slug': series.slug}) }}">
                         {% if series.posterPath %}
                             <img src="/series/posters{{ series.posterPath }}" alt="{{ series.name }}">
                         {% else %}

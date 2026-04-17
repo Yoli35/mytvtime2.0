@@ -79,7 +79,7 @@ readonly class ApiLastAdditionsMenu
                     $item['poster_path'] = '/series/posters/' . $item['poster_path'];
                 }
                 $item['origin_country'] = json_decode($item['origin_country'], true) ?? [];
-                $item['url'] = ($this->generateUrl)('app_show_series', ['id' => $item['id'], 'slug' => $item['slug']]);
+                $item['url'] = ($this->generateUrl)('app_tv_series', ['id' => $item['id'], 'slug' => $item['slug']]);
             }
             return $item;
         }, array_merge($lastSeries, $lastMovies));

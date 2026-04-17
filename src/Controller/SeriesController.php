@@ -175,7 +175,7 @@ class SeriesController extends AbstractController
         // On ne garde que le premier résultat pour chaque série et on ajoute les providers dans un tableau "watch_links".
         foreach ($seriesToStart as $s) {
             if (!array_key_exists($s['id'], $series)) {
-                $series[$s['id']]['url'] = $this->generateUrl('app_show_series', ['id' => $s['id'], 'slug' => $s['slug']]);
+                $series[$s['id']]['url'] = $this->generateUrl('app_tv_series', ['id' => $s['id'], 'slug' => $s['slug']]);
                 $series[$s['id']]['tmdb_id'] = $s['tmdb_id'];
                 $series[$s['id']]['name'] = $s['name'];
                 $series[$s['id']]['sln_name'] = $s['sln_name'];
@@ -592,7 +592,7 @@ class SeriesController extends AbstractController
         }
 
         if (count($series) == 1) {
-            return $this->redirectToRoute('app_show_series', [
+            return $this->redirectToRoute('app_tv_series', [
                 'id' => $series[0]['id'],
                 'slug' => $series[0]['slug'],
             ]);
@@ -795,7 +795,7 @@ class SeriesController extends AbstractController
             }
         }
 
-        return $this->redirectToRoute('app_show_series', [
+        return $this->redirectToRoute('app_tv_series', [
             'id' => $series->getId(),
             'slug' => $localizedSlug ?: $series->getSlug(),
             'oldSeriesAdded' => $oldSeries,
@@ -1542,7 +1542,7 @@ class SeriesController extends AbstractController
 
     public function getOneResult(array $tv, AsciiSlugger $slugger): Response
     {
-        return $this->redirectToRoute('app_show_tmdb', [
+        return $this->redirectToRoute('app_tv_tmdb', [
             'id' => $tv['id'],
             'slug' => $slugger->slug($tv['name'])->lower()->toString(),
         ]);

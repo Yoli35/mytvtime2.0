@@ -11,7 +11,7 @@
     </div>
     <div class="filming_location__details">
         <div class="filming_location__id">{{ 'Id'|trans }}: <a href="{{ path("app_map_index", {'fl': location.tmdb_id}) }}" target="_blank">{{ location.id }}</a></div>
-        <div class="filming_location__id">{{ 'TMDB Id'|trans }}: <a href="{{ path("app_show_tmdb", {id: location.tmdb_id, slug: location.title|slug}) }}" target="_blank">{{ location.tmdb_id }}</a></div>
+        <div class="filming_location__id">{{ 'TMDB Id'|trans }}: <a href="{{ path("app_tv_tmdb", {id: location.tmdb_id, slug: location.title|slug}) }}" target="_blank">{{ location.tmdb_id }}</a></div>
         <div class="filming_location__title">{{ 'Title'|trans }}: {{ location.title }}</div>
         <div class="filming_location__location">{{ 'Location'|trans }}: {{ location.location }}</div>
         <div class="filming_location__description">{{ 'Description'|trans }}: {{ location.description }}</div>

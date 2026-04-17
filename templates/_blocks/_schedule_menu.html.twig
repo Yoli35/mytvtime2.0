@@ -21,11 +21,11 @@
                 {% for eotd in eotdList.results %}
                     {% if eotd.type == 'series' %}
                         {% if linkTo == 'episode' %}
-                            {% set url = path('app_show_episode', {id: eotd.id, slug: eotd.name|slug|lower, seasonNumber: eotd.seasonNumber, episodeNumber: eotd.firstEpisodeNumber}) %}
+                            {% set url = path('app_tv_episode', {id: eotd.id, slug: eotd.name|slug|lower, seasonNumber: eotd.seasonNumber, episodeNumber: eotd.firstEpisodeNumber}) %}
                         {% elseif linkTo == 'season' %}
-                            {% set url = path('app_show_season', {id: eotd.id, slug: eotd.name|slug|lower, seasonNumber: eotd.seasonNumber}) %}
+                            {% set url = path('app_tv_season', {id: eotd.id, slug: eotd.name|slug|lower, seasonNumber: eotd.seasonNumber}) %}
                         {% else %}
-                            {% set url = path('app_show_series', {id: eotd.id, slug: eotd.name|slug|lower}) %}
+                            {% set url = path('app_tv_series', {id: eotd.id, slug: eotd.name|slug|lower}) %}
                         {% endif %}
                     {% else %}
                         {% set url = path('app_movie_show', {id: eotd.id}) %}
@@ -82,11 +82,11 @@
                         {% for eotd in eotdList.results %}
                             {% if eotd.type == 'series' %}
                                 {% if linkTo == 'episode' %}
-                                    {% set url = path('app_show_episode', {id: eotd.id, slug: eotd.name|slug|lower, seasonNumber: eotd.seasonNumber, episodeNumber: eotd.firstEpisodeNumber}) %}
+                                    {% set url = path('app_tv_episode', {id: eotd.id, slug: eotd.name|slug|lower, seasonNumber: eotd.seasonNumber, episodeNumber: eotd.firstEpisodeNumber}) %}
                                 {% elseif linkTo == 'season' %}
-                                    {% set url = path('app_show_season', {id: eotd.id, slug: eotd.name|slug|lower, seasonNumber: eotd.seasonNumber}) %}
+                                    {% set url = path('app_tv_season', {id: eotd.id, slug: eotd.name|slug|lower, seasonNumber: eotd.seasonNumber}) %}
                                 {% else %}
-                                    {% set url = path('app_show_series', {id: eotd.id, slug: eotd.name|slug|lower}) %}
+                                    {% set url = path('app_tv_series', {id: eotd.id, slug: eotd.name|slug|lower}) %}
                                 {% endif %}
                             {% else %}
                                 {% set url = path('app_movie_show', {id: eotd.id}) %}

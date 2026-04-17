@@ -76,7 +76,7 @@
                         {% for h in history.list %}
                             {% set ep = 'S%02dE%02d'|format(h.seasonNumber, h.episodeNumber) %}
                             <li class="menu-item history-item" id="{{ h.episodeId }}" data-title="{{ h.name }} - {{ ep }}">
-                                <a class="history" href="{{ path('app_show_episode', {id: h.id, slug: h.slug, seasonNumber: h.seasonNumber, episodeNumber: h.episodeNumber}) }}">
+                                <a class="history" href="{{ path('app_tv_episode', {id: h.id, slug: h.slug, seasonNumber: h.seasonNumber, episodeNumber: h.episodeNumber}) }}">
                                     <div class="poster">
                                         {% if h.posterPath|length %}
                                             <img src="/series/posters{{ h.posterPath }}" alt="{{ h.name }}">
@@ -192,14 +192,14 @@
                     <ul></ul>
                 </div>
             </div>
-            {% if route in ['app_show_series', 'app_show_season'] %}
+            {% if route in ['app_tv_series', 'app_tv_season'] %}
                 <div class="debug">{{ series.id }} / {{ userSeries.id }} / {{ series.tmdbId }}</div>
             {% endif %}
-            {% if route in ['app_show_episode'] %}
+            {% if route in ['app_tv_episode'] %}
                 <div class="debug">{{ series.id }} / {{ userSeries.id }} / {{ series.tmdbId }}</div>
             {% endif %}
 
-            {% if route in ['app_show_tmdb'] %}
+            {% if route in ['app_tv_tmdb'] %}
                 <div class="debug">{{ tv.id }}</div>
             {% endif %}
 
@@ -309,7 +309,7 @@
                     {% if inProgress.ok %}
                         <div class="separation" id="menu-main-series-in-progress">{{ 'Series in progress'|trans }} - {% if inProgress.nextEpisode %}{{ 'Next episode'|trans }}{% else %}🎉 {{ 'That\'s all!'|trans }} 🎉{% endif %}</div>
                         <div class="a-preview">
-                            <a href="{{ path('app_show_season', {id: inProgress.id, slug: inProgress.name|slug, seasonNumber: inProgress.seasonNumber}) }}"
+                            <a href="{{ path('app_tv_season', {id: inProgress.id, slug: inProgress.name|slug, seasonNumber: inProgress.seasonNumber}) }}"
                                id="sip-menu-item-{{ inProgress.id }}"
                                data-episode-count="{{ inProgress.episodeCount }}"
                                data-first-episode-number="1">
@@ -317,7 +317,7 @@
                                 {{ inProgress.name }}{% if inProgress.nextEpisode %} {{ 'S%02dE%02d'|format(inProgress.seasonNumber, inProgress.nextEpisode) }}{% endif %}
                             </a>
                             <div id="sip-preview-{{ inProgress.id }}" class="episode-of-the-day-preview">
-                                <a href="{{ path('app_show_season', {id: inProgress.id, slug: inProgress.name|slug, seasonNumber: inProgress.seasonNumber}) }}">
+                                <a href="{{ path('app_tv_season', {id: inProgress.id, slug: inProgress.name|slug, seasonNumber: inProgress.seasonNumber}) }}">
                                     {% if inProgress.posterPath %}
                                         <img src="{{ inProgress.posterPath }}" alt="{{ inProgress.name }}">
                                     {% else %}
@@ -342,7 +342,7 @@
                         {% for series in pinnedSeries %}
                             <div class="a-preview">
                                 <a id="pinned-menu-item-{{ series.id }}"{% if series.linkName %} data-title="{{ series.linkName }}"{% endif %}
-                                   href="{{ path('app_show_series', {id: series.id, slug: series.name|slug}) }}">
+                                   href="{{ path('app_tv_series', {id: series.id, slug: series.name|slug}) }}">
                                     {{ series.name }}
                                     {% if series.providerLogoPath %}
                                         <div class="time"></div>
@@ -352,7 +352,7 @@
                                     {% endif %}
                                 </a>
                                 <div id="pinned-preview-{{ series.id }}" class="pinned-series-preview">
-                                    <a href="{{ path('app_show_series', {id: series.id, slug: series.slug}) }}">
+                                    <a href="{{ path('app_tv_series', {id: series.id, slug: series.slug}) }}">
                                         <img src="{{ series.posterPath }}" alt="{{ series.name }}">
                                     </a>
                                 </div>

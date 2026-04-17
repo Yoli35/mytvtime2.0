@@ -22,13 +22,13 @@
         <div class="home-content" dir="ltr">
             <div class="highlighted-series">
                 <div class="poster">
-                    <a href="{{ path('app_show_tmdb', {'id': highlightedSeries.0.id, 'slug': highlightedSeries.0.slug}) }}">
+                    <a href="{{ path('app_tv_tmdb', {'id': highlightedSeries.0.id, 'slug': highlightedSeries.0.slug}) }}">
                         <img src="{{ highlightedSeries.0.poster_path }}" alt="{{ highlightedSeries.0.name }}">
                     </a>
                 </div>
                 <div class="infos">
                     <div class="details">
-                        <a href="{{ path('app_show_tmdb', {'id': highlightedSeries.0.id, 'slug': highlightedSeries.0.slug}) }}">
+                        <a href="{{ path('app_tv_tmdb', {'id': highlightedSeries.0.id, 'slug': highlightedSeries.0.slug}) }}">
                             <div class="name">{{ highlightedSeries.0.name }}</div>
                         </a>
                         <div class="overview">{{ highlightedSeries.0.overview }}</div>
@@ -42,7 +42,7 @@
                     </div>
                     <div class="poster-list">
                         {% for s in highlightedSeries %}
-                            <a href="{{ path('app_show_tmdb', {'id': s.id, 'slug': s.slug}) }}">
+                            <a href="{{ path('app_tv_tmdb', {'id': s.id, 'slug': s.slug}) }}">
                                 <div class="item">
                                     <div class="poster-item" id="thumb-{{ s.id }}">
                                         <img src="{{ s.poster_path }}" alt="{{ s.name }}">
@@ -243,7 +243,7 @@
             {
             "highlightedSeries": {{ highlightedSeries|json_encode|raw }},
             "watchProviders": {{ watchProviders|json_encode|raw }},
-            "app_show_tmdb": "{{ path('app_show_tmdb', {'id': 0, 'slug':"a"})|slice(0, -3) }}",
+            "app_tv_tmdb": "{{ path('app_tv_tmdb', {'id': 0, 'slug':"a"})|slice(0, -3) }}",
             "app_home_load_episode_history": "{{ path('app_home_load_episode_history') }}",
             "app_home_load_provider_series": "{{ path('app_home_load_provider_series') }}"
             }

@@ -1,5 +1,5 @@
 <div class="card tmdb">
-    <a href="{{ path('app_show_tmdb', {'id': series.id, 'slug': series.slug|length ? series.slug : 'no-slug' }) }}" {% if target is defined %} target="{{ target }}"{% endif %}>
+    <a href="{{ path('app_tv_tmdb', {'id': series.id, 'slug': series.slug|length ? series.slug : 'no-slug' }) }}" {% if target is defined %} target="{{ target }}"{% endif %}>
         <div class="poster">
             {% if series.poster_path %}
                 <img src="{{ series.poster_path }}" alt="{{ series.name }}">
