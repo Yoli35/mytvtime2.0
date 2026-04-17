@@ -123,7 +123,6 @@ final class SeriesShowController extends AbstractController
                 return $item['iso_639_1'] == 'en';
             });
             $tv['overview'] = $enTranslations['data']['overview'] ?? '';
-//            $this->addFlash('info', 'The series overview is missing. "' . ($enTranslations['data']['overview'] ?? 'null') . '" found.');
         }
         $this->imageService->saveImage("posters", $tv['poster_path'], $this->imageConfiguration->getUrl('poster_sizes', 5));
         $this->imageService->saveImage("backdrops", $tv['backdrop_path'], $this->imageConfiguration->getUrl('backdrop_sizes', 3));
