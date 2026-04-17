@@ -114,7 +114,7 @@ class ImageService extends AbstractController
         $isWikipediaImage = str_contains($filename, 'wiki');
         $extension = $file->guessExtension();
         $basename = $slugger->slug($title)->lower()->toString() . '-' . $slugger->slug($location)->lower()->toString();
-        if ($seasonNumber != null) { // Season number  0 for specials
+        if ($seasonNumber != null) { // Season number 0 for specials
             $basename .= '-s' . str_pad((string)$seasonNumber, 2, '0', STR_PAD_LEFT);
         }
         if ($episodeNumber != null) { // Episode number 0 for pilots
@@ -480,7 +480,7 @@ class ImageService extends AbstractController
                         imagefill($newImage, 0, 0, imagecolorallocate($newImage, 0, 0, 0));
                     }
                 }
-                $successfullyResampled = imagecopyresampled($newImage, $image, 0, 0, $sourceX, $sourceY, $width, $height, $sourceWidth, $sourceHeight);
+                $successfullyResampled = imagecopyresampled($newImage, $image, 0, 0, $sourceX, $sourceY, $width, $height, (int)$sourceWidth, (int)$sourceHeight);
 
                 if (!$successfullyResampled) {
                     return null;
@@ -501,7 +501,6 @@ class ImageService extends AbstractController
     private function exifInfos(string $filename): array
     {
         $exif = exif_read_data($filename);
-//        dump($exif);
 
         $latitude = null;
         $longitude = null;

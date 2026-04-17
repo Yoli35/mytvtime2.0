@@ -723,8 +723,8 @@ final class SeriesShowController extends AbstractController
         $episode['user_episodes'] = $userEpisodeList;
 
         $language = $episode['language_query'];
-        $noOverview = !strlen($episode['overview'])  && !strlen($userEpisode['localized_overview']);
-        $noFRName = $language === 'fr-FR' && str_starts_with($episode['name'], 'Épisode ') && !$userEpisode['substitute_name'];
+        $noOverview = !strlen($episode['overview'])  && !strlen($userEpisode['localized_overview'] ?? '');
+        $noFRName = $language === 'fr-FR' && $episode['name'] && str_starts_with($episode['name'], 'Épisode ') && !$userEpisode['substitute_name'];
 
         if (($noOverview || $noFRName) && $language !== 'en-US') {
             $episodeUS = json_decode($this->tmdbService->getTvEpisode($series->getTmdbId(), $episode['season_number'], $episode['episode_number'], 'en-US'), true);

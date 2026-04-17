@@ -260,9 +260,9 @@ class SeriesUpdates extends AbstractController
             $data = $this->getDates($progress);
         }
 
-        $lastUpdate = $this->dateService->newDateFromTimestamp(($data['end date'] / 1000) ?? 0, "UTC")->format("Y-m-d H:i:s");
+        $lastUpdate = $this->dateService->newDateFromTimestamp((int)($data['end date'] / 1000) ?? 0, "UTC")->format("Y-m-d H:i:s");
         $lastUpdateString = $this->dateService->formatDateRelativeLong($lastUpdate, "Europe/Paris", $request->getLocale());
-        $lastDuration = ($data['end date'] - $data['start date']) / 1000;
+        $lastDuration = (int)($data['end date'] - $data['start date']) / 1000;
         $lastDurationString = $this->dateService->getDurationString($lastDuration, $units);
 
         return new JsonResponse([
