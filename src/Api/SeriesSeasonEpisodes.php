@@ -78,7 +78,7 @@ class SeriesSeasonEpisodes extends AbstractController
 
 //      $baseLink = "/" . $this->locale . "/series/season/$id-$slug/$seasonNumber#episode-$seasonNumber-";
 //      https://localhost:8000/fr/series/episode/1374-reim-him-hawci-deim/1/1
-        $baseLink = "/" . $this->locale . "/show/episode/$id-$slug/$seasonNumber/";
+        $baseLink = "/" . $this->locale . "/tv/episode/$id-$slug/$seasonNumber/";
 
         // TODO: Utiliser cette logique pour toutes les saisons
         // Trouver l'épisode final avec 'episode_type' = 'finale' pour supprimer les suivants

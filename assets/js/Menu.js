@@ -164,9 +164,9 @@ export class Menu {
             'movie_id': 'movie/tmdb/',
             'dbmovie': 'movie/show/',
             'collection': 'movie/collection/',
-            'tv': 'show/tmdb/',
-            'tv_id': 'show/tmdb/',
-            'dbtv': 'show/series/',
+            'tv': 'tv/tmdb/',
+            'tv_id': 'tv/tmdb/',
+            'dbtv': 'tv/series/',
             'people': 'people/show/',
             'multi': 'search/all?q='
         };
