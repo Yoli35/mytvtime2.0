@@ -414,6 +414,9 @@ final class SeriesShowController extends AbstractController
         $userEpisodes = $this->userEpisodeRepository->getUserEpisodesDB($userSeries->getId(), $season['season_number'], $locale, true);
         $stills = $this->episodeStillRepository->getSeasonStills([$episode['id']]);
 
+        if ($episode['still_path'] == null && $season['episodes'][$episodeNumber - 1]['still_path'] != null) {
+            $episode['still_path'] = $season['episodes'][$episodeNumber - 1]['still_path'];
+        }
         $episode = $this->seasonEpisode($episode, $userSeries, $userEpisodes, $seasonNumber, $finaleEpisodeNumber, $stills);
         $profileUrl = $this->imageConfiguration->getUrl('profile_sizes', 2);
         $peopleUserPreferredNames = $this->getPreferredNames($user);
