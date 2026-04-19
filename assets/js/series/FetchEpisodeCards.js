@@ -52,9 +52,11 @@ export class FetchEpisodeCards {
                 episodeVoteBlocks.forEach(block => {
                     const episodeId = block.getAttribute('data-id');
                     const selectVote = block.querySelector('select');
-                    selectVote.addEventListener('change', (e) => {
-                        const selectVoteDiv = document.querySelector('header .user-episode .select-vote');
+                    selectVote.addEventListener('change', () => {
+                        const selectVoteDiv = document.querySelector('header .user-episode .select-vote[data-ue-id="' + episodeId + '"]');
                         episodeActions.saveVote(episodeId, selectVote.value, selectVoteDiv);
+                        const episodeVoteValue = block.closest('.episode-vote').querySelector('.episode-vote-value');
+                        episodeVoteValue.textContent = selectVote.value;
                     });
                 });
 

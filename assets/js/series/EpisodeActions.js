@@ -929,9 +929,13 @@ export class EpisodeActions {
                     }
 
                     /******************************************************************************
-                     * Fetch episode stills for each season.                                      *
+                     * On the episode page, update the vote value of the episode card             *
                      ******************************************************************************/
-                    self.fetchEpisodeCards.init(parseInt(selectVoteDiv.dataset.id), true);
+                    const episodeCard = document.querySelector('.episode-card.this-is-my-page');
+                    if (episodeCard) {
+                        const episodeVoteValue = episodeCard.querySelector('.episode-vote-value');
+                        episodeVoteValue.textContent = voteValue > -1 ? voteValue : '—';
+                    }
                 }
             }
         });
