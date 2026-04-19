@@ -3741,11 +3741,11 @@ h2 {
                         padding: .25rem .5rem;
                         position: relative;
 
-                        &:hover {
+                        /*&:hover {
                             .episode-vote-block {
                                 display: flex;
                             }
-                        }
+                        }*/
 
                         .episode-vote-block {
                             align-items: center;
@@ -3804,6 +3804,18 @@ h2 {
 
                 &.update {
                     border-color: var(--orange-90);
+                }
+            }
+
+            &:has(.watched) {
+                .episode-infos {
+                    .line-3 {
+                        .episode-vote:hover {
+                            .episode-vote-block {
+                                display: flex;
+                            }
+                        }
+                    }
                 }
             }
         }
