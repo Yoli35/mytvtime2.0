@@ -154,18 +154,20 @@ export class Episode {
          * Watch link copy button                                                     *
          ******************************************************************************/
         const userActions = document.querySelector('.user-actions');
-        const watchLinkCopyDivs = userActions.querySelectorAll('.watch-links.copy');
-        watchLinkCopyDivs.forEach(function (copy) {
-            copy.addEventListener('click', function () {
-                const href = copy.getAttribute('data-url');
-                navigator.clipboard.writeText(href).then(function () {
-                    copy.classList.add('copied');
-                    setTimeout(function () {
-                        copy.classList.remove('copied');
-                    }, 2000);
+        if (userActions) {
+            const watchLinkCopyDivs = userActions.querySelectorAll('.watch-links.copy');
+            watchLinkCopyDivs.forEach(function (copy) {
+                copy.addEventListener('click', function () {
+                    const href = copy.getAttribute('data-url');
+                    navigator.clipboard.writeText(href).then(function () {
+                        copy.classList.add('copied');
+                        setTimeout(function () {
+                            copy.classList.remove('copied');
+                        }, 2000);
+                    });
                 });
             });
-        });
+        }
     }
 
     backToSeason(e) {
