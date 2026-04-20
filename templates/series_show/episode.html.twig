@@ -136,7 +136,7 @@
             "seriesName": "{{ season.series_localized_name ?:series.name }}",
             "episodeName": "{{ episode.user_episode.substitute_name ?: episode.name }}",
             "episodeOverview": "{{ episode.user_episode.localized_overview ?: episode.overview }}",
-            "episodeRuntime": {{ episode.runtime }},
+            "episodeRuntime": {{ episode.runtime ?? 0 }},
             "episodeStill": "{{ episode.still_path ?: episode.stills|length ? episode.stills|last : '' }}",
             "timezone": "{{ timezone }}",
             "seasonProvider": {{ season["watch/providers"]|json_encode(constant('JSON_PRETTY_PRINT'))|raw }},
