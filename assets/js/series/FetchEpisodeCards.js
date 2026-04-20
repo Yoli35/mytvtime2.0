@@ -48,17 +48,7 @@ export class FetchEpisodeCards {
                     }
                 }
 
-                const episodeVoteBlocks = document.querySelectorAll('.episode-vote-block');
-                episodeVoteBlocks.forEach(block => {
-                    const episodeId = block.getAttribute('data-id');
-                    const selectVote = block.querySelector('select');
-                    selectVote.addEventListener('change', () => {
-                        const selectVoteDiv = document.querySelector('header .user-episode .select-vote[data-ue-id="' + episodeId + '"]');
-                        episodeActions.saveVote(episodeId, selectVote.value, selectVoteDiv);
-                        const episodeVoteValue = block.closest('.episode-vote').querySelector('.episode-vote-value');
-                        episodeVoteValue.textContent = selectVote.value;
-                    });
-                });
+                self.initVoteBlock(newEpisodeCardsDiv.querySelectorAll('.episode-vote'), episodeActions);
 
                 if (simpleUpdate) return;
                 setTimeout(function () {
@@ -68,5 +58,19 @@ export class FetchEpisodeCards {
                 if (index < length) self.load(cards, index, length, targetId, simpleUpdate);
             })
             .catch(err => console.log(err));
+    }
+
+    initVoteBlock(episodeVoteBlocks, episodeActions = null) {
+        if (!episodeActions) return;
+        episodeVoteBlocks.forEach(block => {
+            const episodeId = block.getAttribute('data-id');
+            const selectVote = block.querySelector('select');
+            selectVote.addEventListener('change', () => {
+                const selectVoteDiv = document.querySelector('header .user-episode .select-vote[data-ue-id="' + episodeId + '"]');
+                episodeActions.saveVote(episodeId, selectVote.value, selectVoteDiv);
+                const episodeVoteValue = block.closest('.episode-vote').querySelector('.episode-vote-value');
+                episodeVoteValue.textContent = selectVote.value;
+            });
+        });
     }
 }
