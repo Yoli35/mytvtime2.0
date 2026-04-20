@@ -17,6 +17,7 @@ use App\Repository\SettingsRepository;
 use App\Repository\UserEpisodeRepository;
 use App\Repository\UserSeriesRepository;
 use App\Service\DateService;
+use App\Service\ImageConfiguration;
 use App\Service\ImageService;
 use App\Service\ProviderService;
 use App\Service\TMDBService;
@@ -52,6 +53,7 @@ readonly class ApiSeriesEpisode
         private EpisodeSubstituteNameRepository    $episodeSubstituteNameRepository,
         private EpisodeLocalizedOverviewRepository $episodeLocalizedOverviewRepository,
         private EpisodeStillRepository             $episodeStillRepository,
+        private ImageConfiguration                 $imageConfiguration,
         private ImageService                       $imageService,
         private SeriesBroadcastDateRepository      $seriesBroadcastDateRepository,
         private SeriesRepository                   $seriesRepository,
@@ -229,6 +231,8 @@ readonly class ApiSeriesEpisode
             $wpId = $userEpisode->getProviderId();
             if ($wpId) {
                 $wp = $this->providerService->getOne($wpId);
+                $logoUrl = $this->imageConfiguration->getUrl('logo_sizes', 3);
+                $path = $wp->getLogoPath();
             }
             $e = [
                 'airing' => true,
@@ -239,7 +243,7 @@ readonly class ApiSeriesEpisode
                 'name' => $inputBag->get('episodeName'),
                 'overview' => $inputBag->get('episodeOverview'),
                 'provider_name' => $wpId ? $wp->getProviderName() : null,
-                'provider_path' => $wpId ? $wp->getLogoPath() : null,
+                'provider_path' => $wpId ? (str_starts_with('+', $path) ? '/images/providers' . substr($path, 1) : $logoUrl . $path) : null,
                 'vote_color_background' => $wpId ? '#' . $wp->getBackgroundColor() : '#eeeeee',
                 'vote_color' => $wpId ? '#' . $wp->getColor() : '#111111',
                 'runtime' => $inputBag->get('episodeRuntime'),
