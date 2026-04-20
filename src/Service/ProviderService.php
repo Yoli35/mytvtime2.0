@@ -3,6 +3,7 @@
 namespace App\Service;
 
 use App\Entity\User;
+use App\Entity\WatchProvider;
 use App\Repository\UserSeriesRepository;
 use App\Repository\WatchProviderRepository;
 
@@ -21,6 +22,11 @@ readonly class ProviderService
             'all' => $this->watchProviderRepository->getAllProviders(),
             'userProviders' => $this->userSeriesRepository->userSeriesProviders($user),
         ];
+    }
+
+    public function getOne(int $id): WatchProvider
+    {
+        return $this->watchProviderRepository->findOneBy(['providerId' => $id]);
     }
 
     public function seriesWithoutProviders(User $user, string $locale, int $page, int $limit): array

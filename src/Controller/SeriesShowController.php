@@ -446,6 +446,7 @@ final class SeriesShowController extends AbstractController
             'season' => $season,
             'episode' => $episode,
             'slug' => $slug,
+            'timezone' => $user->getTimezone() ?? 'Europe/Paris',
             'status' => $status,
             'statusTitle' => $statusTitle,
             'language' => $locale . '-' . $country,

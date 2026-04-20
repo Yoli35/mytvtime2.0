@@ -177,19 +177,24 @@ class SeriesSeasonEpisodes extends AbstractController
                     $pathForColor = $this->getParameter('kernel.project_dir') . '/public/' . substr($path, 1);
                 }
 
-                $colors = $this->detectColors($pathForColor);
-                if ($colors === true) {
-                    $colors = [
-                        'bgcolor' => '#69968C',
-                        'color' => '#E1E7EA',
-                    ];
+                if (!$wp->getColor()) {
+                    $colors = $this->detectColors($pathForColor);
+                    if ($colors === true) {
+                        $colors = [
+                            'bgcolor' => '#69968C',
+                            'color' => '#E1E7EA',
+                        ];
+                    }
+                    $wp->setColor($colors['color']);
+                    $wp->setBackgroundColor($colors['bgcolor']);
+                    $this->watchProviderRepository->save($wp, true);
                 }
 
                 $providersInfos[$wpId] = [
                     'path' => $path,
                     'name' => $wp->getProviderName(),
-                    'vote_color_background' => "#" . $colors['bgcolor'],
-                    'vote_color' => "#" . $colors['color'],
+                    'vote_color_background' => "#" . $wp->getBackgroundColor(),
+                    'vote_color' => "#" . $wp->getColor(),
                 ];
             }
         }

@@ -35,6 +35,12 @@ class WatchProvider
     #[ORM\Column(nullable: true)]
     private ?DateTimeImmutable $updatedAt = null;
 
+    #[ORM\Column(length: 8, nullable: true)]
+    private ?string $color = null;
+
+    #[ORM\Column(length: 8, nullable: true)]
+    private ?string $backgroundColor = null;
+
     public function __construct(int $providerId, string $providerName, ?string $logoPath, int $displayPriority, array $displayPriorities, DateTimeImmutable $updatedAt, bool $removed)
     {
         $this->providerId = $providerId;
@@ -131,6 +137,30 @@ class WatchProvider
     public function setUpdatedAt(?DateTimeImmutable $updatedAt): static
     {
         $this->updatedAt = $updatedAt;
+
+        return $this;
+    }
+
+    public function getColor(): ?string
+    {
+        return $this->color;
+    }
+
+    public function setColor(?string $color): static
+    {
+        $this->color = $color;
+
+        return $this;
+    }
+
+    public function getBackgroundColor(): ?string
+    {
+        return $this->backgroundColor;
+    }
+
+    public function setBackgroundColor(?string $backgroundColor): static
+    {
+        $this->backgroundColor = $backgroundColor;
 
         return $this;
     }

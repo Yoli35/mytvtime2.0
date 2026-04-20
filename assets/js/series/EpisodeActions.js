@@ -18,6 +18,7 @@ let self;
 export class EpisodeActions {
     constructor(globs, flashMessage, toolTips, menu) {
         self = this;
+        this.globs = globs;
         this.lang = document.documentElement.lang;
         this.toolTips = toolTips;
         this.flashMessage = flashMessage;
@@ -132,6 +133,11 @@ export class EpisodeActions {
         const numberDiv = episodeDiv ? episodeDiv.querySelector('.number') : null;
         const finaleDivs = episodeDiv ? episodeDiv.querySelectorAll('.finale') : [];
 
+        // Season page: episodeCard = null
+        // Episode page: episodeCard = .episode-card.this-is-my-page
+        const episodeCard = document.querySelector('.episode-card.this-is-my-page');
+        const isEpisodePage = !!episodeCard;
+
         fetch('/api/episode/add/' + id, {
             method: 'POST',
             headers: {
@@ -143,7 +149,13 @@ export class EpisodeActions {
                 lastEpisode: lastEpisode,
                 seasonNumber: seasonNumber,
                 episodeNumber: episodeNumber,
-                ueId: ueId
+                ueid: ueId,
+                episodePage: isEpisodePage,
+                episodeName: isEpisodePage ? self.globs.episodeName : '',
+                episodeOverview: isEpisodePage ? self.globs.episodeOverview : '',
+                episodeRuntime: isEpisodePage ? self.globs.episodeRuntime : '',
+                episodeStill: isEpisodePage ? self.globs.episodeStill : '',
+                timezone: isEpisodePage ? self.globs.timezone : 'Europe/Paris',
             })
         }).then((response) => response.json())
             .then(data => {
@@ -335,9 +347,14 @@ export class EpisodeActions {
                 userEpisode.insertBefore(vote, backToTopLink);
 
                 /******************************************************************************
-                 * Fetch episode stills for each season.                                      *
+                 * Update episode card if needed                                              *
                  ******************************************************************************/
-                self.fetchEpisodeCards.init(parseInt(id), true);
+                if (episodeCard) {
+                    const block = document.createElement('div');
+                    const episodeCardLink = episodeCard.closest('a');
+                    block.innerHTML = data['episodeCardBlock'];
+                    episodeCardLink.replaceWith(block.querySelector('a'));
+                }
             });
     }
 

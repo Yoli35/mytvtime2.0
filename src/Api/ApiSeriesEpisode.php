@@ -18,6 +18,7 @@ use App\Repository\UserEpisodeRepository;
 use App\Repository\UserSeriesRepository;
 use App\Service\DateService;
 use App\Service\ImageService;
+use App\Service\ProviderService;
 use App\Service\TMDBService;
 use Closure;
 use DateTimeImmutable;
@@ -59,6 +60,7 @@ readonly class ApiSeriesEpisode
         private TranslatorInterface                $translator,
         private UserEpisodeRepository              $userEpisodeRepository,
         private UserSeriesRepository               $userSeriesRepository,
+        private ProviderService                    $providerService,
     )
     {
     }
@@ -67,13 +69,15 @@ readonly class ApiSeriesEpisode
     #[Route('/add/{id}', name: 'add', requirements: ['id' => Requirement::DIGITS], methods: ['POST'])]
     public function add(#[CurrentUser] User $user, Request $request, int $id): Response
     {
+        $locale = $request->getLocale();
         $inputBag = $request->getPayload();
 
         $showId = $inputBag->get('showId');
         $lastEpisode = $inputBag->get('lastEpisode') == "1";
         $seasonNumber = $inputBag->get('seasonNumber');
         $episodeNumber = $inputBag->get('episodeNumber');
-        $ueId = $inputBag->get('ueId');
+        $ueId = $inputBag->get('ueid');
+        $episodePage = $inputBag->get('episodePage');
         $new = false;
         $bestProviderIds = [];
 
@@ -195,7 +199,7 @@ readonly class ApiSeriesEpisode
         $ue = $this->userEpisodeRepository->getUserEpisodeDB($userEpisode->getId(), $user->getPreferredLanguage() ?? $request->getLocale());
         if ($ue['custom_date']) {
             $cd = $this->dateService->newDateImmutable($ue['custom_date'], 'Europe/Paris');
-            $ue['custom_date'] = $cd->format('Y-m-d H:i O');
+            $ue['custom_date'] = $cd->format('Y-m-d H:i O'); // "2026-04-26 17:30:00" → 2026-04-26 17:30 +02:00
         }
         if ($ue['air_at']) {
             // 10:00:00 → 10:00
@@ -219,9 +223,40 @@ readonly class ApiSeriesEpisode
             'ues' => $ues,
         ]);
 
+        if ($episodePage && !$new) {
+            $d = $ue['custom_date'] ?? $airDate->format('Y-m-d') . $ue['air_at'] ?? (' ' . $ue['watch_at']) ?? null;
+            $referer = $request->headers->get('referer');
+            $wpId = $userEpisode->getProviderId();
+            if ($wpId) {
+                $wp = $this->providerService->getOne($wpId);
+            }
+            $e = [
+                'airing' => true,
+                'air_date' => ucfirst($this->dateService->formatDateRelativeLong($d, 'UTC', $locale)),
+                'episode_number' => $episodeNumber,
+                'id' => $id,
+                'link' => $referer,
+                'name' => $inputBag->get('episodeName'),
+                'overview' => $inputBag->get('episodeOverview'),
+                'provider_name' => $wpId ? $wp->getProviderName() : null,
+                'provider_path' => $wpId ? $wp->getLogoPath() : null,
+                'vote_color_background' => $wpId ? '#' . $wp->getBackgroundColor() : '#eeeeee',
+                'vote_color' => $wpId ? '#' . $wp->getColor() : '#111111',
+                'runtime' => $inputBag->get('episodeRuntime'),
+                'still' => $inputBag->get('episodeStill'),
+                'userEpisodeId' => $ueId,
+                'vote' => $userEpisode->getVote(),
+                'watchedAt' => ucfirst($this->dateService->formatDateRelativeLong($userEpisode->getWatchAt()->format("Y-m-d H:i"), $inputBag->get('timezone'), $locale)),
+            ];
+            $episodeCardBlock = ($this->renderView)('_blocks/series/_season_episode_card.html.twig', [
+                'episode' => $e,
+            ]);
+        }
+
         return ($this->json)([
             'ok' => true,
             'airDateBlock' => $airDateBlock,
+            'episodeCardBlock' => $episodeCardBlock ?? '',
             'new' => $new,
             'views' => $this->translator->trans('Watched %time% times', ['%time%' => count($ues)]),
             'series_progress' => $userSeries->getProgress(),
