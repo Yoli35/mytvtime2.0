@@ -3750,7 +3750,7 @@ h2 {
                         .episode-vote-block {
                             align-items: center;
                             background-color: hsla(from var(--orange) h s l / .5);
-                            border: 2px dashed var(--orange);
+                            /*border: 2px dashed var(--orange);*/
                             border-radius: .25rem;
                             display: none;
                             height: 2rem;
@@ -3766,6 +3766,10 @@ h2 {
 
                             label {
                                 display: none;
+                            }
+
+                            select {
+                                font-size: inherit;
                             }
                         }
                     }

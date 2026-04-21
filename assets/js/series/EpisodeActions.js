@@ -355,7 +355,7 @@ export class EpisodeActions {
                     block.innerHTML = data['episodeCardBlock'];
                     const newEpisodeCardDiv = block.querySelector('.episode-card');
                     newEpisodeCardDiv.classList.add('this-is-my-page');
-                    self.fetchEpisodeCards.initVoteBlock(newEpisodeCardDiv.querySelectorAll('.episode-vote'), self);
+                    self.fetchEpisodeCards.initVoteBlock(newEpisodeCardDiv.querySelectorAll('.episode-vote-block'), self);
                     episodeCardLink.replaceWith(block.querySelector('a'));
                 }
             });

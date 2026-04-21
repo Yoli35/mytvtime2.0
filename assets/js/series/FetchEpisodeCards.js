@@ -48,7 +48,7 @@ export class FetchEpisodeCards {
                     }
                 }
 
-                self.initVoteBlock(newEpisodeCardsDiv.querySelectorAll('.episode-vote'), episodeActions);
+                self.initVoteBlock(newEpisodeCardsDiv.querySelectorAll('.episode-vote-block'), episodeActions);
 
                 if (simpleUpdate) return;
                 setTimeout(function () {
@@ -68,8 +68,8 @@ export class FetchEpisodeCards {
             selectVote.addEventListener('change', () => {
                 const selectVoteDiv = document.querySelector('header .user-episode .select-vote[data-ue-id="' + episodeId + '"]');
                 episodeActions.saveVote(episodeId, selectVote.value, selectVoteDiv);
-                const episodeVoteValue = block.closest('.episode-vote').querySelector('.episode-vote-value');
-                episodeVoteValue.textContent = selectVote.value;
+                // const episodeVoteValue = block.closest('.episode-vote').querySelector('.episode-vote-value');
+                // episodeVoteValue.textContent = selectVote.value;
             });
         });
     }
