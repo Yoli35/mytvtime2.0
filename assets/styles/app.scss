@@ -2382,32 +2382,6 @@ section:has(.pages) {
     }
 }
 
-.flying-poster {
-    align-items: center;
-    display: none;
-    background-color: hsla(from var(--ardoise-90) h s l / .8);
-    border-radius: .5rem;
-    height: 44rem;
-    justify-content: center;
-    opacity: 0;
-    position: absolute;
-    transition: opacity 150ms ease-in-out;
-    width: 30rem;
-    z-index: 10;
-
-    img {
-        border-radius: .25rem;
-        height: 42rem;
-        object-fit: cover;
-        width: 28rem;
-    }
-
-    &.show {
-        display: flex;
-        opacity: 1;
-    }
-}
-
 .diaporama {
     backdrop-filter: blur(5rem);
     background-color: hsla(from var(--ardoise-90) h s l / .5);
@@ -2682,7 +2656,7 @@ section:has(.pages) {
     position: absolute;
     top: -4rem;
     transition: opacity 300ms ease-in-out;
-    z-index: 510;
+    z-index: 5100;
 
     &:not(:has(img)) {
         max-width: max(50%, 50rem);

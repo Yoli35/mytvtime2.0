@@ -756,6 +756,32 @@
     }
 }
 
+.flying-poster {
+    align-items: center;
+    display: none;
+    background-color: hsla(from var(--ardoise-90) h s l / .8);
+    border-radius: .5rem;
+    height: 44rem;
+    justify-content: center;
+    opacity: 0;
+    position: absolute;
+    transition: opacity 150ms ease-in-out;
+    width: 30rem;
+    z-index: 10;
+
+    img {
+        border-radius: .25rem;
+        height: 42rem;
+        object-fit: cover;
+        width: 28rem;
+    }
+
+    &.show {
+        display: flex;
+        opacity: 1;
+    }
+}
+
 .pop-infos {
     align-items: center;
     display: none;
