@@ -390,6 +390,8 @@ final class SeriesShowController extends AbstractController
             $this->addFlash('error', $this->translator->trans('The season could not be loaded'));
             return $this->redirectToRoute('app_tv_series', ['_locale' => $locale, 'id'=> $series->getId(), 'slug' => $series->getSlug()]);
         }
+        $finaleEpisodeNumber = $this->seriesService->getFinaleEpisodeNumber($season);
+        $season['episodes'] = $this->seasonEpisodes($season, $userSeries, $finaleEpisodeNumber, $country);
         $episode = json_decode($this->tmdbService->getTvEpisode($series->getTmdbId(), $seasonNumber, $episodeNumber, $locale, ['credits', 'watch/providers']), true);
         if (key_exists('error', $episode)) {
             $this->addFlash('error', $this->translator->trans('The episode could not be loaded'));
@@ -410,7 +412,6 @@ final class SeriesShowController extends AbstractController
             }
         }
 
-        $finaleEpisodeNumber = $this->seriesService->getFinaleEpisodeNumber($season);
         $userEpisodes = $this->userEpisodeRepository->getUserEpisodesDB($userSeries->getId(), $season['season_number'], $locale, true);
         $stills = $this->episodeStillRepository->getSeasonStills([$episode['id']]);
 
