@@ -433,7 +433,7 @@ final class SeriesShowController extends AbstractController
         $filmingLocationsWithBounds = $this->seriesService->getFilmingLocations($series, $season['series_localized_name'], $seasonNumber, $episodeNumber);
 
         $nextEpisode = $episode['episode_type'] === 'finale' ? null : array_find($season['episodes'], fn($ep) => $ep['episode_number'] == $episodeNumber + 1);
-        $episode['next_episode_is_available'] = $nextEpisode && $this->isNextEpisodeAvailable($user, $nextEpisode['air_date']);
+        $episode['next_episode_is_available'] = $nextEpisode && $nextEpisode['air_date'] && $this->isNextEpisodeAvailable($user, $nextEpisode['air_date']);
 
         $episode['show_id'] = $series->getTmdbId();
         $episode['stills'] = $this->episodeStillRepository->findBy(['episodeId' => $episode['id']], ['id' => 'DESC']);
