@@ -139,11 +139,14 @@ final class SeriesShowController extends AbstractController
                 return $carry + $item;
             }, 0) / $c : 0;
 
+        $externals = $this->getExternals($series, $tv['name'], $tv['origin_country'], $tv['keywords']['results'], $tv['external_ids'] ?? [], $locale);
+
         return $this->render('series_show/tmdb.html.twig', [
             'tv' => $tv,
             'localizedName' => $localizedName,
             'translatedName' => $translatedName,
             'localizedOverview' => $localizedOverview,
+            'externals' => $externals,
         ]);
     }
 
@@ -254,7 +257,7 @@ final class SeriesShowController extends AbstractController
             'addLocationFormData' => $this->seriesService->getLocationFormData($tv['id'], $series->getId()),
             'fieldList' => ['series-id', 'tmdb-id', 'crud-type', 'crud-id', 'title', 'location', 'season-number', 'episode-number', 'description', 'latitude', 'longitude', 'radius', "source-name", "source-url"],
             'mapSettings' => $this->settingsRepository->findOneBy(['name' => 'mapbox']),
-            'externals' => $this->getExternals($series, $tv['keywords']['results'], $tv['external_ids'] ?? [], $locale),
+            'externals' => $this->getExternals($series, $tv['name'], $tv['origin_country'], $tv['keywords']['results'], $tv['external_ids'] ?? [], $locale),
             'translations' => $this->seriesService->getSeriesShowTranslations(),
             'forms' => $forms,
             'oldSeriesAdded' => $request->query->get('oldSeriesAdded') === 'true',
@@ -367,7 +370,7 @@ final class SeriesShowController extends AbstractController
             'statusTitle' => null,
             'providers' => $providers,
             'devices' => $devices,
-//            'externals' => $this->getExternals($series, $tvKeywords['results'] ?? [], $tvExternalIds, $request->getLocale()),
+//            'externals' => $this->getExternals($series, $tv['name'], $tv['origin_country'], $tvKeywords['results'] ?? [], $tvExternalIds, $request->getLocale()),
         ]);
     }
 
@@ -388,14 +391,14 @@ final class SeriesShowController extends AbstractController
         if (key_exists('error', $season)) {
             $this->seriesService->removeUserEpisodes($userSeries, $seasonNumber);
             $this->addFlash('error', $this->translator->trans('The season could not be loaded'));
-            return $this->redirectToRoute('app_tv_series', ['_locale' => $locale, 'id'=> $series->getId(), 'slug' => $series->getSlug()]);
+            return $this->redirectToRoute('app_tv_series', ['_locale' => $locale, 'id' => $series->getId(), 'slug' => $series->getSlug()]);
         }
         $finaleEpisodeNumber = $this->seriesService->getFinaleEpisodeNumber($season);
         $season['episodes'] = $this->seasonEpisodes($season, $userSeries, $finaleEpisodeNumber, $country);
         $episode = json_decode($this->tmdbService->getTvEpisode($series->getTmdbId(), $seasonNumber, $episodeNumber, $locale, ['credits', 'watch/providers']), true);
         if (key_exists('error', $episode)) {
             $this->addFlash('error', $this->translator->trans('The episode could not be loaded'));
-            return $this->redirectToRoute('app_tv_season', ['_locale' => $locale, 'id'=> $series->getId(), 'slug' => $series->getSlug(), 'seasonNumber' => $seasonNumber]);
+            return $this->redirectToRoute('app_tv_season', ['_locale' => $locale, 'id' => $series->getId(), 'slug' => $series->getSlug(), 'seasonNumber' => $seasonNumber]);
         }
         $episode['language_query'] = $locale . '-' . $country;
         if (key_exists('episode_type', $episode) && $episode['episode_type'] === 'finale') {
@@ -727,7 +730,7 @@ final class SeriesShowController extends AbstractController
         $episode['user_episodes'] = $userEpisodeList;
 
         $language = $episode['language_query'];
-        $noOverview = !strlen($episode['overview'])  && !strlen($userEpisode['localized_overview'] ?? '');
+        $noOverview = !strlen($episode['overview']) && !strlen($userEpisode['localized_overview'] ?? '');
         $noFRName = $language === 'fr-FR' && $episode['name'] && str_starts_with($episode['name'], 'Épisode ') && !$userEpisode['substitute_name'];
 
         if (($noOverview || $noFRName) && $language !== 'en-US') {
@@ -1073,14 +1076,14 @@ final class SeriesShowController extends AbstractController
         ];
     }
 
-    private function getExternals(Series $series, array $keywords, array $externalIds, string $locale): array
+    private function getExternals(?Series $series, string $name, array $countries, array $keywords, array $externalIds, string $locale): array
     {
         $keywordIds = array_map(fn($k) => $k['id'], $keywords);
 
-        $seriesCountries = $series->getOriginCountry();
+        $seriesCountries = $series ? $series->getOriginCountry() : $countries;
         $dbExternals = $this->seriesExternalRepository->findAll();
         $externals = [];
-        $displayName = $series->getLocalizedName($locale)?->getName() ?? $series->getName();
+        $displayName = $series ? $series->getLocalizedName($locale)?->getName() ?? $series->getName() : $name;
 
         /** @var SeriesExternal $dbExternal */
         foreach ($dbExternals as $dbExternal) {

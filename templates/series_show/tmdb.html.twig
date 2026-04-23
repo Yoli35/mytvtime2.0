@@ -115,6 +115,8 @@
                         </div>
                     {% endif %}
 
+                    {{ include('_blocks/series/_externals.html.twig') }}
+
                     <h3>{{ 'Key facts'|trans }}</h3>
                     <div class="facts">
                         {% if tv.average_episode_run_time %}
