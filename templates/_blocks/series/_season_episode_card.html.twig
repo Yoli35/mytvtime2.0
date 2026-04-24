@@ -29,7 +29,7 @@
                     <div class="episode-vote-block" data-id="{{ episode.userEpisodeId }}">
                         <label for="episode-vote-select-{{ episode.userEpisodeId }}"></label>
                         <select id="episode-vote-select-{{ episode.userEpisodeId }}">
-                            <option value=""{% if episode.vote is null %} selected{% endif %}></option>
+                            <option value="-1"{% if episode.vote is null %} selected{% endif %}></option>
                             {% for i in range(1, 12) %}
                                 <option value="{{ i }}"{% if episode.vote == i %} selected{% endif %}>{{ i }}</option>
                             {% endfor %}

@@ -13,6 +13,14 @@
     <link rel="stylesheet" href="https://api.mapbox.com/mapbox-gl-js/v3.14.0/mapbox-gl.css">
 {% endblock %}
 {% block body %}
+    {% if episode.still_path %}
+        {% set still = episode.still_path %}
+    {% elseif episode.stills|length %}{# is defined and ue.still #}
+        {% set still = episode.stills|last %}
+        {% set still = "/series/stills/" ~ still.path %}
+    {% else %}
+        {% set still = '' %}
+    {% endif %}
     <script>
         const bd = '/series/posters_blurred{{ season.blurred_poster_path }}';
         const body = document.querySelector("body");
@@ -27,12 +35,8 @@
         <div class="episode-show" data-theme="none">
             <header>
                 <div class="still">
-                    {#                        <img src="{{ episode.still_path }}" alt="{{ episode.name }} still image"> #}
-                    {% if episode.still_path %}
-                        <img src="{{ episode.still_path }}" alt="{{ episode.name }} still image">
-                    {% elseif episode.stills|length %}{# is defined and ue.still #}
-                        {% set still = episode.stills|last %}
-                        <img src="/series/stills/{{ still.path }}" alt="{{ episode.name }} custom still image">
+                    {% if still|length %}
+                        <img src="{{ still }}" alt="{{ episode.name }} still image">
                     {% endif %}
                 </div>
                 <div class="infos">
@@ -137,7 +141,7 @@
             "episodeName": "{{ episode.user_episode.substitute_name ?: episode.name }}",
             "episodeOverview": "{{ episode.user_episode.localized_overview ?: episode.overview }}",
             "episodeRuntime": {{ episode.runtime ?? 0 }},
-            "episodeStill": "{{ episode.still_path ?: episode.stills|length ? episode.stills|last : '' }}",
+            "episodeStill": "{{ still }}",
             "timezone": "{{ timezone }}",
             "seasonProvider": {{ season["watch/providers"]|json_encode(constant('JSON_PRETTY_PRINT'))|raw }},
             "providers": {{ providers|json_encode(constant('JSON_PRETTY_PRINT'))|raw }},

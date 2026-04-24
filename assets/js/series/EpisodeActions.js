@@ -867,6 +867,7 @@ export class EpisodeActions {
     }
 
     saveVote(episodeId, voteValue, selectVoteDiv = null) {
+        console.log(voteValue);
         fetch('/api/episode/vote/' + episodeId, {
             method: 'POST',
             headers: {
@@ -879,7 +880,7 @@ export class EpisodeActions {
         }).then((response) => {
             if (response.ok) {
                 if (selectVoteDiv) {
-                    if (voteValue === -1) {
+                    if (parseInt(voteValue) === -1) {
                         const svgPlus = this.getSvg('plus');
                         selectVoteDiv.innerHTML = '';
                         selectVoteDiv.setAttribute('data-title', this.translations.rating);

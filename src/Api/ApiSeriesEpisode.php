@@ -427,7 +427,7 @@ readonly class ApiSeriesEpisode
     public function vote(Request $request, UserEpisode $userEpisode): JsonResponse
     {
         if ($request->isMethod('POST')) {
-            $vote = $request->getPayload()->get('vote');
+            $vote = $request->getPayload()->getInt('vote');
             $userEpisode->setVote($vote == -1 ? null : $vote);
             $this->userEpisodeRepository->save($userEpisode, true);
         }

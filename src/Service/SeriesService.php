@@ -690,6 +690,7 @@ readonly class SeriesService
             'minute' => $this->translator->trans('minute'),
             'minutes' => $this->translator->trans('minutes'),
             'now' => $this->translator->trans('Now'),
+            'rating' => $this->translator->trans('Give a rating'),
             'second' => $this->translator->trans('second'),
             'seconds' => $this->translator->trans('seconds'),
         ];
