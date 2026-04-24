@@ -13,7 +13,6 @@ use App\Repository\WatchProviderRepository;
 use App\Service\DateService;
 use App\Service\ImageConfiguration;
 use App\Service\TMDBService;
-use DateTimeImmutable;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -58,6 +57,7 @@ class SeriesSeasonEpisodes extends AbstractController
     public function next(Request $request, int $id, int $tmdbId, int $seasonNumber, string $slug): JsonResponse
     {
         $user = $this->getUser();
+        $locale = $user?->getPreferredLanguage() ?? $request->getLocale();
         $this->logoUrl = $this->imageConfiguration->getUrl('logo_sizes', 2);
         $this->stillUrl = $this->imageConfiguration->getUrl('still_sizes', 3);
         $this->locale = $request->getLocale();
@@ -66,7 +66,7 @@ class SeriesSeasonEpisodes extends AbstractController
         $this->nowDate = $now->format('Y-m-d');
         $this->nowTime = $now->format('Y-m-d H:i');
 
-        $season = json_decode($this->tmdbService->getTvSeason($tmdbId, $seasonNumber, $user->getPreferredLanguage() ?? $request->getLocale()), true);
+        $season = json_decode($this->tmdbService->getTvSeason($tmdbId, $seasonNumber, $locale), true);
         $this->seasonUS = json_decode($this->tmdbService->getTvSeason($tmdbId, $seasonNumber, 'en-US'), true);
         $this->episodeIds = array_column($season['episodes'] ?? [], 'id');
         $this->dbBroadcastDateArray = $this->getCustomBroadcastDates();
@@ -235,6 +235,13 @@ class SeriesSeasonEpisodes extends AbstractController
     {
         if ($path !== null) {
             return $this->stillUrl . $path;
+        }
+
+        $episodeUS = array_find($this->seasonUS['episodes'] ?? [], function ($e) use ($episodeId) {
+            return $e['id'] === $episodeId;
+        });
+        if ($episodeUS && $episodeUS['still_path']) {
+            return $this->stillUrl . $episodeUS['still_path'];
         }
 
         $episodeStill = array_find($this->dbEpisodeStills, function ($es) use ($episodeId) {
