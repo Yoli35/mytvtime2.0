@@ -243,7 +243,7 @@ readonly class ApiSeriesEpisode
                 'name' => $inputBag->get('episodeName'),
                 'overview' => $inputBag->get('episodeOverview'),
                 'provider_name' => $wpId ? $wp->getProviderName() : null,
-                'provider_path' => $wpId ? (str_starts_with('+', $path) ? '/images/providers' . substr($path, 1) : $logoUrl . $path) : null,
+                'provider_path' => $wpId ? (str_starts_with($path, '+') ? '/images/providers' . substr($path, 1) : $logoUrl . $path) : null,
                 'vote_color_background' => $wpId ? '#' . $wp->getBackgroundColor() : '#eeeeee',
                 'vote_color' => $wpId ? '#' . $wp->getColor() : '#111111',
                 'runtime' => $inputBag->get('episodeRuntime'),
