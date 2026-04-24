@@ -487,6 +487,7 @@ export class AlbumShow {
         }
 
         const list = document.createElement("ol");
+        list.classList.add('album-photos');
         preview.appendChild(list);
 
         for (const file of curFiles) {

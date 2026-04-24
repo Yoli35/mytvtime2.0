@@ -275,6 +275,7 @@ export class Location {
             }
 
             const list = document.createElement("ol");
+            list.classList.add('images-map-list');
             preview.appendChild(list);
 
             let index = 0;

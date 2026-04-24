@@ -7043,12 +7043,20 @@ dialog, .side-panel {
                 position: relative;
 
                 ol {
-                    display: flex;
-                    flex-direction: column;
                     gap: .5rem;
                     list-style-type: none;
                     padding: 3rem;
                     width: 100%;
+
+                    &.images-map-list {
+                        display: flex;
+                        flex-direction: column;
+                    }
+
+                    &.album-photos {
+                        display: grid-lanes;
+                        grid-template-columns: 1fr 1fr 1fr;
+                    }
 
                     li {
                         position: relative;
