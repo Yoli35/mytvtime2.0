@@ -31,7 +31,7 @@ function init() {
             const value = dateInput.value;
             const diffMinutes = calcMinutes(value);
 
-            textarea.value = "find './public/' -type f -mmin -" + diffMinutes + " -exec zip -nq .png:.webp:.jpg:.jpeg:.mp4 public.zip {} \\;";
+            textarea.value = "find './public/' -type f -mmin -" + diffMinutes + " -exec zip -q -n .png:.webp:.jpg:.jpeg:.mp4 public.zip {} \\;";
         });
 
         copyButton.addEventListener("click", (e) => {
