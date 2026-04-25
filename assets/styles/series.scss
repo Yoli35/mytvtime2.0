@@ -3841,8 +3841,9 @@ h2 {
         .blue-light {
             background-color: hsl(from var(--ardoise-30) h s l / .75);
             border: 1px solid hsl(from var(--ardoise-50) h s l / .75);
-            border-radius: .25rem;
-            height: 3rem;
+            /*border-radius: .25rem;*/
+            border-radius: 5rem;
+            height: .25rem;
             width: 1rem;
         }
 
@@ -3860,12 +3861,15 @@ h2 {
 @keyframes episode-loading {
     0% {
         background-color: hsl(from var(--ardoise-30) h s l / .75);
+        height: .5rem;
     }
     50% {
         background-color: var(--orange);
+        height: 5rem;
     }
     100% {
         background-color: hsl(from var(--ardoise-30) h s l / .75);
+        height: .5rem;
     }
 }
 
