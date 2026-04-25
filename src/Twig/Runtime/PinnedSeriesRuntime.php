@@ -27,10 +27,23 @@ readonly class PinnedSeriesRuntime implements RuntimeExtensionInterface
         }
         $posterUrl = $this->imageConfiguration->getUrl('poster_sizes', 5);
         $logoUrl = $this->imageConfiguration->getUrl('logo_sizes', 2);
-        return array_map(function ($series) use ($logoUrl, $posterUrl) {
+        $arr = array_map(function ($series) use ($logoUrl, $posterUrl) {
             $series['posterPath'] = $series['posterPath'] ? $posterUrl. $series['posterPath'] : null;
             $series['providerLogoPath'] = $this->providerService->getProviderLogoFullPath($series['providerLogoPath'], $logoUrl);
             return $series;
         }, $this->userPinnedSeriesRepository->getPinnedSeriesByUser($user, $locale));
+        $pinnedSeriesArr = [];
+        foreach ($arr as $item) {
+            $index = $item['id'];
+            if (!key_exists($index, $pinnedSeriesArr)) {
+                $pinnedSeriesArr[$index] = $item;
+                $pinnedSeriesArr[$index]['providers'] = [];
+            }
+            $provider['providerLogoPath'] = $item['providerLogoPath'];
+            $provider['providerName'] = $item['providerName'];
+            $pinnedSeriesArr[$index]['providers'][] = $provider;
+        }
+        dump($pinnedSeriesArr);
+        return $pinnedSeriesArr;
     }
 }

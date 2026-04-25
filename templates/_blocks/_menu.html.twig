@@ -346,9 +346,11 @@
                                     {{ series.name }}
                                     {% if series.providerLogoPath %}
                                         <div class="time"></div>
-                                        <div class="provider">
-                                            <img src="{{ series.providerLogoPath }}" alt="{{ series.providerName }}">
-                                        </div>
+                                        {% for p in series.providers %}
+                                            <div class="provider">
+                                                <img src="{{ p.providerLogoPath }}" alt="{{ p.providerName }}">
+                                            </div>
+                                        {% endfor %}
                                     {% endif %}
                                 </a>
                                 <div id="pinned-preview-{{ series.id }}" class="pinned-series-preview">
