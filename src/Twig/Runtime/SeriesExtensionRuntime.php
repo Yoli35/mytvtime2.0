@@ -56,7 +56,7 @@ readonly class SeriesExtensionRuntime implements RuntimeExtensionInterface
                     $item['posterPath'] = $posters[rand(0, count($posters) - 1)]['image_path'];
                 }
             }
-            $item['lastWatchAt'] = $this->dateService->newDateImmutable($item['lastWatchAt'], 'UTC')/*->setTimezone(new \DateTimeZone($user->getTimezone() ?? 'Europe/Paris'))*/;
+            $item['lastWatchAt'] = $this->dateService->newDateImmutable($item['lastWatchAt'], null);
 //            $item['providerLogoPath'] = $item['providerLogoPath'] ? $this->imageConfiguration->getCompleteUrl($item['providerLogoPath'], 'logo_sizes', 2) : null;
             if ($item['providerLogoPath']) {
                 if (str_starts_with($item['providerLogoPath'], '/')) {

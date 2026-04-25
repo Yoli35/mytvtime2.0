@@ -59,10 +59,10 @@ class DateService
         return $date;
     }
 
-    public function newDateImmutable(string $dateString, string $timeZone, bool $allDay = false): DateTimeImmutable
+    public function newDateImmutable(string $dateString, ?string $timezone, bool $allDay = false): DateTimeImmutable
     {
         try {
-            $date = new DateTimeImmutable($dateString, new DateTimeZone($timeZone));
+            $date = new DateTimeImmutable($dateString, $timezone ? new DateTimeZone($timezone) : null);
         } catch (Exception) {
             $date = new DateTimeImmutable("now");
         }
@@ -89,8 +89,8 @@ class DateService
     {
         try {
             $date = new DateTimeImmutable("now");
-            $date->setTimestamp($timestamp);
-            $date->setTimezone(new DateTimeZone($timeZone));
+            $date = $date->setTimestamp($timestamp);
+            $date = $date->setTimezone(new DateTimeZone($timeZone));
         } catch (Exception) {
             $date = new DateTimeImmutable("now");
         }
@@ -137,7 +137,7 @@ class DateService
     {
         try {
             return new DateInterval($interval);
-        } catch (Exception $e) {
+        } catch (Exception) {
         }
         return false;
     }
