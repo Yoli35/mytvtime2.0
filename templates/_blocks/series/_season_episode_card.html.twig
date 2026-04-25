@@ -6,6 +6,19 @@
             {% else %}
                 <div class="no-image">{{ 'No image'|trans }}</div>
             {% endif %}
+            {% if episode.airing and episode.watchedAt is null %}
+                <div class="mark-this-episode-as-watched"
+                     data-id="{{ episode.id }}"
+                     data-ue-id="{{ episode.userEpisodeId }}"
+                     data-series-id="{{ episode.series_id }}"
+                     data-last-episode="{{ episode.last }}"
+                     data-show-id="{{ episode.show_id }}"
+                     data-s-number="{{ episode.season_number }}"
+                     data-e-number="{{ episode.episode_number }}"
+                     data-title="{{ 'Mark this episode as seen'|trans }}">
+                    {{ ux_icon('mdi:plus') }}
+                </div>
+            {% endif %}
         </div>
         <div class="episode-infos">
             <div class="line-1">
@@ -20,12 +33,13 @@
                     {% if episode.runtime %}{{ episode.runtime }} {{ 'minutes'|trans }}{% endif %}
                 </div>
             </div>
-            <div class="line-3{% if episode.airing %} airing"{% endif %}">
+            <div class="line-3{% if episode.airing %} airing{% endif %}">
                 {% if episode.watchedAt %}
                     <div class="episode-watched-at">{{ ux_icon('mdi:eye') }} {{ episode.watchedAt }}</div>
                 {% endif %}
                 <div class="episode-vote"{% if episode.vote_color_background %} style="background-color: {{ episode.vote_color_background }};color: {{ episode.vote_color }};"{% endif %}>
-                    <div class="episode-vote-value">{% if episode.vote %}{{ episode.vote }}{% else %}—{% endif %}</div> / 10
+                    <div class="episode-vote-value">{% if episode.vote %}{{ episode.vote }}{% else %}—{% endif %}</div>
+                    / 10
                     <div class="episode-vote-block" data-id="{{ episode.userEpisodeId }}">
                         <label for="episode-vote-select-{{ episode.userEpisodeId }}"></label>
                         <select id="episode-vote-select-{{ episode.userEpisodeId }}">

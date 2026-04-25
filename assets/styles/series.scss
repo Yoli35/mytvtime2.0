@@ -3649,6 +3649,25 @@ h2 {
                     text-wrap: balance;
                     width: 100%;
                 }
+
+                .mark-this-episode-as-watched {
+                    background-color: var(--orange-40);
+                    border-radius: 5rem;
+                    bottom: 1rem;
+                    cursor: pointer;
+                    position: absolute;
+                    right: 50%;
+                    translate: 50%;
+
+                    svg {
+                        height: 4rem;
+                        width: 4rem;
+                    }
+
+                    &:hover {
+                        background-color: var(--orange-50);
+                    }
+                }
             }
 
             .episode-infos {

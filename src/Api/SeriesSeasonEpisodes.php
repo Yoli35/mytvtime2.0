@@ -99,7 +99,7 @@ class SeriesSeasonEpisodes extends AbstractController
         }
         // Fin TODO
 
-        $episodes = array_map(function ($episode) use ($baseLink) {
+        $episodes = array_map(function ($episode) use ($baseLink, $id, $tmdbId, $seasonNumber, $finalEpisodeNumber) {
             // Substitute Name
             $substituteName = array_find($this->dbEpisodeSubstituteNames, function ($esn) use ($episode) {
                 return $esn->getEpisodeId() === $episode['id'];
@@ -109,25 +109,31 @@ class SeriesSeasonEpisodes extends AbstractController
             }
             // Overview
             $episode['overview'] = $this->getOverview($episode['overview'], $episode['id'], $episode['episode_number']);
-            // Still
-            $episode['still_path'] = $this->getStillPath($episode['still_path'], $episode['id']);
             // User Episode
             $userInfos = $this->getUserInfos($episode['id']);
             // Custom Broadcast Date
             if ($this->dbBroadcastDateArray[$episode['id']] ?? false) {
                 $episode['air_date'] = $this->dbBroadcastDateArray[$episode['id']];
             }
+            $airing = $episode['air_date'] && key_exists($episode['id'], $this->dbBroadcastDateArray) ? ($episode['air_date'] <= $this->nowTime) : ($episode['air_date'] <= $this->nowDate);
+            // Still
+            $episode['still_path'] = $this->getStillPath($episode['still_path'], $episode['id'], $airing, $tmdbId, $episode['season_number'], $episode['episode_number']);
+
             return [
-                'airing' => $episode['air_date'] && key_exists($episode['id'], $this->dbBroadcastDateArray) ? ($episode['air_date'] <= $this->nowTime) : ($episode['air_date'] <= $this->nowDate),
+                'airing' => $airing,
                 'air_date_original' => $episode['air_date'],
                 'air_date' => $episode['air_date'] ? ucfirst($this->dateService->formatDateRelativeLong($episode['air_date'], $this->timezone, $this->locale)) : $this->translator->trans('No date'),
                 'episode_number' => $episode['episode_number'],
                 'id' => $episode['id'],
+                'last' => $episode['episode_number'] === $finalEpisodeNumber,
                 'link' => $baseLink . $episode['episode_number'],
                 'name' => $episode['name'],
                 'overview' => $episode['overview'],
                 'provider_name' => $userInfos['providerName'],
                 'provider_path' => $userInfos['providerPath'],
+                'season_number' => $seasonNumber,
+                'series_id' => $id,
+                'show_id' => $tmdbId,
                 'vote_color_background' => $userInfos['voteColorBackground'],
                 'vote_color' => $userInfos['voteColor'],
                 'runtime' => $episode['runtime'] ?? $season['episode_run_time'][0] ?? $seasonUS['episode_run_time'][0] ?? null,
@@ -236,7 +242,7 @@ class SeriesSeasonEpisodes extends AbstractController
         return $overview;
     }
 
-    private function getStillPath(?string $path, int $episodeId): ?string
+    private function getStillPath(?string $path, int $episodeId, bool $airing, int $tmdbId, int $seasonNumber, int $episodeNumber): ?string
     {
         if ($path !== null) {
             return $this->stillUrl . $path;
@@ -253,7 +259,15 @@ class SeriesSeasonEpisodes extends AbstractController
             return $es->getEpisodeId() === $episodeId;
         });
         if ($episodeStill) {
-            $path = "/series/stills" . $episodeStill->getPath();
+            return "/series/stills" . $episodeStill->getPath();
+        }
+
+        if (!$airing)
+            return null;
+
+        $ep = json_decode($this->tmdbService->getTvEpisode($tmdbId, $seasonNumber, $episodeNumber, 'en-US'), true);
+        if (key_exists('still_path', $ep) && $ep['still_path']) {
+            $path = $this->stillUrl . $ep['still_path'];
         }
 
         return $path;
