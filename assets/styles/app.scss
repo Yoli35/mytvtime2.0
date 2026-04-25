@@ -3115,6 +3115,13 @@ section:has(.pages) {
     }
 }
 
+body:has(.menu.main.open.show) {
+    .global-tools {
+        pointer-events: none;
+        opacity: 0;
+    }
+}
+
 .error-page {
     background-color: hsla(from var(--ardoise-80) h s l / .5);
     border-radius: 1rem;
