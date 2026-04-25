@@ -28,7 +28,7 @@ class SeriesSeasonEpisodes extends AbstractController
     private string $locale;
     private string $nowDate;
     private string $nowTime;
-    private string $timezone;
+    private ?string $timezone;
     private array $seasonUS;
     private array $episodeIds;
     private array $dbBroadcastDateArray;
@@ -61,7 +61,12 @@ class SeriesSeasonEpisodes extends AbstractController
         $this->logoUrl = $this->imageConfiguration->getUrl('logo_sizes', 2);
         $this->stillUrl = $this->imageConfiguration->getUrl('still_sizes', 3);
         $this->locale = $request->getLocale();
-        $this->timezone = 'UTC';//$user?->getTimezone() ?? 'Europe/Paris';
+        // Test : erreur d'affichage depuis le serveur de production.
+        // En local : Hier à 21:40
+        // En production : Hier à 19:40
+        // Valeur en base de données : 2026-04-24 21:40:23
+        // Date du jour : 2026-04-25
+        $this->timezone = null;//'UTC';//$user?->getTimezone() ?? 'Europe/Paris';
         $now = $this->dateService->getNow($user?->getTimezone() ?? 'Europe/Paris');
         $this->nowDate = $now->format('Y-m-d');
         $this->nowTime = $now->format('Y-m-d H:i');
@@ -115,7 +120,7 @@ class SeriesSeasonEpisodes extends AbstractController
             return [
                 'airing' => $episode['air_date'] && key_exists($episode['id'], $this->dbBroadcastDateArray) ? ($episode['air_date'] <= $this->nowTime) : ($episode['air_date'] <= $this->nowDate),
                 'air_date_original' => $episode['air_date'],
-                'air_date' => $episode['air_date'] ? ucfirst($this->dateService->formatDateRelativeLong($episode['air_date'], 'UTC', $this->locale)) : $this->translator->trans('No date'),
+                'air_date' => $episode['air_date'] ? ucfirst($this->dateService->formatDateRelativeLong($episode['air_date'], $this->timezone, $this->locale)) : $this->translator->trans('No date'),
                 'episode_number' => $episode['episode_number'],
                 'id' => $episode['id'],
                 'link' => $baseLink . $episode['episode_number'],
