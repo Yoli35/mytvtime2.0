@@ -43,7 +43,6 @@ readonly class PinnedSeriesRuntime implements RuntimeExtensionInterface
             $provider['providerName'] = $item['providerName'];
             $pinnedSeriesArr[$index]['providers'][] = $provider;
         }
-        dump($pinnedSeriesArr);
         return $pinnedSeriesArr;
     }
 }
