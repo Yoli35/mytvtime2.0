@@ -49,6 +49,7 @@ export class FetchEpisodeCards {
                 }
 
                 self.initVoteBlock(newEpisodeCardsDiv.querySelectorAll('.episode-vote-block'), episodeActions);
+                episodeActions.initEpisodeCards();
 
                 if (simpleUpdate) return;
                 setTimeout(function () {
