@@ -3878,6 +3878,10 @@ h2 {
     }
 }
 
+.episode__cards > a:has(.mark-this-episode-as-watched) ~ a .mark-this-episode-as-watched {
+    display: none;
+}
+
 @keyframes episode-loading {
     0% {
         background-color: hsl(from var(--ardoise-30) h s l / .75);
