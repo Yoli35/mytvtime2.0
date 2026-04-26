@@ -1,6 +1,7 @@
 import {AddCast} from 'AddCast';
 import {CopyName} from "CopyName";
 import {Diaporama} from 'Diaporama';
+import {EpisodeActions} from "EpisodeActions";
 import {FetchEpisodeCards} from "FetchEpisodeCards";
 import {FlashMessage} from "FlashMessage";
 import {Keyword} from 'Keyword';
@@ -62,6 +63,7 @@ export class Show {
      * @property {number} userSeriesId
      * @property {Array} messages
      * @property {Array} providers
+     * @property {Array} devices
      * @property {Array} translations
      * @property {Api} api
      */
@@ -194,7 +196,7 @@ export class Show {
         /******************************************************************************
          * Fetch episode stills for each season.                                      *
          ******************************************************************************/
-        this.fetchEpisodeCards.init();
+        this.fetchEpisodeCards.init(-1, false, new EpisodeActions(jsonGlobsObject, this.flashMessage, this.toolTips, menu, false));
 
         /******************************************************************************
          * Old series added?                                                          *

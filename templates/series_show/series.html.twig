@@ -755,6 +755,7 @@
             "userSeriesId": {{ userSeries.id }},
             "messages": {{ messages|json_encode(constant('JSON_PRETTY_PRINT'))|raw }},
             "providers": {{ providers|json_encode(constant('JSON_PRETTY_PRINT'))|raw }},
+            "devices": {{ devices|json_encode(constant('JSON_PRETTY_PRINT'))|raw }},
             "translations": {{ translations|json_encode(constant('JSON_PRETTY_PRINT'))|raw }},
             "locations": {{ locations|json_encode(constant('JSON_PRETTY_PRINT'))|raw }},
             "api": {

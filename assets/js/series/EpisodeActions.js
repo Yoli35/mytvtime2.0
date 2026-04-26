@@ -16,7 +16,7 @@ import {SeasonComments} from "SeasonComments";
 let self;
 
 export class EpisodeActions {
-    constructor(globs, flashMessage, toolTips, menu) {
+    constructor(globs, flashMessage, toolTips, menu, doComments = true) {
         self = this;
         this.globs = globs;
         this.lang = document.documentElement.lang;
@@ -33,7 +33,7 @@ export class EpisodeActions {
         this.menu = menu;
         this.intervals = [];
 
-        this.seasonComments = new SeasonComments(this.user, this.seriesId, this.seasonNumber, this.translations);
+        if (doComments) this.seasonComments = new SeasonComments(this.user, this.seriesId, this.seasonNumber, this.translations);
 
         this.fetchEpisodeCards = new FetchEpisodeCards(this.toolTips);
 

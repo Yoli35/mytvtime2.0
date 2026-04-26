@@ -261,7 +261,7 @@ final class SeriesShowController extends AbstractController
             'translations' => $this->seriesService->getSeriesShowTranslations(),
             'forms' => $forms,
             'oldSeriesAdded' => $request->query->get('oldSeriesAdded') === 'true',
-            'devices' => $this->deviceRepository->findBy([], ['name' => 'ASC']),
+            'devices' => $this->deviceRepository->deviceArray(),
         ]);
     }
 

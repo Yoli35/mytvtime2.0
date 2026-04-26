@@ -56,7 +56,7 @@ export class FetchEpisodeCards {
                     newEpisodeCardsDiv.style.opacity = "1";
                 }, 100);
                 index++;
-                if (index < length) self.load(cards, index, length, targetId, simpleUpdate);
+                if (index < length) self.load(cards, index, length, targetId, simpleUpdate, episodeActions);
             })
             .catch(err => console.log(err));
     }
