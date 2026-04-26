@@ -149,11 +149,8 @@
             }
         });
     </script>
-    {% if app.environment == 'dev' and app.user %}
-        <div class="screen-size"></div>
-    {% endif %}
     {% if app.user %}
-        <div class="multi-search">
+        <div class="multi-search{% if app.environment == 'dev' %} dev{% endif %}">
             <label for="multi-search">
                 <input type="search" id="multi-search" data-type="multi" data-sub-type="all" class="search" placeholder="{{ 'Movies, series, actors…'|trans }}" spellcheck="false">
                 <span class="multi-search-options-button" data-title="{{ 'Search options'|trans }}">
@@ -186,12 +183,6 @@
 
     <div class="navbar-items right">
         {% if app.environment == 'dev' and app.user %}
-            <div class="navbar-item">
-                <div class="debug-comment-anchor">{{ ux_icon('mdi:comment-text-outline') }}</div>
-                <div class="menu debug-comment-menu" data-id="-1">
-                    <ul></ul>
-                </div>
-            </div>
             {% if route in ['app_tv_series', 'app_tv_season'] %}
                 <div class="debug">{{ series.id }} / {{ userSeries.id }} / {{ series.tmdbId }}</div>
             {% endif %}
@@ -218,6 +209,12 @@
             {% if route in ['app_video_show'] %}
                 <div class="debug">{{ video.id }} / {{ video.link }}</div>
             {% endif %}
+            <div class="navbar-item">
+                <div class="debug-comment-anchor">{{ ux_icon('mdi:comment-text-outline') }}</div>
+                <div class="menu debug-comment-menu" data-id="-1">
+                    <ul></ul>
+                </div>
+            </div>
         {% endif %}
 
         {% if app.user %}

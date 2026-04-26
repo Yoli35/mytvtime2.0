@@ -34,7 +34,7 @@ export class NavBar {
                 this.root.style.setProperty("--navbar-opacity", opacity.toString());
             }
         });*/
-        const multiSearchDiv = navbar.querySelector('.multi-search');
+        const multiSearchDiv = navbar.querySelector('.multi-search.dev');
         if (multiSearchDiv) {
             const labels = {
                 'en': 'Summer',
@@ -42,37 +42,34 @@ export class NavBar {
                 'ko': '여름'
             }
             const label = labels[document.documentElement.lang];
-            let countDownDiv = document.querySelector('.count-down')
-            if (!countDownDiv) {
-                countDownDiv = document.createElement('div');
-                countDownDiv.classList.add('count-down');
-                navbar.insertBefore(countDownDiv, multiSearchDiv);
-                const initialDate = new Date('2026-06-21T08:24:30.000Z');
-                const countDownInterval = setInterval(() => {
-                    const currentDate = new Date();
-                    const timeDifference = initialDate - currentDate;
-                    if (timeDifference < 0) {
-                        clearInterval(countDownInterval);
-                        countDownDiv.remove();
-                        return;
-                    }
-                    const days = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
-                    const hours = Math.floor((timeDifference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-                    const minutes = Math.floor((timeDifference % (1000 * 60 * 60)) / (1000 * 60));
-                    const seconds = Math.floor((timeDifference % (1000 * 60)) / 1000);
-                    // Affiche le temps restant au format DD:HH:MM:SS
-                    countDownDiv.textContent = label + ' → ' + `${days.toString().padStart(2, '0')}:${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-                }, 1000);
-            }
+            const countDownDiv = document.createElement('div');
+            countDownDiv.classList.add('count-down');
+            navbar.insertBefore(countDownDiv, multiSearchDiv);
+            const initialDate = new Date('2026-06-21T08:24:30.000Z');
+            const countDownInterval = setInterval(() => {
+                const currentDate = new Date();
+                const timeDifference = initialDate - currentDate;
+                if (timeDifference < 0) {
+                    clearInterval(countDownInterval);
+                    countDownDiv.remove();
+                    return;
+                }
+                const days = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((timeDifference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutes = Math.floor((timeDifference % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((timeDifference % (1000 * 60)) / 1000);
+                // Affiche le temps restant au format DD:HH:MM:SS
+                countDownDiv.textContent = label + ' → ' + `${days.toString().padStart(2, '0')}:${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            }, 1000);
 
-            let screenSizeDiv = document.querySelector('.screen-size');
-            if (screenSizeDiv) {
+            const screenSizeDiv = document.createElement('div');
+            screenSizeDiv.classList.add('screen-size');
+            navbar.insertBefore(screenSizeDiv, multiSearchDiv);
+            screenSizeDiv.textContent = `${window.innerWidth}x${window.innerHeight}`;
+            navbar.insertBefore(screenSizeDiv, countDownDiv);
+            window.addEventListener('resize', () => {
                 screenSizeDiv.textContent = `${window.innerWidth}x${window.innerHeight}`;
-                navbar.insertBefore(screenSizeDiv, countDownDiv);
-                window.addEventListener('resize', () => {
-                    screenSizeDiv.textContent = `${window.innerWidth}x${window.innerHeight}`;
-                });
-            }
+            });
         }
     }
 
