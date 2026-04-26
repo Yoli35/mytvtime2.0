@@ -23,6 +23,8 @@ readonly class ApiMainMenu
         #[AutowireMethodOf(ControllerHelper::class)]
         private Closure               $json,
         #[AutowireMethodOf(ControllerHelper::class)]
+        private Closure               $generateUrl,
+        #[AutowireMethodOf(ControllerHelper::class)]
         private Closure               $getUser,
         #[AutowireMethodOf(ControllerHelper::class)]
         private Closure               $renderView,
@@ -98,7 +100,8 @@ readonly class ApiMainMenu
         $locale = $request->query->getAlpha("locale", "fr");
         $suggestions = array_map(function ($s) use ($locale) {
             return [
-                'href' => '/' . $locale . '/show/series/' . $s['id'] . '-' . ($s['localized_slug'] ?: $s['slug']),
+//                'href' => '/' . $locale . '/show/series/' . $s['id'] . '-' . ($s['localized_slug'] ?: $s['slug']),
+                'href' => ($this->generateUrl)('app_tv_series', ['id' => $s['id'], 'slug' => $s['localized_slug'] ?: $s['slug'], 'locale' => $locale]),
                 'id' => $s['id'],
                 'name' => ($s['localized_name'] ?: $s['name']) . '(' . $s['air_year'] . ')',
                 'poster_path' => $s['poster_path'],
