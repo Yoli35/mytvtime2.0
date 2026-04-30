@@ -55,7 +55,7 @@
                     border-radius: 50%;
                     color: var(--ardoise-10);
                     cursor: pointer;
-                    display: flex;
+                    display: none;
                     flex-shrink: 0;
                     height: 2.5rem;
                     justify-content: center;
@@ -142,6 +142,13 @@
                     background-color: var(--green-60);
                     color: var(--green-10);
                 }
+            }
+        }
+
+        .infos:hover {
+            .name-block .name-edit,
+            .overview-block .overview-edit {
+                display: flex;
             }
         }
 

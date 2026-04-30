@@ -120,7 +120,7 @@ export class Episode {
         /******************************************************************************
          * Title                                                                      *
          ******************************************************************************/
-        this.initEditTitle();
+        this.initEditName();
 
         /******************************************************************************
          * Overview                                                                   *
@@ -241,14 +241,14 @@ export class Episode {
             });
     }
 
-    initEditTitle() {
-        const titleDialog = document.querySelector('.episode-title-dialog');
-        const form = titleDialog.querySelector('form');
-        const buttonCancel = titleDialog.querySelector('button[name="cancel"]');
+    initEditName() {
+        const nameDialog = document.querySelector('.episode-name-dialog');
+        const form = nameDialog.querySelector('form');
+        const buttonCancel = nameDialog.querySelector('button[name="cancel"]');
         const input = document.getElementById('title-input');
 
-        titleDialog.addEventListener('toggle', () => {
-            if (titleDialog.matches(':popover-open')) {
+        nameDialog.addEventListener('toggle', () => {
+            if (nameDialog.matches(':popover-open')) {
                 setTimeout(() => {
                     input.focus();
                     input.select();
@@ -256,19 +256,19 @@ export class Episode {
             }
         });
         buttonCancel.addEventListener('click', function () {
-            titleDialog.hidePopover();
+            nameDialog.hidePopover();
         });
 
         form.addEventListener('submit', function (e) {
             e.preventDefault();
-            self.saveTitle(e);
+            self.saveName(e);
         });
     }
 
-    saveTitle() {
-        const title = document.querySelector('h1 span');
-        const titleDialog = document.querySelector('.episode-title-dialog');
-        const input = titleDialog.querySelector('input');
+    saveName() {
+        const name = document.querySelector('h1 span');
+        const nameDialog = document.querySelector('.episode-name-dialog');
+        const input = nameDialog.querySelector('input');
 
         fetch('/api/episode/update/info/' + self.episodeId,
             {
@@ -284,8 +284,8 @@ export class Episode {
         )
             .then(function (response) {
                 if (response.ok) {
-                    title.innerText = input.value;
-                    titleDialog.hidePopover();
+                    name.innerText = input.value;
+                    nameDialog.hidePopover();
 
                     const episodeCard = document.querySelector('.episode-card[data-episode-id="' + self.episodeId + '"]');
                     setTimeout(function () {
@@ -294,9 +294,9 @@ export class Episode {
                             episodeCard.classList.remove('update');
                         }, 300);
                     }, 300);
-                    const titleDiv = episodeCard.querySelector('.episode-name');
-                    if (titleDiv) {
-                        titleDiv.innerText = input.value;
+                    const nameDiv = episodeCard.querySelector('.episode-name');
+                    if (nameDiv) {
+                        nameDiv.innerText = input.value;
                     }
                 }
             });
