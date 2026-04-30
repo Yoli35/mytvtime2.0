@@ -40,7 +40,26 @@
                     {% endif %}
                 </div>
                 <div class="infos">
-                    <h1>{{ episode.episode_number }} / {{ season.episode_count }}. {{ episode.user_episode.substitute_name ?: episode.name }}</h1>
+                    <div class="name-block">
+                        {% set name = episode.user_episode.substitute_name ?: episode.name %}
+                        <h1>{{ episode.episode_number }} / {{ season.episode_count }}. <span>{{ name }}</span></h1>
+                        <button class="name-edit" popovertarget="episode-name-edit" popovertargetaction="show" data-name="{{ 'Edit episode name'|trans }}">
+                            {{ ux_icon('mdi:pencil', {height: '24px', width: '24px'}) }}
+                        </button>
+                        <dialog class="episode-name-dialog" id="episode-name-edit" popover="auto">
+                            <form class="episode-name-form">
+                                <div class="form-row">
+                                    <label for="name-input">{{ 'Episode name'|trans }}
+                                        <input type="text" id="name-input" class="name-input" value="{{ name }}" />
+                                    </label>
+                                </div>
+                                <div class="form-row">
+                                    <button type="button" name="cancel">{{ 'Cancel'|trans }}</button>
+                                    <button type="submit" name="save">{{ 'Save'|trans }}</button>
+                                </div>
+                            </form>
+                        </dialog>
+                    </div>
                     {{ include('_blocks/series/_episode_air_date.html.twig', {episode: episode, ue: episode.user_episode, ues: episode.user_episodes}) }}
                     {{ include('_blocks/series/_episode_stats.html.twig', {episode: episode}) }}
                     <div class="overview-block">

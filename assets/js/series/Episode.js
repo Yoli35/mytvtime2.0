@@ -85,7 +85,6 @@ export class Episode {
         const user = this.globs.user;
         const seriesId = this.globs.seriesId;
         const seriesName = this.globs.seriesName;
-        const episodeId = this.globs.episodeId;
         const seasonNumber = this.globs.seasonNumber;
         const translations = this.globs.translations;
 
@@ -117,6 +116,11 @@ export class Episode {
             seriesName: seriesName
         };
         new Location('loc', data, fieldList);
+
+        /******************************************************************************
+         * Title                                                                      *
+         ******************************************************************************/
+        this.initEditTitle();
 
         /******************************************************************************
          * Overview                                                                   *
@@ -232,6 +236,67 @@ export class Episode {
                     const stillDiv = episodeCard.querySelector('.episode-still');
                     if (stillDiv) {
                         stillDiv.setAttribute("data-title", textarea.value);
+                    }
+                }
+            });
+    }
+
+    initEditTitle() {
+        const titleDialog = document.querySelector('.episode-title-dialog');
+        const form = titleDialog.querySelector('form');
+        const buttonCancel = titleDialog.querySelector('button[name="cancel"]');
+        const input = document.getElementById('title-input');
+
+        titleDialog.addEventListener('toggle', () => {
+            if (titleDialog.matches(':popover-open')) {
+                setTimeout(() => {
+                    input.focus();
+                    input.select();
+                }, 0);
+            }
+        });
+        buttonCancel.addEventListener('click', function () {
+            titleDialog.hidePopover();
+        });
+
+        form.addEventListener('submit', function (e) {
+            e.preventDefault();
+            self.saveTitle(e);
+        });
+    }
+
+    saveTitle() {
+        const title = document.querySelector('h1 span');
+        const titleDialog = document.querySelector('.episode-title-dialog');
+        const input = titleDialog.querySelector('input');
+
+        fetch('/api/episode/update/info/' + self.episodeId,
+            {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    content: input.value,
+                    type: 'name'
+                })
+            }
+        )
+            .then(function (response) {
+                if (response.ok) {
+                    title.innerText = input.value;
+                    titleDialog.hidePopover();
+
+                    const episodeCard = document.querySelector('.episode-card[data-episode-id="' + self.episodeId + '"]');
+                    setTimeout(function () {
+                        episodeCard.classList.add('update');
+                        setTimeout(function () {
+                            episodeCard.classList.remove('update');
+                        }, 300);
+                    }, 300);
+                    const titleDiv = episodeCard.querySelector('.episode-name');
+                    if (titleDiv) {
+                        titleDiv.innerText = input.value;
                     }
                 }
             });
