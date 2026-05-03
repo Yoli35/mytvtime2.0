@@ -137,7 +137,7 @@ export class EpisodeActions {
         const seasonNumber = addThisEpisode.getAttribute('data-s-number');
         const lastEpisode = addThisEpisode.getAttribute('data-last-episode');
         const views = parseInt(addThisEpisode.getAttribute('data-views') ?? "0");
-        const backToTopLink = addThisEpisode.parentElement.querySelector('.back-to-top');
+        const backToTopLink = userEpisode.querySelector('.back-to-top');
         const quickEpisodeLinks = document.querySelectorAll('.quick-episode[data-number="' + episodeNumber + '"]');
         const episodeDiv = addThisEpisode.closest('.episode') || episodePage;
         const substituteNameDiv = episodeDiv ? episodeDiv.querySelector('.substitute') : null;

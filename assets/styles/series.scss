@@ -3829,6 +3829,10 @@ h2 {
                 &.update {
                     border-color: var(--orange-90);
                 }
+
+                &:has(.episode-number.watched) {
+                    background-color: var(--green);
+                }
             }
 
             &:has(.watched) {
