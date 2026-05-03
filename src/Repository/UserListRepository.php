@@ -73,7 +73,7 @@ class UserListRepository extends ServiceEntityRepository
                 INNER JOIN `user_list_series` uls ON uls.`user_list_id`=$id AND s.`id`=uls.`series_id`
                  LEFT JOIN `user_series` us ON us.`series_id`=s.`id` AND us.`user_id` = :userId
                  LEFT JOIN `series_localized_name` sln ON sln.`series_id`=s.`id` AND sln.`locale` = :locale
-            ORDER BY us.`added_at` DESC
+            ORDER BY s.first_air_date /*us.`added_at` DESC*/
         SQL;
 
         return $this->getAll($sql, $params, $types);
