@@ -444,7 +444,7 @@ export class Show {
                     if (response.ok) {
                         const tmdbId = removeThisSeries.getAttribute('data-tmdb-id');
                         const slug = removeThisSeries.getAttribute('data-slug');
-                        window.location.href = '/' + lang + '/show/tmdb/' + tmdbId + '-' + slug;
+                        window.location.href = '/' + lang + '/tv/tmdb/' + tmdbId + '-' + slug;
                     }
                 });
             });
