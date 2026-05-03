@@ -44,6 +44,8 @@ readonly class ApiSeriesEpisode
         #[AutowireMethodOf(ControllerHelper::class)]
         private Closure                            $addFlash,
         #[AutowireMethodOf(ControllerHelper::class)]
+        private Closure                            $generateUrl,
+        #[AutowireMethodOf(ControllerHelper::class)]
         private Closure                            $getParameter,
         #[AutowireMethodOf(ControllerHelper::class)]
         private Closure                            $json,
@@ -75,17 +77,20 @@ readonly class ApiSeriesEpisode
         $inputBag = $request->getPayload();
 
         $showId = $inputBag->get('showId');
+        $seriesId = $inputBag->get('seriesId');
         $lastEpisode = $inputBag->get('lastEpisode') == "1";
         $seasonNumber = $inputBag->get('seasonNumber');
         $episodeNumber = $inputBag->get('episodeNumber');
         $ueId = $inputBag->get('ueid');
         $episodePage = $inputBag->get('episodePage');
+        $isNextEpisodeCard = $inputBag->get('isNextEpisodeCard');
         $new = false;
         $bestProviderIds = [];
 
         $messages = [];
 
-        $series = $this->seriesRepository->findOneBy(['tmdbId' => $showId]);
+        $series = $this->seriesRepository->findOneBy(['id' => $seriesId]);
+        $seriesLocalizedName = $series->getLocalizedName($locale);
         $userSeries = $this->userSeriesRepository->findOneBy(['user' => $user, 'series' => $series]);
         $userSeriesEpisodes = $this->userEpisodeRepository->findBy(['userSeries' => $userSeries], ['seasonNumber' => 'ASC', 'episodeNumber' => 'ASC']);
         $userEpisode = $this->userEpisodeRepository->findOneBy(['id' => $ueId]);
@@ -196,6 +201,19 @@ readonly class ApiSeriesEpisode
             $this->userSeriesRepository->save($userSeries, true);
         }
 
+        if ($isNextEpisodeCard) {
+            return ($this->json)([
+                'ok' => true,
+                'redirect' => true,
+                'url' => ($this->generateUrl)('app_tv_episode', [
+                    'id' => $seriesId,
+                    'slug' => $seriesLocalizedName ? $seriesLocalizedName->getSlug() : $series->getSlug(),
+                    'seasonNumber' => $seasonNumber,
+                    'episodeNumber' => $episodeNumber,
+                ]),
+            ]);
+        }
+
         $sbd = $this->seriesBroadcastDateRepository->findOneBy(['episodeId' => $id]);
         $airDate = $sbd ? $sbd->getDate() : $userEpisode->getAirDate();
         $ue = $this->userEpisodeRepository->getUserEpisodeDB($userEpisode->getId(), $user->getPreferredLanguage() ?? $request->getLocale());
@@ -259,6 +277,7 @@ readonly class ApiSeriesEpisode
 
         return ($this->json)([
             'ok' => true,
+            'redirect' => false,
             'airDateBlock' => $airDateBlock,
             'episodeCardBlock' => $episodeCardBlock ?? '',
             'new' => $new,

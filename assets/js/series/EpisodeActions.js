@@ -95,7 +95,6 @@ export class EpisodeActions {
     initEpisodeCards() {
         const markThisEpisodeAsWatched = document.querySelectorAll('.mark-this-episode-as-watched');
         markThisEpisodeAsWatched.forEach(mark => {
-
             mark.addEventListener('click', (e) => {
                 e.preventDefault();
                 e.stopPropagation();
@@ -149,6 +148,7 @@ export class EpisodeActions {
         // Episode page: episodeCard = .episode-card.this-is-my-page
         const episodeCard = document.querySelector('.episode-card.this-is-my-page');
         const isEpisodePage = !!episodeCard;
+        const isNextEpisodeCard = isEpisodePage ? e.currentTarget.closest('.episode-card') !== episodeCard : false;
 
         fetch('/api/episode/add/' + id, {
             method: 'POST',
@@ -157,12 +157,14 @@ export class EpisodeActions {
                 'X-Requested-With': 'XMLHttpRequest'
             },
             body: JSON.stringify({
+                seriesId: seriesId,
                 showId: sId,
                 lastEpisode: lastEpisode,
                 seasonNumber: seasonNumber,
                 episodeNumber: episodeNumber,
                 ueid: ueId,
                 episodePage: isEpisodePage,
+                isNextEpisodeCard: isNextEpisodeCard,
                 episodeName: isEpisodePage ? self.globs.episodeName : '',
                 episodeOverview: isEpisodePage ? self.globs.episodeOverview : '',
                 episodeRuntime: isEpisodePage ? self.globs.episodeRuntime : '',
@@ -173,6 +175,10 @@ export class EpisodeActions {
             .then(data => {
                 // TODO: Vérifier "data"
                 console.log(data);
+                if (data['redirect']) {
+                    window.location.href = data['url'];
+                    return;
+                }
                 if (episodeDiv) {
                     const airDateDiv = episodeDiv.querySelector('.episode-air-date-component');
                     const block = document.createElement('div');
