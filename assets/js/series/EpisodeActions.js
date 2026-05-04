@@ -4,6 +4,7 @@
  * @property {SeasonProvider} seasonProvider
  * @property {number} showId
  * @property {number} seasonNumber
+ * @property {Array} seasonVotes
  * @property {User} user
  * @property {Providers} providers
  * @property {Devices} devices
@@ -27,6 +28,7 @@ export class EpisodeActions {
         this.translations = globs.translations;
         this.providerArray = globs.providers.list;
         this.seasonProvider = globs.seasonProvider;
+        this.seasonVotes = globs.seasonVotes;
         this.seasonNumber = globs.seasonNumber;
         this.seriesId = globs.seriesId;
         this.user = globs.user;
@@ -896,89 +898,104 @@ export class EpisodeActions {
             body: JSON.stringify({
                 vote: voteValue
             })
-        }).then((response) => {
-            if (response.ok) {
-                if (selectVoteDiv) {
-                    if (parseInt(voteValue) === -1) {
-                        const svgPlus = this.getSvg('plus');
-                        selectVoteDiv.innerHTML = '';
-                        selectVoteDiv.setAttribute('data-title', this.translations.rating);
-                        selectVoteDiv.appendChild(svgPlus);
-                        this.toolTips.init(selectVoteDiv);
-                    } else {
-                        // Display the vote value
-                        selectVoteDiv.innerHTML = voteValue;
-                        // Add the vote to the graph
-                        const voteGraphDiv = document.querySelector('.vote-graph');
-                        if (voteGraphDiv) {
-                            const voteDiv = voteGraphDiv.querySelector('.vote[data-ep-id="' + episodeId + '"]');
-                            const div = voteDiv.querySelector('div');
-                            const episodeVoteDiv = voteDiv.closest('.episode-vote');
-                            div.classList.remove('dashed-vote');
-                            div.classList.add('user-vote');
-                            div.style.height = (voteValue * 16) + 'px';
-                            div.innerText = voteValue;
-                            episodeVoteDiv.setAttribute('data-vote', voteValue);
-                            // Average vote for the season
-                            const voteAverageDiv = voteGraphDiv.querySelector('.vote-average');
-                            const voteDivs = voteGraphDiv.querySelectorAll('.episode-vote');
-                            let sum = 0, count = 0;
-                            voteDivs.forEach((element) => {
-                                const vote = 1 * element.getAttribute('data-vote');
-                                if (vote) {
-                                    sum += vote;
-                                    count++;
-                                }
-                            });
-                            if (count) {
-                                let result = (sum / count);
-                                if (result > 10) result = "10+"; else result = result.toFixed(1);
-                                voteAverageDiv.innerHTML = result + " / 10";
-                            } else {
-                                voteAverageDiv.innerHTML = this.translations['No votes'];
-                            }
-                        }
-
-                        // If finale, confetti!!
-                        const episodeDiv = selectVoteDiv.closest(".episode") || selectVoteDiv.closest("header");
-                        if (episodeDiv.querySelector(".finale.season-finale")) {
-                            {
-                                const jsConfetti = new JSConfetti();
-                                jsConfetti.addConfetti({
-                                    confettiNumber: 500,
-                                    confettiColors: [
-                                        'hsl(28deg 100% 48%)',
-                                        'hsl(34deg 100% 50%)',
-                                        'hsl(41deg 100% 50%)',
-                                        'hsl(48deg 100% 50%)',
-                                        'hsl(55deg 100% 50%)',
-                                        'hsl(55deg 99% 66%)',
-                                        'hsl(56deg 98% 75%)',
-                                        'hsl(56deg 98% 83%)',
-                                        'hsl(58deg 100% 90%)',
-                                        'hsl(58deg 100% 93%)',
-                                        'hsl(58deg 100% 95%)',
-                                        'hsl(57deg 100% 98%)',
-                                        'hsl(0deg 0% 100%)',
-                                    ],
-                                }).then(r => {
-                                    console.log(r)
+        }).then((response) => response.json())
+            .then(data => {
+                if (data.ok) {
+                    if (selectVoteDiv) {
+                        if (parseInt(voteValue) === -1) {
+                            const svgPlus = this.getSvg('plus');
+                            selectVoteDiv.innerHTML = '';
+                            selectVoteDiv.setAttribute('data-title', this.translations.rating);
+                            selectVoteDiv.appendChild(svgPlus);
+                            this.toolTips.init(selectVoteDiv);
+                        } else {
+                            // Display the vote value
+                            selectVoteDiv.innerHTML = voteValue;
+                            // Add the vote to the graph
+                            const voteGraphDiv = document.querySelector('.vote-graph');
+                            if (voteGraphDiv) {
+                                const voteDiv = voteGraphDiv.querySelector('.vote[data-ep-id="' + episodeId + '"]');
+                                const div = voteDiv.querySelector('div');
+                                const episodeVoteDiv = voteDiv.closest('.episode-vote');
+                                div.classList.remove('dashed-vote');
+                                div.classList.add('user-vote');
+                                div.style.height = (voteValue * 16) + 'px';
+                                div.innerText = voteValue;
+                                episodeVoteDiv.setAttribute('data-vote', voteValue);
+                                // Average vote for the season
+                                const voteAverageDiv = voteGraphDiv.querySelector('.vote-average');
+                                const voteDivs = voteGraphDiv.querySelectorAll('.episode-vote');
+                                let sum = 0, count = 0;
+                                voteDivs.forEach((element) => {
+                                    const vote = 1 * element.getAttribute('data-vote');
+                                    if (vote) {
+                                        sum += vote;
+                                        count++;
+                                    }
                                 });
+                                if (count) {
+                                    let result = (sum / count);
+                                    if (result > 10) result = "10+"; else result = result.toFixed(1);
+                                    voteAverageDiv.innerHTML = result + " / 10";
+                                } else {
+                                    voteAverageDiv.innerHTML = this.translations['No votes'];
+                                }
+                            }
+
+                            // If finale, confetti!!
+                            const episodeDiv = selectVoteDiv.closest(".episode") || selectVoteDiv.closest("header");
+                            if (episodeDiv.querySelector(".finale.season-finale")) {
+                                {
+                                    const jsConfetti = new JSConfetti();
+                                    jsConfetti.addConfetti({
+                                        confettiNumber: 500,
+                                        confettiColors: [
+                                            'hsl(28deg 100% 48%)',
+                                            'hsl(34deg 100% 50%)',
+                                            'hsl(41deg 100% 50%)',
+                                            'hsl(48deg 100% 50%)',
+                                            'hsl(55deg 100% 50%)',
+                                            'hsl(55deg 99% 66%)',
+                                            'hsl(56deg 98% 75%)',
+                                            'hsl(56deg 98% 83%)',
+                                            'hsl(58deg 100% 90%)',
+                                            'hsl(58deg 100% 93%)',
+                                            'hsl(58deg 100% 95%)',
+                                            'hsl(57deg 100% 98%)',
+                                            'hsl(0deg 0% 100%)',
+                                        ],
+                                    }).then(r => {
+                                        console.log(r)
+                                    });
+                                }
                             }
                         }
-                    }
 
-                    /******************************************************************************
-                     * On the episode page, update the vote value of the episode card             *
-                     ******************************************************************************/
-                    const episodeCard = document.querySelector('.episode-card.this-is-my-page');
-                    if (episodeCard) {
-                        const episodeVoteValue = episodeCard.querySelector('.episode-vote-value');
-                        episodeVoteValue.textContent = voteValue > -1 ? voteValue : '—';
+                        /******************************************************************************
+                         * On the episode page, update the vote value of the episode card             *
+                         ******************************************************************************/
+                        const episodeCard = document.querySelector('.episode-card.this-is-my-page');
+                        if (episodeCard) {
+                            const episodeVoteValue = episodeCard.querySelector('.episode-vote-value');
+                            episodeVoteValue.textContent = voteValue > -1 ? voteValue : '—';
+                        }
+                        /******************************************************************************
+                         * On the episode page, update the average vote                               *
+                         ******************************************************************************/
+                        const averageVoteSpan = document.querySelector('.season-average-vote span');
+                        if (averageVoteSpan) {
+                            const vote = parseInt(voteValue);
+                            const index = data['episodeNumber'] - 1;
+                            self.seasonVotes['votes'][index] = vote;
+                            const sum = self.seasonVotes['votes'].reduce((a, b) => a + b, 0);
+                            const count = self.seasonVotes['votes'].reduce((a, b) => a + (b > 0), 0);
+                            const result = (sum / count).toFixed(2);
+                            averageVoteSpan.textContent = result < 10 ? result : '10+';
+                            self.seasonVotes['averageVote'] = result;
+                        }
                     }
                 }
-            }
-        });
+            });
     }
 
     listInput(list, type = 'text', size = '10') {

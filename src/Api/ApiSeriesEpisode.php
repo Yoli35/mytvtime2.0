@@ -450,7 +450,10 @@ readonly class ApiSeriesEpisode
             $userEpisode->setVote($vote == -1 ? null : $vote);
             $this->userEpisodeRepository->save($userEpisode, true);
         }
-        return new JsonResponse(['ok' => true]);
+        return new JsonResponse([
+            'ok' => true,
+            'episodeNumber' => $userEpisode->getEpisodeNumber(),
+        ]);
     }
 
     #[Route('/height/{userSeriesId}', name: 'height', requirements: ['id' => Requirement::DIGITS], methods: ['POST'])]

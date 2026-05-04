@@ -130,7 +130,7 @@
                 {% endif %}
                 {{ include('_blocks/series/_map.html.twig', {locations: locations, mapSettings: mapSettings}) }}
                 {{ include('_blocks/series/_guest_stars.html.twig', {guest_stars: episode.guest_stars, episode_page: true}) }}
-                {{ include('_blocks/series/_credits.html.twig', {season: season, series: series}) }}
+                {{ include('_blocks/series/_credits.html.twig', {season: season, series: series, seasonVotes: seasonVotes}) }}
             </main>
         </div>
     </div>
@@ -155,6 +155,7 @@
             "showId": {{ series.tmdbId }},
             "episodeId": {{ episode.id }},
             "seasonNumber": {{ season.season_number }},
+            "seasonVotes": {{ seasonVotes|json_encode(constant('JSON_PRETTY_PRINT'))|raw }},
             "episodeNumber": {{ episode.episode_number }},
             "seriesName": "{{ (season.series_localized_name ?:series.name)|e('js') }}",
             "episodeName": "{{ (episode.user_episode.substitute_name ?: episode.name)|e('js') }}",

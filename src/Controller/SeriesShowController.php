@@ -298,7 +298,8 @@ final class SeriesShowController extends AbstractController
         $season['blurred_poster_path'] = $this->imageService->blurPoster($season['poster_path'], 'series', 8);
 
         $season['deepl'] = null;//$this->seasonLocalizedOverview($series, $season, $seasonNumber, $request);
-        $season['episodes'] = $this->seasonEpisodes($season, $userSeries, $this->seriesService->getFinaleEpisodeNumber($season), $country);
+        list($seasonVotes, $seasonEpisodes) = $this->seasonEpisodes($season, $userSeries, $this->seriesService->getFinaleEpisodeNumber($season), $country);
+        $season['episodes'] = $seasonEpisodes;
         $season['progress'] = $this->userEpisodeRepository->seasonProgress($userSeries, $seasonNumber);
         $season['air_date'] = $this->adjustSeasonAirDate($user, $season, 'date');
         $season['air_date_string'] = $this->adjustSeasonAirDate($user, $season, 'string');
@@ -356,6 +357,7 @@ final class SeriesShowController extends AbstractController
         return $this->render('series_show/season.html.twig', [
             'series' => $series,
             'userSeries' => $userSeries,
+            'seasonVotes' => $seasonVotes,
             'tv' => $tv,
             'translations' => $this->seriesService->getSeasonShowTranslations(),
             'quickLinks' => $this->getQuickLinks($user, $season['episodes']),
@@ -394,7 +396,8 @@ final class SeriesShowController extends AbstractController
             return $this->redirectToRoute('app_tv_series', ['_locale' => $locale, 'id' => $series->getId(), 'slug' => $series->getSlug()]);
         }
         $finaleEpisodeNumber = $this->seriesService->getFinaleEpisodeNumber($season);
-        $season['episodes'] = $this->seasonEpisodes($season, $userSeries, $finaleEpisodeNumber, $country);
+        list($seasonVotes, $seasonEpisodes, $userEpisodes) = $this->seasonEpisodes($season, $userSeries, $finaleEpisodeNumber, $country);
+        $season['episodes'] = $seasonEpisodes;
         $episode = json_decode($this->tmdbService->getTvEpisode($series->getTmdbId(), $seasonNumber, $episodeNumber, $locale, ['credits', 'watch/providers']), true);
         if (key_exists('error', $episode)) {
             $this->addFlash('error', $this->translator->trans('The episode could not be loaded'));
@@ -415,7 +418,7 @@ final class SeriesShowController extends AbstractController
             }
         }
 
-        $userEpisodes = $this->userEpisodeRepository->getUserEpisodesDB($userSeries->getId(), $season['season_number'], $locale, true);
+//        $userEpisodes = $this->userEpisodeRepository->getUserEpisodesDB($userSeries->getId(), $season['season_number'], $locale, true);
         $stills = $this->episodeStillRepository->getSeasonStills([$episode['id']]);
 
         if ($episode['still_path'] == null && $season['episodes'][$episodeNumber - 1]['still_path'] != null) {
@@ -449,6 +452,7 @@ final class SeriesShowController extends AbstractController
             'series' => $series,
             'season' => $season,
             'episode' => $episode,
+            'seasonVotes' => $seasonVotes,
             'slug' => $slug,
             'timezone' => $user->getTimezone() ?? 'Europe/Paris',
             'status' => $status,
@@ -602,6 +606,8 @@ final class SeriesShowController extends AbstractController
         $userEpisodes = $this->userEpisodeRepository->getUserEpisodesDB($userSeries->getId(), $season['season_number'], $locale, true);
         $peopleUserPreferredNames = $this->getPreferredNames($user);
 
+        $seasonVotes = $this->getSeasonVotes($userEpisodes);
+
         $episodeIds = array_column($userEpisodes, 'episode_id');
         $stills = $this->episodeStillRepository->getSeasonStills($episodeIds);
 
@@ -635,7 +641,21 @@ final class SeriesShowController extends AbstractController
             $this->seriesRepository->save($series, true);
             $this->addFlash('success', sprintf("Series updated (%d season%s, %d episode%s)", $tv['number_of_seasons'], $tv['number_of_seasons'] > 1 ? 's' : '', $tv['number_of_episodes'], $tv['number_of_episodes'] > 1 ? 's' : ''));
         }
-        return $seasonEpisodes;
+        return [$seasonVotes, $seasonEpisodes, $userEpisodes];
+    }
+
+    private function getSeasonVotes(array $userEpisodes): array
+    {
+        $seasonVotes['votes'] = [];
+        foreach ($userEpisodes as $userEpisode) {
+            if ($userEpisode['previous_occurrence_id'] === null) {
+                $seasonVotes['votes'][$userEpisode['episode_number'] - 1] = $userEpisode['vote'];
+            }
+        }
+        ksort($seasonVotes['votes']);
+        $seasonVotes['averageVote'] = round(array_sum($seasonVotes['votes']) / count(array_filter($seasonVotes['votes'], fn($vote) => $vote !== null)), 2);
+
+        return $seasonVotes;
     }
 
     private function seasonChanges(User $user, int $seasonId): array

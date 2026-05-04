@@ -4359,6 +4359,16 @@ h2 {
         position: relative;
         width: fit-content;
 
+        .season-average-vote {
+            background-color: hsl(from var(--green-50) h s l / .75);
+            border-radius: .5rem;
+            height: 6rem;
+            padding-inline: 2rem;
+            font-size: 4rem;
+            font-weight: 300;
+            line-height: 1.5;
+        }
+
         .cast-search-block {
             background-color: var(--green);
             border-radius: 1rem;

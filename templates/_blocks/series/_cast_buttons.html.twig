@@ -1,12 +1,15 @@
 <div class="cast-buttons">
+    {% if seasonVotes is defined %}
+        <div class="season-average-vote"><span>{{ seasonVotes.averageVote < 10 ? seasonVotes.averageVote : '10+' }}</span> / 10</div>
+    {% endif %}
     <a href="{{ path('app_tv_series', {id: seriesId, slug: name|slug}) }}">
-    <div class="series-name">
-        {% if localized_name %}
-            <span class="localization-span">{{ localized_name.name }}</span>
-        {% else %}
-            <span class="name-span">{{ name }}</span>
-        {% endif %}
-    </div>
+        <div class="series-name">
+            {% if localized_name %}
+                <span class="localization-span">{{ localized_name.name }}</span>
+            {% else %}
+                <span class="name-span">{{ name }}</span>
+            {% endif %}
+        </div>
     </a>
     {% if "ROLE_ADMIN" in app.user.roles %}
         <div class="add-cast-button" data-title="{{ 'Add someone to the cast'|trans }}">
