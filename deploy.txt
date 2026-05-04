@@ -4,18 +4,25 @@
 4- Paste this in your local terminal:
 
 clear;
+echo 'Cleaning up...'
 echo '' > var/log/dev.log;
 rm -R var/cache/dev;
+echo 'Installing dependencies...'
 composer install --no-dev --optimize-autoloader;
+echo 'Clearing cache...'
 APP_ENV=prod APP_DEBUG=0 php bin/console cache:clear;
+echo 'Compressing files...'
 zip -rq Archives.zip bin composer.json composer.lock config importmap.php package.json src symfony.lock templates translations var vendor;
+echo 'Compressing images...'
+find './public/' -type f -mmin -37142 -exec zip -q -n .png:.webp:.jpg:.jpeg:.mp4 public.zip {} \;
 
-find './public/' -type f -mmin -2011 -exec zip -q -n .png:.webp:.jpg:.jpeg:.mp4 public.zip {} \;
-
+echo 'Compiling assets...'
 cons asset-map:compile
+echo 'Compressing assets...'
 zip -rq assets.zip ./public/assets;
 zip -rq Archives.zip assets.zip public.zip;
 rm assets.zip public.zip;
+echo 'Uploading to server...'
 scp /Users/iboy/Sites/mytvtime2.0/Archives.zip u109355875@access922206626.webspace-data.io:/
 
 5- copy Archives.zip to server
