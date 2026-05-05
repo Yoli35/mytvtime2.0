@@ -653,7 +653,13 @@ final class SeriesShowController extends AbstractController
             }
         }
         ksort($seasonVotes['votes']);
-        $seasonVotes['averageVote'] = round(array_sum($seasonVotes['votes']) / count(array_filter($seasonVotes['votes'], fn($vote) => $vote !== null)), 2);
+        $sum = array_sum($seasonVotes['votes']);
+        $count =count(array_filter($seasonVotes['votes'], fn($vote) => $vote !== null));
+        if ($count) {
+        $seasonVotes['averageVote'] = round($sum / $count, 1);
+        } else {
+            $seasonVotes['averageVote'] = 0;
+        }
 
         return $seasonVotes;
     }

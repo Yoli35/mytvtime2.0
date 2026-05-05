@@ -989,8 +989,8 @@ export class EpisodeActions {
                             self.seasonVotes['votes'][index] = vote;
                             const sum = self.seasonVotes['votes'].reduce((a, b) => a + b, 0);
                             const count = self.seasonVotes['votes'].reduce((a, b) => a + (b > 0), 0);
-                            const result = (sum / count).toFixed(2);
-                            averageVoteSpan.textContent = result < 10 ? result : '10+';
+                            const result = count ? (sum / count).toFixed(1) : 0;
+                            averageVoteSpan.textContent = result < 10 ? (result > 0 ? result : '—') : '10+';
                             self.seasonVotes['averageVote'] = result;
                         }
                     }

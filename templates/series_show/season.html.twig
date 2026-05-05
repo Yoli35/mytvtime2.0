@@ -367,6 +367,7 @@
             "showId": {{ series.tmdbId }},
             "seasonProgress": {{ season.progress|json_encode(constant('JSON_PRETTY_PRINT'))|raw }},
             "seasonNumber": {{ season.season_number }},
+            "seasonVotes": {{ seasonVotes|json_encode(constant('JSON_PRETTY_PRINT'))|raw }},
             "episodeName": "",
             "episodeOverview": "",
             "episodeRuntime": 0,

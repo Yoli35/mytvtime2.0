@@ -4362,11 +4362,14 @@ h2 {
         .season-average-vote {
             background-color: hsl(from var(--green-50) h s l / .75);
             border-radius: .5rem;
-            height: 6rem;
-            padding-inline: 2rem;
+            flex-shrink: 0;
             font-size: 4rem;
             font-weight: 300;
+            height: 6rem;
             line-height: 1.5;
+            padding-inline: 2rem;
+            text-wrap: nowrap;
+            white-space: nowrap;
         }
 
         .cast-search-block {

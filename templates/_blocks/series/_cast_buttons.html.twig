@@ -1,6 +1,6 @@
 <div class="cast-buttons">
     {% if seasonVotes is defined %}
-        <div class="season-average-vote"><span>{{ seasonVotes.averageVote < 10 ? seasonVotes.averageVote : '10+' }}</span> / 10</div>
+        <div class="season-average-vote"><span>{{ seasonVotes.averageVote < 10 ? (seasonVotes.averageVote > 0 ? seasonVotes.averageVote : '—') : '10+' }}</span> / 10</div>
     {% endif %}
     <a href="{{ path('app_tv_series', {id: seriesId, slug: name|slug}) }}">
         <div class="series-name">
