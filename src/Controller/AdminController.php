@@ -24,6 +24,7 @@ use App\Service\DateService;
 use App\Service\ImageConfiguration;
 use App\Service\ImageService;
 use App\Service\KeywordService;
+use App\Service\ProviderService;
 use App\Service\TMDBService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
@@ -55,7 +56,7 @@ class AdminController extends AbstractController
         private readonly PointOfInterestCategoryRepository $pointOfInterestCategoryRepository,
         private readonly PointOfInterestImageRepository    $pointOfInterestImageRepository,
         private readonly PointOfInterestRepository         $pointOfInterestRepository,
-        private readonly SeriesController                  $seriesController,
+        private readonly ProviderService                   $providerService,
         private readonly SeriesRepository                  $seriesRepository,
         private readonly SettingsRepository                $settingsRepository,
         private readonly TMDBService                       $tmdbService,
@@ -232,7 +233,7 @@ class AdminController extends AbstractController
             $p1 = $s['logo1'] ? explode('|', $s['logo1']) : [null, null];
             $p2 = $s['logo2'] ? explode('|', $s['logo2']) : [null, null];
 
-            $s['provider_logo'] = $this->seriesController->getProviderLogoFullPath($p1[0] ?? $p2[0], $logoUrl);
+            $s['provider_logo'] = $this->providerService->getProviderLogoFullPath($p1[0] ?? $p2[0], $logoUrl);
             $s['provider_name'] = $p1[1] ?? $p2[1];
             return $s;
         }, $series);
@@ -345,7 +346,7 @@ class AdminController extends AbstractController
         $seriesAdditionalOverviews = $this->seriesRepository->seriesAdditionalOverviews($id);
         $seriesBroadcastSchedules = $this->seriesRepository->seriesBroadcastSchedules($id);
         foreach ($seriesBroadcastSchedules as &$sbs) {
-            $sbs['provider_logo'] = $this->seriesController->getProviderLogoFullPath($sbs['provider_logo'], $logoUrl);
+            $sbs['provider_logo'] = $this->providerService->getProviderLogoFullPath($sbs['provider_logo'], $logoUrl);
             $sbs['broadcast_dates'] = $this->seriesRepository->seriesBroadcastDates($sbs['id']);
         }
         $seriesImages = $this->seriesRepository->seriesImagesById($id);
@@ -353,11 +354,11 @@ class AdminController extends AbstractController
         $seriesLocalizedOverviews = $this->seriesRepository->seriesLocalizedOverviews($id);
         $seriesNetworks = $this->seriesRepository->seriesNetworks($id);
         $seriesNetworks = array_map(function ($sn) use ($logoUrl) {
-            $sn['logo_path'] = $this->seriesController->getProviderLogoFullPath($sn['logo_path'], $logoUrl);
+            $sn['logo_path'] = $this->providerService->getProviderLogoFullPath($sn['logo_path'], $logoUrl);
             return $sn;
         }, $seriesNetworks);
         $seriesWatchLinks = array_map(function ($swl) use ($logoUrl) {
-            $swl['provider_logo'] = $this->seriesController->getProviderLogoFullPath($swl['provider_logo'], $logoUrl);
+            $swl['provider_logo'] = $this->providerService->getProviderLogoFullPath($swl['provider_logo'], $logoUrl);
             return $swl;
         }, $this->seriesRepository->seriesWatchLinks($id));
 
@@ -527,7 +528,7 @@ class AdminController extends AbstractController
             $m['origin_country'] = json_decode($m['origin_country'], true);
             $p = $m['provider'] ? explode('|', $m['provider']) : [null, null];
 
-            $m['provider_logo'] = $this->seriesController->getProviderLogoFullPath($p[1], $logoUrl);
+            $m['provider_logo'] = $this->providerService->getProviderLogoFullPath($p[1], $logoUrl);
             $m['provider_name'] = $p[0];
             return $m;
         }, $movies);
@@ -622,7 +623,7 @@ class AdminController extends AbstractController
         $movieLocalizedNames = $this->movieRepository->movieLocalizedNames($id);
         $movieLocalizedOverviews = $this->movieRepository->movieLocalizedOverviews($id);
         $movieDirectLinks = array_map(function ($swl) use ($logoUrl) {
-            $swl['provider_logo'] = $this->seriesController->getProviderLogoFullPath($swl['provider_logo'], $logoUrl);
+            $swl['provider_logo'] = $this->providerService->getProviderLogoFullPath($swl['provider_logo'], $logoUrl);
             return $swl;
         }, $this->movieRepository->movieDirectLinks($id));
 
@@ -683,7 +684,7 @@ class AdminController extends AbstractController
         $logoUrl = $this->imageConfiguration->getUrl('logo_sizes', 3);
         $providers = array_map(function ($p) use ($logoUrl) {
             $p['custom_provider'] = str_starts_with($p['logo_path'], '+');
-            $p['logo_path'] = $this->seriesController->getProviderLogoFullPath($p['logo_path'], $logoUrl);
+            $p['logo_path'] = $this->providerService->getProviderLogoFullPath($p['logo_path'], $logoUrl);
             $p['display_priorities'] = json_decode($p['display_priorities'], true);
             return $p;
         }, $providers);
@@ -717,7 +718,7 @@ class AdminController extends AbstractController
 
         $logoUrl = $this->imageConfiguration->getUrl('logo_sizes', 5); // w500
         $provider['custom_provider'] = str_starts_with($provider['logo_path'], '+');
-        $provider['logo_path'] = $this->seriesController->getProviderLogoFullPath($provider['logo_path'], $logoUrl);
+        $provider['logo_path'] = $this->providerService->getProviderLogoFullPath($provider['logo_path'], $logoUrl);
         $provider['display_priorities'] = json_decode($provider['display_priorities'], true);
 
         $tvProviderList = json_decode(
@@ -728,7 +729,7 @@ class AdminController extends AbstractController
             return $p['provider_id'] === $provider['provider_id'];
         });
         if ($tvProvider) {
-            $tvProvider['logo_path'] = $this->seriesController->getProviderLogoFullPath($tvProvider['logo_path'], $logoUrl);
+            $tvProvider['logo_path'] = $this->providerService->getProviderLogoFullPath($tvProvider['logo_path'], $logoUrl);
         }
 
         $providersLink = $this->generateAdminUrl($this->generateUrl('admin_providers'), [
