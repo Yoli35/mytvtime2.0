@@ -984,7 +984,7 @@ export class EpisodeActions {
                         episodeVoteValue.textContent = voteValue > -1 ? voteValue : '—';
                     }
                     /******************************************************************************
-                     * On the episode page, update the average vote                               *
+                     * On the episode and season pages, update the average vote                   *
                      ******************************************************************************/
                     const averageVoteSpan = document.querySelector('.season-average-vote span');
                     if (averageVoteSpan) {
