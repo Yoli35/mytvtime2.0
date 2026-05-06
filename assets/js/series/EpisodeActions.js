@@ -150,7 +150,9 @@ export class EpisodeActions {
         // Episode page: episodeCard = .episode-card.this-is-my-page
         const episodeCard = document.querySelector('.episode-card.this-is-my-page');
         const isEpisodePage = !!episodeCard;
-        const isNextEpisodeCard = isEpisodePage ? e.currentTarget.closest('.episode-card') !== episodeCard : false;
+        const cardButton = e.currentTarget.closest('.episode-card');
+        const isCardButton = !!cardButton;
+        const isNextEpisodeCard = isEpisodePage && isCardButton ? cardButton !== episodeCard : false;
 
         fetch('/api/episode/add/' + id, {
             method: 'POST',
@@ -970,29 +972,30 @@ export class EpisodeActions {
                                 }
                             }
                         }
+                    }
 
-                        /******************************************************************************
-                         * On the episode page, update the vote value of the episode card             *
-                         ******************************************************************************/
-                        const episodeCard = document.querySelector('.episode-card.this-is-my-page');
-                        if (episodeCard) {
-                            const episodeVoteValue = episodeCard.querySelector('.episode-vote-value');
-                            episodeVoteValue.textContent = voteValue > -1 ? voteValue : '—';
-                        }
-                        /******************************************************************************
-                         * On the episode page, update the average vote                               *
-                         ******************************************************************************/
-                        const averageVoteSpan = document.querySelector('.season-average-vote span');
-                        if (averageVoteSpan) {
-                            const vote = parseInt(voteValue);
-                            const index = data['episodeNumber'] - 1;
-                            self.seasonVotes['votes'][index] = vote;
-                            const sum = self.seasonVotes['votes'].reduce((a, b) => a + b, 0);
-                            const count = self.seasonVotes['votes'].reduce((a, b) => a + (b > 0), 0);
-                            const result = count ? (sum / count).toFixed(1) : 0;
-                            averageVoteSpan.textContent = result < 10 ? (result > 0 ? result : '—') : '10+';
-                            self.seasonVotes['averageVote'] = result;
-                        }
+                    /******************************************************************************
+                     * On the episode page, update the vote value of the episode card             *
+                     ******************************************************************************/
+                    const episodeTmdbId = parseInt(data['episodeId']);
+                    const episodeCard = document.querySelector(`.episode-card[data-episode-id="${episodeTmdbId}"]`);
+                    if (episodeCard) {
+                        const episodeVoteValue = episodeCard.querySelector('.episode-vote-value');
+                        episodeVoteValue.textContent = voteValue > -1 ? voteValue : '—';
+                    }
+                    /******************************************************************************
+                     * On the episode page, update the average vote                               *
+                     ******************************************************************************/
+                    const averageVoteSpan = document.querySelector('.season-average-vote span');
+                    if (averageVoteSpan) {
+                        const vote = parseInt(voteValue);
+                        const index = data['episodeNumber'] - 1;
+                        self.seasonVotes['votes'][index] = vote;
+                        const sum = self.seasonVotes['votes'].reduce((a, b) => a + b, 0);
+                        const count = self.seasonVotes['votes'].reduce((a, b) => a + (b > 0), 0);
+                        const result = count ? (sum / count).toFixed(1) : 0;
+                        averageVoteSpan.textContent = result < 10 ? (result > 0 ? result : '—') : '10+';
+                        self.seasonVotes['averageVote'] = result;
                     }
                 }
             });

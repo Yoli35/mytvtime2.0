@@ -39,7 +39,7 @@
                 {% endif %}
                 <div class="episode-vote"{% if episode.vote_color_background %} style="background-color: {{ episode.vote_color_background }};color: {{ episode.vote_color }};"{% endif %}>
                     <div class="episode-vote-value">{% if episode.vote %}{{ episode.vote }}{% else %}—{% endif %}</div>
-                    / 10
+                    &nbsp;/ 10
                     <div class="episode-vote-block" data-id="{{ episode.userEpisodeId }}">
                         <label for="episode-vote-select-{{ episode.userEpisodeId }}"></label>
                         <select id="episode-vote-select-{{ episode.userEpisodeId }}">

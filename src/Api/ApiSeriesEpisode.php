@@ -453,6 +453,7 @@ readonly class ApiSeriesEpisode
         return new JsonResponse([
             'ok' => true,
             'episodeNumber' => $userEpisode->getEpisodeNumber(),
+            'episodeId' => $userEpisode->getEpisodeId(),
         ]);
     }
 
