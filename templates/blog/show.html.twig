@@ -22,7 +22,8 @@
                 </div>
             </div>
             <div class="content">
-                {{ article.content|nl2br }}
+                {{ article.content|nl2br|markdown_to_html|raw }}
+{#                {{ article.content|nl2br }}#}
             </div>
         </div>
     </div>
