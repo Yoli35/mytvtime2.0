@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Api\ApiWatchLink;
+use App\Entity\EpisodeLocalizedOverview;
 use App\Entity\Series;
 use App\Entity\SeriesExternal;
 use App\Entity\SeriesImage;
@@ -14,6 +15,7 @@ use App\Entity\UserSeries;
 use App\Form\AddBackdropType;
 use App\Form\SeriesVideoType;
 use App\Repository\DeviceRepository;
+use App\Repository\EpisodeLocalizedOverviewRepository;
 use App\Repository\EpisodeStillRepository;
 use App\Repository\FilmingLocationRepository;
 use App\Repository\PeopleUserPreferredNameRepository;
@@ -56,30 +58,31 @@ final class SeriesShowController extends AbstractController
     private bool $reloadUserEpisodes = false;
 
     public function __construct(
-        private readonly ApiWatchLink                      $watchLinkApi,
-        private readonly DateService                       $dateService,
-        private readonly DeviceRepository                  $deviceRepository,
-        private readonly EpisodeStillRepository            $episodeStillRepository,
-        private readonly FilmingLocationRepository         $filmingLocationRepository,
-        private readonly ImageConfiguration                $imageConfiguration,
-        private readonly ImageService                      $imageService,
-        private readonly MonologLogger                     $logger,
-        private readonly PeopleUserPreferredNameRepository $peopleUserPreferredNameRepository,
-        private readonly ProviderService                   $providerService,
-        private readonly SeasonLocalizedOverviewRepository $seasonLocalizedOverviewRepository,
-        private readonly SeriesCastRepository              $seriesCastRepository,
-        private readonly SeriesExternalRepository          $seriesExternalRepository,
-        private readonly SeriesImageRepository             $seriesImageRepository,
-        private readonly SeriesRepository                  $seriesRepository,
-        private readonly SeriesService                     $seriesService,
-        private readonly SeriesVideoRepository             $seriesVideoRepository,
-        private readonly SettingsRepository                $settingsRepository,
-        private readonly SourceRepository                  $sourceRepository,
-        private readonly TMDBService                       $tmdbService,
-        private readonly TranslatorInterface               $translator,
-        private readonly UserEpisodeRepository             $userEpisodeRepository,
-        private readonly UserSeriesRepository              $userSeriesRepository,
-        private readonly WatchProviderRepository           $watchProviderRepository,
+        private readonly ApiWatchLink                       $watchLinkApi,
+        private readonly DateService                        $dateService,
+        private readonly DeviceRepository                   $deviceRepository,
+        private readonly EpisodeStillRepository             $episodeStillRepository,
+        private readonly EpisodeLocalizedOverviewRepository $episodeLocalizedOverviewRepository,
+        private readonly FilmingLocationRepository          $filmingLocationRepository,
+        private readonly ImageConfiguration                 $imageConfiguration,
+        private readonly ImageService                       $imageService,
+        private readonly MonologLogger                      $logger,
+        private readonly PeopleUserPreferredNameRepository  $peopleUserPreferredNameRepository,
+        private readonly ProviderService                    $providerService,
+        private readonly SeasonLocalizedOverviewRepository  $seasonLocalizedOverviewRepository,
+        private readonly SeriesCastRepository               $seriesCastRepository,
+        private readonly SeriesExternalRepository           $seriesExternalRepository,
+        private readonly SeriesImageRepository              $seriesImageRepository,
+        private readonly SeriesRepository                   $seriesRepository,
+        private readonly SeriesService                      $seriesService,
+        private readonly SeriesVideoRepository              $seriesVideoRepository,
+        private readonly SettingsRepository                 $settingsRepository,
+        private readonly SourceRepository                   $sourceRepository,
+        private readonly TMDBService                        $tmdbService,
+        private readonly TranslatorInterface                $translator,
+        private readonly UserEpisodeRepository              $userEpisodeRepository,
+        private readonly UserSeriesRepository               $userSeriesRepository,
+        private readonly WatchProviderRepository            $watchProviderRepository,
     )
     {
     }
@@ -396,8 +399,10 @@ final class SeriesShowController extends AbstractController
             return $this->redirectToRoute('app_tv_series', ['_locale' => $locale, 'id' => $series->getId(), 'slug' => $series->getSlug()]);
         }
         $finaleEpisodeNumber = $this->seriesService->getFinaleEpisodeNumber($season);
-        list($seasonVotes, $seasonEpisodes, $userEpisodes) = $this->seasonEpisodes($season, $userSeries, $finaleEpisodeNumber, $country);
-        $season['episodes'] = $seasonEpisodes;
+//        list($seasonVotes, $seasonEpisodes, $userEpisodes) = $this->seasonEpisodes($season, $userSeries, $finaleEpisodeNumber, $country);
+//        $season['episodes'] = $seasonEpisodes;
+        $userEpisodes = $this->userEpisodeRepository->getUserEpisodesDB($userSeries->getId(), $season['season_number'], $locale, true);
+        $seasonVotes = $this->getSeasonVotes($userEpisodes);
         $episode = json_decode($this->tmdbService->getTvEpisode($series->getTmdbId(), $seasonNumber, $episodeNumber, $locale, ['credits', 'watch/providers']), true);
         if (key_exists('error', $episode)) {
             $this->addFlash('error', $this->translator->trans('The episode could not be loaded'));
@@ -654,9 +659,9 @@ final class SeriesShowController extends AbstractController
         }
         ksort($seasonVotes['votes']);
         $sum = array_sum($seasonVotes['votes']);
-        $count =count(array_filter($seasonVotes['votes'], fn($vote) => $vote !== null));
+        $count = count(array_filter($seasonVotes['votes'], fn($vote) => $vote !== null));
         if ($count) {
-        $seasonVotes['averageVote'] = round($sum / $count, 1);
+            $seasonVotes['averageVote'] = round($sum / $count, 1);
         } else {
             $seasonVotes['averageVote'] = 0;
         }
@@ -761,7 +766,19 @@ final class SeriesShowController extends AbstractController
 
         if (($noOverview || $noFRName) && $language !== 'en-US') {
             $episodeUS = json_decode($this->tmdbService->getTvEpisode($series->getTmdbId(), $episode['season_number'], $episode['episode_number'], 'en-US'), true);
-            $episode['overview'] = $episodeUS['overview'];
+            if ($episodeUS['overview']) {
+                $episode['overview'] = $episodeUS['overview'];
+                $localizedOverview = new EpisodeLocalizedOverview($episode['id'], $episode['overview'], 'en');
+                $this->episodeLocalizedOverviewRepository->save($localizedOverview, true);
+            } else {
+                $seasonUS = json_decode($this->tmdbService->getTvSeason($series->getTmdbId(), $episode['season_number'], 'en-US'), true);
+                $episodeUS = $seasonUS['episodes'][$episode['episode_number'] - 1];
+                if (strlen($episodeUS['overview'] ?? '')) {
+                    $episode['overview'] = $episodeUS['overview'];
+                    $localizedOverview = new EpisodeLocalizedOverview($episode['id'], $episode['overview'], 'en');
+                    $this->episodeLocalizedOverviewRepository->save($localizedOverview, true);
+                }
+            }
             if ($noFRName) {
                 $episode['name'] = $episodeUS['name'];
             }
@@ -778,10 +795,6 @@ final class SeriesShowController extends AbstractController
         $ues = [];
         foreach ($episodes as $episode) {
             $episode['provider_logo_path'] = $this->providerService->getProviderLogoFullPath($episode['provider_logo_path'], $logoUrl);
-            /*if ($episode['provider_id'] > 0)
-                $episode['provider_logo_path'] = $episode['provider_logo_path'] ? $logoUrl . $episode['provider_logo_path'] : null;
-            else
-                $episode['provider_logo_path'] = '/images/providers/' . $episode['provider_logo_path'];*/
             if (!key_exists('watch_at_db', $episode)) {
                 $episode['watch_at_db'] = $episode['watch_at'];
                 if ($episode['watch_at']) {
