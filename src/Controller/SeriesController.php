@@ -888,7 +888,7 @@ class SeriesController extends AbstractController
         $seriesBroadcastSchedule->setSeasonPartFirstEpisode($seasonPartFirstEpisode);
         $seriesBroadcastSchedule->setSeasonPartEpisodeCount($seasonPartEpisodeCount);
         $seriesBroadcastSchedule->setFirstAirDate($this->date($date, true));
-        $seriesBroadcastSchedule->setAirAt(new DateTimeImmutable()->setTime($hour, $minute));
+        $seriesBroadcastSchedule->setAirAt(new DateTime()->setTime($hour, $minute));
         $seriesBroadcastSchedule->setFrequency($frequency);
         $seriesBroadcastSchedule->setOverride($override);
         $seriesBroadcastSchedule->setCountry($country);
