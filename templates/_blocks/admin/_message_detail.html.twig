@@ -28,10 +28,10 @@
             {% endif %}
         </div>
         <div class="admin__message__details__field">
-            <strong>{{ 'Name'|trans }}:</strong> {{ message.name }}
+            <strong>{{ 'Name'|trans }}:</strong> {{ message.name }}<button>{{ 'Block this username'|trans }}</button>
         </div>
         <div class="admin__message__details__field">
-            <strong>{{ 'Email'|trans }}:</strong> <a href="mailto:{{ message.email }}" class="button">{{ message.email }}</a>
+            <strong>{{ 'Email'|trans }}:</strong> <a href="mailto:{{ message.email }}" class="button">{{ message.email }}</a><button>{{ 'Block this email'|trans }}</button>
         </div>
         <div class="admin__message__details__field">
             <strong>{{ 'Subject'|trans }}:</strong> {{ message.subject }}

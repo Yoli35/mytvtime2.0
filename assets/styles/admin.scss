@@ -715,6 +715,22 @@
                     align-items: flex-start;
                     flex-direction: column;
                 }
+
+                button {
+                    background-color: var(--red);
+                    border: none;
+                    border-radius: 5rem;
+                    color: var(--ardoise-10);
+                    cursor: pointer;
+                    margin-inline-start: auto;
+                    padding-block: .5rem;
+                    padding-inline: 1rem;
+                    transition: background-color 300ms ease-in-out;
+
+                    &:hover {
+                        background-color: var(--red-40);
+                    }
+                }
             }
 
             .admin_message_tools {
