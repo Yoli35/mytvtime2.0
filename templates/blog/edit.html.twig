@@ -1,0 +1,157 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}my Tv Time → {{ 'Blog'|trans }} → {{ article.title }}{% endblock %}
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('styles/blog.scss') }}">
+{% endblock %}
+
+{% block body %}
+    {% include '_blocks/_menu.html.twig' %}
+    <div class="container-fluid">
+        <div class="article-details">
+            <div class="back-to-blog">
+                <div class="tool">
+                    <button class="back-link">{{ ux_icon('mdi:arrow-back', {'data-title': 'Back to article'|trans}) }}</button>
+                </div>
+                <div class="tool">
+                    <button class="save-link">{{ ux_icon('mdi:content-save', {'data-title': 'Save article'|trans}) }}</button>
+                </div>
+            </div>
+            <dialog id="confirm-abort-dialog" popover="auto">
+                <p>{{ 'Are you sure you want to dismiss modifications?'|trans }}</p>
+                <form id="abort-form">
+                    <button type="button" popovertarget="cancel-abort-dialog" popovertargetaction="hide">{{ 'Cancel'|trans }}</button>
+                    <button type="button" class="confirm-abort-button">{{ 'Dismiss'|trans }}</button>
+                    <button type="button" class="confirm-save-button">{{ 'Save'|trans }}</button>
+                </form>
+            </dialog>
+            <div class="header">
+                <div class="backdrop">
+                    <img src="/images/articles/backdrops/{{ article.backdropPath }}" alt="{{ article.title }} backdrop">
+                </div>
+                <h1>{{ article.title }}</h1>
+                <div class="article-author">{{ article.author }}</div>
+                <div class="article-dates">
+                    <div class="article-date">{{ article.createdAt|format_datetime('relative_medium', 'short')|capitalize }}</div>
+                    <div class="article-date">{{ article.updatedAt|format_datetime('relative_medium', 'short')|capitalize }}</div>
+                </div>
+            </div>
+            <div class="content">
+                <form id="article-edit-form" class="raw">
+                    <label for="title"><span>{{ 'Title'|trans }}</span>
+                        <input id="title" type="text" value="{{ article.title }}"/>
+                    </label>
+                    <label for="author"><span>{{ 'Author'|trans }}</span>
+                        <input id="author" type="text" value="{{ article.author }}"/>
+                    </label>
+                    <label for="content"><span>{{ 'Content'|trans }}</span>
+                        <textarea id="content">{{ article.content }}</textarea>
+                    </label>
+                </form>
+                <div class="markdown">{{ article.content|markdown_to_html|raw }}</div>
+            </div>
+        </div>
+    </div>
+    {% include '_blocks/_footer.html.twig' %}
+{% endblock %}
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            let contentChanged = false;
+            const initialTitle = "{{ article.title }}";
+            const initialAuthor = "{{ article.author }}";
+            const initialContent = "{{ article.content|e('js') }}";
+
+            saveButtonState(contentChanged);
+
+            const backLink = document.querySelector('.back-link');
+            backLink.addEventListener('click', () => {
+                if (contentChanged) {
+                    /** @type {HTMLDialogElement} */
+                    const confirmAbortDialog = document.getElementById('confirm-abort-dialog');
+                    confirmAbortDialog.showPopover();
+                } else {
+                    window.location.href = '{{ path('app_blog_article', {'id': article.id, 'slug': article.title|lower|slug}) }}';
+                }
+            });
+
+            const saveButton = document.querySelector('.save-link');
+            saveButton.addEventListener('click', () => {
+                saveArticle();
+                contentChanged = false;
+                saveButtonState(contentChanged);
+            });
+
+            /** @type {HTMLInputElement} */
+            const titleInput = document.getElementById('title');
+            titleInput.addEventListener('input', () => {
+                contentChanged = titleInput.value !== initialTitle;
+                saveButtonState(contentChanged);
+            });
+
+            /** @type {HTMLInputElement} */
+            const authorInput = document.getElementById('author');
+            authorInput.addEventListener('input', () => {
+                contentChanged = authorInput.value !== initialAuthor;
+                saveButtonState(contentChanged);
+            });
+
+            /** @type {HTMLTextAreaElement} */
+            const contentTextarea = document.getElementById('content');
+            contentTextarea.addEventListener('input', () => {
+                contentChanged = contentTextarea.value !== initialContent;
+                saveButtonState(contentChanged);
+            });
+
+            const abortButton = document.querySelector('.confirm-abort-button');
+            abortButton.addEventListener('click', abortArticle);
+        });
+
+        function saveArticle() {
+            const form = document.getElementById("article-edit-form");
+            const title = form.querySelector("#title").value;
+            const author = form.querySelector("#author").value;
+            const content = form.querySelector("#content").value;
+
+            if (!title.trim() || !author.trim() || !content.trim()) {
+                alert('Please fill in all fields');
+                return;
+            }
+
+            // Perform form validation and submission logic here
+            // Example: Send form data to server using fetch
+            // Example: Handle server response and display success/error messages
+            const formData = new FormData();
+            formData.append('title', title);
+            formData.append('author', author);
+            formData.append('content', content);
+            fetch('{{ path('app_blog_article_save', {'id': article.id}) }}', {
+                method: 'POST',
+                body: formData,
+            })
+                .then(response => response.json())
+                .then(data => {
+                    console.log('Article saved successfully:', data);
+                })
+                .catch(error => {
+                    console.error('Error saving article:', error);
+                });
+        }
+
+        function abortArticle() {
+            window.location.href = "{{ path('app_blog_article', {'id': article.id, 'slug': article.title|lower|slug}) }}";
+        }
+
+        function saveButtonState(contentChanged) {
+            const saveButton = document.querySelector('.save-link');
+            if (!contentChanged) {
+                saveButton.classList.add('disabled');
+            } else {
+                saveButton.classList.remove('disabled');
+            }
+        }
+
+    </script>
+{% endblock %}

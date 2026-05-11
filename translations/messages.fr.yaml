@@ -31,9 +31,19 @@ Show dataset information: Afficher les informations sur l'ensemble de données
 Users: Utilisateurs
 more notifications: notifications supplémentaires
 # Blog
+Abort: Annuler les modifications
+Are you sure you want to delete this article? : Êtes-vous sûr de vouloir supprimer cet article ?
+Are you sure you want to dismiss modifications? : Êtes-vous sûr de vouloir annuler les modifications ?
+Author: Auteur
+Back to article: Retour à l'article
+Back to blog: Retour au blog
 Blog: Blog
+Content: Contenu
+Delete article: Supprimer l'article
+Dismiss: Annuler
+Edit article: Modifier l'article
 My blog: Mon blog
-
+Save article: Enregistrer l'article
 # Menu
 All locations: Tous les lieux
 Apply: Appliquer

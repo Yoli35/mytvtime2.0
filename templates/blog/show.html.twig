@@ -10,6 +10,18 @@
     {% include '_blocks/_menu.html.twig' %}
     <div class="container-fluid">
         <div class="article-details">
+            <div class="back-to-blog">
+                <div class="tool"><a href="{{ path('app_blog_index') }}" class="back-to-blog-link">{{ ux_icon('mdi:blog', {'data-title': 'Back to blog'|trans}) }}</a></div>
+                <div class="tool"><a href="{{ path('app_blog_article_edit', {'id': article.id}) }}" class="edit-link">{{ ux_icon('mdi:pen', {'data-title': 'Edit article'|trans}) }}</a></div>
+                <div class="tool"><button popovertarget="confirm-delete-dialog" class="delete-link">{{ ux_icon('mdi:trash', {'data-title': 'Delete article'|trans}) }}</button></div>
+            </div>
+            <dialog id="confirm-delete-dialog" popover="auto">
+                <p>{{ 'Are you sure you want to delete this article?'|trans }}</p>
+                <form method="post" action="{{ path('app_blog_article_delete', {'id': article.id}) }}">
+                    <button type="button" popovertarget="confirm-delete-dialog" popovertargetaction="hide">{{ 'Cancel'|trans }}</button>
+                    <button type="submit" class="confirm-delete-button">{{ 'Delete'|trans }}</button>
+                </form>
+            </dialog>
             <div class="header">
                 <div class="backdrop">
                     <img src="/images/articles/backdrops/{{ article.backdropPath }}" alt="{{ article.title }} backdrop">
@@ -22,8 +34,7 @@
                 </div>
             </div>
             <div class="content">
-                {{ article.content|markdown_to_html|raw }}
-{#                {{ article.content|nl2br }}#}
+                <div class="markdown">{{ article.content|markdown_to_html|raw }}</div>
             </div>
         </div>
     </div>
