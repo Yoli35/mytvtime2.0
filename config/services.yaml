@@ -25,3 +25,8 @@ services:
     App\Service\TMDBService:
         arguments:
             $bearer: '%env(TMDB_BEARER)%'
+
+    App\Markdown\GithubFlavoredMarkdown: ~
+
+    twig.markdown.default:
+        alias: App\Markdown\GithubFlavoredMarkdown

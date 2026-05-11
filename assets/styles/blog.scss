@@ -89,5 +89,184 @@
         margin-inline: auto;
         max-width: 64rem;
         padding: 2rem;
+
+        > * + * {
+            margin-block-start: 1rem;
+        }
+
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6 {
+            color: var(--ardoise-10);
+            font-weight: 400;
+            line-height: 1.25;
+            margin-block-start: 2rem;
+        }
+
+        h1 {
+            font-size: 2.25rem;
+        }
+
+        h2 {
+            border-block-end: 1px solid hsla(from var(--ardoise-10) h s l / .2);
+            font-size: 1.875rem;
+            padding-block-end: .5rem;
+        }
+
+        h3 {
+            font-size: 1.5rem;
+        }
+
+        h4 {
+            font-size: 1.25rem;
+        }
+
+        p {
+            font-weight: 300;
+        }
+
+        strong {
+            font-weight: 600;
+        }
+
+        em {
+            font-style: italic;
+        }
+
+        a {
+            color: var(--orange-50);
+            font-weight: 500;
+            text-decoration: underline;
+            text-underline-offset: .2em;
+
+            &:hover,
+            &:focus {
+                color: var(--orange-40);
+            }
+        }
+
+        ul,
+        ol {
+            display: flex;
+            flex-direction: column;
+            gap: .25rem;
+            padding-inline-start: 2rem;
+        }
+
+        ul {
+            list-style: disc;
+        }
+
+        ol {
+            list-style: decimal;
+        }
+
+        li {
+            padding-inline-start: .25rem;
+
+            > ul,
+            > ol {
+                margin-block-start: .25rem;
+            }
+        }
+
+        blockquote {
+            background-color: hsla(from var(--ardoise-80) h s l / .5);
+            border-inline-start: .25rem solid var(--orange-50);
+            border-radius: .25rem;
+            color: var(--ardoise-20);
+            font-style: italic;
+            padding: 1rem 1.25rem;
+            text-wrap: pretty;
+
+            /*
+                background-color: #333;
+                border-inline-start: .5rem solid #666;
+                margin-block: 1rem;
+                padding-block: 1rem;
+                padding-inline-start: 2rem;
+             */
+        }
+
+        hr {
+            border: 0;
+            border-block-start: 1px solid hsla(from var(--ardoise-10) h s l / .2);
+            margin-block: 2rem;
+        }
+
+        code {
+            background-color: hsla(from var(--ardoise-80) h s l / .8);
+            border: 1px solid hsla(from var(--ardoise-10) h s l / .15);
+            border-radius: .25rem;
+            color: var(--orange-40);
+            font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Consolas, "Liberation Mono", Menlo, monospace;
+            font-size: .9em;
+            padding: .125rem .375rem;
+        }
+
+        pre {
+            background-color: hsla(from var(--ardoise-90) h s l / .85);
+            border: 1px solid hsla(from var(--ardoise-10) h s l / .15);
+            border-radius: .5rem;
+            overflow-x: auto;
+            padding: 1rem;
+
+            code {
+                background-color: transparent;
+                border: 0;
+                color: var(--ardoise-10);
+                display: block;
+                padding: 0;
+            }
+        }
+
+        table {
+            border-collapse: collapse;
+            display: block;
+            overflow-x: auto;
+            width: 100%;
+        }
+
+        thead {
+            background-color: hsla(from var(--orange-50) h s l / .25);
+        }
+
+        th,
+        td {
+            border: 1px solid hsla(from var(--ardoise-10) h s l / .2);
+            padding: .5rem .75rem;
+            text-align: left;
+        }
+
+        th {
+            color: var(--orange-50);
+            font-weight: 600;
+        }
+
+        tbody tr:nth-child(odd) {
+            background-color: hsla(from var(--ardoise-80) h s l / .35);
+        }
+
+        tbody tr:nth-child(even) {
+            background-color: hsla(from var(--ardoise-90) h s l / .35);
+        }
+
+        img {
+            border-radius: .5rem;
+            height: auto;
+            margin-inline: auto;
+        }
+
+        del {
+            color: var(--ardoise-30);
+        }
+
+        input[type="checkbox"] {
+            accent-color: var(--orange-50);
+            margin-inline-end: .5rem;
+        }
     }
 }
