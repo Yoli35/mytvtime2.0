@@ -19,8 +19,6 @@ final class GithubFlavoredMarkdown implements MarkdownInterface
 
     public function convert(string $body): string
     {
-        $t = $this->converter->convert($body)->getContent();
-        dump($t);
-        return $t;
+        return $this->converter->convert($body)->getContent();
     }
 }
