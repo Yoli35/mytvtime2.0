@@ -245,7 +245,7 @@ export class Episode {
         const nameDialog = document.querySelector('.episode-name-dialog');
         const form = nameDialog.querySelector('form');
         const buttonCancel = nameDialog.querySelector('button[name="cancel"]');
-        const input = document.getElementById('title-input');
+        const input = document.getElementById('name-input');
 
         nameDialog.addEventListener('toggle', () => {
             if (nameDialog.matches(':popover-open')) {
