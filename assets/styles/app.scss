@@ -1286,6 +1286,8 @@ label:has(input[type="text"]) {
         }
 
         &.active {
+            margin-inline-start: auto;
+
             input[type="search"] {
                 background-color: var(--orange-30);
                 padding-inline: 1rem 5rem;
@@ -1630,6 +1632,12 @@ label:has(input[type="text"]) {
 
         &:has(+ div), + div {
             margin-inline-end: 0;
+        }
+    }
+
+    &:has(.multi-search.active) {
+        .screen-size, .count-down {
+            display: none;
         }
     }
 }
