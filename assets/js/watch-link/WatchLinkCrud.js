@@ -46,7 +46,7 @@ export class WatchLinkCrud {
             {needle: 'www.primevideo.com', providerId: 119},
             {needle: 'www.viki.com', providerId: 1390},
             {needle: 'wetv.vip', providerId: 623},
-            {needle: 'www.youtube.com', providerId: 192},
+            {needle: 'youtube.com', providerId: 192},
         ];
 
         this.init();
