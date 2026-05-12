@@ -66,6 +66,13 @@ export class WatchLinkCrud {
         const watchLinkFormCancel = watchLinkForm.querySelector('button[type="button"]');
         const watchLinkFormSubmit = watchLinkForm.querySelector('button[type="submit"]');
 
+        watchLinkFormDialog.addEventListener('toggle', function (e) {
+            if (e.newState === 'open') {
+                watchLinkFormUrl.focus();
+                watchLinkFormUrl.select();
+            }
+        });
+
         addWatchLink.addEventListener('click', function () {
             watchLinkFormType.value = 'create';
             watchLinkFormSubmit.classList.remove('delete');
