@@ -34,7 +34,7 @@
                 </div>
             </div>
             <div class="content">
-                <div class="markdown">{{ article.content|markdown_to_html|raw }}</div>
+                {{ include('_blocks/blog/_markdown.html.twig', {'content': article.content}) }}
             </div>
         </div>
     </div>

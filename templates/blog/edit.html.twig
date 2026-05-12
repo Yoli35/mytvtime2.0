@@ -48,8 +48,9 @@
                     <label for="content"><span>{{ 'Content'|trans }}</span>
                         <textarea id="content">{{ article.content }}</textarea>
                     </label>
+                    <div class="preview" data-title="{{ 'Apply changes'|trans }}">{{ ux_icon('mdi:arrow-right') }}</div>
                 </form>
-                <div class="markdown">{{ article.content|markdown_to_html|raw }}</div>
+                {{ include('_blocks/blog/_markdown.html.twig', {'content': article.content}) }}
             </div>
         </div>
     </div>
@@ -65,6 +66,9 @@
             const initialContent = "{{ article.content|e('js') }}";
 
             saveButtonState(contentChanged);
+
+            const previewButton = document.querySelector('.preview');
+            previewButton.addEventListener('click', previewArticle);
 
             const backLink = document.querySelector('.back-link');
             backLink.addEventListener('click', () => {
@@ -109,6 +113,38 @@
             abortButton.addEventListener('click', abortArticle);
         });
 
+        function previewArticle() {
+            const form = document.getElementById("article-edit-form");
+            const content = form.querySelector("#content").value;
+
+            if (!content.trim()) {
+                alert('Please fill in all fields');
+                return;
+            }
+
+            // Perform form validation and submission logic here
+            // Example: Send form data to server using fetch
+            // Example: Handle server response and display success/error messages
+            const formData = new FormData();
+            formData.append('content', content);
+            fetch('{{ path('app_blog_article_preview') }}', {
+                method: 'POST',
+                body: formData,
+            })
+                .then(response => response.json())
+                .then(data => {
+                    console.log('Article saved successfully:', data);
+                    const previewContainer = document.querySelector('.markdown');
+                    const tempPreview = document.createElement('div');
+                    tempPreview.innerHTML = data.preview;
+                    const preview = tempPreview.querySelector('.markdown');
+                    previewContainer.replaceWith(preview);
+                })
+                .catch(error => {
+                    console.error('Error saving article:', error);
+                });
+        }
+
         function saveArticle() {
             const form = document.getElementById("article-edit-form");
             const title = form.querySelector("#title").value;
@@ -146,10 +182,13 @@
 
         function saveButtonState(contentChanged) {
             const saveButton = document.querySelector('.save-link');
+            const previewButton = document.querySelector('.preview');
             if (!contentChanged) {
                 saveButton.classList.add('disabled');
+                previewButton.classList.add('disabled');
             } else {
                 saveButton.classList.remove('disabled');
+                previewButton.classList.remove('disabled');
             }
         }
 

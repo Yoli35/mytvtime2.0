@@ -14,7 +14,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 final class BlogController extends AbstractController
 {
     public function __construct(
-        private readonly ArticleRepository $articleRepository,
+        private readonly ArticleRepository   $articleRepository,
         private readonly TranslatorInterface $translator,
     )
     {
@@ -43,6 +43,19 @@ final class BlogController extends AbstractController
     {
         return $this->render('blog/edit.html.twig', [
             'article' => $article,
+        ]);
+    }
+
+    #[Route('/article/preview', name: 'article_preview', methods: ['POST'])]
+    public function preview(Request $request): Response
+    {
+        $payload = $request->request->all();
+        dump($payload);
+        $content = $payload['content'];
+
+        return $this->json([
+            'ok' => true,
+            'preview' => $this->renderView('_blocks/blog/_markdown.html.twig', ['content' => $content]),
         ]);
     }
 
