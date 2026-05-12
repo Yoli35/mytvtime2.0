@@ -94,6 +94,8 @@
                 contentChanged = titleInput.value !== initialTitle;
                 saveButtonState(contentChanged);
             });
+            titleInput.select();
+            titleInput.focus();
 
             /** @type {HTMLInputElement} */
             const authorInput = document.getElementById('author');

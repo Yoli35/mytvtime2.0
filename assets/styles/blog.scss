@@ -242,9 +242,14 @@
                 flex-direction: column;
                 /*gap: .5rem;*/
                 margin-inline-start: 0;
+                width: 100%;
 
                 span {
                     font-weight: 600;
+                }
+
+                input {
+                    width: 100%;
                 }
 
                 textarea {
