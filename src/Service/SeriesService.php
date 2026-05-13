@@ -134,24 +134,20 @@ readonly class SeriesService
         return $tv;
     }
 
-//    public function getTvMini(Series $series): ?array
-//    {
-//        $seriesTmdbId = $series->getTmdbId();
-//        $tv = json_decode($this->tmdbService->getTv($seriesTmdbId, 'en-US'), true);
-//
-//        if (key_exists('error', $tv)) {
-//            $this->logger->error("TMDB TV show not found", ['series_id' => $series->getId(), 'tmdb_id' => $seriesTmdbId]);
-//            return null;
-//        }
-//
-//        if (!$tv) {
-//            return null;
-//        }
-//
-//        $tv['seasons'] = $this->seasonsPosterPath($tv['seasons']);
-//
-//        return $tv;
-//    }
+    public function getTvMini(int $tmdbId): ?array
+    {
+        $tv = json_decode($this->tmdbService->getTv($tmdbId, 'fr-FR'), true);
+
+        if (key_exists('error', $tv)) {
+            return null;
+        }
+
+        if (!$tv) {
+            return null;
+        }
+
+        return $tv;
+    }
 
     public function updateSeries(Series $series, array $tv, array $seriesImages): Series
     {

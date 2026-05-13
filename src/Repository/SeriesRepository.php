@@ -140,6 +140,20 @@ class SeriesRepository extends ServiceEntityRepository
         return $this->getAll($sql, ['userId' => $userId], ['userId' => ParameterType::INTEGER]);
     }
 
+    public function getAiringSeries(string $date): array
+    {
+        $sql = <<<SQL
+            SELECT DISTINCT s.`name` AS name, sln.`name` AS localized_name, s.`id` AS id, s.`tmdb_id` AS tmdb_id, s.`poster_path` AS poster_path
+            FROM `series` s
+                LEFT JOIN `series_localized_name` sln ON sln.`series_id`=s.`id`
+                LEFT JOIN `user_series` us ON us.`series_id`=s.`id`
+                LEFT JOIN `user_episode` ue ON ue.`user_series_id`=us.`id`
+            WHERE ue.`air_date` >= :date
+        SQL;
+
+        return $this->getAll($sql, ['date' => $date], ['date' => ParameterType::STRING]);
+    }
+
     public function seriesPosters(int $seriesId): array
     {
         $sql = <<<SQL

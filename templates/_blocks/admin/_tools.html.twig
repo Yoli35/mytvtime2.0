@@ -3,6 +3,7 @@
 
     <div class="tools">
         <h1>{{ ux_icon('mdi:tools') }} {{ 'Tools'|trans }}</h1>
+
         <div class="tool">
             <h2>{{ ux_icon('mdi:calendar-time') }} {{ 'Minutes passed since...'|trans }}</h2>
             <form id="find-zip-command" class="form">
@@ -29,6 +30,27 @@
                 </div>
             </form>
             <script type="module" src="{{ asset('js/admin/tools.js') }}"></script>
+        </div>
+
+        <div class="tool">
+            <h2>{{ ux_icon('mdi:file-image') }} {{ 'Check if airing series have a new poster'|trans }} (<span class="series-count"></span>)</h2>
+            <form id="check-posters" class="form">
+                <div class="form-row">
+                    <div class="form-field">
+                        <label for="start">{{ 'Start'|trans }}
+                            <input type="number" id="start" name="start" value="{{ startDay }}">
+                        </label>
+                    </div>
+                    <div class="form-field">
+                        <div class="form-row">
+                            <button type="submit" class="admin__button" value="adjust">{{ 'Adjust starting day'|trans }}</button>
+                            <button type="submit" class="admin__button" value="check">{{ 'Check'|trans }}</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-results poster-update">
+                </div>
+            </form>
         </div>
     </div>
 

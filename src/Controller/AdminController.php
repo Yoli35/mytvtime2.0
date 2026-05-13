@@ -25,6 +25,7 @@ use App\Service\ImageConfiguration;
 use App\Service\ImageService;
 use App\Service\KeywordService;
 use App\Service\ProviderService;
+use App\Service\SeriesService;
 use App\Service\TMDBService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
@@ -58,6 +59,7 @@ class AdminController extends AbstractController
         private readonly PointOfInterestRepository         $pointOfInterestRepository,
         private readonly ProviderService                   $providerService,
         private readonly SeriesRepository                  $seriesRepository,
+        private readonly SeriesService                     $seriesService,
         private readonly SettingsRepository                $settingsRepository,
         private readonly TMDBService                       $tmdbService,
         private readonly TranslatorInterface               $translator,
@@ -100,7 +102,7 @@ class AdminController extends AbstractController
     #[Route('/keywords', name: 'keywords')]
     public function keywords(Request $request): Response
     {
-        $firsts = ['other', '0-9','a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'];
+        $firsts = ['other', '0-9', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'];
         $first = $request->query->get('first', 'a');
         $keywords = $this->keywordRepository->get($first);
         $missingTranslations = $this->keywordService->keywordsTranslation($keywords, $request->getLocale());
@@ -157,7 +159,73 @@ class AdminController extends AbstractController
     #[Route('/tools', name: 'tools')]
     public function tools(): Response
     {
-        return $this->render('admin/index.html.twig');
+        return $this->render('admin/index.html.twig', [
+            'startDay' => $this->getStartDay(),
+        ]);
+    }
+
+    private function getStartDay(): int
+    {
+        $settingsArr = $this->settingsRepository->findBy(['name' => 'schedule_menu_settings']);
+        if (empty($settingsArr)) {
+            return 2;
+        } else {
+            $startDay = 0;
+            foreach ($settingsArr as $settings) {
+                $start = intval($settings->getData()['start']);
+                $startDay = min($start, $startDay);
+            }
+        }
+        return $startDay;
+    }
+
+    #[Route('/tools/check/posters/adjust', name: 'tools_check_posters_adjust', methods: ['POST'])]
+    public function toolsCheckPostersAdjust(Request $request): Response
+    {
+        $data = $request->getPayload();
+        dump($data);
+        $startDay = $data->getInt('startDay', $this->getStartDay());
+        $startDate = $this->dateService->getNow('UTC', true)->modify($startDay . ' days')->format('Y-m-d');
+        $seriesArr = $this->seriesRepository->getAiringSeries($startDate);
+
+        return $this->json([
+            'status' => 'success',
+            'seriesArr' => $seriesArr,
+        ]);
+    }
+
+    #[Route('/tools/check/posters/check', name: 'tools_check_posters_check', methods: ['POST'])]
+    public function toolsCheckPostersCheck(Request $request): Response
+    {
+        $data = $request->toArray();
+        dump($data);
+        $series = $data['series'];
+        dump($series);
+        $posterUrl = $this->imageConfiguration->getUrl('poster_sizes', 5);
+        $updated = false;
+
+        $tv = $this->seriesService->getTvMini($series['tmdb_id']);
+        if (!$tv) {
+            return $this->json([
+                'error' => 'TV not found',
+            ]);
+        }
+        if ($tv['poster_path'] != $series['poster_path']) {
+            $this->imageService->saveImage("posters", $tv['poster_path'], $posterUrl);
+
+            $dbSeries = $this->seriesRepository->find($series['id']);
+            if ($dbSeries) {
+                $dbSeries->setPosterPath($tv['poster_path']);
+                $this->seriesRepository->save($dbSeries);
+                $updated = true;
+            }
+        }
+
+        return $this->json([
+            'status' => 'success',
+            'update' => $updated,
+            'poster_path' => $posterUrl . $tv['poster_path'],
+        ]);
     }
 
     #[Route('/api', name: 'api')]
