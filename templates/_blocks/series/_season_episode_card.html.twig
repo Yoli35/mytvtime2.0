@@ -1,61 +1,64 @@
-<a href="{{ episode.link }}">
-    <div class="episode-card" data-episode-id="{{ episode.id }}">
-        <div class="episode-still"{% if episode.overview|length %} data-title="{{ episode.overview }}"{% else %} data-title="{{ episode.name }}"{% endif %} data-title-width="32rem">
-            {% if episode.still %}
-                <img src="{{ episode.still }}" alt="{{ episode.name }}">
-            {% else %}
-                <div class="no-image">{{ 'No image'|trans }}</div>
-            {% endif %}
-            {% if episode.airing and episode.watchedAt is null %}
-                <div class="mark-this-episode-as-watched"
-                     data-id="{{ episode.id }}"
-                     data-ue-id="{{ episode.userEpisodeId }}"
-                     data-series-id="{{ episode.series_id }}"
-                     data-last-episode="{{ episode.last }}"
-                     data-show-id="{{ episode.show_id }}"
-                     data-s-number="{{ episode.season_number }}"
-                     data-e-number="{{ episode.episode_number }}"
-                     data-title="{{ 'Mark this episode as seen'|trans }}">
-                    {{ ux_icon('mdi:plus') }}
-                </div>
-            {% endif %}
+<div class="episode-card" data-episode-id="{{ episode.id }}">
+    <div class="episode-still"{% if episode.overview|length %} data-title="{{ episode.overview }}"{% else %} data-title="{{ episode.name }}"{% endif %} data-title-width="32rem">
+        {% if episode.still %}
+            <img src="{{ episode.still }}" alt="{{ episode.name }}">
+        {% else %}
+            <div class="no-image">{{ 'No image'|trans }}</div>
+        {% endif %}
+        {% if episode.airing %}
+            <a href="{{ episode.link }}">
+                <div class="go-to-episode-page" data-title="{{ 'Go to episode'|trans }}">{{ ux_icon('mdi:login-variant') }}</div>
+            </a>
+        {% endif %}
+        {% if episode.airing and episode.watchedAt is null %}
+            <div class="mark-this-episode-as-watched"
+                 data-id="{{ episode.id }}"
+                 data-ue-id="{{ episode.userEpisodeId }}"
+                 data-series-id="{{ episode.series_id }}"
+                 data-last-episode="{{ episode.last }}"
+                 data-show-id="{{ episode.show_id }}"
+                 data-s-number="{{ episode.season_number }}"
+                 data-e-number="{{ episode.episode_number }}"
+                 data-title="{{ 'Mark this episode as seen'|trans }}">
+                {{ ux_icon('mdi:plus') }}
+            </div>
+        {% endif %}
+    </div>
+    <div class="episode-infos">
+        <div class="line-1">
+            <div class="episode-number{% if episode.watchedAt %} watched{% endif %}">{{ episode.episode_number }}</div>
+            <div class="episode-name">{{ episode.name }}</div>
         </div>
-        <div class="episode-infos">
-            <div class="line-1">
-                <div class="episode-number{% if episode.watchedAt %} watched{% endif %}">{{ episode.episode_number }}</div>
-                <div class="episode-name">{{ episode.name }}</div>
+        <div class="line-2">
+            <div class="episode-air-date">
+                {% if episode.air_date %}{{ ux_icon('mdi:broadcast') }} {{ episode.air_date }}{% endif %}
             </div>
-            <div class="line-2">
-                <div class="episode-air-date">
-                    {% if episode.air_date %}{{ ux_icon('mdi:broadcast') }} {{ episode.air_date }}{% endif %}
-                </div>
-                <div class="episode-runtime">
-                    {% if episode.runtime %}{{ episode.runtime }} {{ 'minutes'|trans }}{% endif %}
+            <div class="episode-runtime">
+                {% if episode.runtime %}{{ episode.runtime }} {{ 'minutes'|trans }}{% endif %}
+            </div>
+        </div>
+        <div class="line-3{% if episode.airing %} airing{% endif %}">
+            {% if episode.watchedAt %}
+                <div class="episode-watched-at">{{ ux_icon('mdi:eye') }} {{ episode.watchedAt }}</div>
+            {% endif %}
+            <div class="episode-vote"{% if episode.vote_color_background %} style="background-color: {{ episode.vote_color_background }};color: {{ episode.vote_color }};"{% endif %}>
+                <div class="episode-vote-value">{% if episode.vote %}{{ episode.vote }}{% else %}—{% endif %}</div>
+                &nbsp;/ 10
+                <div class="episode-vote-block" data-id="{{ episode.userEpisodeId }}">
+                    <label for="episode-vote-select-{{ episode.userEpisodeId }}"></label>
+                    <select id="episode-vote-select-{{ episode.userEpisodeId }}">
+                        <option value="-1"{% if episode.vote is null %} selected{% endif %}></option>
+                        {% for i in range(1, 12) %}
+                            <option value="{{ i }}"{% if episode.vote == i %} selected{% endif %}>{{ i }}</option>
+                        {% endfor %}
+                    </select>
                 </div>
             </div>
-            <div class="line-3{% if episode.airing %} airing{% endif %}">
-                {% if episode.watchedAt %}
-                    <div class="episode-watched-at">{{ ux_icon('mdi:eye') }} {{ episode.watchedAt }}</div>
-                {% endif %}
-                <div class="episode-vote"{% if episode.vote_color_background %} style="background-color: {{ episode.vote_color_background }};color: {{ episode.vote_color }};"{% endif %}>
-                    <div class="episode-vote-value">{% if episode.vote %}{{ episode.vote }}{% else %}—{% endif %}</div>
-                    &nbsp;/ 10
-                    <div class="episode-vote-block" data-id="{{ episode.userEpisodeId }}">
-                        <label for="episode-vote-select-{{ episode.userEpisodeId }}"></label>
-                        <select id="episode-vote-select-{{ episode.userEpisodeId }}">
-                            <option value="-1"{% if episode.vote is null %} selected{% endif %}></option>
-                            {% for i in range(1, 12) %}
-                                <option value="{{ i }}"{% if episode.vote == i %} selected{% endif %}>{{ i }}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
+            {% if episode.provider_path %}
+                <div class="provider-logo" data-title="{{ episode.provider_name }}">
+                    <img src="{{ episode.provider_path }}" alt="{{ episode.provider_name }}">
                 </div>
-                {% if episode.provider_path %}
-                    <div class="provider-logo" data-title="{{ episode.provider_name }}">
-                        <img src="{{ episode.provider_path }}" alt="{{ episode.provider_name }}">
-                    </div>
-                {% endif %}
-            </div>
+            {% endif %}
         </div>
     </div>
-</a>
+</div>
