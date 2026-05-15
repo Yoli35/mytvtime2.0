@@ -915,6 +915,7 @@ label:has(input[type="text"]) {
                         background-color: var(--orange-20);
                         gap: unset;
                         height: unset;
+                        max-width: 10.25rem;
 
                         a {
                             aspect-ratio: unset;
