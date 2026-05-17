@@ -31,6 +31,9 @@ return [
     'AdminSeriesUpdates' => [
         'path' => './assets/js/admin/AdminSeriesUpdates.js',
     ],
+    'AdminTools' => [
+        'path' => './assets/js/admin/AdminTools.js',
+    ],
     'AlbumShow' => [
         'path' => './assets/js/album/AlbumShow.js',
     ],

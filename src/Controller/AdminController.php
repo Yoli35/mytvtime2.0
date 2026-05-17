@@ -183,7 +183,6 @@ class AdminController extends AbstractController
     public function toolsCheckPostersAdjust(Request $request): Response
     {
         $data = $request->getPayload();
-        dump($data);
         $startDay = $data->getInt('startDay', $this->getStartDay());
         $startDate = $this->dateService->getNow('UTC', true)->modify($startDay . ' days')->format('Y-m-d');
         $seriesArr = $this->seriesRepository->getAiringSeries($startDate);
@@ -198,9 +197,8 @@ class AdminController extends AbstractController
     public function toolsCheckPostersCheck(Request $request): Response
     {
         $data = $request->toArray();
-        dump($data);
         $series = $data['series'];
-        dump($series);
+
         $posterUrl = $this->imageConfiguration->getUrl('poster_sizes', 5);
         $updated = false;
 
@@ -970,7 +968,6 @@ class AdminController extends AbstractController
         $addLocationForm = $this->render('_blocks/forms/_add_location_form.html.twig', $data);
         $now = $this->dateService->getNowImmutable("Europe/Paris");
         $emptyPoi = new PointOfInterest('New point of interest', '', '', '', '', 0, 0, $now);
-//        dump($data, $addLocationForm, $emptyPoi);
 
         return $this->render('admin/index.html.twig', [
             'pois' => [
@@ -1032,7 +1029,6 @@ class AdminController extends AbstractController
     {
         $inputBag = $request->getPayload()->all();
         $files = $request->files->all();
-//        dump($inputBag, $files);
 
         $messages = [];
 

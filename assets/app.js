@@ -4,6 +4,7 @@ import {AdminKeyword} from "AdminKeyword";
 import {AdminMovieEdit} from "AdminMovieEdit";
 import {AdminPointsOfInterest} from "AdminPointsOfInterest";
 import {AdminSeriesUpdates} from "AdminSeriesUpdates";
+import {AdminTools} from "AdminTools";
 import {AlbumShow} from "AlbumShow";
 import {Application} from "Application";
 import {AverageColor} from 'AverageColor';
@@ -49,6 +50,10 @@ window.addEventListener("DOMContentLoaded", () => {
     // Admin page
     const admin = document.querySelector(".admin");
     if (admin) {
+        if (admin.querySelector(".admin__tools")) {
+            new AdminTools(toolTips);
+            return;
+        }
         if (admin.querySelector(".admin__keywords")) {
             new AdminKeyword(flashMessage);
             return;
