@@ -667,9 +667,6 @@ class MovieController extends AbstractController
         $images['logo_path']['500w'] = $this->imageConfiguration->getUrl('logo_sizes', 5);
         $images['logo_path']['1000w'] = $this->imageConfiguration->getUrl('logo_sizes', 6);
 
-//        dump([
-//            'images' => $images,
-//        ]);
         return $images;
     }
 

@@ -50,7 +50,6 @@ final class BlogController extends AbstractController
     public function preview(Request $request): Response
     {
         $payload = $request->request->all();
-        dump($payload);
         $content = $payload['content'];
 
         return $this->json([
@@ -63,7 +62,6 @@ final class BlogController extends AbstractController
     public function save(Request $request, Article $article): Response
     {
         $payload = $request->request->all();
-        dump($payload);
         $article->setTitle($payload['title']);
         $article->setAuthor($payload['author']);
         $article->setContent($payload['content']);

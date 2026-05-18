@@ -368,17 +368,6 @@ class SeriesController extends AbstractController
         });
         $selectedProvider['logo_path'] = $this->providerService->getProviderLogoFullPath($selectedProvider['logo_path'], $this->imageConfiguration->getUrl('logo_sizes', 5));
 
-        /*dump([
-            'provider' => $provider,
-            'selectedProvider' => $selectedProvider, // Si null, on affiche la liste des séries sans provider
-            'providers' => $providers,
-            'seriesWithoutProvider' => $seriesWithoutProvider,
-            'seriesByProvider' => $seriesByProvider,
-            'tab' => $tab,
-            'page tab 1' => $page1,
-            'page tab 2' => $page2,
-            'totalPages' => ceil(count($seriesByProvider) / $limit),
-        ]);*/
         $tmdbIds = array_column($seriesByProvider['results'], 'tmdb_id');
 
         return $this->render('series/series_by_provider.html.twig', [

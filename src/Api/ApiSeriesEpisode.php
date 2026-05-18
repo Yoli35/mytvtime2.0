@@ -662,14 +662,7 @@ readonly class ApiSeriesEpisode
         $userId = $userSeries->getUser()->getId();
         $userEpisodes = $this->userEpisodeRepository->getEpisodeListBetweenDates($userId, $firstWatchDate->format("Y-m-d"), $lastWatchDate->format("Y-m-d"));
         $episodeCount = count($userEpisodes);
-        /*dump([
-            'first EpisodeDb' => $firstEpisodeDb,
-            'last EpisodeDb' => $lastEpisodeDb,
-            'first WatchDate' => $firstWatchDate,
-            'last WatchDate' => $lastWatchDate,
-            'episode Count' => $episodeCount,
-            'user episodes' => $userEpisodes,
-        ]);*/
+
         if ($episodeCount == $numberOfEpisode) {
             return true;
         }
