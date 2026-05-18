@@ -173,6 +173,7 @@ readonly class SeriesSchedule
             if (!key_exists($index, $seriesArr)) {
                 $seriesArr[$index] = [];
             }
+            $item['upToDate'] = $item['watchAt'] !== null;
             $seriesArr[$index][] = $item;
         }
         ksort($seriesArr);
