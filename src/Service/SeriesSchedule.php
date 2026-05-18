@@ -126,7 +126,7 @@ readonly class SeriesSchedule
                         $display = sprintf('Specials #%02d & #%02d', $start, $end);
                     $item['firstEpisodeNumber'] = $start;
                 } else {
-                    $episodeNumber = $item['episodes'][0];
+                    $start = $episodeNumber = $item['episodes'][0];
                     if ($seasonNumber)
                         $display = sprintf('S%02dE%02d', $seasonNumber, $episodeNumber);
                     else
@@ -138,6 +138,12 @@ readonly class SeriesSchedule
                 $item['display'] = $item['name'] . ' ' . $display;
                 $item['episodeCount'] = count($episodeIdArr);
                 $item['upToDate'] = $item['future_up_to_date'] || $item['past_up_to_date'];
+
+                if ($item['firstToWatchSeasonNumber'] && $item['firstToWatchSeasonNumber'] <= $item['seasonNumber'] && $item['firstToWatchEpisodeNumber'] < $start) {
+                    $item['firstToWatch'] = true;
+                } else {
+                    $item['firstToWatch'] = false;
+                }
 
                 $dayArr[$key] = $item;
             }
@@ -163,6 +169,9 @@ readonly class SeriesSchedule
             $item['seasonPosterPath'] = null;
             $item['episodeCount'] = 1;
             $item['firstEpisodeNumber'] = 1;
+            $item['firstToWatch'] = 0;
+            $item['firstToWatchSeasonNumber'] = 0;
+            $item['firstToWatchEpisodeNumber'] = 0;
             $movieArr[$item['id']] = $item;
         }
 
@@ -194,6 +203,9 @@ readonly class SeriesSchedule
                     'episodeCount' => $item['episodeCount'],
                     'episodesWatched' => $item['episodesWatched'],
                     'firstEpisodeNumber' => $item['firstEpisodeNumber'],
+                    'firstToWatch' => $item['firstToWatch'],
+                    'firstToWatchSeasonNumber' => $item['firstToWatchSeasonNumber'],
+                    'firstToWatchEpisodeNumber' => $item['firstToWatchEpisodeNumber'],
                     'id' => $item['id'],
                     'posterPath' => $item['posterPath'],
                     'providerLogoPath' => $item['providerLogoPath'],
@@ -221,6 +233,7 @@ readonly class SeriesSchedule
                 'results' => $results,
             ];
         }
+        dump($intervalArr);
         return $intervalArr;
     }
 

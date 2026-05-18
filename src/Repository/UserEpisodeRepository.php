@@ -620,7 +620,15 @@ class UserEpisodeRepository extends ServiceEntityRepository
                       AND ue2.`episode_number`=ue.`episode_number`
                       AND ue.`episode_number`>1
                       AND IF(sbd.id, DATE(sbd.date) >= DATE(NOW()), ue.air_date >= DATE(NOW()))) IS NOT NULL) AS future_up_to_date,
-                (ue.`watch_at` IS NOT NULL) AS past_up_to_date
+                (ue.`watch_at` IS NOT NULL) AS past_up_to_date,
+                (SELECT ue3.`episode_number`
+                  FROM `user_episode` ue3
+                  WHERE ue3.`user_series_id`=us.`id` AND ue3.`season_number`>0 AND ue3.`watch_at` IS NULL
+                  ORDER BY ue3.`season_number`, ue3.`episode_number` LIMIT 1) AS firstToWatchEpisodeNumber,
+                (SELECT ue3.`season_number`
+                  FROM `user_episode` ue3
+                  WHERE ue3.`user_series_id`=us.`id` AND ue3.`season_number`>0 AND ue3.`watch_at` IS NULL
+                  ORDER BY ue3.`season_number`, ue3.`episode_number` LIMIT 1) AS firstToWatchSeasonNumber
             FROM series s 
                  INNER JOIN user_series us ON s.id = us.series_id 
                  INNER JOIN user_episode ue ON us.id = ue.user_series_id 

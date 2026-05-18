@@ -21,7 +21,11 @@
                 {% for eotd in eotdList.results %}
                     {% if eotd.type == 'series' %}
                         {% if linkTo == 'episode' %}
-                            {% set url = path('app_tv_episode', {id: eotd.id, slug: eotd.name|slug|lower, seasonNumber: eotd.seasonNumber, episodeNumber: eotd.firstEpisodeNumber}) %}
+                            {% if eotd.firstToWatch %}
+                                {% set url = path('app_tv_episode', {id: eotd.id, slug: eotd.name|slug|lower, seasonNumber: eotd.firstToWatchSeasonNumber, episodeNumber: eotd.firstToWatchEpisodeNumber}) %}
+                            {% else %}
+                                {% set url = path('app_tv_episode', {id: eotd.id, slug: eotd.name|slug|lower, seasonNumber: eotd.seasonNumber, episodeNumber: eotd.firstEpisodeNumber}) %}
+                            {% endif %}
                         {% elseif linkTo == 'season' %}
                             {% set url = path('app_tv_season', {id: eotd.id, slug: eotd.name|slug|lower, seasonNumber: eotd.seasonNumber}) %}
                         {% else %}
@@ -39,6 +43,9 @@
                             <div class="episode-progress" data-id="{{ eotd.id }}" style="right: {{ 100 - eotd.progress }}%;"></div>
                             <div>
                                 {{ eotd.display }}
+                                {% if eotd.firstToWatch %}
+                                    <span class="first-to-watch">{{ 'S%02dE%02d'|format(eotd.firstToWatchSeasonNumber, eotd.firstToWatchEpisodeNumber) }}</span>
+                                {% endif %}
                                 {% if eotd.customDate %}
                                     {{ ux_icon('mdi:calendar', {'data-title': 'Custom schedule'|trans, height: '16px', width: '16px'}) }}
                                 {% endif %}
@@ -82,7 +89,11 @@
                         {% for eotd in eotdList.results %}
                             {% if eotd.type == 'series' %}
                                 {% if linkTo == 'episode' %}
-                                    {% set url = path('app_tv_episode', {id: eotd.id, slug: eotd.name|slug|lower, seasonNumber: eotd.seasonNumber, episodeNumber: eotd.firstEpisodeNumber}) %}
+                                    {% if eotd.firstToWatch %}
+                                        {% set url = path('app_tv_episode', {id: eotd.id, slug: eotd.name|slug|lower, seasonNumber: eotd.firstToWatchSeasonNumber, episodeNumber: eotd.firstToWatchEpisodeNumber}) %}
+                                    {% else %}
+                                        {% set url = path('app_tv_episode', {id: eotd.id, slug: eotd.name|slug|lower, seasonNumber: eotd.seasonNumber, episodeNumber: eotd.firstEpisodeNumber}) %}
+                                    {% endif %}
                                 {% elseif linkTo == 'season' %}
                                     {% set url = path('app_tv_season', {id: eotd.id, slug: eotd.name|slug|lower, seasonNumber: eotd.seasonNumber}) %}
                                 {% else %}
@@ -135,7 +146,12 @@
                                         </div>
                                     </div>
                                     <div class="infos">
-                                        <div class="name">{{ eotd.display }}</div>
+                                        <div class="name">
+                                            {{ eotd.display }}
+                                            {% if eotd.firstToWatch %}
+                                                <span class="first-to-watch">{{ 'S%02dE%02d'|format(eotd.firstToWatchSeasonNumber, eotd.firstToWatchEpisodeNumber) }}</span>
+                                            {% endif %}
+                                        </div>
                                     </div>
                                 </a>
                             </div>

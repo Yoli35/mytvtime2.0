@@ -1602,6 +1602,14 @@ label:has(input[type="text"]) {
                     }
                 }
             }
+
+            .first-to-watch {
+                background-color: var(--red);
+                border-radius: .25rem;
+                color: var(--orange-90);
+                margin-inline: 1rem;
+                padding-inline: .5rem;
+            }
         }
     }
 
