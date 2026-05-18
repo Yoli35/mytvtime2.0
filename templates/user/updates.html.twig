@@ -18,7 +18,117 @@
                 </div>
             </div>
             <div class="site-update glowing-border">
-
+                <div class="list">
+                    <h2>77° mise à jour : 18/05/2026 11:00</h2>
+                    <ul>
+                        <li>
+                            <div class="change">→ Add missing upToDate flag in movie schedule data</div>
+                            <div class="details"></div>
+                        </li>
+                        <li>
+                            <div class="change">→ Update episode card replacement logic</div>
+                            <div class="details">Simplifies the replacement of episode cards to ensure a smoother update process during interactions. Improves user experience by maintaining consistent and reliable updates to episode card displays.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Refactor admin tools to use modular class structure</div>
+                            <div class="details">Redesigns the admin tools into a modular class system for improved organization, reusability, and maintainability. Enhances code clarity and simplifies future feature expansions or updates.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Set movie show width to 100%</div>
+                            <div class="details">Ensures the movie show section spans the full width, aligning it consistently with other content areas. Improves layout uniformity and visual design cohesion.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Limit episode card width in grid layout</div>
+                            <div class="details">Restricts the maximum width of episode cards in grid displays to ensure consistent alignment and prevent oversized elements. Improves overall visual balance and layout aesthetics.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Add quick access link to episode details</div>
+                            <div class="details">Introduces a direct link to episode pages for airing episodes, allowing users to quickly navigate to detailed information. Enhances convenience and streamlines the browsing experience.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Add poster update tool for airing series</div>
+                            <div class="details">Provides an admin tool to check for updated posters of airing series and replace them if needed, enhancing the visual content's accuracy and freshness. Also add UpdatePosterOfAiringSeriesCommand</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Add message count to admin messages header</div>
+                            <div class="details">Displays the total number of messages in the admin section for quick at-a-glance reference, improving usability and context awareness.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Set focus and select URL field when opening watch link form</div>
+                            <div class="details">Improves user experience by automatically focusing and selecting the URL field when the watch link form dialog opens, enabling faster input and reducing the need for manual interaction.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Improve blog editing form behavior and input styling</div>
+                            <div class="details">Sets focus and selects the title field on load for faster editing. Adjusts input field styling to ensure consistent width across elements, enhancing the overall user experience.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Add article preview feature for blog editing</div>
+                            <div class="details">Allows users to preview markdown-rendered content while editing blog articles. Improves editing experience by providing a visual representation of the final output before saving changes.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Add edit, save, and delete functionality for blog articles</div>
+                            <div class="details">Introduces options to edit, save, and delete blog articles, providing users with greater control over content management. Improves interaction with articles by adding translation support, confirmation dialogues, and a polished UI for these actions.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Update field reference for episode name input</div>
+                            <div class="details">Corrects the input field reference to align with the updated naming convention. Fixes potential issues with functionality when interacting with the episode name dialog.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Adjust multi-search layout and hide elements on activation</div>
+                            <div class="details">Updates the multi-search component to align properly by adjusting spacing and hides specific elements when active. Improves visual clarity and layout responsiveness during multi-search interactions.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Use GitHub-flavored markdown for blog articles</div>
+                            <div class="details">Switches to GitHub-flavored markdown for rendering blog articles, enhancing support for advanced markdown features. Improves formatting consistency and readability across different types of content.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Fix provider detection for YouTube links</div>
+                            <div class="details">Ensures links containing "youtube.com" are properly identified as YouTube provider links. Resolves cases where certain YouTube URLs were not being matched for correct provider assignment.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Add block buttons to admin message details</div>
+                            <div class="details">Provides buttons to block a username or email directly from the message details view. Enhances moderation tools for administrators, allowing quicker actions on flagged users or emails.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Save localized episode overviews in database</div>
+                            <div class="details">Stores English overviews in the database when unavailable in the user's language. Improves episode data reliability and ensures fallback content is consistently accessible.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Render markdown in blog articles</div>
+                            <div class="details">Formats blog articles to support markdown for enhanced readability and content presentation. Ensures a better viewing experience by enabling rich text features like headers, lists, and links.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Fix air time handling in series broadcast schedules</div>
+                            <div class="details">Replaces immutable date-time configuration for air time with mutable handling to ensure proper time adjustments. Prevents potential inconsistencies in scheduling updates and aligns with expected behavior for broadcast scheduling.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Switch to ProviderService for logo management</div>
+                            <div class="details">Replaces logo path handling with a dedicated service for improved consistency and maintainability. Simplifies related logic and ensures a more streamlined approach to fetching provider logos across the application.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Upgrade Symfony from 7.4.8 to 8.0.8</div>
+                            <div class="details">Update dependencies and adjust configurations. Upgrades various library versions to ensure compatibility with the latest features and security updates. Refines configurations for improved functionality and alignment with best practices.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Improve episode addition & vote updates</div>
+                            <div class="details">Adding the episode using the + button at the top of the page simply updates the corresponding card without reloading the page. Ensures accurate vote updates on episode cards and average season scores. Fixes inconsistencies in vote values and improves the clarity of displayed ratings for better user experience when voting on episodes.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Improve layout for people columns</div>
+                            <div class="details">Adjusts spacing, scrolling, and dimensions to enhance the readability and usability of the people columns. Ensures better alignment and navigation, particularly for screens with constrained vertical space.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Improve season average vote display</div>
+                            <div class="details">Enhances the display of season average votes to handle zero-vote scenarios gracefully. Replaces empty values with a dash, ensuring clarity and a better user experience when no votes are present.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Add season average vote display</div>
+                            <div class="details">Introduces a dynamic badge to show the season's average vote. Updates instantly when an episode is rated, enhancing visibility of voting trends and user engagement.</div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="site-update glowing-border">
                 <div class="list">
                     <h2>76° mise à jour : 04/05/2026 08:30</h2>
                     <ul>
