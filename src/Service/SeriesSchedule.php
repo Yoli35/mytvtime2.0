@@ -233,7 +233,7 @@ readonly class SeriesSchedule
                 'results' => $results,
             ];
         }
-        dump($intervalArr);
+
         return $intervalArr;
     }
 
