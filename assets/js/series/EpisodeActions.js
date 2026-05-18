@@ -374,12 +374,11 @@ export class EpisodeActions {
                  ******************************************************************************/
                 if (episodeCard) {
                     const block = document.createElement('div');
-                    const episodeCardLink = episodeCard.closest('a');
                     block.innerHTML = data['episodeCardBlock'];
                     const newEpisodeCardDiv = block.querySelector('.episode-card');
                     newEpisodeCardDiv.classList.add('this-is-my-page');
                     self.fetchEpisodeCards.initVoteBlock(newEpisodeCardDiv.querySelectorAll('.episode-vote-block'), self);
-                    episodeCardLink.replaceWith(block.querySelector('a'));
+                    episodeCard.replaceWith(newEpisodeCardDiv);
                 }
             });
     }
