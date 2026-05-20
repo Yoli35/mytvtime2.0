@@ -20,6 +20,7 @@ use App\Repository\UserRepository;
 use App\Repository\VideoCategoryRepository;
 use App\Repository\VideoRepository;
 use App\Repository\WatchProviderRepository;
+use App\Service\ContactBlocklistService;
 use App\Service\DateService;
 use App\Service\ImageConfiguration;
 use App\Service\ImageService;
@@ -47,6 +48,7 @@ class AdminController extends AbstractController
 
     public function __construct(
         private readonly ContactMessageRepository          $contactMessageRepository,
+        private readonly ContactBlocklistService           $contactBlocklistService,
         private readonly DateService                       $dateService,
         private readonly FilmingLocationRepository         $filmingLocationRepository,
         private readonly ImageConfiguration                $imageConfiguration,
@@ -145,6 +147,8 @@ class AdminController extends AbstractController
             'message' => $message,
             'previous' => $this->contactMessageRepository->getPreviousMessage($message->getId()),
             'next' => $this->contactMessageRepository->getNextMessage($message->getId()),
+            'nameBlocked' => $this->contactBlocklistService->isBlockedName($message->getName() ?? ''),
+            'emailBlocked' => $this->contactBlocklistService->isBlockedEmail($message->getEmail() ?? ''),
         ]);
     }
 
@@ -154,6 +158,32 @@ class AdminController extends AbstractController
         $this->contactMessageRepository->remove($message, true);
 
         return $this->redirectToRoute('admin_messages');
+    }
+
+    #[Route('/message/block/name/{id}', name: 'message_block_name', requirements: ['id' => Requirement::DIGITS], methods: ['POST'])]
+    public function messageBlockName(ContactMessage $message, Request $request): Response
+    {
+        if (!$this->isCsrfTokenValid('admin_message_block_name_' . $message->getId(), (string) $request->request->get('_token'))) {
+            throw $this->createAccessDeniedException();
+        }
+
+        $blocked = $this->contactBlocklistService->addNameNeedle($message->getName() ?? '');
+        $this->addFlash('success', $blocked ? $this->translator->trans('Added to blocked list') : $this->translator->trans('Already in blocked list'));
+
+        return $this->redirectToRoute('admin_message_detail', ['id' => $message->getId()]);
+    }
+
+    #[Route('/message/block/email/{id}', name: 'message_block_email', requirements: ['id' => Requirement::DIGITS], methods: ['POST'])]
+    public function messageBlockEmail(ContactMessage $message, Request $request): Response
+    {
+        if (!$this->isCsrfTokenValid('admin_message_block_email_' . $message->getId(), (string) $request->request->get('_token'))) {
+            throw $this->createAccessDeniedException();
+        }
+
+        $blocked = $this->contactBlocklistService->addEmailNeedle($message->getEmail() ?? '');
+        $this->addFlash('success', $blocked ? $this->translator->trans('Added to blocked list') : $this->translator->trans('Already in blocked list'));
+
+        return $this->redirectToRoute('admin_message_detail', ['id' => $message->getId()]);
     }
 
     #[Route('/tools', name: 'tools')]

@@ -28,10 +28,18 @@
             {% endif %}
         </div>
         <div class="admin__message__details__field">
-            <strong>{{ 'Name'|trans }}:</strong> {{ message.name }}<button>{{ 'Block this username'|trans }}</button>
+            <strong>{{ 'Name'|trans }}:</strong> {{ message.name }}
+            <form method="post" action="{{ path('admin_message_block_name', {id: message.id}) }}" style="display:inline">
+                <input type="hidden" name="_token" value="{{ csrf_token('admin_message_block_name_' ~ message.id) }}">
+                <button type="submit" {% if nameBlocked %}disabled{% endif %}>{{ 'Block this username'|trans }}</button>
+            </form>
         </div>
         <div class="admin__message__details__field">
-            <strong>{{ 'Email'|trans }}:</strong> <a href="mailto:{{ message.email }}" class="button">{{ message.email }}</a><button>{{ 'Block this email'|trans }}</button>
+            <strong>{{ 'Email'|trans }}:</strong> <a href="mailto:{{ message.email }}" class="button">{{ message.email }}</a>
+            <form method="post" action="{{ path('admin_message_block_email', {id: message.id}) }}" style="display:inline">
+                <input type="hidden" name="_token" value="{{ csrf_token('admin_message_block_email_' ~ message.id) }}">
+                <button type="submit" {% if emailBlocked %}disabled{% endif %}>{{ 'Block this email'|trans }}</button>
+            </form>
         </div>
         <div class="admin__message__details__field">
             <strong>{{ 'Subject'|trans }}:</strong> {{ message.subject }}
