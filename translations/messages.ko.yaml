@@ -1,322 +1,595 @@
 #Admin
-Users: 사용자
-Providers: 제공자
+Api: API
+'Base url': '기본 URL'
+'Catalog - API to enumerate datasets': '카탈로그 - 데이터 집합 열거용 API'
 Dashboard: 대시보드
-more notifications: 더 많은 알림
+'Dataset - API to work on records': '데이터 세트 - 레코드 작업용 API'
+Endpoints: '종료 지점'
+Execute: 실행
+'Export a catalog in RDF/XML (DCAT)': 'RDF/XML(DCAT)로 카탈로그 내보내기'
+'Export a dataset in CSV format': '데이터 집합을 CSV 형식으로 내보내기'
+'Export a dataset in GPX format': '데이터 집합을 GPX 형식으로 내보내기'
+'Export a dataset in Parquet': '데이터 집합을 Parquet으로 내보내기'
+'Export a dataset': '데이터 집합 내보내기'
+'Export catalog in CSV format': 'CSV 형식으로 카탈로그 내보내기'
+'Export catalog in specified format': '지정된 형식으로 카탈로그 내보내기'
+'List dataset attachments': '데이터 집합 첨부 파일 목록'
+'List export formats for a dataset': '데이터 집합의 내보내기 형식 나열'
+'List export formats': '내보내기 형식 목록'
+'List facet values for a dataset': '데이터 집합의 패싯 값 나열'
+'List facet values': '패싯 값 나열'
+Modules: 모듈
+'Next message': '다음 메시지'
+'No next message': '다음 메시지 없음'
+'No previous message': '이전 메시지 없음'
+'Previous message': '이전 메시지'
+Providers: 제공자
+'Query catalog datasets': '카탈로그 데이터 세트 쿼리'
+'Query dataset records': '데이터 집합의 레코드 쿼리'
+'Read a dataset record': '데이터 집합 레코드 읽기'
+'Show dataset information': '데이터 집합에 대한 정보 표시'
+Users: 사용자
+'more notifications': '더 많은 알림'
+# Blog
+Abort: '변경 사항 취소'
+'Apply changes': '변경 사항 적용'
+'Are you sure you want to delete this article? ': '이 글을 삭제하시겠습니까?'
+'Are you sure you want to dismiss modifications? ': '변경 사항을 취소하시겠습니까?'
+Author: 작성자
+'Back to article': '기사로 돌아가기'
+'Back to blog': '블로그로 돌아가기'
+Blog: 블로그
+Content: 콘텐츠
+'Delete article': '글 삭제하기'
+Dismiss: 취소
+'Edit article': '문서 수정하기'
+'My blog': '내 블로그'
+'Save article': '문서 저장'
+# Menu
+'All locations': '모든 위치'
+Apply: 신청하기
+'Change your avatar on your account page': '계정 페이지에서 아바타 변경'
+'Contact me': '다음 연락처로 문의하세요.'
+'Display the poster': '포스터 보기'
+'Final air date': '최종 릴리스 날짜'
+'In my movie list': '내 영화 목록에서'
+'In my series list': '내 시리즈 목록에서'
+'Last adds': '최신 추가 사항'
+'Last watched': '마지막으로 시청한 시리즈'
+Limit: 제한
+'Link to': 링크
+'Menu people': 사람
+'Movies, series, actors…': '영화, 시리즈, 배우...'
+'My browsing history': '내 인터넷 사용 기록'
+'My media': '내 미디어'
+'My viewing history': '내 시청 기록'
+'No history': '기록 없음'
+'Open in a new tab': '새 탭에서 열기'
+'Order by': '정렬 기준'
+'Please log in to see more options': '더 많은 옵션을 보려면 로그인하세요.'
+'Search options': '검색 옵션'
+'What next to watch': '다음에 볼 내용'
 
 # Home
-Any questions or comments?: 질문이나 의견이 있으십니까?
-A series by name/year: 이름/년도로 시리즈
-A series: 시리즈
-Add to pinned series: 고정된 시리즈에 추가
+'A series by name/year': '이름/년도로 시리즈'
+'A series': 시리즈
+'Accent color': '강조 색상'
+'Add to pinned series': '고정된 시리즈에 추가'
 Admin: 관리자
-Among your series: 당신의 시리즈 중
+'Advanced among your series': '시리즈 진행'
+'Among your series': '당신의 시리즈 중'
+'Any questions or comments?': '질문이나 의견이 있으십니까?'
 Automatic: 자동
-Choose a username: 사용자 이름을 선택하세요
-Coming soon: 곧 출시됩니다
-Confirm password: 비밀번호 확인
+'Average episode runtime': '평균 에피소드 길이'
+'Choose a username': '사용자 이름을 선택하세요'
+'Click here to add an image': '이미지를 추가하려면 여기를 클릭하세요.'
+'Close menu': '메뉴 닫기'
+'Coming soon': '곧 출시됩니다'
+'Confirm password': '비밀번호 확인'
 Connect: 연결
 Country: 국가
 Dark: 어두운
-Day count: 일 수
+'Day count': '일 수'
 Device: 장치
-Disconnect: 연결 해제
-Email address: 이메일 주소
+Disconnect: '연결 해제'
+'Email address': '이메일 주소'
 Email: 이메일
 English: 영어
-Episode history (%d): 지난 %d 일 동안의 에피소드 기록
-Episode history (%h): 지난 %h 시간 동안의 에피소드 기록
-Episodes detail: 에피소드 상세
-Episodes to watch: 볼 에피소드
+'Episode history (%d)': '지난 %d 일 동안의 에피소드 기록'
+'Episode history (%h)': '지난 %h 시간 동안의 에피소드 기록'
+'Episodes detail': '에피소드 상세'
+'Episodes to watch': '볼 에피소드'
+'Episodes watched in the last %dayCount% hours (%count%)': '지난 %일 동안 시청한 에피소드 %일수%시간(%카운트%)'
+'Episodes watched in the last %dayCount% days (%count%)': '지난 %일동안 시청한 에피소드 수(%일수%) (%카운트%)'
 French: 프랑스어
-Hide preview: 미리보기 숨기기
+Guest: 게스트
+'Hide preview': '미리보기 숨기기'
 Home: 홈
-I agree to the terms and conditions: 약관에 동의합니다
-In production: 제작 중
-In The Movie Database: 무비 데이터베이스에
+'I agree to the terms and conditions': '약관에 동의합니다'
+'In The Movie Database': '무비 데이터베이스에'
+'In production': '제작 중'
 Korean: 한국어
-Last 14 days: 지난 14일
-Last 24 hours: 지난 24시간
-Last 30 days: 지난 30일
-Last 7 days: 지난 7일
-Last added series: 최근 추가된 시리즈
-Latest series added: 최근 추가된 시리즈
+'Last 14 days': '지난 14일'
+'Last 24 hours': '지난 24시간'
+'Last 30 days': '지난 30일'
+'Last 7 days': '지난 7일'
+'Last added series': '최근 추가된 시리즈'
+'Last viewed movies': '마지막으로 시청한 영화'
+'Latest series added': '최근 추가된 시리즈'
 Light: 밝은
-My account: 내 계정
-My networks: 내 네트워크
-My providers: 내 제공자
-New episode date: 새로운 에피소드 날짜
-New episode: 새로운 에피소드
-New series date: 새로운 시리즈 날짜
-No backdrop: 배경 없음
+'My account': '내 계정'
+'My networks': '내 네트워크'
+'My providers': '내 제공자'
+'New episode date': '새로운 에피소드 날짜'
+'New episode': '새로운 에피소드'
+'New series date': '새로운 시리즈 날짜'
+'No backdrop': '배경 없음'
+'Open menu': '메뉴 열기'
 Options: 옵션
 Password: 비밀번호
-Pinned series: 고정된 시리즈
-Preferred language: 선호하는 언어
+'Paste your image here (green)': '여기에 이미지 붙여넣기(녹색)'
+'Pinned series': '고정된 시리즈'
+'Preferred language': '선호하는 언어'
 Rating: 평가
-Re-type your password: 비밀번호 다시 입력
-Recent movies: 최근 영화
-Recent series: 최근 시리즈
+'Re-type your password': '비밀번호 다시 입력'
+'Recent movies': '최근 영화'
+'Recent series': '최근 시리즈'
 Register: 등록
-Remember me: 기억하기
-Remove from pinned series: 고정된 시리즈에서 제거
-Search among your series: 당신의 시리즈 중 검색
-Series history: 시리즈 기록
-Series.by country: 국가별 시리즈
-Series.in progress: 현재 시청 중인 시리즈
-Series.not seen in a while: 오랫동안 본 시리즈 없음
-Series.to start: 시작할 시리즈
-Series.up coming series: 다가오는 시리즈
-Series.week: 이번 주의 에피소드
-Show preview: 미리보기 보기
-Sign in: 로그인
-Similar series: 비슷한 시리즈
+'Remember me': 기억하기
+'Remove from pinned series': '고정된 시리즈에서 제거'
+'Search among your series': '당신의 시리즈 중 검색'
+'Series by country': '국가별 시리즈'
+'Series history': '시리즈 기록'
+'Series.by country': '국가별 시리즈'
+'Series.by provider': 플랫폼별
+'Series.by ranking vote': '투표별 순위'
+'Series.in progress': '현재 시청 중인 시리즈'
+Series.favorites: '즐겨 찾는 시리즈'
+'Series.not seen in a while': '오랫동안 본 시리즈 없음'
+'Series.to start': '시작할 시리즈'
+'Series.up coming series': '다가오는 시리즈'
+Series.week: '이번 주의 에피소드'
+Settings: 설정
+'Show preview': '미리보기 보기'
+'Sign in': 로그인
+'Similar series': '비슷한 시리즈'
 Theme: 테마
 Timezone: 시간대
-Unknown: 알 수 없음
-User networks: 사용자 네트워크
-User providers: 사용자 제공자
+Total: 합계
+Unknown: '알 수 없음'
+'User networks': '사용자 네트워크'
+'User providers': '사용자 제공자'
 User: 사용자
-Username: 사용자 이름
-Your country will be used to determine the correct time for TV shows and movies.: 귀하의 국가는 TV 프로그램 및 영화의 올바른 시간을 결정하는 데 사용됩니다.
-Your preferred language for series descriptions and reviews. You can change this later.: 시리즈 설명 및 리뷰를 위한 선호하는 언어입니다. 나중에 변경할 수 있습니다.
-Your series: 당신의 시리즈
-Your timezone will be used to determine the correct time for TV shows and movies.: 귀하의 시간대는 TV 프로그램 및 영화의 올바른 시간을 결정하는 데 사용됩니다.
-remaining episode to see: 볼 남은 에피소드
-remaining episodes to see: 볼 남은 에피소드
+Username: '사용자 이름'
+'Your country will be used to determine the correct time for TV shows and movies.': '귀하의 국가는 TV 프로그램 및 영화의 올바른 시간을 결정하는 데 사용됩니다.'
+'Your preferred language for series descriptions and reviews. You can change this later.': '시리즈 설명 및 리뷰를 위한 선호하는 언어입니다. 나중에 변경할 수 있습니다.'
+'Your series': '당신의 시리즈'
+'Your timezone will be used to determine the correct time for TV shows and movies.': '귀하의 시간대는 TV 프로그램 및 영화의 올바른 시간을 결정하는 데 사용됩니다.'
+'history entries': '기록 항목'
+network.added: '플랫폼 추가'
+network.updated: '플랫폼 업데이트'
+'remaining episode to see': '볼 남은 에피소드'
+'remaining episodes to see': '볼 남은 에피소드'
 series: 시리즈
 seriess: 시리즈
 
-#Days of the week
-Days of the week: 요일
+'Days of the week': 요일
+Sunday: 일요일
 Monday: 월요일
 Tuesday: 화요일
 Wednesday: 수요일
 Thursday: 목요일
 Friday: 금요일
 Saturday: 토요일
-Sunday: 일요일
+sunday: 일요일
+monday: 월요일
+tuesday: 화요일
+wednesday: 수요일
+thursday: 목요일
+friday: 금요일
+saturday: 토요일
 
 # All my series
-Additional Overviews: 추가 개요
+'Added on': 추가됨
+'Additional Overviews': '추가 개요'
+'Additional information': '추가 정보'
 All: 모두
+'Alternative Titles': '대체 증권'
 Ascending: 오름차순
-Date added: 추가된 날짜
+Changes: '변경 사항'
+'Choose an option': '옵션 선택'
+Close: 닫기
+Credits: '크레딧(출연진, 기술팀 등)'
+'Date added': '추가된 날짜'
 Default: 기본값
 Descending: 내림차순
-Episode air date: 에피소드 방송일
+'Display priorities': '우선순위 표시'
+'Display priority': '우선순위 표시'
+'Episode air date': '에피소드 방송일'
+'Episode air date updated': '에피소드 방영 날짜 업데이트'
+'Episodes of the week': '금주의 에피소드'
+'External IDs': '외부 식별자'
 Filters: 필터
-First air date: 첫 방송일
+'First air date': '첫 방송일'
 Id: ID
-Last air date: 마지막 방송일
-Last series watched: 마지막으로 본 시리즈
-Localized Names: 지역화된 이름
-Localized Overviews: 지역화된 개요
-My series: 내 시리즈
-Next episode: 다음 에피소드
-Next page: 다음 페이지
-No: 아니요
-Number of elements per page: 페이지당 요소 수
+Images: 이미지
+'Last air date': '마지막 방송일'
+'Last episode': '지난 에피소드'
+'Last series watched': '마지막으로 본 시리즈'
+Latest: 마지막
+'Localized Names': '지역화된 이름'
+'Localized Overviews': '지역화된 개요'
+'My series': '내 시리즈'
+'Next episode': '다음 에피소드'
+'Next page': '다음 페이지'
+'Newer first': '가장 최근의 첫 번째'
+'No': 아니요
+'Number of elements per page': '페이지당 요소 수'
+'Older first': '이전 버전 먼저'
 Order: 순서
 Pages: 페이지
-Previous page: 이전 페이지
+'Previous episode': '이전 에피소드'
+'Previous page': '이전 페이지'
+'Release Dates': '릴리스 날짜'
 Release: 출시
-Series by ID: ID로 시리즈
-Series by name: 이름으로 시리즈
-Series started: 시작된 시리즈
-Series to start: 시작할 시리즈
-Show / hide filter options: 필터 옵션 표시/숨기기
-Show / hide pages: 페이지 표시/숨기기
+Reviews: 리뷰
+'See the movie description': '영상 설명 보기'
+'See the provider description': '플랫폼에 대한 설명 보기'
+'See the series description': '시리즈에 대한 설명 보기'
+'Series by ID': 'ID로 시리즈'
+'Series by name': '이름으로 시리즈'
+'Series started': '시작된 시리즈'
+'Series to start': '시작할 시리즈'
+'Show / hide filter options': '필터 옵션 표시/숨기기'
+'Show / hide pages': '페이지 표시/숨기기'
+Similar: 유사
 Sort: 정렬
 Synopsis: 개요
-TMDB Id: TMDB ID
-The Movie DB ID: 무비 데이터베이스 ID
-The Movie DB search: 무비 데이터베이스 검색
-Watched series: 본 시리즈
-Yes: 예
-remaining episode: 남은 에피소드
-remaining episodes: 남은 에피소드
+'TMDB Id': 'TMDB ID'
+'The Movie DB ID': '무비 데이터베이스 ID'
+'The Movie DB search': '무비 데이터베이스 검색'
+Translations: 번역
+'Watch Providers': '스트리밍 플랫폼'
+'Watched series': '본 시리즈'
+'Yes': 예
+providers: 플랫폼
+'remaining episode': '남은 에피소드'
+'remaining episodes': '남은 에피소드'
+french: 프랑스어
+english: 영어
+korean: 한국어
+'Include image language': '이미지 언어 포함'
+Get: Get
+'Agregate credits': '총 세출 예산'
+'End date': '종료 날짜'
+'Start date': '시작 날짜'
+
+# Add a series
+'Search for a series…': '시리즈 검색...'
+'Addition of older series': '이전 시리즈 추가'
+'No, thanks': '아니요, 괜찮습니다.'
+'Episodes are considered viewed on the day of broadcast': '에피소드는 방송 당일에 시청한 것으로 간주합니다.'
+'Start watching the series now!': '지금 바로 시리즈를 시청하세요!'
+'The series has been added to your watchlist': '시리즈가 관심 목록에 추가되었습니다.'
+'This series is more than 2 years old': '이 시리즈는 2년이 넘었습니다.'
+'Have you already watched it and want to mark all episodes as viewed?': '이미 시청하셨고 모든 에피소드를 본 것으로 표시하시겠습니까?'
+
+# Series tools
+'Add this series to the list public': '이 시리즈를 공개 목록에 추가하기'
+'Add to a list': '목록에 추가'
+'Add to new list': '새 목록에 추가'
+'Description of the list': '목록에 대한 설명'
+'List name': '목록 이름'
+'Make the list public': '목록 공개하기'
+'Mark as favorite': '즐겨찾기로 표시'
+'Name of the list': '목록 이름'
+'New list': '새 목록'
+'Public list': '공개 목록'
+'Required field': '필수 필드'
+Share: 공유
+'This series has been added to one or more lists': '이 시리즈가 하나 이상의 목록에 추가되었습니다.'
+
+# User lists
+'My lists': '내 목록'
+'Show/hide lists': '목록 표시/숨기기'
+Years: 년
 
 # Series Show
-1 episode seen: 1 에피소드 본
-A real binger!: 진정한 중독자!
-A real marathoner!: 진정한 마라토너!
-Add a localized overview: 지역화된 개요 추가
-Add a video: 비디오 추가
-Add a watch link: 시청 링크 추가
-Add an additional overview: 추가 개요 추가
-Add this series to your watchlist: 이 시리즈를 시청 목록에 추가
-Add to favorites: 즐겨찾기에 추가
+"'%cast% has been added to the season cast'": '시즌 출연진에 %캐스트%가 추가되었습니다.'
+"'%cast% has been added to the series cast'": '캐스트%가 시리즈 출연진에 추가되었습니다.'
+"'%cast% is already in the season cast'": '캐스트%는 이미 시즌 출연진의 일부입니다.'
+"'%cast% is already in the series cast'": 'cast%는 이미 시리즈의 출연진에 포함되어 있습니다.'
+"'%count% episodes have been removed from the series (%list%)'": '카운트% 에피소드가 시리즈에서 제거되었습니다(%목록%).'
+"'An episode has been removed from the series (%id%)'": '시리즈에서 에피소드가 삭제되었습니다(%id%).'
+"'Episode %number% has been updated'": '번호% 에피소드가 업데이트되었습니다.'
+
+'1 episode seen': '1 에피소드 본'
+'A real binger!': '진정한 중독자!'
+'A real marathoner!': '진정한 마라토너!'
+'Add a backdrop': '배경 추가'
+'Add a comment or reply to it for the episode': '에피소드에 댓글을 달거나 답글을 달기'
+'Add a comment': '댓글 추가'
+'Add a localized overview': '지역화된 개요 추가'
+'Add a re-edited version to this season': '이번 시즌에 재편집 버전 추가'
+'Add a video': '비디오 추가'
+'Add a watch link': '시청 링크 추가'
+'Add all available backdrops from TMDB': 'TMDB에서 사용 가능한 모든 배경 추가'
+'Add all available images': '사용 가능한 모든 이미지 추가'
+'Add an additional overview': '추가 개요 추가'
+'Add answer': '답변 추가하기'
+'Add images': '이미지 추가'
+'Add someone to the cast': '출연자 추가하기'
+'Add this series to your watchlist': '이 시리즈를 시청 목록에 추가'
+'Add to favorites': '즐겨찾기에 추가'
 Add: 추가
-Additional image: 추가 이미지
-Additional overviews for the series: 시리즈에 대한 추가 개요
-Additional overviews: 추가 개요
-After tomorrow: 모레 이후
-Air date: 방송일
-All episodes seen: 모든 에피소드 본
-All seasons: 모든 시즌
-Alternate schedules: 대체 일정
-Are you sure you want to delete this overview?: 이 개요를 삭제하시겠습니까?
-Available: 사용 가능
-Back to series: 시리즈로 돌아가기
-Back to the series page: 시리즈 페이지로 돌아가기
-Back to top: 맨 위로
-Backdrop added: 배경 추가됨
-Backdrop updated: 배경 업데이트됨
-Binge watcher badge unlocked: 연속 시청자 배지 잠금 해제
-Broadcast delay: 방송 지연
-Cancel rating: 평가 취소
+'Additional image': '추가 이미지'
+'Additional images': '추가 이미지'
+'Thumbnail and images': '썸네일 및 이미지'
+'Additional overviews for the series': '시리즈에 대한 추가 개요'
+'No images currently selected for upload': '전송할 이미지가 선택되지 않았습니다.'
+'Additional overviews': '추가 개요'
+'Adjust search': '검색 조정'
+'After tomorrow': '모레 이후'
+'Air date': 방송일
+'All episodes seen': '모든 에피소드 본'
+'All languages': '모든 언어'
+'All seasons': '모든 시즌'
+'Alternate schedules': '대체 일정'
+'Are you sure you want to delete this overview?': '이 개요를 삭제하시겠습니까?'
+'Assistant Foley Artist': '어시스턴트 아티스트 폴리'
+'Assistant Picture Car Coordinator': '시네마카 보조 코디네이터'
+Available: '사용 가능'
+'Back to season': '시즌으로 돌아가기'
+'Back to series': '시리즈로 돌아가기'
+'Back to the season': '시즌으로 돌아가기'
+'Back to the series page': '시리즈 페이지로 돌아가기'
+'Back to top': '맨 위로'
+'Backdrop added': '배경 추가됨'
+'Backdrop count': '배경 개수'
+'Backdrop updated': '배경 업데이트됨'
+'Binge watcher badge unlocked': '연속 시청자 배지 잠금 해제'
+'Broadcast delay': '방송 지연'
+'Cancel rating': '평가 취소'
 Canceled: 취소됨
 Cast: 캐스트
-Choose a device: 장치 선택
-Choose a provider: 제공자 선택
-Click to select, then paste your overview.: 선택하려면 클릭한 다음 개요를 붙여넣으세요.
-Continuing: 계속 중
-Copy this watch link: 이 시청 링크 복사
+'Character‘s name': '캐릭터 이름'
+'Choose a device': '장치 선택'
+'Choose a provider': '제공자 선택'
+'Click to select images': '클릭하여 이미지 선택'
+'Click to select, then paste your overview.': '선택하려면 클릭한 다음 개요를 붙여넣으세요.'
+'Collapse all videos': '모든 동영상 줄이기'
+Continuing: '계속 중'
+'Copy all': '모두 복사'
+'Copy watch link': '링크 주소 복사'
+Copy: 복사
 Crew: 스텝
-Delay in days: 일별 지연
+'Custom schedule': '개인화된 시간표'
+'Dailies Manager': '데일리 담당'
+'Date added ascending': '오름차순으로 추가된 날짜'
+'Date added descending': '추가된 날짜 내림차순'
+'Delay in days': '일별 지연'
 Delay: 지연
-Delete this watch link: 이 시청 링크 삭제
+'Delete watch link': '링크 삭제'
 Delete: 삭제
 Desktop: 데스크탑
-Drag and drop a file or click to browse: 파일을 끌어다 놓거나 클릭하여 찾아보세요
-Drop your file here: 파일을 여기에 놓으세요
-Drop your images files here: 이미지 파일을 여기에 놓으세요
-Edit this watch link: 이 시청 링크 편집
+'Drag and drop a file or click to browse': '파일을 끌어다 놓거나 클릭하여 찾아보세요'
+'Drop your images files here': '이미지 파일을 여기에 놓으세요'
+'Drop your file here': '파일을 여기에 놓으세요'
+'Drop your image file here': '여기에서 이미지 제출하기'
+'Edit episode name': '에피소드 이름 수정하기'
+'Edit episode overview': '에피소드 미리보기 수정하기'
+'Edit all episodes name and overview': '모든 에피소드의 이름 및 미리보기 변경하기'
+'Edit location': '위치 변경'
+'Edit watch link': '링크 수정'
 Edit: 편집
 Ended: 종료됨
-Episode of the day: 오늘의 에피소드
+'Episode name': '에피소드 이름'
+'Episode number': '에피소드 번호'
+'Episode of the day': '오늘의 에피소드'
+'Episode overview': '에피소드 미리 보기'
 Episode: 에피소드
-Episodes of the day: 오늘의 에피소드
+'Episodes of the day': '오늘의 에피소드'
 Episodes: 에피소드
-External sources: 외부 소스
-Filming locations map: 촬영 장소 지도
-First air date updated: 첫 방송일 업데이트됨
-Give a rating: 평가하기
-In Production: 제작 중
-In progress: 진행 중
-In two days: 이틀 후
-Key facts: 주요 사실
+'Error → votes and episodes do not match': '오류 → 투표와 에피소드가 일치하지 않습니다.'
+'Expand all videos': '모든 동영상 확장'
+'External sources': '외부 소스'
+'Filming locations map': '촬영 장소 지도'
+'First air date updated': '첫 방송일 업데이트됨'
+"First day of the week → %day%'": "요일 → %요일%'"
+'Five days ago': '5일 전'
+'Fly to the location': '위치로 이동'
+'Four days ago': '4일 전'
+Freq.: 빈도
+'Give a rating': 평가하기
+'Go to episode': '에피소드로 이동'
+'Guest stars': '게스트 캐릭터'
+'In Production': '제작 중'
+'In five days': '5일 후'
+'In four days': '4일 만에'
+'In progress': '진행 중'
+'In seven days': '7일 후'
+'In six days': '6일 후'
+'In three days': '3일 후'
+'In two days': '이틀 후'
+'Key facts': '주요 사실'
 Laptop: 노트북
-Last episode to air: 마지막 방송 에피소드
-Last episode watched: 마지막으로 본 에피소드
-Last seen: 마지막으로 본
-Last to air: 마지막 방송
-Last to watch: 마지막으로 볼
-Last watched series: 마지막으로 본 시리즈
-Local files: 로컬 파일
-Localized name: 지역화된 이름
-Localized overviews for the series: 시리즈에 대한 지역화된 개요
-Localized overviews: 지역화된 개요
-Logo added: 로고 추가됨
-Marathoner badge unlocked: 마라토너 배지 잠금 해제
-Mark this episode as seen: 이 에피소드를 본 것으로 표시
+'Last episode to air': '마지막 방송 에피소드'
+'Last episode watched': '마지막으로 본 에피소드'
+'Last seen': '마지막으로 본'
+'Last to air': '마지막 방송'
+'Last to watch': '마지막으로 볼'
+'Last watched series': '마지막으로 본 시리즈'
+'Loading filming locations…': '촬영 위치 로드 중...'
+'Local files': '로컬 파일'
+'Localized name': '지역화된 이름'
+'Localized overviews for the series': '시리즈에 대한 지역화된 개요'
+'Localized overviews': '지역화된 개요'
+'Location marker': '위치 마커'
+'Logo added': '로고 추가됨'
+'Marathoner badge unlocked': '마라토너 배지 잠금 해제'
+'Mark this episode as seen': '이 에피소드를 본 것으로 표시'
 Mobile: 모바일
-Name updated: 이름 업데이트됨
+'Name updated': '이름 업데이트됨'
 Network: 네트워크
 Networks: 네트워크
-New status: 새로운 상태
-Next episode air date updated: 다음 에피소드 방송일 업데이트됨
-Next episode to air: 다음 방송 에피소드
-Next episode to watch: 다음으로 볼 에피소드
-No additional images currently selected for upload: 현재 업로드할 추가 이미지 없음
-No date yet: 아직 날짜 없음
-No date: 날짜 없음
-No episode seen: 에피소드 없음
-No image currently selected for upload: 현재 업로드할 이미지 없음
-No overview: 개요 없음
-No picture: 사진 없음
-No poster: 포스터 없음
-Not a valid file type. Update your selection: 유효한 파일 유형이 아닙니다. 선택을 업데이트하세요
-Not watched yet: 아직 보지 않음
+'New schedule': '새로운 시간표'
+'New status': '새로운 상태'
+'Next episode air date updated': '다음 에피소드 방송일 업데이트됨'
+'Next episode to air': '다음 방송 에피소드'
+'Next episode to watch is %episode%': '다음 시청할 에피소드는 %episode%입니다.'
+'Next episode to watch': '다음으로 볼 에피소드'
+'Next image': '다음 이미지'
+'Next series': '다음 시리즈'
+'No additional images currently selected for upload': '현재 업로드할 추가 이미지 없음'
+'No date yet': '아직 날짜 없음'
+'No date': '날짜 없음'
+'No episode seen': '에피소드 없음'
+'No image currently selected for upload': '현재 업로드할 이미지 없음'
+'No image': '이미지 없음'
+'No logo': '로고 없음'
+'No overview': '개요 없음'
+'No picture': '사진 없음'
+'No poster': '포스터 없음'
+'No selected days of week.': '선택한 요일이 없습니다.'
+'No still': '비네트 없음'
+'No votes': '투표 없음'
+'Not a valid file type. Update your selection': '유효한 파일 유형이 아닙니다. 선택을 업데이트하세요'
+'Not watched yet': '아직 보지 않음'
+'Nothing to show here': '여기에 표시할 항목이 없습니다.'
 Now: 지금
-Number of episodes has changed: 에피소드 수가 변경되었습니다
-Original Country: 원본 국가
-Original language: 원본 언어
-Original name updated: 원본 이름 업데이트됨
-Original name: 원본 이름
-Overview for the series: 시리즈 개요
-Overview updated: 개요 업데이트됨
+'Number of days after': '이후 일수'
+'Number of days before': '이전 일수'
+'Number of episodes has changed': '에피소드 수가 변경되었습니다'
+'On Set Key Props': '온셋 소품'
+'One backdrop': 배경
+'One logo': 로고
+'One poster': 포스터
+'Original Country': '원본 국가'
+'Original language': '원본 언어'
+'Original name updated': '원본 이름 업데이트됨'
+'Original name': '원본 이름'
+'Overview for the season': '시즌 개요'
+'Overview for the series': '시리즈 개요'
+'Overview updated': '개요 업데이트됨'
 Overview: 개요
-Paste your translation here: 번역을 여기에 붙여넣으세요
-Pilot: 시리즈 프리미어
+'Paste your translation here': '번역을 여기에 붙여넣으세요'
+Pilot: '시리즈 프리미어'
 Planned: 계획됨
-Poster added: 포스터 추가됨
-Poster updated: 포스터 업데이트됨
+'Poster added': '포스터 추가됨'
+'Poster count': '포스터 수'
+'Poster of the next series': '다음 시리즈 포스터'
+'Poster of the previous series': '이전 시리즈의 포스터'
+'Poster updated': '포스터 업데이트됨'
+'Previous image': '이전 이미지'
+'Previous series': '이전 시리즈'
 Provider: 제공자
-Quick day watch badge unlocked: 빠른 일일 시청 배지 잠금 해제
-Quick week watch badge unlocked: 빠른 주간 시청 배지 잠금 해제
-Remove from favorites: 즐겨찾기에서 제거
-Remove this series from your watchlist: 이 시리즈를 시청 목록에서 제거
+Purchase: 구매
+'Quick day watch badge unlocked': '빠른 일일 시청 배지 잠금 해제'
+'Quick week watch badge unlocked': '빠른 주간 시청 배지 잠금 해제'
+'Remove from a list': '목록에 추가 또는 목록에서 제거'
+'Remove from favorites': '즐겨찾기에서 제거'
+'Remove this series from your watchlist': '이 시리즈를 시청 목록에서 제거'
 Remove: 제거
-Returning Series: 돌아오는 시리즈
+Rental: 렌탈
+'Returning Series': '돌아오는 시리즈'
 Save: 저장
 Schedules: 일정
-Season completed: 시즌 완료
-Season x: x 시즌
+'Scroll down to submit': '아래로 스크롤하여 제출'
+'Search for a person…': '사람 검색...'
+'Season completed': '시즌 완료'
+'Season finale': '시즌 종료'
+'Season localized overview': '시즌 현지 개요'
+'Season number': '시즌 번호'
+'Season poster': '시즌 포스터'
+'Season x': 'x 시즌'
 Season: 시즌
 Seasons: 시즌
-See all: 모두 보기
-See on Google: Google에서 보기
-Select a provider: 제공자 선택
-Select a source: 소스 선택
-Series added to your watchlist: 시리즈가 시청 목록에 추가되었습니다
-Series airing this week: 이번 주 방영되는 시리즈
-Series already in your watchlist: 이미 시청 목록에 있는 시리즈
-Series by country: 국가별 시리즈
-Series finale: 시리즈 종영
-Series in progress: 진행 중인 시리즈
-Series not found on The Movie Database: 무비 데이터베이스에서 시리즈를 찾을 수 없습니다
-Series not seen in a while: 오랫동안 본 시리즈 없음
-Series of the day: 오늘의 시리즈
-Series of the next 7 days: 다음 7일의 시리즈
+'See all': '모두 보기'
+'See on Google': 'Google에서 보기'
+'Select a provider': '제공자 선택'
+'Select a source': '소스 선택'
+"Selected days of the week → %days%'": "선택한 요일 → %일%'"
+'Send your comment': '댓글 보내기'
+'Series added to your watchlist': '시리즈가 시청 목록에 추가되었습니다'
+'Series airing this week': '이번 주 방영되는 시리즈'
+'Series already in your watchlist': '이미 시청 목록에 있는 시리즈'
+'Series finale': '시리즈 종영'
+'Series in progress': '진행 중인 시리즈'
+'Series not found on The Movie Database': '무비 데이터베이스에서 시리즈를 찾을 수 없습니다'
+'Series not seen in a while': '오랫동안 본 시리즈 없음'
+'Series of the day': '오늘의 시리즈'
+'Series of the next 7 days': '다음 7일의 시리즈'
+'Series schedule menu range': '시리즈 일정 메뉴의 범위'
 Series: 시리즈
+'Seven days ago': '7일 전'
+'Show all': '모두 보기'
 Since: 이후
-Slug updated: 슬러그 업데이트됨
+'Six days ago': '6일 전'
+'Slug updated': '슬러그 업데이트됨'
 Source: 소스
-Special episodes: 특별 에피소드
+'Special episodes': '특별 에피소드'
+Specials: '특별 에피소드'
 Status: 상태
-Suggest a localized name: 지역화된 이름 제안
-Suggest a name: 이름 제안
-Suggest a title: 제목 제안
-Suggest an overview: 개요 제안
-TBA: 발표 예정
+Still: 비네트
+Streaming: 스트리밍
+'Suggest a localized name': '지역화된 이름 제안'
+'Suggest a name': '이름 제안'
+'Suggest a title': '제목 제안'
+'Suggest an overview': '개요 제안'
+TBA: '발표 예정'
 Tablet: 태블릿
 Television: 텔레비전
-That's all!: 이것으로 끝!
-That's all, Folks!: 이것으로 끝입니다!
-The link has been copied to your clipboard: 링크가 클립보드에 복사되었습니다
-This field is required: 이 필드는 필수입니다
+"That's all!": '이것으로 끝!'
+"That's all, Folks!": '이것으로 끝입니다!'
+'The first day of the week must be in the selected days of the week.': '요일은 선택한 요일에 속해야 합니다.'
+'The link has been copied to your clipboard': '링크가 클립보드에 복사되었습니다'
+'This field is required': '이 필드는 필수입니다'
+'This series belongs to your watch later list!': '이 시리즈는 나중에 관심 목록에 추가됩니다!'
+'Three days ago': '3일 전'
+'Thumbnail, additional images': '썸네일, 추가 이미지'
+Thumbnail: 비네트
 Time: 시간
-To be continued: 계속될 예정
-To start: 시작할 예정
+'To be continued': '계속될 예정'
+'To start': '시작할 예정'
 Today: 오늘
+'Toggle image preview': '이미지 미리보기'
+'Toggle text color': '텍스트 색상 변경'
 Tomorrow: 내일
 Translate: 번역
-Two days ago: 이틀 전
+'Two days ago': '이틀 전'
 URL: URL
-Url: URL
-Up to date!: 최신 상태!
-Up to date: 최신 상태
+'Up to date!': '최신 상태!'
+'Up to date': '최신 상태'
 Updates: 업데이트
-Upload it!: 업로드하세요!
-User actions: 사용자 작업
-Video Identifier (11 characters - i.e. 5KHgFEiPD4g): 비디오 식별자 (11자 - 예 5KHgFEiPD4g)
+'Upload it!': 업로드하세요!
+Url: URL
+Urls: URL
+'User actions': '사용자 작업'
+'Utility Stunts': '유틸리티 스턴트맨'
+'Video Identifier (11 characters - i.e. 5KHgFEiPD4g)': '비디오 식별자 (11자 - 예 5KHgFEiPD4g)'
 Videos: 비디오
+'View date': '날짜 보기'
 Vote: 투표
-Watch links: 시청 링크
-Watch on: 시청
-Watched again: 다시 본
-Watched time times: time번 본
-Where to buy: 어디서 구매할까요
-Where to rent: 어디서 대여할까요
-Where to watch: 어디서 볼까요
+'Watch on': 시청
+'Watch season': '시즌 보기'
+'Watch specials': '특별 에피소드 보기'
+Watch: 시계
+'Watched %time% times': '조회 횟수 %시간 %회'
+'Watched again': '다시 본'
+'What else to watch?': '또 어떤 볼거리가 있나요?'
+'What to watch next?': '다음에 무엇을 볼까요?'
+'Where was "%name%" filmed?': '"%이름%"이 촬영된 곳은 어디인가요?'
+'With watched episodes without provider': '플랫폼 없이 시청하는 에피소드'
+'Write your overview here': '여기에 요약을 작성하세요.'
 Yesterday: 어제
-available: 사용 가능
+'Your episodes have been updated according to the series information.': '에피소드가 시리즈의 정보로 업데이트되었습니다.'
+and: 그리고
+available: '사용 가능'
+backdrops: 배경
 day: 일
 days: 일
 episode: 에피소드
-episodes seen: 에피소드 본
+'episodes seen': '에피소드 본'
 episodes: 에피소드
 hour: 시간
 hours: 시간
@@ -324,278 +597,61 @@ image: 이미지
 images: 이미지
 in: 에
 locations: 위치
+logos: 로고
 minute: 분
 minutes: 분
+network.not_found: '네트워크를 찾을 수 없음'
+'new episodes have been added to the series': '시리즈에 새로운 에피소드가 추가되었습니다.'
+'on': 'on'
+posters: 포스터
+season.number: 시즌
 season: 시즌
 second: 초
 seconds: 초
 since: 이후
+special.episode: '스페셜 에피소드'
+special.episodes: '특별 에피소드'
 star: 별
 stars: 별
 visit: 방문
 visits: 방문
-x star: x 별
-x stars: x 별
+vote: 투표
+votes: 투표
+'x star': 'x 별'
+'x stars': 'x 별'
+'Remove this series': '이 시리즈 제거'
+'See later list not found': '나중에 볼 목록을 찾을 수 없습니다.'
+'Series not found': '시리즈를 찾을 수 없음'
+'Series removed from watch later list': '나중에 보기 위해 목록에서 삭제된 시리즈'
+'Links to': 링크
+'Series page': '시리즈 페이지'
+'Season page': '시즌 페이지'
+'Episode page': '에피소드 페이지'
+'More episodes to come': '앞으로 더 많은 에피소드'
+'count new episodes are now available in season number': '시즌 번호에 새 에피소드 수 포함'
 
-Add a backdrop: 배경 추가
-Add all available backdrops from TMDB: TMDB에서 사용 가능한 모든 배경 추가
-Add all available backdrops: 사용 가능한 모든 배경 추가
-
-# Schedule form
-Override the Movie Database schedule: 무비 데이터베이스 일정 재정의
-Override TMDB: TMDB 재정의
+#Schedule form
+'Override the Movie Database schedule': '무비 데이터베이스 일정 재정의'
+'Override TMDB': 'TMDB 재정의'
 Frequency: 빈도
-Multi parts: 다중 부분
-This season will be broadcast in several parts: 이 시즌은 여러 부분으로 방송됩니다
+'Multi part': 다자간
+'This season will be broadcast in several parts': '이 시즌은 여러 부분으로 방송됩니다'
 Part: 부분
-First episode: 첫 에피소드
-Episode count: 에피소드 수
-All at once: 한꺼번에
+'First episode': '첫 에피소드'
+'Episode count': '에피소드 수'
+'All at once': 한꺼번에
 Daily: 매일
-Weekly, one at a time: 주간, 한 번에 하나
-Weekly, two at a time: 주간, 두 번에 하나
-Weekly, three at a time: 주간, 세 번에 하나
-Weekly, two, then one: 주간, 두 번, 그리고 하나
-Weekly, three, then one: 주간, 세 번, 그리고 하나
-Weekly, four, then one: 주간, 네 번, 그리고 하나
-Weekly, four, then two: 주간, 네 번, 그리고 두 번
-Weekly, selected days: 주간, 선택된 날
+'Selected days, then weekly, one at a time': '선택한 날짜, 그리고 매주, 한 번에 하나씩'
+'Weekly, one at a time': '주간, 한 번에 하나'
+'Weekly, two at a time': '주간, 두 번에 하나'
+'Weekly, three at a time': '주간, 세 번에 하나'
+'Weekly, four at a time': '매주, 한 번에 4개씩'
+'Weekly, two, then one': '주간, 두 번, 그리고 하나'
+'Weekly, three, then one': '주간, 세 번, 그리고 하나'
+'Weekly, four, then one': '주간, 네 번, 그리고 하나'
+'Weekly, four, then two': '주간, 네 번, 그리고 두 번'
+'Weekly, selected days': '주간, 선택된 날'
 
-#Search
-Search: 검색
-Search a series: 시리즈 검색
-Advanced search: 고급 검색
-Page: 페이지
-Language: 언어
-First air date year: 첫 방송일 년도
-Name of the series: 시리즈 이름
-Search results: 검색 결과
-No results: 결과 없음
-results: 결과
-Go to page: 페이지로 이동
-After: 이후
-Before: 이전
-Origin country: 원산지 국가
-Monetization type: 수익화 유형
-Flatrate: 정액제
-Watch providers: 시청 제공자
-Keywords: 키워드
-Start typing to search: 입력하여 검색
-And: 그리고
-Or: 또는
-All keywords: 모든 키워드
-Any keywords: 모든 키워드
-Runtime less than: 런타임이 다음보다 짧은
-Runtime greater than: 런타임이 다음보다 긴
-Free: 무료
-Rent: 대여
-Buy: 구매
-Ads: 광고
-Documentary: 다큐멘터리
-News: 뉴스
-Miniseries: 미니시리즈
-Reality: 리얼리티
-Scripted: 스크립트
-Talk Show: 토크쇼
-Video: 비디오
-Type: 유형
-Sort by: 정렬 기준
-Popularity descending: 인기도 내림차순
-Popularity ascending: 인기도 오름차순
-Vote average descending: 평균 투표 내림차순
-Vote average ascending: 평균 투표 오름차순
-First air date descending: 첫 방송일 내림차순
-First air date ascending: 첫 방송일 오름차순
-Original name descending: 원본 이름 내림차순
-Original name ascending: 원본 이름 오름차순
-Name descending: 이름 내림차순
-Name ascending: 이름 오름차순
-Vote count descending: 투표 수 내림차순
-Vote count ascending: 투표 수 오름차순
-
-# People
-People: 사람
-Personal Informations: 개인 정보
-Known for Department: 부서로 알려진
-Acting: 연기
-Known appearances: 알려진 출연
-Gender: 성별
-Female: 여성
-Male: 남성
-Birthday: 생일
-old: 세
-Place of Birth: 출생지
-Also known as: 다른 이름
-Known for: 알려진
-Movie: 영화
-Serie: 시리즈
-tv: TV
-movie: 영화
-Self: 자신
-Himself: 그 자신
-Herself: 그 여자 자신
-Homepage: 홈페이지
-as.job: 로서
-Directing: 감독
-Production: 제작
-Writing: 작가
-Go: 가기
-Lists: 목록
-items: 항목
-#job.Adaptation.he: 적응
-#job.Animation.she: 애니메이션
-#job.Assistant Director.he:
-#job.Associate Producer.he:
-#job.Associate Producer.she:
-#job.Author.he:
-#job.Book.he:
-#job.Characters.he:
-#job.Cinematography.he:
-#job.Co-Executive Producer.he:
-#job.Co-Producer.he:
-#job.Co-Producer.she:
-#job.Co-Writer.he:
-#job.Comic Book.he:
-#job.Conductor.he:
-#job.Creative Producer.he:
-#job.Creator.he:
-#job.Creator.she:
-#job.Development Producer.he:
-#job.Development Producer.she:
-#job.Dialogue.he:
-#job.Director of Photography.he:
-#job.Director.he:
-#job.Director.she:
-#job.Documentation & Support.he:
-#job.Documentation & Support.she:
-#job.Editor.he:
-#job.Executive Co-Producer.he:
-#job.Executive Co-Producer.she:
-#job.Executive Producer.he:
-#job.Executive Producer.she:
-#job.Idea.he:
-#job.Idea.she:
-#job.Lighting Technician.he:
-#job.Music Director.he:
-#job.Music Supervisor.he:
-#job.Music.he:
-#job.Novel.he:
-#job.Original Music Composer.he:
-#job.Original Story.he:
-#job.Presenter.he:
-#job.Producer.he:
-#job.Producer.she:
-#job.Production Assistant.he:
-#job.Production Design.he:
-#job.Production Executive.he:
-#job.Production Sound Mixer.he:
-#job.Screenplay.he:
-#job.Screenstory.he:
-#job.Script.he:
-#job.Songs.he:
-#job.Songs.she:
-#job.Sound Mixer.he:
-#job.Story.he:
-#job.Stunts.he:
-#job.Teleplay.he:
-#job.Thanks.he:
-#job.Thanks.she:
-#job.Writer.he:
-#job.Writer.she:
-
-# Contact
-Contact: 연락
-Name: 이름
-Subject: 주제
-Message: 메시지
-Cancel: 취소
-Send: 보내기
-Contact form: 연락 양식
-Contact message: 연락 메시지
-From: 보낸 사람
-Your message has been sent: 메시지가 전송되었습니다
-An error occurred, please try again later: 오류가 발생했습니다. 나중에 다시 시도하세요
-
-# User / Profile
-Profile: 프로필
-Preferred Language: 선호하는 언어
-Avatar: 아바타
-Banner: 배너
-Update: 업데이트
-Drop your file here or click to upload: 파일을 여기에 놓거나 클릭하여 업로드하세요
-Filter: 필터
-Start taping...: 타이핑을 시작하세요...
-See selected: 선택된 항목 보기
-
-# Movies
-Movies: 영화
-movies: 영화
-Title: 제목
-My movies: 내 영화
-poster: 포스터
-backdrop: 배경
-Genres: 장르
-Collection: 컬렉션
-Runtime: 런타임
-Note: 노트
-Average: 평균
-Count: 수
-Release date: 개봉일
-Recommendations: 추천
-Add this movie to your watchlist: 이 영화를 시청 목록에 추가
-Premiere: 프리미어
-Theatrical (limited): 극장 (한정)
-Theatrical: 극장
-Digital: 디지털
-Physical: 물리적
-TV: TV
-Released: 출시됨
-Production companies: 제작사
-Production countries: 제작 국가
-Mark as viewed: 본 것으로 표시
-Not found: 찾을 수 없음
-Movie not found on TMDB: TMDB에서 영화를 찾을 수 없습니다
-Search on TMDB: TMDB에서 검색
-Delete this movie from your watchlist: 이 영화를 시청 목록에서 삭제
-
-
-# Map
-Add a shooting location: 촬영 장소 추가
-All countries: 모든 국가
-Arrow keys: 화살표 키
-Click the map to copy the latitude and longitude to the clipboard: 위도와 경도를 클립보드에 복사하려면 지도를 클릭하세요
-Countries: 국가
-Decrease the pitch by 10 degrees: 피치를 10도 감소
-Decrease the rotation by 15 degrees: 회전을 15도 감소
-Decrease the zoom level by 1: 줌 레벨을 1 감소
-Decrease the zoom level by 2: 줌 레벨을 2 감소
-Description: 설명
-Go to: 가기
-Image: 이미지
-Increase the pitch by 10 degrees: 피치를 10도 증가
-Increase the rotation by 15 degrees: 회전을 15도 증가
-Increase the zoom level by 1: 줌 레벨을 1 증가
-Increase the zoom level by 2: 줌 레벨을 2 증가
-Latitude: 위도
-Location: 위치
-Locations: 위치
-Longitude: 경도
-Pan by 100 pixels: 100 픽셀로 이동
-Paste Google maps url here to obtain latitude and longitude: 위도와 경도를 얻으려면 Google 지도 URL을 여기에 붙여넣으세요
-Shooting locations for count series: count 시리즈의 촬영 장소
-Shooting locations: 촬영 장소
-Zoom to: 줌
-
-# Week
-Dimanche: 일요일
-Lundi: 월요일
-Mardi: 화요일
-Mercredi: 수요일
-Jeudi: 목요일
-Vendredi: 금요일
-Samedi: 토요일
-
-#Months
 January: 1월
 February: 2월
 March: 3월
@@ -609,48 +665,1024 @@ October: 10월
 November: 11월
 December: 12월
 
-#Videos
-Added at: 추가됨
+#Search
+Ads: 광고
+'Advanced search': '고급 검색'
+After: 이후
+'All keywords': '모든 키워드'
+And: 그리고
+'Any keywords': '모든 키워드'
+Before: 이전
+Buy: 구매
+Dates: 날짜
+Documentary: 다큐멘터리
+'First air date ascending': '첫 방송일 오름차순'
+'First air date descending': '첫 방송일 내림차순'
+'First air date year': '첫 방송일 년도'
+Flatrate: 정액제
+Free: 무료
+'Go to page': '페이지로 이동'
+Hide: 숨기기
+Keywords: 키워드
+Language: 언어
+Miniseries: 미니시리즈
+'Monetization type': '수익화 유형'
+'Name ascending': '이름 오름차순'
+'Name descending': '이름 내림차순'
+'Name of the series': '시리즈 이름'
+News: 뉴스
+'No results': '결과 없음'
+'Open in new tab': '새 탭에서 열기'
+Or: 또는
+'Origin country': '원산지 국가'
+Origin: 원산지
+'Original name ascending': '원본 이름 오름차순'
+'Original name descending': '원본 이름 내림차순'
+Page: 페이지
+'Popularity ascending': '인기도 오름차순'
+'Popularity descending': '인기도 내림차순'
+Reality: 리얼리티
+'Refine your search': '검색 구체화'
+Rent: 대여
+Reset: 초기화
+'Runtime greater than': '런타임이 다음보다 긴'
+'Runtime less than': '런타임이 다음보다 짧은'
+Scripted: 스크립트
+'Search a series': '시리즈 검색'
+'Search results': '검색 결과'
+Search: 검색
+'Series name': '시리즈 이름'
+Show: 보기
+'Sort by': '정렬 기준'
+'Start typing to search': '입력하여 검색'
+'Status and type': '상태 및 유형'
+'Talk Show': 토크쇼
+Type: 유형
+Video: 비디오
+'Viewer place': '관중의 장소'
+'Vote average ascending': '평균 투표 오름차순'
+'Vote average descending': '평균 투표 내림차순'
+'Vote count ascending': '투표 수 오름차순'
+'Vote count descending': '투표 수 내림차순'
+'Watch providers': '시청 제공자'
+Year: 연도
+results: 결과
+
+# People
+Acting: 연기
+'Add a new name': '새 이름 추가'
+'Also known as': '다른 이름'
+'Average rating': '평균 점수'
+Birthday: 생일
+Directing: 감독
+Female: 여성
+Gender: 성별
+Go: 가기
+Herself: '그 여자 자신'
+Himself: '그 자신'
+Homepage: 홈페이지
+'Known appearances': '알려진 출연'
+'Known for Department': '부서로 알려진'
+'Known for': 알려진
+Lists: 목록
+Male: 남성
+Movie: 영화
+'No proposals': '제안 없음'
+'No rating yet': '아직 메모 없음'
+People: 사람
+'Personal Informations': '개인 정보'
+'Place of birth': 출생지
+Production: 제작
+Self: 자신
+Serie: 시리즈
+'Set as preferred name': '기본 이름으로 설정'
+'Star people': '별표 표시된 사람들'
+Writing: 작가
+'Your rating': 평가
+'Your stars': '당신의 별'
+'Copy to clipboard': '클립보드에 복사'
+'Add a localized biography': '현지화된 약력 추가'
+Biography: 전기
+'Biography must be at least 20 characters long.': '약력은 20자 이상이어야 합니다.'
+as.job: 로서
+items: 항목
+movie: 영화
+old: 세
+tv: TV
+"job.Actor's Assistant.he": '배우의 어시스턴트'
+job.Adaptation.he: 적응
+job.Animation.she: 호스트
+'job.Assistant Director.he': 조감독
+'job.Associate Producer.he': 부프로듀서
+'job.Associate Producer.she': 부프로듀서
+job.Author.he: 작성자
+job.Book.he: 예약
+job.Characters.he: 크리에이터(문자)
+job.Cinematography.he: 시네마토그래피
+'job.Co-Executive Producer.he': '공동 총괄 프로듀서'
+'job.Co-Executive Producer.she': '공동 총괄 프로듀서'
+job.Co-Producer.he: '공동 프로듀서'
+job.Co-Producer.she: '공동 프로듀서'
+job.Co-Writer.he: '공동 저자'
+job.Co-Writer.she: '공동 저자'
+'job.Comic Book.he': '코믹 스트립'
+job.Conductor.he: '오케스트라 지휘자'
+'job.Consulting Producer.he': '컨설턴트 프로듀서'
+'job.Consulting Producer.she': '컨설팅 프로듀서'
+'job.Creative Consultant.he': '크리에이티브 컨설턴트'
+'job.Creative Consultant.she': '크리에이티브 컨설턴트'
+'job.Creative Producer.he': '크리에이티브 프로듀서'
+job.Creator.he: 크리에이터
+job.Creator.she: 디자이너
+'job.Development Producer.he': '개발 프로듀서'
+'job.Development Producer.she': '개발 프로듀서'
+job.Dialogue.he: 대화
+'job.Director of Photography.he': '촬영 감독'
+job.Director.he: 디렉터
+job.Director.she: 디렉터
+'job.Documentation & Support.he': '문서 및 지원'
+'job.Documentation & Support.she': '문서 및 지원'
+job.Editor.he: 편집장
+'job.Executive Co-Producer.he': '공동 총괄 프로듀서'
+'job.Executive Co-Producer.she': '공동 총괄 프로듀서'
+'job.Executive Producer.he': '총괄 프로듀서'
+'job.Executive Producer.she': '총괄 프로듀서'
+job.Idea.he: 아이디어
+job.Idea.she: 아이디어
+'job.Lighting Technician.he': '조명 기술자'
+'job.Music Director.he': '음악 감독'
+'job.Music Supervisor.he': '음악 감독'
+job.Music.he: 음악
+job.Novel.he: 신규
+'job.Original Music Composer.he': '오리지널 음악 작곡가'
+'job.Original Story.he': '오리지널 스토리'
+job.Presenter.he: 발표자
+job.Producer.he: 프로듀서
+job.Producer.she: 프로듀서
+'job.Production Assistant.he': '프로덕션 어시스턴트'
+'job.Production Design.he': 디자인(제작)
+'job.Production Executive.he': '이그제큐티브 프로덕션'
+'job.Production Sound Mixer.he': '사운드 믹서(프로덕션)'
+job.Screenplay.he: '스크립트 작성기'
+job.Screenstory.he: 시나리오
+job.Script.he: 글쓰기
+job.Songs.he: 단어
+job.Songs.she: 단어
+'job.Sound Mixer.he': '사운드 믹서'
+job.Story.he: 작성자(스토리)
+'job.Stunt Double.he': 스턴트맨
+'job.Stunt Double.she': 스턴트우먼
+job.Stunts.he: 스턴트맨
+job.Teleplay.he: 텔레텍스트
+job.Thanks.he: 감사
+job.Thanks.she: 감사
+'job.Theme Song Performance.he': '주제곡 연주자'
+job.Writer.he: 작성자
+job.Writer.she: 작성자
+
+# Jobs
+'"First Assistant \"A\" Camera"': ''
+'"First Assistant \"B\" Camera"': ''
+'"First Assistant \"C\" Camera"': ''
+'"Second Assistant \"A\" Camera"': ''
+'"Second Assistant \"B\" Camera"': ''
+'"Second Assistant \"C\" Camera"': ''
+'"\"A\" Camera Operator"': ''
+'"\"B\" Camera Operator"': ''
+'"\"C\" Camera Operator"': ''
+'"\"D\" Camera Operator"': ''
+
+'24 Frame Playback': '24개 이미지 재생'
+'3D Artist': '3D 아티스트'
+'3D Supervisor': '3D 슈퍼바이저'
+'ADR & Dubbing': 'ADR 및 더빙'
+'ADR Coordinator': 'ADR 코디네이터'
+'ADR Editor': 'ADR 피터'
+'ADR Mixer': 'ADR 믹서'
+'ADR Recordist': 'ADR 레코더'
+'ADR Supervisor': 'ADR 감독자'
+'ADR Voice Casting': 'ADR 음성 캐스트'
+Accountant: 회계사
+'Acting Double': '더블 액터'
+'Action Director': '액션 디렉터'
+"Actor's Assistant": '배우의 어시스턴트'
+Adaptation: 적응
+'Additional Casting': '추가 캐스팅'
+'Additional Colorist': '추가 컬러리스트'
+'Additional Editor': '추가 피터'
+'Additional Music': '추가 음악'
+'Additional Photography': '추가 사진'
+'Additional Script Supervisor': '추가 스크립트 감독자'
+'Additional Second Assistant Director': '두 번째 조감독 추가'
+'Additional Sound Re-Recording Mixer': '추가 사운드 믹서'
+'Additional Soundtrack': '추가 사운드트랙'
+'Additional Wardrobe Assistant': '추가 옷장 도우미'
+Administration: 관리
+'Administrative Assistant': '관리 도우미'
+'Aerial Coordinator': '에어 코디네이터'
+'Aerial Director of Photography': '항공 촬영 디렉터'
+'Animal Coordinator': '동물 코디네이터'
+'Animal Wrangler': '동물 조련사'
+'Animation Director': '애니메이션 감독'
+'Animation Manager': '이벤트 책임자'
+'Animation Supervisor': '애니메이션 감독자'
+Animation: 애니메이션
+'Apprentice Sound Editor': '견습 사운드 편집자'
+Armorer: 아머러
+'Art Department Assistant': '예술 부서 보조'
+'Art Department Coordinator': '예술 부서 코디네이터'
+'Art Department Manager': '예술 부서 책임자'
+'Art Department Production Assistant': '예술 부서의 프로덕션 어시스턴트'
+'Art Department Trainee': '미술학과 연수생'
+'Art Designer': '아트 디자이너'
+'Art Direction': '예술적 방향'
+Art: 예술
+'Assistant Accountant': '회계사 보조'
+'Assistant Art Director': '예술 감독 보조'
+'Assistant Camera': '카메라 어시스턴트'
+'Assistant Chef': '보조 관리자'
+'Assistant Chief Lighting Technician': '보조 헤드 조명 기술자'
+'Assistant Costume Designer': '보조 의상 디자이너'
+'Assistant Director Trainee': '연수생 조감독'
+'Assistant Director of Photography': '촬영 조감독'
+'Assistant Director': 조감독
+'Assistant Editor': '보조 편집기'
+'Assistant Electrician': '보조 전기 기사'
+'Assistant Grip': '그립 도우미'
+'Assistant Hairstylist': '미용 도우미'
+'Assistant Location Manager': '로컬라이제이션 관리자'
+'Assistant Makeup Artist': '메이크업 어시스턴트'
+'Assistant Production Coordinator': '프로덕션 코디네이터 보조'
+'Assistant Production Design': '프로덕션 디자인 어시스턴트'
+'Assistant Production Manager': '생산 관리자 보조'
+'Assistant Property Master': '보조 소품 마스터'
+'Assistant Script': '스크립트 어시스턴트'
+'Assistant Set Decoration': '세트 장식'
+'Assistant Sound Editor': '보조 사운드 편집기'
+'Assistant Unit Manager': '보조 단위 관리자'
+'Associate Editor': 준편집자
+'Associate Producer': 부프로듀서
+'Background Casting Director': '엑스트라 캐스팅 디렉터'
+'Base Camp Operator': '베이스 캠프 운영자'
+'Best Boy Electric': '보조 헤드 조명 기술자'
+'Best Boy Grip': '보조 그립 관리자'
+'Best Boy Lighting Technician': '보조 헤드 조명 기술자'
+Book: 예약
+'Boom Operator': '붐 운영자'
+'Business Affairs Coordinator': '커머셜 업무 코디네이터'
+'CG Supervisor': 'CG 감독자'
+'Camera Loader': '카메라 충전기'
+'Camera Operator': '카메라 오퍼레이터'
+'Camera Supervisor': '카메라 감독자'
+'Camera Technician': '카메라 기술자'
+'Camera Trainee': '카메라 연수생'
+Camera: 카메라
+Carpenter: 조인자
+'Casting Assistant': '캐스팅 어시스턴트'
+'Casting Associate': '캐스팅 파트너'
+'Casting Consultant': '캐스팅 컨설턴트'
+'Casting Coordinator': '캐스팅 코디네이터'
+'Casting Director': '캐스팅 디렉터'
+Casting: 캐스팅
+Catering: 케이터링
+'Character Designer': '캐릭터 디자이너'
+Characters: 문자
+Chef: Head
+'Chief Lighting Technician': '수석 조명 기술자'
+'Child Wrangler': '어린이 트레이너'
+Choreographer: 안무가
+Cinematography: 시네마토그래피
+'Clapper Loader': '클래퍼 로더'
+'Clearances Coordinator': '라이선스 코디네이터'
+Co-Director: '공동 디렉터'
+'Co-Executive Producer': '공동 총괄 프로듀서'
+Co-Producer: '공동 프로듀서'
+'Color Assistant': '컬러 어시스턴트'
+'Color Grading': 보정
+Colorist: 컬러리스트
+'Comic Book': '코믹 스트립'
+'Commissioning Editor': '주문 편집기'
+'Compositing Artist': '합성 아티스트'
+'Compositing Lead': '합성 리더'
+'Compositing Supervisor': '합성 감독자'
+Compositor: 합성
+Compositors: 합성
+'Concept Artist': '컨셉 아티스트'
+'Conceptual Design': '컨셉 디자인'
+'Conceptual Illustrator': '컨셉 일러스트레이터'
+Conductor: '오케스트라 지휘자'
+'Construction Buyer': '건설 바이어'
+'Construction Coordinator': '건설 코디네이터'
+'Construction Foreman': '건설 감독'
+'Construction Grip': '건설 그립'
+'Construction Manager': '건설 책임자'
+'Consulting Producer': '컨설턴트 프로듀서'
+'Contact Lens Technician': '콘택트렌즈 기술자'
+Continuity: 연속성
+Controller: 컨트롤러
+'Coordinating Producer': '코디네이팅 프로듀서'
+'Costume & Make-Up': '의상 및 메이크업'
+'Costume Assistant': '보조 의상 디자이너'
+'Costume Consultant': '의상 컨설턴트'
+'Costume Coordinator': '의상 코디네이터'
+'Costume Design': '의상 디자인'
+'Costume Designer': '의상 디자이너'
+'Costume Illustrator': '의상 일러스트레이터'
+'Costume Mistress': '의상 여주인'
+'Costume Set Supervisor': '의상 감독자'
+'Costume Standby': 응급복
+'Costume Supervisor': '의상 감독자'
+Costumer: '의상 디자이너'
+'Craft Service': '케이터링 서비스'
+'Creative Consultant': '크리에이티브 컨설턴트'
+'Creative Director': '크리에이티브 디렉터'
+'Creative Producer': '크리에이티브 프로듀서'
+Creator: 크리에이터
+'Creature Effects Technical Director': '크리처 이펙트 기술 디렉터'
+'Dailies Operator': '일일 운영자'
+'Data Wrangler': '데이터 트레이너'
+'Delegated Producer': '라인 프로듀서'
+'Development Manager': '개발 책임자'
+'Development Producer': '개발 프로듀서'
+'Dialect Coach': '방언 트레이너'
+'Dialogue Coach': '대화 트레이너'
+'Dialogue Editor': '대화 편집기'
+'Digital Colorist': '디지털 컬러리스트'
+'Digital Compositor': '디지털 합성'
+'Digital Effects Supervisor': '디지털 효과 감독자'
+'Digital Imaging Technician': '디지털 이미징 기술자'
+'Digital Intermediate Assistant': '디지털 중급 도우미'
+'Digital Intermediate Colorist': '디지털 중급 컬러리스트'
+'Digital Intermediate Editor': '디지털 중급 편집기'
+'Digital Intermediate Producer': '디지털 중간 프로듀서'
+'Digital Intermediate': '디지털 중개자'
+'Director of Photography': '촬영 감독'
+Director: 디렉터
+'Dolly Grip': '그립 돌리'
+Draughtsman: 드래프츠맨
+'Dressing Prop': '장식용 액세서리'
+Driver: 드라이버
+'Drone Operator': '드론 운영자'
+'Drone Pilot': '드론 조종사'
+Editing: 어셈블리
+Editor: 피터
+'Editorial Manager': '편집 관리자'
+'Editorial Production Assistant': '편집 제작 도우미'
+'Editorial Staff': 사설
+'Effects Supervisor': '효과 감독자'
+Electrician: '전기 기술자'
+'Epk Camera Operator': 'EPK 카메라 오퍼레이터'
+'Epk Producer': '프로듀서 EPK'
+'Executive Assistant': '경영 비서'
+'Executive Consultant': '경영진 컨설턴트'
+'Executive In Charge Of Production': '생산 담당 임원'
+'Executive Music Producer': '총괄 음악 프로듀서'
+"Executive Producer's Assistant": '총괄 프로듀서 보조'
+'Executive Producer': '총괄 프로듀서'
+'Executive Story Editor': '총괄 작가'
+'Executive Visual Effects Producer': '시각 효과 총괄 프로듀서'
+'Extras Casting Assistant': '엑스트라 캐스팅 지원'
+'Extras Casting': '엑스트라 캐스팅'
+'Fight Choreographer': '전투 안무가'
+Finance: 금융
+'Finishing Producer': '마무리 프로듀서'
+'First Assistant "D" Camera': "첫 번째 보조 카메라 'D"
+'First Assistant Accountant': '첫 번째 보조 회계사'
+'First Assistant Art Direction': '첫 번째 예술 감독 조감독'
+'First Assistant Camera': '최초의 카메라 어시스턴트'
+'First Assistant Director': '첫 번째 조감독'
+'First Assistant Editor': '첫 번째 보조 편집자'
+'First Assistant Hairstylist': '첫 번째 보조 미용사'
+'First Assistant Makeup Artist': '첫 번째 보조 메이크업 아티스트'
+'First Assistant Production Coordinator': '첫 번째 보조 프로덕션 코디네이터'
+'First Assistant Sound Editor': '첫 번째 보조 사운드 편집기'
+'Floor Runner': '무대 어시스턴트'
+'Focus Puller': '초점 풀러'
+'Foley Artist': '아티스트 폴리'
+'Foley Editor': '에디터 폴리'
+'Foley Mixer': '폴리 믹서'
+'Foley Recordist': '폴리 레코더'
+'Foley Supervisor': '감독자 폴리'
+Foley: Foley
+Gaffer: '조명 디자이너'
+'Graphic Designer': '그래픽 디자이너'
+'Graphic Novel': '그래픽 소설'
+Greensman: 정원사
+Grip: 그립
+'Hair Assistant': '미용 도우미'
+'Hair Department Head': '미용 부서장'
+'Hair Designer': 미용사
+'Hair Supervisor': '미용 감독자'
+Hairdresser: 미용사
+Hairstylist: 미용사
+'Head Greensman': '수석 정원사'
+'Head of Animation': '이벤트 책임자'
+'Head of Production': '프로덕션 관리자'
+'Head of Story': '스토리 책임자'
+'Health and Safety': '건강 및 안전'
+'Hide all facts': '모든 사실 숨기기'
+'Hide all providers': '모든 플랫폼 숨기기'
+Idea: 아이디어
+'In Memory Of': '다음을 기념하여'
+'Interior Designer': '인테리어 디자이너'
+'Key Carpenter': '메인 목수'
+'Key Construction Grip': '주요 구조 그립'
+'Key Costumer': '수석 의상 디자이너'
+'Key Grip': '메인 그립'
+'Key Hair Stylist': '수석 미용사'
+'Key Makeup Artist': '수석 메이크업 아티스트'
+'Key Production Assistant': '시니어 프로덕션 어시스턴트'
+'Key Rigging Grip': '메인 리깅 그립'
+'Key Scenic Artist': '메인 세트 아티스트'
+'Key Set Production Assistant': '시니어 무대 제작 보조'
+'Layout Supervisor': '레이아웃 관리자'
+'Lead Animator': '주요 발표자'
+'Lead Painter': '메인 화가'
+'Lead Set Dresser': '메인 세트 데코레이터'
+Leadman: '팀 리더'
+'Legal Services': '법률 서비스'
+'Libra Head Technician': '천칭자리 기술자'
+'Lighting Artist': '조명 아티스트'
+'Lighting Design': '조명 디자인'
+'Lighting Director': '촬영 감독'
+'Lighting Programmer': '조명 프로그래머'
+'Lighting Supervisor': '조명 감독자'
+'Lighting Technician': '조명 기술자'
+Lighting: 조명
+'Line Producer': '라인 프로듀서'
+Loader: 충전기
+'Local Casting': '로컬 캐스팅'
+'Location Assistant': '위치 도우미'
+'Location Casting': '로케이션 캐스팅'
+'Location Coordinator': '위치 코디네이터'
+'Location Manager': '현지화 책임'
+'Location Production Assistant': '로컬라이제이션 프로덕션 어시스턴트'
+'Location Scout': '위치 찾기'
+Lyricist: 가사
+'Main Title Designer': '크레딧 디자이너'
+'Main Title Theme Composer': '메인 테마 작곡가'
+'Makeup & Hair Assistant': '메이크업 및 헤어 스타일링 도우미'
+'Makeup & Hair': '메이크업 및 헤어스타일링'
+'Makeup Artist': '메이크업 아티스트'
+'Makeup Department Head': '메이크업 부서장'
+'Makeup Designer': '메이크업 아티스트'
+'Makeup Effects Designer': '메이크업 효과 디자이너'
+'Makeup Effects': '효과 메이크업'
+'Makeup Supervisor': '메이크업 감독자'
+'Makeup Trainee': '연습생 메이크업 아티스트'
+'Marine Coordinator': '해양 코디네이터'
+'Martial Arts Choreographer': '무술 안무가'
+'Master Lighting Artist': '수석 조명 아티스트'
+'Matte Painter': '매트 페인터'
+'Medical Consultant': '의료 컨설턴트'
+'Military Consultant': '군사 컨설턴트'
+'Mix Technician': '믹싱 기술자'
+'Mixing Engineer': '사운드 엔지니어'
+Modeling: 모델링
+'Motion Capture Artist': '모션 캡처 아티스트'
+'Music Arranger': '음악 편곡자'
+'Music Co-Supervisor': '뮤지컬 공동 감독자'
+'Music Consultant': '음악 컨설턴트'
+'Music Coordinator': '음악 코디네이터'
+'Music Director': '음악 감독'
+'Music Editor': '음악 편집기'
+'Music Producer': '음악 프로듀서'
+'Music Score Producer': '음악 프로듀서'
+'Music Supervisor': '음악 감독'
+Music: 음악
+'Musical Casting': '뮤지컬 캐스팅'
+Musician: 뮤지션
+Novel: Roman
+'On Set Computer Graphics': '세트의 컴퓨터 그래픽'
+'On Set Dresser': '세트 데코레이터'
+'Online Editor': '라인 피터'
+'Opening/Ending Animation': '오프닝/마감 엔터테인먼트'
+Orchestrator: 오케스트레이터
+'Original Casting': '오리지널 캐스팅'
+'Original Concept': '독창적인 컨셉'
+'Original Film Writer': '오리지널 시나리오 작가'
+'Original Music Composer': '오리지널 음악 작곡가'
+'Original Series Creator': '오리지널 시리즈 제작자'
+'Original Story': '오리지널 스토리'
+Other: 기타
+'Paint Coordinator': '페인트 코디네이터'
+'Payroll Accountant': '급여 회계사'
+'Petty Cash Buyer': '소액 현금 구매자'
+'Picture Car Coordinator': '무대 차량 코디네이터'
+'Pipeline Technical Director': '파이프라인 기술 관리자'
+'Playback Coordinator': '독서 코디네이터'
+'Post Producer': '포스트 프로덕션 프로듀서'
+'Post Production': '포스트 프로덕션'
+'Post Production Accountant': '포스트 프로덕션 회계사'
+'Post Production Assistant': '포스트 프로덕션 어시스턴트'
+'Post Production Consulting': '포스트 프로덕션 컨설팅'
+'Post Production Coordinator': '포스트 프로덕션 코디네이터'
+'Post Production Producer': '포스트 프로덕션 프로듀서'
+'Post Production Supervisor': '포스트 프로덕션 감독자'
+'Post-Production Manager': '포스트 프로덕션 책임자'
+'Pre-Visualization Supervisor': '사전 시각화 감독자'
+Presenter: 발표자
+'Principal Costumer': '수석 의상 디자이너'
+"Producer's Assistant": '프로듀서 어시스턴트'
+Producer: 프로듀서
+'Production Accountant': '생산 회계사'
+'Production Assistant': '프로덕션 어시스턴트'
+'Production Consultant': '프로덕션 컨설턴트'
+'Production Controller': '프로덕션 컨트롤러'
+'Production Coordinator': '생산 코디네이터'
+'Production Design': 디자인(제작)
+'Production Designer': '프로덕션 디자이너'
+'Production Director': '프로덕션 관리자'
+'Production Driver': '프로덕션 관리자'
+'Production Executive': '프로덕션 임원'
+'Production Manager': '프로덕션 관리자'
+'Production Office Assistant': '프로덕션 오피스 어시스턴트'
+'Production Office Coordinator': '프로덕션 오피스 코디네이터'
+'Production Runner': '프로덕션 어시스턴트'
+'Production Secretary': '생산 비서'
+'Production Sound Mixer': '사운드 믹서(프로덕션)'
+'Production Supervisor': '생산 감독자'
+'Project Manager': '프로젝트 관리자'
+'Prop Designer': '액세서리 디자이너'
+'Prop Maker': '액세서리 제조업체'
+'Property Builder': '액세서리 제조업체'
+'Property Buyer': '액세서리 구매자'
+'Property Master': '액세서리 마스터'
+Propmaker: '액세서리 제조업체'
+Props: 액세서리
+'Prosthetic Designer': '보철물 디자이너'
+'Prosthetic Makeup Artist': '보철 메이크업 아티스트'
+'Prosthetic Supervisor': '보철물 감독자'
+Prosthetics: 보철물
+Publicist: '언론 담당자'
+'Pyrotechnic Supervisor': '불꽃놀이 감독자'
+'Recording Supervision': '레코딩 감독'
+Researcher: 연구원
+'Rigging Gaffer': '리깅 조명 기술자'
+'Rigging Grip': '리깅 그립'
+'Rigging Supervisor': '리깅 감독자'
+'Rotoscoping Artist': '로토스코핑 아티스트'
+'Russian Arm Operator': '러시아 암 오퍼레이터'
+'Scenario Writer': '스크립트 작성기'
+'Scenic Artist': '데코 아티스트'
+'Scientific Consultant': '과학 컨설턴트'
+'Score Engineer': '음악 엔지니어'
+'Scoring Mixer': '음악 믹서'
+Screenplay: 시나리오
+Screenstory: 역사
+'Script Consultant': '스크립트 컨설턴트'
+'Script Coordinator': '스크립트 코디네이터'
+'Script Editor': '스크립트 편집기'
+'Script Supervisor': '스크립트 관리자'
+Script: 시나리오
+Sculptor: 조각가
+Seamstress: 재봉사
+'Second Assistant "D" Camera': "두 번째 카메라 어시스턴트 'D"
+'Second Assistant Accountant': '두 번째 보조 회계사'
+'Second Assistant Camera': '두 번째 카메라 어시스턴트'
+'Second Assistant Director': '두 번째 조감독'
+'Second Assistant Production Coordinator': '두 번째 보조 프로덕션 코디네이터'
+'Second Company Grip': '세컨드 팀 그립'
+'Second Second Assistant Director': '두 번째 조감독'
+'Second Unit Director of Photography': '두 번째 팀의 촬영 감독'
+'Second Unit Director': '두 번째 팀장'
+'Second Unit First Assistant Director': '세컨드 팀의 첫 번째 조감독'
+'Second Unit': '두 번째 팀'
+Security: 보안
+'Senior Colorist': '수석 컬러리스트'
+'Senior Visual Effects Supervisor': '선임 시각 효과 감독자'
+'Series Composition': '시리즈 구성'
+'Series Director': '시리즈 감독'
+'Set Buyer': '트레이 구매자'
+'Set Costumer': '무대 의상 디자이너'
+'Set Decorating Coordinator': '세트 장식 코디네이터'
+'Set Decoration Buyer': '세트 장식 구매자'
+'Set Decoration': 장식
+'Set Designer': '세트 디자이너'
+'Set Dresser': '세트 데코레이터'
+'Set Dressing Production Assistant': '세트 장식 제작 도우미'
+'Set Medic': '트레이 닥터'
+'Set Photographer': '세트 포토그래퍼'
+'Set Production Assistant': '무대 프로덕션 어시스턴트'
+'Set Supervisor': '무대 감독자'
+Shading: 음영
+'Short Story': 신규
+'Show all facts': '모든 사실 보기'
+'Show all providers': '모든 플랫폼 보기'
+Songs: 단어
+'Sound Assistant': '사운드 어시스턴트'
+'Sound Designer': '사운드 디자이너'
+'Sound Director': '사운드 디렉터'
+'Sound Editor': '사운드 편집기'
+'Sound Effects Designer': '사운드 디자이너'
+'Sound Effects Editor': '사운드 편집기'
+'Sound Engineer': '사운드 엔지니어'
+'Sound Mix Technician': '사운드 믹싱 기술자'
+'Sound Mixer': '사운드 믹서'
+'Sound Post Production Coordinator': '사운드 포스트 프로덕션 코디네이터'
+'Sound Post Supervisor': '사운드 포스트 프로덕션 감독자'
+'Sound Re-Recording Assistant': '사운드 믹싱 어시스턴트'
+'Sound Re-Recording Mixer': '사운드 믹서'
+'Sound Recordist': '사운드 레코더'
+'Sound Supervisor': '사운드 감독자'
+Sound: 사운드
+'Special Effects Assistant': '특수 효과 도우미'
+'Special Effects Best Boy': '보조 특수 효과 감독자'
+'Special Effects Coordinator': '특수 효과 코디네이터'
+'Special Effects Key Makeup Artist': '수석 특수효과 메이크업 아티스트'
+'Special Effects Makeup Artist': '특수 효과 메이크업 아티스트'
+'Special Effects Manager': '특수 효과 책임자'
+'Special Effects Supervisor': '특수 효과 감독자'
+'Special Effects Technician': '특수 효과 기술자'
+'Special Effects': '특수 효과'
+'Special Props': '특별 액세서리'
+'Specialized Driver': '전문 드라이버'
+'Staff Writer': '스크립트 작성기'
+'Stand In': 안감
+'Standby Art Director': '긴급 예술 감독'
+'Standby Carpenter': '긴급 목수'
+'Standby Painter': '응급 화가'
+'Standby Property Master': '비상 액세서리 마스터'
+'Steadicam Operator': '스테디캠 운영자'
+'Stereoscopic Supervisor': '스테레오스코픽 감독자'
+'Still Photographer': '세트 포토그래퍼'
+'Story Editor': '기록 게시자'
+'Story Supervisor': '기록 관리자'
+Story: 역사
+'Storyboard Artist': '스토리보드 아티스트'
+Storyboard: 스토리보드
+'Studio Teacher': '스튜디오 선생님'
+'Stunt Coordinator': '스턴트 코디네이터'
+'Stunt Double': '폭포 안감'
+'Stunt Driver': '캐스케이드 연산자'
+Stunts: 캐스케이드
+'Supervising ADR Editor': 'ADR 어셈블리 감독자'
+'Supervising Armorer': '총포 감독관'
+'Supervising Art Director': '슈퍼바이징 아트 디렉터'
+'Supervising Dialogue Editor': '대화 편집 감독자'
+'Supervising Music Editor': '음악 편집자 감독'
+'Supervising Producer': '감독 프로듀서'
+'Supervising Sound Editor': '사운드 감독자'
+'Supervising Sound Effects Editor': '사운드 편집자 감독'
+'Systems Administrators & Support': '시스템 및 지원 관리자'
+Tailor: suit
+'Technical Advisor': '기술 고문'
+'Technical Supervisor': '기술 감독자'
+'Techno Crane Operator': '테크노 크레인 운영자'
+Teleplay: 텔레텍스트
+Thanks: 감사
+'Theme Song Performance': '주제곡의 해석'
+'Third Assistant Camera': '세 번째 카메라 어시스턴트'
+'Third Assistant Director': '세 번째 조감독'
+'Title Designer': '타이틀 디자이너'
+'Trainee Production Coordinator': '교육생 프로덕션 코디네이터'
+Transcriptions: 트랜스크립션
+Translator: 번역기
+'Transportation Captain': '수송 대장'
+'Transportation Co-Captain': '운송 공동 선장'
+'Transportation Coordinator': '운송 코디네이터'
+'Travel Coordinator': '여행 코디네이터'
+'Truck Costumer': '트럭 의상 제작자'
+'Truck Supervisor': '트럭 감독자'
+'Unit Manager': 부서장
+'Unit Production Manager': '프로덕션 관리자'
+'Unit Publicist': '언론 담당자'
+'Utility Sound': 유용성
+'VFX Artist': 'VFX 아티스트'
+'VFX Editor': 'VFX 에디터'
+'VFX Production Coordinator': 'VFX 프로덕션 코디네이터'
+'VFX Supervisor': 'VFX 감독자'
+'Video Assist Operator': '화상 지원 운영자'
+'Visual Development': '시각적 개발'
+'Visual Effects Art Director': '시각 효과 아트 디렉터'
+'Visual Effects Assistant Editor': '보조 시각 효과 편집기'
+'Visual Effects Compositor': '시각 효과 합성'
+'Visual Effects Coordinator': '시각 효과 코디네이터'
+'Visual Effects Director': '시각 효과 감독'
+'Visual Effects Editor': '시각 효과 편집기'
+'Visual Effects Producer': '시각 효과 프로듀서'
+'Visual Effects Production Assistant': '시각 효과 제작 도우미'
+'Visual Effects Production Manager': '시각 효과 제작 관리자'
+'Visual Effects Supervisor': '시각 효과 감독자'
+'Visual Effects': '시각 효과'
+'Vocal Coach': '음성 트레이너'
+Vocals: 음성
+'Wardrobe Assistant': '보조 의상 디자이너'
+'Wardrobe Designer': '의상 디자이너'
+'Wardrobe Supervisor': '옷장 관리자'
+'Where to watch, rent or buy': '시청, 대여 또는 구매처'
+Wigmaker: '가발 제조업체'
+Writer: '스크립트 작성기'
+"Writers' Assistant": '대본 작가 지원'
+"Writers' Production": '스크립터 제작'
+'Runner Art Department': '예술 부서 보조'
+'Lighting Manager': '조명 관리자'
+
+'Additional Grip': '그립감 강화'
+Ager/Dyer: 에이저/페인터
+'Charge Scenic Artist': '헤드 세트 아티스트'
+Painter: 페인터
+'Best Boy Electrician': '전기 기술자 보조'
+'Assistant Gaffer': '보조 조명 디자이너'
+'Assistant Decorator': '보조 데코레이터'
+'Extras Makeup Artist': '추가 메이크업 아티스트'
+'Drone Cinematographer': '드론 영화 제작자'
+'Quality Control Supervisor': '품질 관리 감독자'
+'Sound Effects': '음향 효과'
+
+# Contact
+Contact: 연락
+Name: 이름
+Subject: 주제
+Message: 메시지
+Cancel: 취소
+Send: 보내기
+'Contact form': '연락 양식'
+'Contact message': '연락 메시지'
+From: '보낸 사람'
+'Your message has been sent': '메시지가 전송되었습니다'
+'An error occurred, please try again later': '오류가 발생했습니다. 나중에 다시 시도하세요'
+
+# User / Profile
+Avatar: 아바타
+'Back to my account': '내 계정으로 돌아가기'
+Banner: 배너
+'Choose a color': '색상 선택'
+'Confirm deletion of Apple link?': 'Apple 링크 제거를 확인하셨나요?'
+'Confirm deletion of Github link?': 'GitHub 링크 삭제를 확인하셨나요?'
+'Confirm deletion of Google link?': 'Google 링크 제거를 확인하셨나요?'
+'Drop your file here or click to upload': '파일을 여기에 놓거나 클릭하여 업로드하세요'
+Filter: 필터
+'Link Apple': '링크 Apple'
+'Link GitHub': 'GitHub 링크'
+'Link Google': 'Google 링크'
+'Link or unlink external accounts (Google, GitHub, Apple)': '외부 계정 연결 또는 연결 해제(Google, GitHub, Apple)'
+'Manage connections': '연결 관리'
+'Preferred Language': '선호하는 언어'
+'Preferred Languages': '기본 언어'
+Profile: 프로필
+'See selected': '선택된 항목 보기'
+'Select Language': '언어 선택'
+'Start taping...': '타이핑을 시작하세요...'
+'Targeted Languages': '대상 언어'
+'Translation Settings': '번역 매개변수'
+'Unlink Apple': 'Apple 풀기'
+'Unlink GitHub': GitHub
+'Unlink Google': 'Google 연결 해제'
+Connexions: 연결
+Update: 업데이트
+'You can change the translations of the application here.': '여기에서 애플리케이션의 번역을 변경할 수 있습니다.'
+
+# Movies
+"'%minutes% minutes'": '분% 분'
+'1 minute': 1분
+2015: 2015
+'Add this movie to your watchlist': '이 영화를 시청 목록에 추가'
+Average: 평균
+Backdrops: 배경
+Backdrop: 배경
+Collection: 컬렉션
+Count: 수
+'Delete this movie from your watchlist': '이 영화를 시청 목록에서 삭제'
+Digital: 디지털
+Genres: 장르
+Logos: 로고
+Logo: 로고
+'Mark as viewed': '본 것으로 표시'
+'Movie not found on TMDB': 'TMDB에서 영화를 찾을 수 없습니다'
+Movies: 영화
+'Movies by ID': 'ID별 영화'
+'My favorite movies': '내가 가장 좋아하는 영화'
+'My movies': '내 영화'
+'Name of the movie': '영화 이름'
+'Next video': '다음 비디오'
+'Not found': '찾을 수 없음'
+Note: 노트
+Physical: 물리적
+Posters: 포스터
+Poster: 포스터
+Premiere: 프리미어
+'Previous video': '이전 비디오'
+'Production companies': 제작사
+'Production countries': '제작 국가'
+Recommendations: 추천
+'Release date year': '출시 연도'
+'Release date': 개봉일
+Released: 출시됨
+Runtime: 런타임
+'Search a movie': '영화 검색'
+'Search for a movie…': '영화 검색...'
+'Search on TMDB': 'TMDB에서 검색'
+'Select a language': '언어 선택'
+TV: TV
+'Theatrical (limited)': '극장 (한정)'
+Theatrical: 극장
+Title: 제목
+'Where to buy or rent': '구매 또는 대여처'
+'Where to buy': '어디서 구매할까요'
+'Where to flatrate': '스트리밍 시청 위치'
+'Where to rent': '어디서 대여할까요'
+'Your list does not contain any movies': '목록에 영화가 없습니다.'
+backdrop: 배경
+movies: 영화
+poster: 포스터
+
+# Map
+'Add a shooting location': '촬영 장소 추가'
+'All countries': '모든 국가'
+'All series': '모든 시리즈'
+'Arrow keys': '화살표 키'
+'Center the map on this location': '이 위치에 카드를 중앙에 배치합니다.'
+'Click the map to copy the latitude and longitude to the clipboard': '위도와 경도를 클립보드에 복사하려면 지도를 클릭하세요'
+Countries: 국가
+'Decrease the pitch by 10 degrees': '피치를 10도 감소'
+'Decrease the rotation by 15 degrees': '회전을 15도 감소'
+'Decrease the zoom level by 1': '줌 레벨을 1 감소'
+'Decrease the zoom level by 2': '줌 레벨을 2 감소'
+Description: 설명
+'Go to': 가기
+Image: 이미지
+'Increase the pitch by 10 degrees': '피치를 10도 증가'
+'Increase the rotation by 15 degrees': '회전을 15도 증가'
+'Increase the zoom level by 1': '줌 레벨을 1 증가'
+'Increase the zoom level by 2': '줌 레벨을 2 증가'
+Last: 최신
+Latitude: 위도
+Location: 위치
+Locations: 위치
+Longitude: 경도
+'Map styles': '카드 스타일'
+'Pan by 100 pixels': '100 픽셀로 이동'
+'Paste Google maps url here to obtain latitude and longitude': '위도와 경도를 얻으려면 Google 지도 URL을 여기에 붙여넣으세요'
+'Points of Interest toggle display': '관심 지점 표시'
+'Recent additions': '최근 추가 사항'
+'Recent updates': '최근 업데이트'
+'Results per page': '페이지별 결과'
+'Shooting locations for %d series': 'D 시리즈의 촬영 위치'
+'Shooting locations': '촬영 장소'
+'Zoom to': 줌
+'map additions': '최신 추가 사항'
+'map updates': '최신 업데이트'
+'Zone radius': '영역 반경'
+Radius: 반경
+
+# Points of interest
+'Points of interest': '관심 지점'
+
+# Videos
+'Added at': 추가됨
 Added: 추가됨
+Agriculture: 농업
+'Albert Moukheiber': '알버트 무케이버'
+'All categories': '모든 카테고리'
+'Animal documentary': '동물 다큐멘터리'
+Arte: Arte
+'Artificial Intelligence': 인공지능
+'Asma Mhalla': '아스마 할라'
+'Aurélien Barrau': '오렐리엔 바라우'
+'Back to my videos by category': '카테고리별 내 동영상으로 돌아가기'
+'Back to my videos': '내 동영상으로 돌아가기'
+'Balade mentale': '정신적 산책'
+Capitalism: 자본주의
+Cat: 고양이
+Categories: 카테고리
+'Chinese tradition': '중국 전통'
+'Claire Nouvian': '클레어 누비안'
+'Climate change': '기후 변화'
+'Clément Viktorovitch': '클레멘트 빅토로비치'
+Collapse: 접기
 Comments: 댓글
-Display less: 댓글 숨기기
-Display more: 댓글 더 보기
-Link: YouTube 링크
-My videos: 내 비디오
-No comments: 댓글 없음
-Published at: 출시됨
+Demography: '인구 통계'
+'Display less': '댓글 숨기기'
+'Display more': '댓글 더 보기'
+Economics: 경제
+Environment: 환경
+'Failed to copy video link': '비디오 링크 복사 실패'
+'Gender bias': '성별 편견'
+Golden: 황금
+"It's important": 중요합니다
+'Jean-Luc Mélenchon': '장 뤽 멜랑숑'
+'Kawai Yuto': '카와이 유토'
+Link: 'YouTube 링크'
+Listen: 듣기
+'Lucy Darling': '루시 달링'
+'Manuel Bompart': '마누엘 봄파트'
+'Mass extinction': '대량 멸종'
+Mercosur: 메르코수르
+'My videos': '내 비디오'
+Neoliberalism: 신자유주의
+'New category': '새 카테고리'
+'Nicolas Framont': '니콜라스 프라몽'
+'No comments': '댓글 없음'
+'No video': '동영상 없음'
+'One video': '한 비디오'
+Pest: 해충
+Politics: 정치
+'Published at': 출시됨
 Published: 출시됨
+Repression: 억압
+SNCF: SNCF
+'Share this video': '이 비디오 공유'
+Taxation: 과세
+'The Empire': 제국
+'The Sound of Silence': '침묵의 소리'
+'Time spent watching these count videos': '이 count 비디오를 시청하는 데 소요된 시간'
+Transition: 전환
+'Video link copied to clipboard': '클립보드에 비디오 링크가 복사되었습니다'
+'World of work': '업무의 세계'
+'You Raise Me Up': '유 레이즈 미 업'
+'YouTube Short': '짧은 YouTube 동영상'
 at: 에서
 comments: 댓글
+'count pages': 페이지
+'count videos': 비디오
 likes: 좋아요
+or: 또는
+'seconds or': '초 또는'
 views: 조회수
-Categories: 카테고리
-All categories: 모든 카테고리
-Environment: 환경
-Climate change: 기후 변화
-Politics: 정치
-Economics: 경제
-Artificial Intelligence: 인공지능
-Agriculture: 농업
-Animal documentary: 동물 다큐멘터리
-Pest: 해충
-Listen: 듣기
-It's important: 중요합니다
-Time spent watching these count videos: 이 count 비디오를 시청하는 데 소요된 시간
-seconds or: 초 또는
-count pages: 페이지
-count videos: 비디오
-One video: 한 비디오
-Capitalism: 자본주의
-The Sound of Silence: 침묵의 소리
-Share this video: 이 비디오 공유
-Video link copied to clipboard: 클립보드에 비디오 링크가 복사되었습니다
-Failed to copy video link: 비디오 링크 복사 실패
 
 # Error page
 Oops!: 이런!
-An error occurred while processing your request.: 요청을 처리하는 동안 오류가 발생했습니다.
-Please try again later or contact support if the issue persists.: 문제가 지속되면 나중에 다시 시도하거나 지원팀에 문의하세요.
-Go to Home: 홈으로 이동
-Or you will be redirect to the last page: 마지막 페이지로 리디렉션됩니다
+'An error occurred while processing your request.': '요청을 처리하는 동안 오류가 발생했습니다.'
+'Please try again later or contact support if the issue persists.': '문제가 지속되면 나중에 다시 시도하거나 지원팀에 문의하세요.'
+'Go to Home': '홈으로 이동'
+'Or you will be redirect to the last page': '마지막 페이지로 리디렉션됩니다'
 secondes: 초
+
+
+# Admin
+'Add a new point of interest': '새 관심 지점 추가'
+Address: 주소
+'Adjust starting day': '출발일 조정'
+'An error has occurred': '오류가 발생했습니다.'
+'Are you sure you want to delete this message?': '이 메시지를 삭제하시겠습니까?'
+'Back to messages': '메시지로 돌아가기'
+'Block this email': '이 이메일 차단하기'
+'Block this username': '이 사용자 아이디 차단'
+'Added to blocked list': '차단 목록에 추가되었습니다'
+'Already in blocked list': '이미 차단 목록에 있습니다'
+Calculate: 계산
+Channel: 채널
+'Check for updates': '업데이트 확인'
+'Check if airing series have a new poster': '현재 방영 중인 시리즈에 새 포스터가 있는지 확인하기'
+Check: 확인
+City: 도시
+Coordinates: '연락처 세부 정보'
+Creation: 생성
+'Delete message': '메시지 삭제'
+Duration: 기간
+'Edit filming location': '촬영 위치 변경하기'
+'Filming locations': '촬영 장소'
+'Force update': '강제 업데이트'
+'Generate find/zip command': '찾기/압축 명령 생성'
+'Go to video page': '동영상 페이지로 이동'
+'Keywords updated successfully': '성공적인 키워드 업데이트'
+'Last update': '마지막 업데이트'
+'Message details': '메시지 세부 정보'
+Messages: 메시지
+'Minutes passed since...': '몇 분이 지났습니다...'
+'No messages': '메시지 없음'
+'Only one translation left!': '번역이 하나만 남았습니다!'
+'Points of interrest': '관심 지점'
+Results: 결과
+'See the filming location description': '촬영 장소에 대한 설명 보기'
+'See the point of interest description': '관심 지점에 대한 설명 보기'
+'Select a country': '국가 선택'
+Start: 출발일
+'TMDB ID': 'TMDB ID'
+Tools: 도구
+Translation: 번역
+Update_: 업데이트
+'Video Id': '아이디 동영상'
+'Work in progress': '진행 중인 작업'
+'missing translations': '누락된 번역'
+'new message': '새 메시지'
+'new messages': '새 메시지'
+'point of interest': '관심 지점'
+'points of interest': '관심 지점'
+videos: 동영상
+
+# Albums
+'Add a new album cover': '새 앨범 표지 추가'
+'Add photos': '사진 추가'
+Album: 앨범
+Albums: 앨범
+Caption: 범례
+'Create a new album': '새 앨범 추가'
+Create: 만들기
+'Created at': '에 생성됨'
+Date: 날짜
+'Modify album': '앨범 수정'
+Modify: 수정
+'My albums': '내 앨범'
+'New album name': '새 앨범 이름'
+'Next album': '다음 앨범'
+'No album': '앨범 없음'
+'Photo thumbnail': '사진 썸네일'
+'Previous album': '이전 앨범'
+'Updated at': '업데이트된 날짜'
+Photos: 사진
+Photo: 사진
+'Last days': '마지막 날'
+photo: 사진
+photos: 사진
