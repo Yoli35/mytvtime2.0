@@ -745,6 +745,10 @@ label:has(input[type="text"]) {
                 padding-block: 0.5rem;
                 padding-inline: 1rem;
                 width: 100%;
+
+                &:first-of-type {
+                    margin-block-start: 0;
+                }
             }
         }
 
@@ -1559,6 +1563,10 @@ label:has(input[type="text"]) {
         &.show {
             opacity: 1;
         }
+    }
+
+    .menu.main {
+        border-radius: 1.75rem;
     }
 
     .menu.history {
