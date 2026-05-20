@@ -167,7 +167,7 @@ export class Movie {
         /******************************************************************************
          * Menu to add a localized name or an overview and additional overview        *
          ******************************************************************************/
-        new TranslationsForms(this.userMovieId, 'movie', this.translations);
+        new TranslationsForms(this.userMovieId, 'movie', this.tooltips, this.translations);
 
         /******************************************************************************
          * Keyword translation                                                        *

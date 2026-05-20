@@ -1,11 +1,9 @@
-import {ToolTips} from "ToolTips";
-
 let self;
 
 export class TranslationsForms {
-    constructor(id, type, translations, seasonNumber = null) {
+    constructor(id, type, toolTips, translations, seasonNumber = null) {
         self = this;
-        this.toolTips = new ToolTips();
+        this.toolTips = toolTips;
         this.translations = translations;
         this.id = id;
         this.mediaType = type;
@@ -70,7 +68,9 @@ export class TranslationsForms {
             saveButton.addEventListener('click', this.saveName);
         }
 
-        localizedOverview?.addEventListener('click', this.openLocalizedOverviewForm);
+        if (localizedOverview) {
+            localizedOverview.addEventListener('click', this.openLocalizedOverviewForm);
+        }
 
         if (additionalOverview && this.seasonNumber == null) {
             additionalOverview.addEventListener('click', this.openAdditionalOverviewForm);
@@ -184,18 +184,23 @@ export class TranslationsForms {
         this.hideForm(this.nameFormContainer);
     }
 
-    async openLocalizedOverviewForm() {
-        await this.updateClipboardCacheFromUserGesture();
+    openLocalizedOverviewForm() {
         const firstRow = this.overviewForm.querySelector('.form-row:first-child');
         const hiddenInputTool = this.overviewForm.querySelector('#tool');
+        const isSeriesPage =  this.seasonNumber == null;
+        let overviewText = '';
         hiddenInputTool.setAttribute('data-type', 'localized');
         hiddenInputTool.setAttribute('data-crud', 'add');
         hiddenInputTool.setAttribute('data-overview-id', "-1");
         firstRow.classList.add('hide');
+        if (isSeriesPage) {
+            const seriesOverview = document.querySelector('.series-overview');
+            overviewText = seriesOverview.innerText;
+        }
         const submitButton = this.overviewForm.querySelector('button[type="submit"]');
         submitButton.textContent = this.translations['Add'];
         const overviewField = this.overviewForm.querySelector('#overview-field');
-        overviewField.value = '';
+        overviewField.value = overviewText;
         this.localizationToolsMenu.classList.toggle('active');
         this.displayForm(this.overviewFormContainer);
     }
@@ -501,50 +506,18 @@ export class TranslationsForms {
     }
 
     displayForm(formContainer) {
-        this.pasteButton(formContainer);
 
         if (formContainer.getAttribute('popover') === "") {
             formContainer.showPopover();
-            formContainer.querySelector('textarea')?.focus();
         } else {
             formContainer.classList.add('display');
             setTimeout(function () {
-                form.classList.add('active');
+                formContainer.classList.add('active');
             }, 0);
-            formContainer.querySelector('textarea')?.focus();
         }
-    }
-
-    pasteButton(formContainer) {
-        if (!this.clipboardCache) return;
-
         const textarea = formContainer.querySelector('textarea');
-        if (!textarea) return;
-
-        // Crée le bouton si nécessaire
-        const text = this.clipboardCache
-        const submitButton = formContainer.querySelector('button[type="submit"]');
-        const parentElement = submitButton.parentElement;
-        const pasteBtn = document.createElement('button');
-        pasteBtn.type = 'button';
-        pasteBtn.classList.add('paste-from-clipboard');
-        pasteBtn.textContent = (self.translations && self.translations['Paste']) || 'Coller';
-        pasteBtn.setAttribute("data-title", "“ " + text + " ”");
-        self.toolTips.initElement(pasteBtn);
-
-        pasteBtn.addEventListener('click', function () {
-            const start = textarea.selectionStart || 0;
-            const end = textarea.selectionEnd || 0;
-            const before = textarea.value.slice(0, start);
-            const after = textarea.value.slice(end);
-            textarea.value = before + text + after;
-            // replacer le curseur après le texte collé
-            const newPos = start + text.length;
-            textarea.setSelectionRange(newPos, newPos);
-            textarea.focus();
-            pasteBtn.remove();
-        });
-        parentElement.insertBefore(pasteBtn, submitButton);
+        textarea.focus();
+        textarea.select();
     }
 
     hideForm(form) {

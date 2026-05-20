@@ -174,7 +174,7 @@ export class Season {
         /******************************************************************************
          * Menu to add a localized name or an overview and additional overview        *
          ******************************************************************************/
-        new TranslationsForms(this.seriesId, 'season', this.translations, this.seasonNumber);
+        new TranslationsForms(this.seriesId, 'season', this.toolTips, this.translations, this.seasonNumber);
 
         /******************************************************************************
          * Comments                                                                   *

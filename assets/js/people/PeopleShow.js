@@ -51,7 +51,7 @@ export class PeopleShow {
          * Menu to add a localized name or an overview and additional overview        *
          ******************************************************************************/
         const id = document.querySelector(".person").getAttribute("data-id");
-        new TranslationsForms(id, 'people', this.translations);
+        new TranslationsForms(id, 'people', this.toolTips,this.translations);
     }
 
     initInfos() {

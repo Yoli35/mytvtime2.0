@@ -460,7 +460,7 @@ export class Show {
         /******************************************************************************
          * Menu to add a localized name or an overview and additional overview.       *
          ******************************************************************************/
-        new TranslationsForms(seriesId, 'series', translations);
+        new TranslationsForms(seriesId, 'series', this.toolTips, translations);
 
         /******************************************************************************
          * Keyword translation.                                                       *
