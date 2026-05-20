@@ -2,12 +2,14 @@
 
 namespace App\Controller;
 
-//use App\DTO\ContactDTO;
 use App\Entity\ContactMessage;
 use App\Entity\User;
 use App\Form\ContactType;
 use App\Repository\ContactMessageRepository;
+use App\Service\ContactBlocklistService;
 use App\Service\ImageService;
+use Psr\Log\LoggerInterface;
+use Random\RandomException;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -20,10 +22,19 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 #[Route('/{_locale}/contact', name: 'app_contact_', requirements: ['_locale' => 'fr|en|ko'])]
 class ContactController extends AbstractController
 {
+    private const array BLOCKED_REDIRECT_URLS = [
+        'https://www.netflix.com/',
+        'https://www.primevideo.com/',
+        'https://www.apple.com/apple-tv-plus/',
+        'https://www.disneyplus.com/',
+    ];
+
     public function __construct(
         private readonly ContactMessageRepository $contactMessageRepository,
+        private readonly ContactBlocklistService  $contactBlocklistService,
         private readonly ImageService             $imageService,
         private readonly MailerInterface          $mailer,
+        private readonly LoggerInterface          $logger,
         private readonly TranslatorInterface      $translator,
     )
     {
@@ -41,6 +52,17 @@ class ContactController extends AbstractController
         }
         $form = $this->createForm(ContactType::class, $data);
         $form->handleRequest($request);
+
+        if ($form->isSubmitted()) {
+            $submittedName = $form->get('name')->getData();
+            $submittedEmail = $form->get('email')->getData();
+            if (
+                (is_string($submittedName) && $this->contactBlocklistService->isBlockedName($submittedName))
+                || (is_string($submittedEmail) && $this->contactBlocklistService->isBlockedEmail($submittedEmail))
+            ) {
+                return $this->redirect($this->getRandomBlockedRedirectUrl());
+            }
+        }
 
         if ($form->isSubmitted() && $form->isValid()) {
             $data = $form->getData();
@@ -68,5 +90,19 @@ class ContactController extends AbstractController
             'form' => $form->createView(),
             'bgImage' => $this->imageService->getRandomBlurredPosters(),
         ]);
+    }
+
+    private function getRandomBlockedRedirectUrl(): string
+    {
+        if (self::BLOCKED_REDIRECT_URLS === []) {
+            return 'https://www.disneyplus.com/';
+        }
+
+        try {
+            return self::BLOCKED_REDIRECT_URLS[random_int(0, count(self::BLOCKED_REDIRECT_URLS) - 1)];
+        } catch (RandomException $e) {
+            $this->logger->error($e->getMessage());
+            return self::BLOCKED_REDIRECT_URLS[0];
+        }
     }
 }
