@@ -49,7 +49,7 @@
                                 {% if eotd.customDate %}
                                     {{ ux_icon('mdi:calendar', {'data-title': 'Custom schedule'|trans, height: '16px', width: '16px'}) }}
                                 {% endif %}
-                                {% if eotd.last_episode %}
+                                {% if eotd.firstEpisodeNumber > 1 and eotd.last_episode %}
                                     {{ ux_icon('mdi:hand-wave', {'data-title': 'Season finale'|trans, height: '16px', width: '16px'}) }}
                                 {% endif %}
                                 {% if eotd.premiere %}
