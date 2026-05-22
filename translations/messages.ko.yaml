@@ -1619,6 +1619,8 @@ Address: 주소
 'Back to messages': '메시지로 돌아가기'
 'Block this email': '이 이메일 차단하기'
 'Block this username': '이 사용자 아이디 차단'
+'Unblock this email': '이 이메일 차단 해제'
+'Unblock this username': '이 사용자 아이디 차단 해제'
 'Added to blocked list': '차단 목록에 추가되었습니다'
 'Already in blocked list': '이미 차단 목록에 있습니다'
 Calculate: 계산

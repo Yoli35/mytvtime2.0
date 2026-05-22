@@ -173,6 +173,19 @@ class AdminController extends AbstractController
         return $this->redirectToRoute('admin_message_detail', ['id' => $message->getId()]);
     }
 
+    #[Route('/message/unblock/name/{id}', name: 'message_unblock_name', requirements: ['id' => Requirement::DIGITS], methods: ['POST'])]
+    public function messageUnlockName(ContactMessage $message, Request $request): Response
+    {
+        if (!$this->isCsrfTokenValid('admin_message_unblock_name_' . $message->getId(), (string) $request->request->get('_token'))) {
+            throw $this->createAccessDeniedException();
+        }
+
+        $blocked = $this->contactBlocklistService->removeNameNeedle($message->getName() ?? '');
+        $this->addFlash('success', $blocked ? $this->translator->trans('Removed from blocked list') : $this->translator->trans('Still in blocked list'));
+
+        return $this->redirectToRoute('admin_message_detail', ['id' => $message->getId()]);
+    }
+
     #[Route('/message/block/email/{id}', name: 'message_block_email', requirements: ['id' => Requirement::DIGITS], methods: ['POST'])]
     public function messageBlockEmail(ContactMessage $message, Request $request): Response
     {
@@ -182,6 +195,19 @@ class AdminController extends AbstractController
 
         $blocked = $this->contactBlocklistService->addEmailNeedle($message->getEmail() ?? '');
         $this->addFlash('success', $blocked ? $this->translator->trans('Added to blocked list') : $this->translator->trans('Already in blocked list'));
+
+        return $this->redirectToRoute('admin_message_detail', ['id' => $message->getId()]);
+    }
+
+    #[Route('/message/unblock/email/{id}', name: 'message_unblock_email', requirements: ['id' => Requirement::DIGITS], methods: ['POST'])]
+    public function messageUnblockEmail(ContactMessage $message, Request $request): Response
+    {
+        if (!$this->isCsrfTokenValid('admin_message_unblock_email_' . $message->getId(), (string) $request->request->get('_token'))) {
+            throw $this->createAccessDeniedException();
+        }
+
+        $blocked = $this->contactBlocklistService->removeEmailNeedle($message->getEmail() ?? '');
+        $this->addFlash('success', $blocked ? $this->translator->trans('Removed from blocked list') : $this->translator->trans('Still in blocked list'));
 
         return $this->redirectToRoute('admin_message_detail', ['id' => $message->getId()]);
     }

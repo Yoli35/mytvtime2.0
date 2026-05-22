@@ -45,9 +45,19 @@ class ContactBlocklistService
         return $this->addNeedle(self::NAME_SETTING, $needle, self::DEFAULT_NAME_NEEDLES);
     }
 
+    public function removeNameNeedle(string $needle): bool
+    {
+        return $this->removeNeedle(self::NAME_SETTING, $needle);
+    }
+
     public function addEmailNeedle(string $needle): bool
     {
         return $this->addNeedle(self::EMAIL_SETTING, $needle, self::DEFAULT_EMAIL_NEEDLES);
+    }
+
+    public function removeEmailNeedle(string $needle): bool
+    {
+        return $this->removeNeedle(self::EMAIL_SETTING, $needle);
     }
 
     private function getNeedles(string $settingName, array $defaultNeedles): array
@@ -95,6 +105,32 @@ class ContactBlocklistService
         }
 
         $needles[] = $needle;
+        $settings->setData($needles);
+        $this->settingsRepository->save($settings, true);
+
+        return true;
+    }
+
+    private function removeNeedle(string $settingName, string $needle): bool
+    {
+        $needle = trim($needle);
+        if ($needle === '') {
+            return false;
+        }
+        $settings = $this->settingsRepository->findOneBy([
+            'user' => null,
+            'name' => $settingName,
+        ]);
+        if (!$settings) {
+            return false;
+        }
+
+        $needles = $this->normalizeNeedles($settings->getData());
+        if (!$this->needleExists($needles, $needle)) {
+            return false;
+        }
+
+        $needles = array_filter($needles, static fn (string $existingNeedle): bool => mb_strtolower($existingNeedle) !== mb_strtolower($needle));
         $settings->setData($needles);
         $this->settingsRepository->save($settings, true);
 
