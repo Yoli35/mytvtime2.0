@@ -158,6 +158,12 @@ class EpisodeAirDateCommand
                 }
                 $seasonNumber = $season['season_number'];
                 $tvSeason = json_decode($this->tmdbService->getTvSeason($series->getTmdbId(), $seasonNumber, $language), true);
+                if (key_exists('error', $tvSeason)) {
+                    $response = json_decode($tvSeason['response'], true);
+                    $this->io->write(' 🚫 - Season ' . $seasonNumber . ' not found. Message: ' . $response['status_message']);
+                    $writeln = true;
+                    continue;
+                }
                 $episodes = $tvSeason ? $tvSeason['episodes'] : [];
                 if (!count($episodes)) {
                     $this->io->write(' 🚫 - No episodes for season ' . $seasonNumber);
