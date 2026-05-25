@@ -147,7 +147,7 @@ final class VideoController extends AbstractController
         $nextVideo = $this->videoRepository->getNextVideo($video, $user);
 
         $this->formatDates($userVideo);
-
+dump($categories);
         return $this->render('video/show.html.twig', [
             'userVideo' => $userVideo,
             'video' => $video,

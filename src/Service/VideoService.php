@@ -19,7 +19,8 @@ readonly class VideoService
         $categories = array_map(function ($cat) {
             return [
                 'id' => $cat->getId(),
-                'name' => $this->translator->trans($cat->getName()),
+                'name' => $cat->getName(),
+//                'name' => $this->translator->trans($cat->getName()),
                 'color' => $cat->getColor(),
             ];
         }, $this->categoryRepository->findAll());
