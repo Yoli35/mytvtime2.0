@@ -95,12 +95,14 @@ export class EpisodeActions {
     }
 
     initEpisodeCards() {
+        const self = this;
         const markThisEpisodeAsWatched = document.querySelectorAll('.mark-this-episode-as-watched');
         markThisEpisodeAsWatched.forEach(mark => {
             mark.addEventListener('click', (e) => {
                 e.preventDefault();
                 e.stopPropagation();
-                this.addEpisode(e);
+                self.addEpisode(e);
+                mark.remove();
             });
         });
     }
