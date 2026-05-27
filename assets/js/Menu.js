@@ -510,13 +510,21 @@ export class Menu {
         const scheduleMenuDiv = document.querySelector(".schedule-menu");
         const lastEpisodeId = scheduleMenuDiv.getAttribute("data-id") || "-1";
         const locale = this.lang;
+        const episodePage = document.querySelector(".episode-show");
+        const seriesId = episodePage?.getAttribute("data-series-id") || "-1";
+        const episodeId = episodePage?.getAttribute("data-episode-id") || "-1";
         const apiUrl = '/api/main/menu/update';
         const options = {
             method: 'POST',
             headers: {
                 accept: 'application/json'
             },
-            body: JSON.stringify({locale: locale, lastViewedEpisodeId: localStorage.getItem("schedule_range_updated") ? -1 : lastEpisodeId}),
+            body: JSON.stringify({
+                locale: locale,
+                lastViewedEpisodeId: localStorage.getItem("schedule_range_updated") ? -1 : lastEpisodeId,
+                seriesId: seriesId,
+                episodeId: episodeId
+            }),
         };
 
         fetch(apiUrl, options)

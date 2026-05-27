@@ -921,6 +921,10 @@ label:has(input[type="text"]) {
                         height: unset;
                         max-width: 10.25rem;
 
+                        &:has(.current) {
+                            background-color: var(--orange-50);
+                        }
+
                         a {
                             aspect-ratio: unset;
                             flex-direction: column;
@@ -1029,6 +1033,10 @@ label:has(input[type="text"]) {
                                 justify-content: center;
                                 padding-inline: 0.5rem;
                                 width: 10rem;
+
+                                &.current {
+                                    background-color: var(--orange);
+                                }
 
                                 .name {
                                     line-height: 1.2;
@@ -1763,10 +1771,48 @@ label:has(input[type="text"]) {
     }
 }
 
+@keyframes current {
+    0% {
+        left: 50%;
+    }
+    50% {
+        left: calc(80% - 1rem);
+    }
+    100% {
+        left: 50%;
+    }
+}
+
 .menu.main {
     .a-preview a {
         isolation: isolate;
         position: relative;
+
+        .episode-current {
+            background-color: transparent;
+            counter-reset: ball;
+            display: flex;
+            inset: 0 0 0 0;
+            justify-content: center;
+            position: absolute;
+            text-align: center;
+            z-index: -1;
+
+            .orange-ball {
+                /*--ball-delay: calc(counter(ball) * 200ms);*/
+
+                animation: current 1800ms infinite ease-in-out;
+                animation-delay: var(--ball-delay);
+                background-color: var(--orange);
+                border-radius: 50%;
+                bottom: calc(1rem - calc(var(--ball-size) / 2));
+                counter-increment: ball;
+                height: var(--ball-size);
+                left: 0;
+                position: absolute;
+                width: var(--ball-size);
+            }
+        }
 
         .episode-progress {
             background-color: var(--green);
@@ -1774,7 +1820,7 @@ label:has(input[type="text"]) {
             inset: 0 0 0 0;
             position: absolute;
             transition: background-color .2s ease, width .2s ease;
-            z-index: -1;
+            z-index: -2;
 
             &:hover {
                 background-color: var(--green-60);

@@ -1,6 +1,8 @@
 {% set interval = data.interval %}
 {% set startDay = data.startDay %}
 {% set endDay = data.endDay %}
+{% set seriesId = data.seriesId %}
+{% set episodeId = data.episodeId %}
 <div class="schedule-menu" data-id="{{ interval.lastViewedEpisodeId }}">
     {% for relativeDay in  startDay..endDay %}
         {% set eotdList = interval[relativeDay] %}
@@ -41,6 +43,19 @@
                            data-episode-count="{{ eotd.episodeCount }}"
                            data-first-episode-number="{{ eotd.firstEpisodeNumber }}">
                             <div class="episode-progress" data-id="{{ eotd.id }}" style="right: {{ 100 - eotd.progress }}%;"></div>
+                            {% if seriesId == eotd.id or episodeId in eotd.episodeIdArr %}
+                                <div class="episode-current">
+                                    <div class="orange-ball" style="--ball-delay: 0; --ball-size: 16px"></div>
+                                    <div class="orange-ball" style="--ball-delay: 100ms; --ball-size: 14px"></div>
+                                    <div class="orange-ball" style="--ball-delay: 200ms; --ball-size: 12px"></div>
+                                    <div class="orange-ball" style="--ball-delay: 300ms; --ball-size: 10px"></div>
+                                    <div class="orange-ball" style="--ball-delay: 400ms; --ball-size: 8px"></div>
+                                    <div class="orange-ball" style="--ball-delay: 500ms; --ball-size: 6px"></div>
+                                    <div class="orange-ball" style="--ball-delay: 600ms; --ball-size: 4px"></div>
+                                    <div class="orange-ball" style="--ball-delay: 700ms; --ball-size: 2px"></div>
+                                    <div class="orange-ball" style="--ball-delay: 800ms; --ball-size: 2px"></div>
+                                </div>
+                            {% endif %}
                             <div>
                                 {{ eotd.display }}
                                 {% if eotd.firstToWatch %}
@@ -145,7 +160,7 @@
                                             <div class="progress" style="width: {{ eotd.progress }}%;"></div>
                                         </div>
                                     </div>
-                                    <div class="infos">
+                                    <div class="infos{% if seriesId == eotd.id or episodeId in eotd.episodeIdArr %} current{% endif %}">
                                         <div class="name">
                                             {{ eotd.display }}
                                             {% if eotd.firstToWatch %}

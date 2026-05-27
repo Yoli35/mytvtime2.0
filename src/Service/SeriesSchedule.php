@@ -135,6 +135,7 @@ readonly class SeriesSchedule
                 }
                 $episodeIdArr = array_unique($item['episodeIds']);
                 $item['episodeIds'] = implode('-', $episodeIdArr);
+                $item['episodeIdArr'] = $episodeIdArr;
                 $item['display'] = $item['name'] . ' ' . $display;
                 $item['episodeCount'] = count($episodeIdArr);
                 $item['upToDate'] = $item['future_up_to_date'] || $item['past_up_to_date'];
@@ -200,6 +201,7 @@ readonly class SeriesSchedule
                     'customDate' => $item['customDate'],
                     'episodeId' => $item['episodeId'] ?? null,
                     'episodeIds' => $item['episodeIds'] ?? null,
+                    'episodeIdArr' => $item['episodeIdArr'] ?? null,
                     'episodeCount' => $item['episodeCount'],
                     'episodesWatched' => $item['episodesWatched'],
                     'firstEpisodeNumber' => $item['firstEpisodeNumber'],

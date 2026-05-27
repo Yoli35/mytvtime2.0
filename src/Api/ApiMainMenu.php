@@ -50,6 +50,9 @@ readonly class ApiMainMenu
         $lastViewedEpisodeId = $inputBag->getInt('lastViewedEpisodeId', -1);
         $actualLastViewedEpisodeId = $this->userEpisodeRepository->lastViewedEpisodeId($user);
 
+        $seriesId = $inputBag->getInt('seriesId', -1);
+        $episodeId = $inputBag->getInt('episodeId', -1);
+
         if ($lastViewedEpisodeId === $actualLastViewedEpisodeId) {
             return ($this->json)([
                 'ok' => true,
@@ -79,6 +82,8 @@ readonly class ApiMainMenu
                     'interval' => $interval,
                     'startDay' => $startDay,
                     'endDay' => $endDay,
+                    'seriesId' => $seriesId,
+                    'episodeId' => $episodeId,
                 ],
                 'linkTo' => $linkTo,
             ]),
