@@ -511,7 +511,8 @@ export class Menu {
         const lastEpisodeId = scheduleMenuDiv.getAttribute("data-id") || "-1";
         const locale = this.lang;
         const episodePage = document.querySelector(".episode-show");
-        const seriesId = episodePage?.getAttribute("data-series-id") || "-1";
+        const seasonPage = document.querySelector(".series-show");
+        const seriesId = episodePage?.getAttribute("data-series-id") || seasonPage?.getAttribute("data-series-id") || "-1";
         const episodeId = episodePage?.getAttribute("data-episode-id") || "-1";
         const apiUrl = '/api/main/menu/update';
         const options = {

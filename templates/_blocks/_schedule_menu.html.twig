@@ -3,6 +3,7 @@
 {% set endDay = data.endDay %}
 {% set seriesId = data.seriesId %}
 {% set episodeId = data.episodeId %}
+{% set current = 0 %}
 <div class="schedule-menu" data-id="{{ interval.lastViewedEpisodeId }}">
     {% for relativeDay in  startDay..endDay %}
         {% set eotdList = interval[relativeDay] %}
@@ -45,16 +46,17 @@
                             <div class="episode-progress" data-id="{{ eotd.id }}" style="right: {{ 100 - eotd.progress }}%;"></div>
                             {% if seriesId == eotd.id or episodeId in eotd.episodeIdArr %}
                                 <div class="episode-current">
-                                    <div class="orange-ball" style="--ball-delay: 0; --ball-size: 16px"></div>
-                                    <div class="orange-ball" style="--ball-delay: 100ms; --ball-size: 14px"></div>
-                                    <div class="orange-ball" style="--ball-delay: 200ms; --ball-size: 12px"></div>
-                                    <div class="orange-ball" style="--ball-delay: 300ms; --ball-size: 10px"></div>
-                                    <div class="orange-ball" style="--ball-delay: 400ms; --ball-size: 8px"></div>
-                                    <div class="orange-ball" style="--ball-delay: 500ms; --ball-size: 6px"></div>
-                                    <div class="orange-ball" style="--ball-delay: 600ms; --ball-size: 4px"></div>
-                                    <div class="orange-ball" style="--ball-delay: 700ms; --ball-size: 2px"></div>
-                                    <div class="orange-ball" style="--ball-delay: 800ms; --ball-size: 2px"></div>
+                                    <div class="orange-ball" style="--ball-delay: 0ms; --ball-size: 16px; --offset: {{ 180 * current }}deg"></div>
+                                    <div class="orange-ball" style="--ball-delay: 20ms; --ball-size: 14px; --offset: {{ 180 * current }}deg"></div>
+                                    <div class="orange-ball" style="--ball-delay: 40ms; --ball-size: 12px; --offset: {{ 180 * current }}deg"></div>
+                                    <div class="orange-ball" style="--ball-delay: 60ms; --ball-size: 10px; --offset: {{ 180 * current }}deg"></div>
+                                    <div class="orange-ball" style="--ball-delay: 80ms; --ball-size: 8px; --offset: {{ 180 * current }}deg"></div>
+                                    <div class="orange-ball" style="--ball-delay: 100ms; --ball-size: 6px; --offset: {{ 180 * current }}deg"></div>
+                                    <div class="orange-ball" style="--ball-delay: 120ms; --ball-size: 4px; --offset: {{ 180 * current }}deg"></div>
+                                    <div class="orange-ball" style="--ball-delay: 140ms; --ball-size: 2px; --offset: {{ 180 * current }}deg"></div>
+                                    <div class="orange-ball" style="--ball-delay: 160ms; --ball-size: 2px; --offset: {{ 180 * current }}deg"></div>
                                 </div>
+                                {% set current = current + 1 %}
                             {% endif %}
                             <div>
                                 {{ eotd.display }}

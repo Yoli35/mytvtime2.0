@@ -1771,15 +1771,26 @@ label:has(input[type="text"]) {
     }
 }
 
+@property --angle1 {
+    syntax: "<angle>";
+    inherits: true;
+    initial-value: 0deg;
+}
+
+@property --angle2 {
+    syntax: "<angle>";
+    inherits: true;
+    initial-value: 0deg;
+}
+
 @keyframes current {
     0% {
-        left: 50%;
-    }
-    50% {
-        left: calc(80% - 1rem);
+        --angle1: var(--offset);
+        --angle2: var(--offset);
     }
     100% {
-        left: 50%;
+        --angle1: calc(var(--offset) + 1800deg);
+        --angle2: calc(var(--offset) + 360deg);
     }
 }
 
@@ -1799,16 +1810,23 @@ label:has(input[type="text"]) {
             z-index: -1;
 
             .orange-ball {
-                /*--ball-delay: calc(counter(ball) * 200ms);*/
+                --amplitude: 12px;
+                --r: calc(var(--ball-size) / 2);
+                --x: 65%;
+                --y: calc(16px - var(--r));
+                --radius: 15%;
+                --angle1: 0deg;
+                --angle2: 0deg;
+                --offset: 0deg;
 
-                animation: current 1800ms infinite ease-in-out;
+                animation: current 2s infinite linear;
                 animation-delay: var(--ball-delay);
                 background-color: var(--orange);
                 border-radius: 50%;
-                bottom: calc(1rem - calc(var(--ball-size) / 2));
+                bottom: calc(var(--y) + calc(cos(var(--angle1)) * var(--amplitude)));
                 counter-increment: ball;
                 height: var(--ball-size);
-                left: 0;
+                left: calc(var(--x) + cos(var(--angle2)) * var(--radius));
                 position: absolute;
                 width: var(--ball-size);
             }
