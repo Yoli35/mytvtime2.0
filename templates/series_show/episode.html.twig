@@ -84,6 +84,9 @@
                     </div>
                 </div>
                 <div class="navigation">
+                    {% if locations|length %}
+                        <div class="go-to-map" data-target="#map" data-title="{{ 'Filming locations map'|trans }}">{{ ux_icon('mdi:map-outline') }}</div>
+                    {% endif %}
                     {% if episode.episode_number > 1 %}
                         <a href="{{ path("app_tv_episode", {id: series.id, slug: slug, seasonNumber: season.season_number, episodeNumber: episode.episode_number - 1}) }}">
                             <div class="previous-episode" data-title="{{ 'Previous episode'|trans }}">{{ ux_icon('mdi:arrow-left') }}</div>

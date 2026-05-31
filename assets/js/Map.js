@@ -125,7 +125,7 @@ export class Map {
                 const lat = parseFloat(el.getAttribute('data-latitude'));
                 const lng = parseFloat(el.getAttribute('data-longitude'));
                 setTimeout(() => {
-                    this.map.flyTo({center: [lng, lat], duration: 4000, zoom: 15, curve: 2, easing: (n) => n, essential: true});
+                    this.map.flyTo({center: [lng, lat + .004], duration: 4000, zoom: 15, curve: 2, easing: (n) => n, essential: true});
                     setTimeout(() => {
                         lastMarker.togglePopup();
                     }, 5000);

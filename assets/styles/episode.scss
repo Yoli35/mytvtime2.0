@@ -157,6 +157,27 @@
             gap: 1rem;
             margin-inline-start: auto;
 
+            .go-to-map {
+                --svgSize: max(2vw, 2vh);
+
+                align-items: center;
+                aspect-ratio: 1;
+                background-color: var(--orange-50);
+                border-radius: 5rem;
+                color: var(--ardoise-10);
+                cursor: pointer;
+                display: flex;
+                height: 3.75rem;
+                justify-content: center;
+                outline: 4px solid hsl(from var(--orange-80) h s l / .25);
+                transition: background-color 150ms ease-in-out;
+                width: 3.75rem;
+
+                &:hover {
+                    background-color: var(--orange-60);
+                }
+            }
+
             .previous-episode, .next-episode {
                 justify-content: center;
                 width: 3.75rem;

@@ -128,6 +128,19 @@ export class Episode {
         this.initEditOverview();
 
         /******************************************************************************
+         * Go to the map section.                                                     *
+         ******************************************************************************/
+        const goToMap = document.querySelector('.go-to-map');
+        if (goToMap) {
+            goToMap.addEventListener('click', () => {
+                const target = document.querySelector(goToMap.getAttribute('data-target'));
+                if (target) {
+                    target.scrollIntoView({behavior: 'smooth', block: 'center'});
+                }
+            });
+        }
+
+        /******************************************************************************
          * Comments                                                                   *
          ******************************************************************************/
         const seasonComments = new SeasonComments(user, seriesId, seasonNumber, translations);
