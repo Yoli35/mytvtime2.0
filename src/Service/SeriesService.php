@@ -52,6 +52,7 @@ readonly class SeriesService
         private KeywordService                $keywordService,
         private MonologLogger                 $logger,
         private NetworkRepository             $networkRepository,
+        private ProviderService               $providerService,
         private SeasonService                 $seasonService,
         private SeriesImageRepository         $seriesImageRepository,
         private SeriesLocalizedNameRepository $seriesLocalizedNameRepository,
@@ -917,6 +918,7 @@ readonly class SeriesService
         $firstAirDate = $schedule->getFirstAirDate();
         $airAt = $schedule->getAirAt();
         $daysOfWeek = $schedule->getDaysOfWeek();
+        $providerId = $schedule->getProviderId();
 
         if ($schedule->isMultiPart()) {
             $firstEpisode = $schedule->getSeasonPartFirstEpisode();
@@ -1123,7 +1125,14 @@ readonly class SeriesService
                 }
                 break;
         }
-        return ['override' => $override, 'seasonNumber' => $seasonNumber, 'multiPart' => $multiPart, 'seasonPart' => $seasonPart, 'airDays' => $dayArr];
+        return [
+            'override' => $override,
+            'seasonNumber' => $seasonNumber,
+            'multiPart' => $multiPart,
+            'seasonPart' => $seasonPart,
+            'airDays' => $dayArr,
+            'provider' => $this->providerService->getOneWithLogo($providerId)
+        ];
     }
 
     private function isValidDaysOfWeek(array $daysOfWeek, int $selectedDayCount, int $firstDayOfWeek): bool

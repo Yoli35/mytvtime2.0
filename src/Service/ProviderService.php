@@ -10,6 +10,7 @@ use App\Repository\WatchProviderRepository;
 readonly class ProviderService
 {
     public function __construct(
+        private ImageConfiguration      $imageConfiguration,
         private UserSeriesRepository    $userSeriesRepository,
         private WatchProviderRepository $watchProviderRepository,
     )
@@ -27,6 +28,19 @@ readonly class ProviderService
     public function getOne(int $id): WatchProvider
     {
         return $this->watchProviderRepository->findOneBy(['providerId' => $id]);
+    }
+
+    public function getOneWithLogo(int $id): array
+    {
+        $p = $this->watchProviderRepository->findOneBy(['providerId' => $id]);
+        if (!$p) {
+            return ['logoPath' => null, 'providerName' => ''];
+        }
+        $logoUrl = $this->imageConfiguration->getUrl('logo_sizes', 2);
+        return [
+            'logoPath' => $this->getProviderLogoFullPath($p->getLogoPath(), $logoUrl),
+            'providerName' => $p->getProviderName(),
+        ];
     }
 
     public function seriesWithoutProviders(User $user, string $locale, int $page, int $limit): array

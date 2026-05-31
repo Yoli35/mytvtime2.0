@@ -120,7 +120,12 @@ Mandatory variables:
             <div class="schedule-block">
                 {% for as in series.alternateSchedules %}
                     {% if as.override %}
-                        <h3> {{ 'Season'|trans }} {{ as.seasonNumber }}{% if as.multiPart %} {{ 'Part'|trans }} {{ as.seasonPart }}{% endif %} - {{ as.airDays|length }} {{ 'episodes'|trans }}</h3>
+                        <h3>
+                            {{ 'Season'|trans }} {{ as.seasonNumber }}{% if as.multiPart %} {{ 'Part'|trans }} {{ as.seasonPart }}{% endif %}, {{ as.airDays|length }} {{ 'episodes'|trans }} {{ 'on'|trans }} {{ as.provider.providerName }}
+                            {% if as.provider.logoPath %}
+                                <img src="{{ as.provider.logoPath }}" alt="{{ as.provider.providerName }} Logo" class="provider-logo">
+                            {% endif %}
+                        </h3>
                         <div class="alternate-schedule">
                             {% for airDay in as.airDays %}
                                 <a href="{{ airDay.url }}" id="{{ airDay.episode }}">
