@@ -22,7 +22,7 @@ import {NetworkAndProvider} from "NetworkAndProvider";
 import {PeopleShow} from "PeopleShow";
 import {PeopleStar} from "PeopleStar";
 import {Photos} from 'Photos';
-// import {PosterHover} from 'PosterHover';
+import {PreferredName} from "PreferredName";
 import {Profile} from 'Profile';
 import {ProviderSelect} from 'ProviderSelect';
 import {Season} from 'Season';
@@ -190,12 +190,14 @@ window.addEventListener("DOMContentLoaded", () => {
     });
 
     if (seasonPage) {
-        const season = new Season(menu);
+        const preferredName = new PreferredName();
+        const season = new Season(menu, preferredName);
         season.init();
     }
     if (seriesPage) {
         new UserList(flashMessage, toolTips, document.querySelectorAll(".action.toggle-bookmark-series"));
-        const show = new Show();
+        const preferredName = new PreferredName();
+        const show = new Show(preferredName);
         show.init(menu);
     }
 
@@ -204,7 +206,8 @@ window.addEventListener("DOMContentLoaded", () => {
         new UserList(flashMessage, toolTips, null);
     }
     if (episodePage) {
-        const episode = new Episode(flashMessage, toolTips, menu);
+        const preferredName = new PreferredName();
+        const episode = new Episode(flashMessage, toolTips, menu, preferredName);
         episode.init();
     }
 

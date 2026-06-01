@@ -133,7 +133,7 @@ let self;
 
 export class Season {
 
-    constructor(menu) {
+    constructor(menu, preferredName) {
         self = this;
 
         /** @var {Globs} globs */
@@ -148,6 +148,7 @@ export class Season {
         this.translations = globs.translations;
         this.lang = document.documentElement.lang;
         this.menu = menu;
+        this.preferredName = preferredName;
 
         this.flashMessage = new FlashMessage();
         this.toolTips = new ToolTips();
@@ -156,6 +157,18 @@ export class Season {
     }
 
     init() {
+        /******************************************************************************
+         * cast and crew preferred name change monitoring                             *
+         ******************************************************************************/
+        window.addEventListener('pageshow', (event) => {
+            const nav = performance.getEntriesByType('navigation')[0];
+            const cameBack = event.persisted || (nav && nav.type === 'back_forward');
+
+            if (cameBack) {
+                this.preferredName.syncFromSessionStorage();
+            }
+        });
+
         /******************************************************************************
          * Adjust Vote section colors according to the brightness of the background   *
          ******************************************************************************/

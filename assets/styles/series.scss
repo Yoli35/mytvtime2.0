@@ -6329,6 +6329,12 @@ h2 {
 
                 .preferred-name {
                     color: var(--orange-80);
+                    outline: 2px solid transparent;
+                    transition: outline-color 0.3s ease-in-out;
+
+                    &.update {
+                        outline-color: var(--orange-50);
+                    }
                 }
 
                 &:has(.preferred-name) {

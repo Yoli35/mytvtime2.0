@@ -103,6 +103,9 @@ return [
     'Photos' => [
         'path' => './assets/js/album/Photos.js',
     ],
+    'PreferredName' => [
+        'path' => './assets/js/people/PreferredName.js',
+    ],
     'Profile' => [
         'path' => './assets/js/user/Profile.js',
     ],

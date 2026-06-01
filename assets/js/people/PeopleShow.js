@@ -244,6 +244,9 @@ export class PeopleShow {
             })
             .then(response => response.json())
             .then(data => {
+                const newValue = data['preferred-name'];
+                sessionStorage.setItem('preferred_name_' + id, newValue);
+
                 const leftColumn = document.querySelector(".left-column");
                 const preferredNameInfos = leftColumn.querySelector(".preferred-name-infos");
                 const newBlockDiv = document.createElement("div");

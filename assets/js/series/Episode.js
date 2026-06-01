@@ -64,7 +64,7 @@ let self = null;
 
 export class Episode {
 
-    constructor(flashMessage, toolTips, menu) {
+    constructor(flashMessage, toolTips, menu, PreferredName) {
         self = this;
         /** @var {Globs} */
         this.globs = JSON.parse(document.querySelector('div#globs').textContent);
@@ -74,6 +74,7 @@ export class Episode {
         this.toolTips = toolTips;
         this.flashMessage = flashMessage;
         this.menu = menu;
+        this.preferredName = PreferredName;
         this.episodeActions = new EpisodeActions({...this.globs, ...this.globsMap}, flashMessage, toolTips, menu);
         this.episodeId = this.globs.episodeId;
         this.fetchEpisodeCards = new FetchEpisodeCards(this.toolTips);
@@ -93,6 +94,18 @@ export class Episode {
         const filmingLocations = this.globsMap.locations;
         const locationImagePath = this.globsMap.locationImagePath;
         console.log(this.globsMap);
+
+        /******************************************************************************
+         * cast and crew preferred name change monitoring                             *
+         ******************************************************************************/
+        window.addEventListener('pageshow', (event) => {
+            const nav = performance.getEntriesByType('navigation')[0];
+            const cameBack = event.persisted || (nav && nav.type === 'back_forward');
+
+            if (cameBack) {
+                this.preferredName.syncFromSessionStorage();
+            }
+        });
 
         /******************************************************************************
          * user actions                                                               *

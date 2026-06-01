@@ -102,12 +102,13 @@ export class Show {
      * @property {string} url
      */
 
-    constructor() {
+    constructor(preferredName) {
         self = this;
         this.lang = document.documentElement.lang;
         this.toolTips = new ToolTips();
         this.flashMessage = new FlashMessage();
         this.fetchEpisodeCards = new FetchEpisodeCards(this.toolTips);
+        this.preferredName = preferredName;
     }
 
     init(menu) {
@@ -141,6 +142,18 @@ export class Show {
             // ">" Arrow: Next series
             if (event.key === ">" && nextSeries) {
                 nextSeries.click();
+            }
+        });
+
+        /******************************************************************************
+         * cast and crew preferred name change monitoring                             *
+         ******************************************************************************/
+        window.addEventListener('pageshow', (event) => {
+            const nav = performance.getEntriesByType('navigation')[0];
+            const cameBack = event.persisted || (nav && nav.type === 'back_forward');
+
+            if (cameBack) {
+                this.preferredName.syncFromSessionStorage();
             }
         });
 
