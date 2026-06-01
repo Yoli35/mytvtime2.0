@@ -19,6 +19,93 @@
             </div>
             <div class="site-update glowing-border">
                 <div class="list">
+                    <h2>78° mise à jour : 01/06/2026 10:11</h2>
+                    <ul>
+                        <li>
+                            <div class="change">→ Add "Filming locations map" button to episode page</div>
+                            <div class="details">Introduces a button to navigate to the filming locations map from the episode page. Enhances usability by providing a quick and smooth scroll feature to this section when locations are available.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Symfony version requirement → 8.1.0</div>
+                            <div class="details"></div>
+                        </li>
+                        <li>
+                            <div class="change">→ Add provider logos to alternate schedules</div>
+                            <div class="details">Displays provider logos alongside schedule details to improve clarity and visual appeal. Enables users to quickly identify streaming providers for scheduled episodes at a glance.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Highlights current series in the schedule menu</div>
+                            <div class="details">Enhances the visual appearance of the calendar menu by adding animations to the items corresponding to the current page. Improves user experience by adding dynamic and engaging visual feedback for episode progress.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Update episode comment styles</div>
+                            <div class="details">Adjusts colors and backgrounds for episode comment sections to improve readability and overall visual consistency. Enhances the user experience with cleaner and more cohesive design elements.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Highlight active series and episode in the menu</div>
+                            <div class="details">Adds visual indicators for the currently selected series and episode in the menu. Improves navigation by making it easier to identify the active series and episode at a glance.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Handle missing TV season data gracefully</div>
+                            <div class="details">Adds a message when a TV season is not found, preventing errors and improving feedback. Ensures users are informed about missing data with clear status messages for better transparency.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Remove category name translations from video pages</div>
+                            <div class="details">Simplifies category display by removing translations for category names. Ensures a consistent and unaltered display of original category names across the application.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Reorder map and guest stars sections</div>
+                            <div class="details">Swaps the position of the guest stars and map sections on episode pages. Improves the logical flow of content by displaying guest stars before the map information.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Update season finale icon visibility in schedule menu</div>
+                            <div class="details">Hides the season finale icon for shows starting with episode 1. Improves clarity by displaying the icon only when a show begins at a later episode and has a defined finale.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Add unblock actions for names and emails in admin messages</div>
+                            <div class="details">Introduce options to unblock sender names or emails directly from the admin message detail view. Improves flexibility by allowing admins to reverse blocking actions with a single click.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Add lock icons for blocked names and emails in admin messages</div>
+                            <div class="details">Replaces block buttons with lock icons when a name or email is already blocked. Improves clarity by visually distinguishing blocked entries in the admin message detail view.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ chore(translations): regenerate Korean messages from French source</div>
+                            <div class="details">Regenerate `messages.ko.yaml` from `messages.fr.yaml`, keep the existing Korean translations where present, and restore the section comments to match the French file structure for easier maintenance.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ feat(contact): use database-backed blocklists for contact redirection</div>
+                            <div class="details">Update `ContactController.php` and `ContactBlocklistService.php` so contact submissions are checked against the stored blocked name/email needles instead of hardcoded arrays. Keep the redirect-on-block behavior, but pick the destination from the existing random redirect list.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ feat(admin): add contact block actions from message detail</div>
+                            <div class="details">Update `_message_detail.html.twig` and `AdminController.php` to expose POST actions for blocking a sender name or email directly from a contact message. The admin message detail view now shows real block buttons with CSRF protection, and the blocked values are persisted through the shared contact blocklist service.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Add support for tooltips in translations forms</div>
+                            <div class="details">Enables tooltips within translation forms for improved guidance and usability. Helps users better understand available actions and options when interacting with localized content.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Refine first unwatched episode detection logic</div>
+                            <div class="details">Improves the logic for identifying the first unwatched episode in the series schedule. Ensures more accurate results for enhanced clarity and navigation within the schedule menu.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Fix visibility logic for watched episode markers</div>
+                            <div class="details">Addresses an issue where the marker for watched episodes was not hidden correctly in some cases. Ensures consistent and accurate visual updates to improve user experience when browsing episode cards.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Disable custom proxy directory for Doctrine ORM</div>
+                            <div class="details">Disables the custom proxy directory setup, relying instead on the default behavior. Simplifies configuration and aligns with standard practices to reduce potential misconfigurations.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Highlight first unwatched episode in schedule menu</div>
+                            <div class="details">Adds a clear indicator for the first unwatched episode, enhancing usability by helping users quickly locate their next episode to watch. Improves navigation and viewing continuity for series progress.</div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="site-update glowing-border">
+                <div class="list">
                     <h2>77° mise à jour : 18/05/2026 11:00</h2>
                     <ul>
                         <li>
