@@ -12,6 +12,7 @@ export class Location {
         this.lang = document.documentElement.lang;
         this.flashMessage = null;
         this.type = type;// 'poi'|'loc'
+        this.imageCount = 0;
         this.translations = data.translations || {};
         this.filmingLocations = data.locations;
         this.emptyLocation = data.emptyLocation || {};
@@ -278,7 +279,7 @@ export class Location {
             list.classList.add('images-map-list');
             preview.appendChild(list);
 
-            let index = 0;
+            let index = self.imageCount;
             for (const file of curFiles) {
                 const listItem = document.createElement("li");
                 if (validFileType(file)) {
@@ -411,7 +412,7 @@ export class Location {
         const inputs = addLocationForm.querySelectorAll('input');
         const crudTypeInput = addLocationForm.querySelector('input[name="crud-type"]');
         const firstInput = addLocationForm.querySelector('input[required]');
-        const titleInput = addLocationForm.querySelector('input[name="title"]');
+        const titleInput = addLocationForm.querySelector('input[name="title"]') || addLocationForm.querySelector('input[name="name"]');
         const crudIdInput = addLocationForm.querySelector('input[name="crud-id"]');
         const episodeNumberInput = addLocationForm.querySelector('input[name="episode-number"]');
         const seasonNumberInput = addLocationForm.querySelector('input[name="season-number"]');
@@ -423,7 +424,7 @@ export class Location {
         const sourceNameInput = addLocationForm.querySelector('input[name="source-name"]');
         const sourceUrlInput = addLocationForm.querySelector('input[name="source-url"]');
         const locationImages = addLocationForm.querySelector(".location-images");
-        const additionalImagesDiv = addLocationForm.querySelector('.additional-images');
+        // const additionalImagesDiv = addLocationForm.querySelector('.additional-images');
         const submitButton = addLocationForm.querySelector('button[type="submit"]');
         const deleteButton = addLocationForm.querySelector('button[type="button"].danger');
 
@@ -434,7 +435,12 @@ export class Location {
                 input.value = '';
             }
         });
-        titleInput.value = location.title;
+        if (this.type === 'loc') {
+            titleInput.value = location.title;
+        }
+        if (this.type === 'poi') {
+            titleInput.value = location.name;
+        }
         submitButton.textContent = buttonText;
         crudTypeInput.value = crud;
 
@@ -445,6 +451,7 @@ export class Location {
                 seasonNumberInput.value = '0';
             }
             locationImages.style.display = 'none';
+            this.imageCount = 0;
         } else {
             if (this.type === 'loc') {
                 crudIdInput.value = location.id;
@@ -460,26 +467,56 @@ export class Location {
                 deleteButton.classList.remove('d-none');
             }
             locationImages.style.display = 'flex';
-            const stillDiv = locationImages.querySelector('.still');
+            /*const stillDiv = locationImages.querySelector('.still');
             const imageDiv = stillDiv.querySelector('.image');
             imageDiv.innerHTML = '';
             const img = document.createElement('img');
             img.src = this.imagePath + location.still_path;
             img.alt = "Location image"
             imageDiv.appendChild(img);
+            this.imageCount = 1;*/
 
-            const wrapper = additionalImagesDiv.querySelector('.wrapper');
+            addLocationDialog.classList.add('open');
+            const wrapper = locationImages.querySelector('ol.wrapper');
             wrapper.innerHTML = '';
-            const additionalImagesArray = location.filmingLocationImages.filter(fl => fl.id !== location.still_id);
-            for (let image of additionalImagesArray) {
-                const img = document.createElement('img');
+            /*const additionalImagesArray = location.filmingLocationImages.filter(fl => fl.id !== location.still_id);
+            for (let image of additionalImagesArray) {*/
+            location.filmingLocationImages.forEach(image => {
+                /*const img = document.createElement('img');
                 const imageDiv = document.createElement('div');
                 imageDiv.classList.add('image');
                 img.src = this.imagePath + image.path;
-                img.alt = image.title;
+                img.alt = 'Image #' + (this.imageCount + 1);
                 imageDiv.appendChild(img);
-                wrapper.appendChild(imageDiv);
-            }
+                wrapper.appendChild(imageDiv);*/
+                const listItem = document.createElement("li");
+                const radio = document.createElement("input");
+                radio.id = "thumbnail-" + this.imageCount;
+                radio.type = "radio";
+                radio.name = "thumbnail";
+                radio.value = 'existing-image-' + image.id;
+                if (image.id === location.still_id) radio.checked = true;
+                const label = document.createElement("label");
+                label.classList.add("thumbnail-choice");
+                label.setAttribute("for", "thumbnail-" + this.imageCount);
+                const span = document.createElement("span");
+                span.textContent = 'Image #' + (this.imageCount + 1);
+                const div = document.createElement("div");
+                div.classList.add('selected');
+                div.innerText = "Vignette";
+                const img = document.createElement("img");
+                img.src = this.imagePath + image.path;
+                img.alt = 'Image #' + (this.imageCount + 1);
+
+                label.appendChild(span);
+                label.appendChild(div);
+                label.appendChild(img);
+
+                listItem.appendChild(radio);
+                listItem.appendChild(label);
+                wrapper.appendChild(listItem);
+                this.imageCount += 1;
+            });
         }
         addLocationDialog.classList.add('open');
         firstInput.focus();

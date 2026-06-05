@@ -87,6 +87,20 @@ class PointOfInterest
         $this->updatedAt = $now;
     }
 
+    public function toArray(): array
+    {
+        return [
+            'id' => $this->id,
+            'name' => $this->name,
+            'address' => $this->address,
+            'city' => $this->city,
+            'originCountry' => $this->originCountry,
+            'description' => $this->description,
+            'latitude' => $this->latitude,
+            'longitude' => $this->longitude,
+        ];
+    }
+
     public function getId(): ?int
     {
         return $this->id;

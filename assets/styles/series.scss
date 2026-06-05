@@ -6328,12 +6328,18 @@ h2 {
                 }
 
                 .preferred-name {
+                    border-radius: 5rem;
+                    border: 2px solid transparent;
                     color: var(--orange-80);
-                    outline: 2px solid transparent;
-                    transition: outline-color 0.3s ease-in-out;
+                    margin-inline: auto;
+                    padding-inline: .75rem;
+                    text-wrap: balance;
+                    transition: border-color 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+                    width: fit-content;
 
                     &.update {
-                        outline-color: var(--orange-50);
+                        border-color: var(--orange-50);
+                        box-shadow: 0 0 2rem 0.5rem var(--orange-50);
                     }
                 }
 
@@ -7111,7 +7117,8 @@ dialog, .side-panel {
             }
 
             .preview-image-file,
-            .preview-image-files {
+            .preview-image-files,
+            .location-images {
                 position: relative;
 
                 ol {
@@ -7123,6 +7130,11 @@ dialog, .side-panel {
                     &.images-map-list {
                         display: flex;
                         flex-direction: column;
+                    }
+
+                    &.existing-images-map-list {
+                        display: flex;
+                        flex-direction: row;
                     }
 
                     &.album-photos {
@@ -7318,18 +7330,20 @@ dialog, .side-panel {
     }
 
     .location-images {
-        display: flex;
+        /*display: flex;
         gap: .5rem;
-        width: 100%;
+        width: 100%;*/
+        max-height: 30rem;
+        overflow-y: auto;
 
-        .still, .additional-images {
+        /*.still, .additional-images {
             display: flex;
             flex-direction: column;
-        }
+        }*/
 
-        .additional-images {
+        /*.additional-images {
             width: calc(100% - 17rem);
-        }
+        }*/
 
         .wrapper {
             display: flex;

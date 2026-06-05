@@ -4,6 +4,7 @@ namespace App\Service;
 
 use App\Entity\FilmingLocation;
 use App\Entity\Network;
+use App\Entity\PointOfInterest;
 use App\Entity\Series;
 use App\Entity\SeriesBroadcastSchedule;
 use App\Entity\SeriesImage;
@@ -1305,6 +1306,13 @@ readonly class SeriesService
         $emptyLocation = new FilmingLocation($uuid, $tmdbId, $title, "", "", 0, 0, null, 0, 0, "", "", $now, true);
         $emptyLocation->setOriginCountry($series->getOriginCountry());
         return $emptyLocation->toArray();
+    }
+
+    public function newPoi(): array
+    {
+        $now = $this->now();
+        $emptyPoi = new PointOfInterest('New point of interest', '', '', '', '', 0, 0, $now);
+        return $emptyPoi->toArray();
     }
 
     public function getLocationFormData(int $tvId, int $seriesId): array

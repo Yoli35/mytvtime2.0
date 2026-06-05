@@ -23,7 +23,7 @@ export class AdminTools {
         console.log("initZipCommand");
         const findZipForm = document.getElementById("find-zip-command");
 
-        findZipForm.addEventListener("submit", (e) => {
+        findZipForm?.addEventListener("submit", (e) => {
             e.preventDefault();
 
             const calcButton = findZipForm.querySelector("button[value='calc']");
@@ -68,6 +68,9 @@ export class AdminTools {
     initCheckPosters() {
         console.log("initCheckPosters");
         const checkPostersForm = document.getElementById("check-posters");
+        if (!checkPostersForm) {
+            return;
+        }
         const startInput = checkPostersForm.querySelector("input[name='start']");
 
         self.fetchSeries(parseInt(startInput.value) || 0);

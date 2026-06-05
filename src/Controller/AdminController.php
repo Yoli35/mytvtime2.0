@@ -1021,9 +1021,9 @@ class AdminController extends AbstractController
                 ],
             ],
         ];
-        $addLocationForm = $this->render('_blocks/forms/_add_location_form.html.twig', $data);
-        $now = $this->dateService->getNowImmutable("Europe/Paris");
-        $emptyPoi = new PointOfInterest('New point of interest', '', '', '', '', 0, 0, $now);
+        $addLocationForm = $this->renderView('_blocks/forms/_add_location_form.html.twig', $data);
+        $editLocationImagesForm = $this->renderView('_blocks/forms/_edit_location_images_form.html.twig', $data);
+        $emptyPoi = $this->seriesService->newPoi();
 
         return $this->render('admin/index.html.twig', [
             'pois' => [
@@ -1034,6 +1034,8 @@ class AdminController extends AbstractController
             ],
             'mapSettings' => $this->settingsRepository->findOneBy(['name' => 'mapbox']),
             'addLocationForm' => $addLocationForm,
+            'editLocationImagesForm' => $editLocationImagesForm,
+            'emptyPoi' => $emptyPoi,
             'pagination' => $pagination,
             'page' => $page,
             'limit' => $limit,
