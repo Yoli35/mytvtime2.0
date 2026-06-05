@@ -46,7 +46,7 @@
                 &nbsp;/ 10
                 <div class="episode-vote-block" data-id="{{ episode.userEpisodeId }}">
                     <label for="episode-vote-select-{{ episode.userEpisodeId }}"></label>
-                    <select id="episode-vote-select-{{ episode.userEpisodeId }}">
+                    <select id="episode-vote-select-{{ episode.userEpisodeId }}" {% if episode.vote_color_background %} style="--select-background-color: {{ episode.vote_color_background }}; --select-text-color: {{ episode.vote_color }};"{% endif %}>
                         <option value="-1"{% if episode.vote is null %} selected{% endif %}></option>
                         {% for i in range(1, 12) %}
                             <option value="{{ i }}"{% if episode.vote == i %} selected{% endif %}>{{ i }}</option>

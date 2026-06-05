@@ -3774,7 +3774,7 @@ h2 {
                         background-color: hsla(from var(--orange) h s l / .5);
                         /*border: 2px dashed var(--orange);*/
                         border-radius: .25rem;
-                        display: none;
+                        display: block;
                         height: 2rem;
                         inset: 0;
                         justify-content: center;
@@ -3782,7 +3782,7 @@ h2 {
                         position: absolute;
                         transition: opacity 0.3s ease-in-out;
 
-                        &:hover {
+                        &:hover, &:has(select:open) {
                             opacity: 1;
                         }
 
@@ -3791,7 +3791,33 @@ h2 {
                         }
 
                         select {
+                            align-items: center;
+                            appearance: base-select;
+                            background-color: var(--select-background-color, transparent);
+                            color: var(--select-text-color, inherit);
+                            display: flex;
                             font-size: inherit;
+                            height: 100%;
+                            padding-inline: .5rem;
+                            width: 100%;
+                        }
+
+                        select::picker(select) {
+                            appearance: base-select;
+                            background-color: var(--select-background-color, transparent);
+                            border-radius: .5rem;
+                            color: var(--select-text-color, inherit);
+                            font-size: inherit;
+                        }
+
+                        select::picker-icon {
+                            font-size: .75rem;
+                            align-self: center;
+                            transition: transform 0.3s ease-in-out;
+                        }
+
+                        select:open::picker-icon {
+                            transform: rotate(180deg);
                         }
                     }
                 }
