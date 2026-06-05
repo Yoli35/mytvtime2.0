@@ -342,7 +342,7 @@
                     </div>
                 {% endif %}
 
-                {{ include('_blocks/series/_credits.html.twig') }}
+                {{ include('_blocks/series/_credits.html.twig', {credits: season.credits, seriesLocalizedName: season.series_localized_name, seriesName: series.name, seriesId: series.id, seasonNumber: season.season_number}) }}
 
                 {% if episodeCount %}
                     <div class="episodes-comments"></div>

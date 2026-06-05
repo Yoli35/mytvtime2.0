@@ -131,7 +131,7 @@
                 {% if addWatchNextDiv is defined %}
                     <div class="what-to-watch-next"></div>
                 {% endif %}
-                {{ include('_blocks/series/_credits.html.twig', {season: season, series: series, seasonVotes: seasonVotes}) }}
+                {{ include('_blocks/series/_credits.html.twig', {credits: season.credits, seriesLocalizedName: season.series_localized_name, seriesName: series.name, seriesId: series.id, seasonNumber: season.season_number}) }}
                 {{ include('_blocks/series/_guest_stars.html.twig', {guest_stars: episode.guest_stars, episode_page: true}) }}
                 {{ include('_blocks/series/_map.html.twig', {locations: locations, mapSettings: mapSettings}) }}
             </main>

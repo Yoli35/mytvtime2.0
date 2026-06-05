@@ -2,12 +2,12 @@
     {% if seasonVotes is defined %}
         <div class="season-average-vote"><span>{{ seasonVotes.averageVote < 10 ? (seasonVotes.averageVote > 0 ? seasonVotes.averageVote : '—') : '10+' }}</span> / 10</div>
     {% endif %}
-    <a href="{{ path('app_tv_series', {id: seriesId, slug: name|slug}) }}">
+    <a href="{{ path('app_tv_series', {id: seriesId, slug: seriesName|slug}) }}">
         <div class="series-name">
-            {% if localized_name %}
-                <span class="localization-span">{{ localized_name.name }}</span>
+            {% if seriesLocalizedName %}
+                <span class="localization-span">{{ seriesLocalizedName }}</span>
             {% else %}
-                <span class="name-span">{{ name }}</span>
+                <span class="name-span">{{ seriesName }}</span>
             {% endif %}
         </div>
     </a>
