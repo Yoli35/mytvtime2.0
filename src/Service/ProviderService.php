@@ -30,8 +30,14 @@ readonly class ProviderService
         return $this->watchProviderRepository->findOneBy(['providerId' => $id]);
     }
 
-    public function getOneWithLogo(int $id): array
+    public function getOneWithLogo(?int $id): array
     {
+        if (!$id) {
+            return [
+                'logoPath' => null,
+                'providerName' => null,
+            ];
+        }
         $p = $this->watchProviderRepository->findOneBy(['providerId' => $id]);
         if (!$p) {
             return ['logoPath' => null, 'providerName' => ''];

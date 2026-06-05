@@ -121,7 +121,7 @@ Mandatory variables:
                 {% for as in series.alternateSchedules %}
                     {% if as.override %}
                         <h3>
-                            {{ 'Season'|trans }} {{ as.seasonNumber }}{% if as.multiPart %} {{ 'Part'|trans }} {{ as.seasonPart }}{% endif %}, {{ as.airDays|length }} {{ 'episodes'|trans }} {{ 'on'|trans }} {{ as.provider.providerName }}
+                            {{ 'Season'|trans }} {{ as.seasonNumber }}{% if as.multiPart %} {{ 'Part'|trans }} {{ as.seasonPart }}{% endif %}, {{ as.airDays|length }} {{ 'episodes'|trans }}{% if as.provider.providerName %} {{ 'on'|trans }} {{ as.provider.providerName }}{% endif %}
                             {% if as.provider.logoPath %}
                                 <img src="{{ as.provider.logoPath }}" alt="{{ as.provider.providerName }} Logo" class="provider-logo">
                             {% endif %}
