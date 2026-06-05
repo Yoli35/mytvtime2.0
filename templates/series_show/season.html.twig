@@ -136,6 +136,10 @@
                         <div class="backdrop">
                             <img src="/series/backdrops{{ season.backdrop_path }}" alt="{{ season.name }}">
                         </div>
+                    {% elseif season.poster_path %}
+                        <div class="backdrop">
+                            <img src="/series/posters{{ season.poster_path }}" alt="{{ season.name }}">
+                        </div>
                     {% endif %}
                 </div>
                 {% set episodeCount = season.progress.episodeCount %}
