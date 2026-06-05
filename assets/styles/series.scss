@@ -1,26 +1,6 @@
 :root {
 }
 
-//noinspection CssInvalidFunction
-.scroll-watcher {
-    height: .5rem;
-    position: fixed;
-    top: 0;
-    width: 100%;
-    z-index: 1000;
-    background-color: var(--orange-50);
-    scale: 0 1;
-    animation: scroll-watcher linear;
-    animation-timeline: scroll();
-    transform-origin: left;
-}
-
-@keyframes scroll-watcher {
-    to {
-        scale: 1 1;
-    }
-}
-
 h2 {
     background-color: var(--orange-50);
     border-radius: .25rem;

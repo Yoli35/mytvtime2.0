@@ -1,33 +1,38 @@
 @use "variables";
 
-::view-transition-old(root) {
-    /*animation: move-out 500ms ease-in-out;*/
-    animation-delay: 500ms;
-}
 
-::view-transition-new(root) {
-    animation: move-in 500ms ease-in-out;
-}
 
-@keyframes move-in {
-    from {
-        transform: translateX(100%);
-        opacity: 0;
+@media(prefers-reduced-motion: no-preference) {
+    @view-transition {
+        navigation: auto;
     }
-    to {
-        transform: translateX(0);
-        opacity: 1;
-    }
-}
 
-@keyframes move-out {
-    from {
-        transform: translateY(0);
-        opacity: 1;
+    @keyframes fadeIn {
+        0% {
+            opacity: 0;
+        }
+
+        100% {
+            opacity: 1;
+        }
     }
-    to {
-        transform: translateY(-100%);
-        opacity: 0;
+
+    @keyframes fadeOut {
+        0% {
+            opacity: 1;
+        }
+
+        100% {
+            opacity: 0;
+        }
+    }
+
+    ::view-transition-old(root) {
+        animation: fadeOut .5s ease-in-out;
+    }
+
+    ::view-transition-new(root) {
+        animation: fadeIn .5s ease-in-out;
     }
 }
 
