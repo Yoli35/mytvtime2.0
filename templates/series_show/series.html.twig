@@ -372,7 +372,7 @@
 
             <div class="content column">
                 <div class="content-seasons">
-                    {{ include('_blocks/series/_credits.html.twig', {credits: tv.credits, seriesLocalizedName: tv.localized_name.name, seriesName: series.name, seriesId: series.id, seasonNumber: -1}) }}
+                    {{ include('_blocks/series/_credits.html.twig', {credits: tv.credits, seriesLocalizedName: tv.localized_name?tv.localized_name.name:null, seriesName: series.name, seriesId: series.id, seasonNumber: -1}) }}
                 </div>
             </div>
 
