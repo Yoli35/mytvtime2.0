@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="{{ asset('styles/series.scss') }}">
     <link rel="stylesheet" href="{{ asset('styles/card.scss') }}">
     <link rel="stylesheet" href="{{ asset('styles/episode.scss') }}">
+    <link rel="stylesheet" href="{{ asset('styles/people.scss') }}">
     <link rel="stylesheet" href="{{ asset('styles/translations.scss') }}">
     <link rel="stylesheet" href="https://api.mapbox.com/mapbox-gl-js/v3.14.0/mapbox-gl.css">
 {% endblock %}
@@ -37,6 +38,8 @@
                 <div class="still">
                     {% if still|length %}
                         <img src="{{ still }}" alt="{{ episode.name }} still image">
+                    {% elseif series.backdropPath %}
+                        <img src="{{ asset('/series/backdrops' ~ series.backdropPath) }}" alt="{{ series.name }} backdrop image">
                     {% endif %}
                 </div>
                 <div class="infos">
