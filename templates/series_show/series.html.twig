@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="{{ asset('styles/map.scss') }}">
     <link rel="stylesheet" href="{{ asset('styles/user.scss') }}">
     <link rel="stylesheet" href="{{ asset('styles/series.scss') }}">
+    <link rel="stylesheet" href="{{ asset('styles/people.scss') }}">
     <link rel="stylesheet" href="{{ asset('styles/translations.scss') }}">
     <link rel="stylesheet" href="https://api.mapbox.com/mapbox-gl-js/v3.14.0/mapbox-gl.css">
 {% endblock %}
@@ -748,6 +749,7 @@
     <div id="svgs" style="display: none">
         {{ ux_icon('mdi:content-copy', {id: 'copy', height: '18px', width: '18px'}) }}
         {{ ux_icon('mdi:asterisk', {id: 'asterisk'}) }}
+        {{ ux_icon('mdi:close', {id: 'cancel' }) }}
         <div class="svg" id="arrow-down">{{ ux_icon('mdi:arrow-down') }}</div>
         <div class="svg" id="arrow-up">{{ ux_icon('mdi:arrow-up') }}</div>
         <div class="svg" id="arrow-left">{{ ux_icon('mdi:arrow-left') }}</div>

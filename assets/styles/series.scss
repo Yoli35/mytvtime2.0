@@ -3,7 +3,7 @@
 
 h2 {
     background-color: var(--orange-50);
-    border-radius: .25rem;
+    border-radius: 5rem;
     /*color: var(--orange-90);*/
     padding: .5rem 1rem;
 }
@@ -6424,6 +6424,8 @@ h2 {
 
     &.growable {
         transition: all 0.3s ease-in-out;
+        background-color: hsla(from var(--orange-30) h s l / .75);
+        backdrop-filter: blur(1rem);
     }
 
     .people-big-card-content {
@@ -6442,8 +6444,20 @@ h2 {
         }
 
         main {
-            backdrop-filter: blur(5rem);
+            height: 100%;
             width: 100%;
+
+            .person {
+                height: 100%;
+                margin-block-start: 0;
+                min-height: unset;
+
+                .left-column, .right-column {
+                    height: 100%;
+                    max-height: unset;
+                    min-height: unset;
+                }
+            }
         }
 
         .people-big-card-close-button {
@@ -6457,8 +6471,8 @@ h2 {
             height: 2rem;
             justify-content: center;
             position: absolute;
-            right: 1.5rem;
-            top: 1.5rem;
+            right: .5rem;
+            top: .5rem;
             width: 2rem;
             z-index: 1;
 

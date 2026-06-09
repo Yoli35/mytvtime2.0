@@ -42,7 +42,6 @@ export class PeopleCard {
                 const peopleBigCard = document.querySelector('.people-big-card');
                 const peopleBigCardContent = peopleBigCard.querySelector('.people-big-card-content');
                 const newImg = peopleBigCardContent.querySelector('img');
-                newImg.classList.add('growing-image');
                 setTimeout(() => {
                     peopleBigCardContent.classList.add('fade-out');
                     setTimeout(() => {
@@ -73,14 +72,13 @@ export class PeopleCard {
 
         const body = document.querySelector('body');
         body.classList.add('frozen');
+        const scrollY = window.scrollY;
         const peopleBigCard = document.createElement('div');
         peopleBigCard.classList.add('people-big-card');
-        peopleBigCard.style.position = 'absolute';
         peopleBigCard.style.left = `${bounds.left}px`;
-        peopleBigCard.style.top = `${bounds.top}px`;
+        peopleBigCard.style.top = `${bounds.top + scrollY}px`;
         peopleBigCard.style.width = `${bounds.width}px`;
         peopleBigCard.style.height = `${bounds.height}px`;
-        peopleBigCard.style.backgroundColor = 'rgba(0, 0, 0, 0.5)';
         document.addEventListener('keydown', this.closeOnEscapeKey)
         document.body.appendChild(peopleBigCard);
 
@@ -89,7 +87,7 @@ export class PeopleCard {
         }, 0);
         setTimeout(() => {
             peopleBigCard.style.left = '1rem';
-            peopleBigCard.style.top = `${16 + body.scrollTop}px`;
+            peopleBigCard.style.top = `${16 + scrollY}px`;
             peopleBigCard.style.width = `calc(100vw - 2rem)`;
             peopleBigCard.style.height = `calc(100vh - 2rem)`;
         }, 0);
@@ -98,6 +96,7 @@ export class PeopleCard {
         peopleBigCardContent.classList.add('people-big-card-content');
         const peoplePhotoImg = peopleCard.querySelector('img');
         peopleBigCardContent.appendChild(peoplePhotoImg.cloneNode(true));
+        peopleBigCardContent.querySelector('img').classList.add('growing-image');
         peopleBigCard.appendChild(peopleBigCardContent);
     }
 
@@ -116,9 +115,10 @@ export class PeopleCard {
         const peopleBigCard = document.querySelector('.people-big-card');
         const peopleCard = this.currentPeopleCard;
         const bounds = peopleCard.getBoundingClientRect();
+        const scrollY = window.scrollY;
 
         peopleBigCard.style.left = `${bounds.left}px`;
-        peopleBigCard.style.top = `${bounds.top}px`;
+        peopleBigCard.style.top = `${bounds.top + scrollY}px`;
         peopleBigCard.style.width = `${bounds.width}px`;
         peopleBigCard.style.height = `${bounds.height}px`;
         setTimeout(() => {

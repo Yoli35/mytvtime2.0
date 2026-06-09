@@ -4,6 +4,7 @@ import {CopyName} from "CopyName";
 import {EpisodeActions} from "EpisodeActions";
 import {FlashMessage} from "FlashMessage";
 import {Map} from "Map";
+import {PeopleCard} from "PeopleCard";
 import {SeasonComments} from "SeasonComments";
 import {ToolTips} from 'ToolTips';
 import {TranslationsForms} from "TranslationsForms";
@@ -168,6 +169,11 @@ export class Season {
                 this.preferredName.syncFromSessionStorage();
             }
         });
+
+        /******************************************************************************
+         * Initialize people cards                                                    *
+         ******************************************************************************/
+        new PeopleCard();
 
         /******************************************************************************
          * Adjust Vote section colors according to the brightness of the background   *

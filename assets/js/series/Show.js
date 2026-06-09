@@ -6,6 +6,7 @@ import {FetchEpisodeCards} from "FetchEpisodeCards";
 import {FlashMessage} from "FlashMessage";
 import {Keyword} from 'Keyword';
 import {Location} from "Location";
+import {PeopleCard} from "PeopleCard";
 import {ToolTips} from 'ToolTips';
 import {TranslationsForms} from "TranslationsForms";
 import {WatchLinkCrud} from "WatchLinkCrud";
@@ -156,6 +157,11 @@ export class Show {
                 this.preferredName.syncFromSessionStorage();
             }
         });
+
+        /******************************************************************************
+         * Initialize people cards                                                    *
+         ******************************************************************************/
+        new PeopleCard();
 
         /******************************************************************************
          * Animation for the progress bar.                                            *
