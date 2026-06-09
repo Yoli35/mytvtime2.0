@@ -446,7 +446,7 @@
             border-radius: 5rem;
             color: var(--ardoise-10);
             display: flex;
-            font-size: 3.5rem;
+            font-size: clamp(1rem, 3vw, 3.5rem);
             font-weight: 300;
             line-height: 1.1em;
             justify-content: center;
