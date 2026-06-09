@@ -11,7 +11,7 @@
     {% set preferredName = people.preferredName.name ?? none %}
     <div class="container-fluid">
         {{ include('_blocks/_menu.html.twig') }}
-        <main>
+        <main id="people-card">
             <div class="person" data-id="{{ people.id }}">
                 <div class="left-column">
                     {% if people.profile_path|length %}
@@ -316,7 +316,7 @@
         {
             "app_series_get_overview": "{{ path('app_series_get_overview', {id: 0})|slice(0, -1) }}",
             "app_people_rating": "{{ path('app_people_rating') }}",
-            "app_people_preferred_name": "{{ path('app_people_preferred_name') }}",
+            "app_people_preferred_name": "{{ path('api_people_preferred_name_save') }}",
             "imgUrl": "{{ imageConfig.url ~ imageConfig.profile_sizes.2 }}",
             "translations": {
                 "Add": "{{ 'Add'|trans }}",

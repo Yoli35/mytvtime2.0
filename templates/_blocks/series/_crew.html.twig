@@ -1,4 +1,5 @@
-<a href="{{ path('app_people_show', {id: people.id, slug: people.slug}) }}">
+{#<a href="{{ path('app_people_show', {id: people.id, slug: people.slug}) }}">#}
+<div class="people-class" data-id="{{ people.id }}">
     <div class="people" id="crew-{{ people.id }}">
         <div class="photo" data-title="{{ people.name }}{% if people.preferred_name %} - {{ people.preferred_name }}{% endif %}">
             {% if people.profile_path %}
@@ -19,4 +20,5 @@
             </div>
         </div>
     </div>
-</a>
+</div>
+{#</a>#}

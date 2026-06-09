@@ -5,10 +5,10 @@ import {TranslationsForms} from "TranslationsForms";
 let self = null;
 
 export class PeopleShow {
-    constructor() {
+    constructor(globs) {
         self = this;
-        this.lang = document.querySelector("html").getAttribute("lang");
-        this.globs = JSON.parse(document.querySelector(".global-data").textContent);
+        this.lang = document.documentElement.lang;
+        this.globs = globs || JSON.parse(document.querySelector(".global-data").textContent);
 
         this.app_series_get_overview = this.globs.app_series_get_overview;
         this.app_people_rating = this.globs.app_people_rating;
@@ -21,8 +21,11 @@ export class PeopleShow {
     }
 
     start() {
-
-        const infos = document.querySelector(".credits").querySelectorAll(".info");
+        const episodeCardMain = document.querySelector("main#people-card");
+        if (!episodeCardMain) {
+            return;
+        }
+        const infos = episodeCardMain.querySelector(".credits").querySelectorAll(".info");
         infos.forEach(info => {
             info.addEventListener("click", this.showInfos);
         });
@@ -195,7 +198,7 @@ export class PeopleShow {
     }
 
     initPreferredName() {
-        const preferredNameForm = document.querySelector(".preferred-name");
+        const preferredNameForm = document.querySelector(".preferred-name-infos form.preferred-name");
         const radios = preferredNameForm.querySelectorAll('input[type="radio"]');
         const input = preferredNameForm.querySelector('input[name="new_name"]');
         const submitButton = preferredNameForm.querySelector('button[type="submit"]');
@@ -224,7 +227,7 @@ export class PeopleShow {
 
     preferredName(e) {
         e.preventDefault();
-        const preferredNameForm = document.querySelector(".preferred-name");
+        const preferredNameForm = document.querySelector(".preferred-name-infos form.preferred-name");
         const id = preferredNameForm.querySelector("input[name=id]").value;
         const formData = new FormData(preferredNameForm);
         const preferredName = formData.get("also_known_as");
@@ -234,7 +237,7 @@ export class PeopleShow {
             "name": preferredName,
             "new": newName
         };
-        fetch(self.globs.app_people_preferred_name,
+        fetch("/api/people/preferred-name/save",
             {
                 method: 'POST',
                 headers: {

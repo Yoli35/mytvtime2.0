@@ -1,0 +1,138 @@
+import {PeopleShow} from "PeopleShow";
+
+export class PeopleCard {
+    constructor() {
+        this.currentPeopleCard = null;
+        this.peopleShow = null;
+        this.handleCardClick = this.handleCardClick.bind(this);
+        this.fetchData = this.fetchData.bind(this);
+        this.openCard = this.openCard.bind(this);
+        this.closeCard = this.closeCard.bind(this);
+        this.closeOnEscapeKey = this.closeOnEscapeKey.bind(this);
+        this.init();
+    }
+
+    init() {
+        console.log('PeopleCard initialized');
+        const peopleCards = document.querySelectorAll('.people-card');
+        peopleCards.forEach(peopleCard => {
+            peopleCard.addEventListener('click', this.handleCardClick);
+        });
+    }
+
+    handleCardClick(e) {
+        this.currentPeopleCard = e.currentTarget;
+        const peopleCard = e.currentTarget;
+        const id = peopleCard.getAttribute('data-id');
+        this.openCard(peopleCard);
+        this.fetchData(id);
+    }
+
+    fetchData(id) {
+        fetch('/api/people/card/show', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({id: id})
+        })
+            .then(response => response.json())
+            .then(data => {
+                console.log('PeopleCard data', data);
+                const peopleBigCard = document.querySelector('.people-big-card');
+                const peopleBigCardContent = peopleBigCard.querySelector('.people-big-card-content');
+                const newImg = peopleBigCardContent.querySelector('img');
+                newImg.classList.add('growing-image');
+                setTimeout(() => {
+                    peopleBigCardContent.classList.add('fade-out');
+                    setTimeout(() => {
+                        peopleBigCardContent.removeChild(newImg);
+                        peopleBigCardContent.innerHTML = data['view'];
+                        this.addCloseButton(peopleBigCardContent);
+                        peopleBigCardContent.classList.remove('fade-out');
+                    }, 300);
+                }, 0);
+
+                if (this.peopleShow === null) {
+                    this.peopleShow = new PeopleShow(data['globs']);
+                } else {
+                    this.peopleShow.start();
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching data:', error);
+            });
+    }
+
+    openCard(peopleCard) {
+        const id = peopleCard.getAttribute('data-id');
+        console.log('PeopleCard card clicked', id);
+        const photoDiv = peopleCard.querySelector('.photo');
+        const bounds = photoDiv.getBoundingClientRect();
+        console.log('PeopleCard card bounds', bounds);
+
+        const body = document.querySelector('body');
+        body.classList.add('frozen');
+        const peopleBigCard = document.createElement('div');
+        peopleBigCard.classList.add('people-big-card');
+        peopleBigCard.style.position = 'absolute';
+        peopleBigCard.style.left = `${bounds.left}px`;
+        peopleBigCard.style.top = `${bounds.top}px`;
+        peopleBigCard.style.width = `${bounds.width}px`;
+        peopleBigCard.style.height = `${bounds.height}px`;
+        peopleBigCard.style.backgroundColor = 'rgba(0, 0, 0, 0.5)';
+        document.addEventListener('keydown', this.closeOnEscapeKey)
+        document.body.appendChild(peopleBigCard);
+
+        setTimeout(() => {
+            peopleBigCard.classList.add('growable');
+        }, 0);
+        setTimeout(() => {
+            peopleBigCard.style.left = '1rem';
+            peopleBigCard.style.top = `${16 + body.scrollTop}px`;
+            peopleBigCard.style.width = `calc(100vw - 2rem)`;
+            peopleBigCard.style.height = `calc(100vh - 2rem)`;
+        }, 0);
+
+        const peopleBigCardContent = document.createElement('div');
+        peopleBigCardContent.classList.add('people-big-card-content');
+        const peoplePhotoImg = peopleCard.querySelector('img');
+        peopleBigCardContent.appendChild(peoplePhotoImg.cloneNode(true));
+        peopleBigCard.appendChild(peopleBigCardContent);
+    }
+
+    addCloseButton(div) {
+        const peopleBigCardCloseButton = document.createElement('button');
+        const svgCancel = document.querySelector('#svgs svg#cancel');
+        const svg = svgCancel.cloneNode(true);
+        svg.removeAttribute('id');
+        peopleBigCardCloseButton.classList.add('people-big-card-close-button');
+        peopleBigCardCloseButton.appendChild(svg);
+        peopleBigCardCloseButton.addEventListener('click', this.closeCard);
+        div.appendChild(peopleBigCardCloseButton);
+    }
+
+    closeCard() {
+        const peopleBigCard = document.querySelector('.people-big-card');
+        const peopleCard = this.currentPeopleCard;
+        const bounds = peopleCard.getBoundingClientRect();
+
+        peopleBigCard.style.left = `${bounds.left}px`;
+        peopleBigCard.style.top = `${bounds.top}px`;
+        peopleBigCard.style.width = `${bounds.width}px`;
+        peopleBigCard.style.height = `${bounds.height}px`;
+        setTimeout(() => {
+            peopleBigCard.classList.remove('growable');
+        }, 300);
+        document.body.removeChild(peopleBigCard);
+        document.removeEventListener('keydown', this.closeOnEscapeKey)
+        body.classList.remove('frozen');
+        this.currentPeopleCard = null;
+    }
+
+    closeOnEscapeKey(e) {
+        if (e.key === 'Escape') {
+            this.closeCard();
+        }
+    }
+}

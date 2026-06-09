@@ -1,0 +1,301 @@
+{% set preferredName = people.preferredName.name ?? none %}
+<main id="people-card">
+    <div class="person" data-id="{{ people.id }}">
+        <div class="left-column">
+            {% if people.profile_path|length %}
+                <div class="profile">
+                    <img src="{{ imageConfig.url ~ imageConfig.profile_sizes.2 ~ people.profile_path }}" alt="{{ people.name }}" loading="lazy">
+                </div>
+            {% endif %}
+            {{ include('_blocks/people/_rating.html.twig', {rating: people.userRating, avgRating: people.avgRating}) }}
+            <div class="infos">
+                <h4>{{ 'Personal Informations'|trans }}</h4>
+                <div class="info">
+                    <div>{{ 'Known for Department'|trans }}</div>
+                    <div>{{ people.known_for_department|trans }}</div>
+                </div>
+                <div class="info">
+                    <div>{{ 'Known appearances'|trans }}</div>
+                    <div>{{ count }}</div>
+                </div>
+                <div class="info">
+                    <div>{{ 'Gender'|trans }}</div>
+                    <div>{{ (people.gender == 1 ? 'Female' : (people.gender == 2 ? 'Male':'Other'))|trans }}</div>
+                </div>
+                {% if people.birthday %}
+                    <div class="info">
+                        <div>{{ 'Birthday'|trans }}</div>
+                        <div>{{ people.birthday|format_date('medium') }} ({{ people.age }} {{ 'old'|trans }})</div>
+                    </div>
+                {% endif %}
+                {% if people.deathday %}
+                    <div class="info">
+                        <div>{{ 'Deathday'|trans }}</div>
+                        <div>{{ people.deathday|format_date('medium') }}</div>
+                    </div>
+                {% endif %}
+                {% if people.place_of_birth %}
+                    <div class="info">
+                        <div>{{ 'Place of birth'|trans }}</div>
+                        <div>{{ people.place_of_birth }}</div>
+                    </div>
+                {% endif %}
+                {% if people.homepage %}
+                    <div class="info">
+                        <div class="home-page">
+                            {{ 'Homepage'|trans }}
+                            <a href="{{ people.homepage }}" target="_blank">
+                                {{ ux_icon('mdi:link-variant', {height: '16px', width: '16px', 'data-title': 'Homepage'|trans ~ ' → ' ~ people.homepage}) }}
+                            </a>
+                            <span class="copy">
+                                        {{ ux_icon('mdi:content-paste', {height: '16px', width: '16px', 'data-title': 'Copy to clipboard'|trans}) }}
+                                    </span>
+                            <script>
+                                document.querySelector('.home-page .copy').addEventListener('click', function () {
+                                    navigator.clipboard.writeText("{{ people.homepage }}");
+                                });
+                            </script>
+                        </div>
+                    </div>
+                {% endif %}
+                <div class="info">
+                    {{ include ('_blocks/people/_preferred_name.html.twig', {people: people, preferredName: preferredName}) }}
+                </div>
+            </div>
+            {% if people.images|length %}
+                {% if people.images.profiles|length %}
+                    <div class="images">
+                        {% for image in people.images.profiles %}
+                            <img src="{{ imageConfig.url ~ imageConfig.profile_sizes.3 ~ image.file_path }}" alt="{{ people.name }}" loading="lazy">
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            {% endif %}
+        </div>
+        <div class="right-column">
+            <div class="content">
+                <div class="name">
+                    <h1>{{ people.name }}{% if preferredName %}<span class="preferred-name"> - {{ preferredName }}</span>{% endif %}</h1>
+                    {{ include('_blocks/translations/_tools.html.twig', {type: 'people', hidden: 0}) }}
+                </div>
+                {{ include('_blocks/forms/_localized_biography.html.twig') }}
+                <div class="bio">
+                    {% if people.biography|length %}
+                        {{ people.biography|nl2br }}
+                    {% endif %}
+                </div>
+                <div class="localized-bio">
+                    {% if people.localizedBiography|length %}
+                        {{ people.localizedBiography.biography|nl2br }}
+                    {% endif %}
+                </div>
+                {% if credits.known_for|length %}
+                    <h2>{{ 'Known for'|trans }}</h2>
+                    <div class="known-for">
+                        <div class="wrapper">
+                            {% for media in credits.known_for %}
+                                {% if media.media_type == "movie" %}
+                                    {% set url = path('app_movie_tmdb', {id: media.id}) %}
+                                {% endif %}
+                                {% if media.media_type == "tv" %}
+                                    {% set url = path('app_tv_tmdb', {id: media.id, slug: media.slug}) %}
+                                {% endif %}
+                                <div class="poster{% if media.added %} added{% endif %}">
+                                    {% if url|length %}
+                                    <a href="{{ url }}">
+                                        {% endif %}
+                                        <img src="{{ media.poster_path }}" alt="{{ media.title }}" loading="lazy">
+                                        <div class="title">{{ media.title }}</div>
+                                        {% if url is defined %}
+                                    </a>
+                                    {% endif %}
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <div class="poster-hover"><img src="" alt=""></div>
+                {% endif %}
+                <div class="credits">
+                    {% if credits.cast|length %}
+                        <h2>{{ 'Acting'|trans }}</h2>
+                        <div class="acting">
+                            {% set lastDate = "" %}
+                            {% for date, prod in credits.cast %}
+                                {% if loop.index0 %}
+                                    {% if date|length == 10 and date|slice(0,4) != lastDate %}
+                                        <div class="separation"></div>
+                                    {% endif %}
+                                {% endif %}
+                                <div class="date{% if prod.user_added %}{% if prod.progress==0 %} added{% elseif prod.progress==100 %} ended{% else %} started{% endif %}{% endif %}">
+                                    {% if loop.index0 %}
+                                        {% if date|length == 10 and date|slice(0,4) != lastDate %}
+                                            <div class="year">{{ date|length == 10 ? (date|slice(0,4)) : "—" }}</div>
+                                        {% else %}
+                                            <div class="year"></div>
+                                        {% endif %}
+                                    {% else %}
+                                        <div class="year">{{ date|length == 10 ? (date|slice(0,4)) : "—" }}</div>
+                                    {% endif %}
+                                    <div class="info" data-id="{{ prod.id }}" data-title="{{ prod.title }}" data-type="{{ prod.media_type }}" data-poster="{{ prod.poster_path }}">
+                                        {{ ux_icon('mdi:information-outline') }}
+                                    </div>
+                                    {% if prod.media_type == "movie" %}
+                                        {% set url = "" %}
+                                    {% endif %}
+                                    {% if prod.media_type == "tv" %}
+                                        {% set url = path('app_tv_tmdb', {id: prod.id, slug: prod.slug}) %}
+                                    {% endif %}
+                                    {% if prod.media_type == "movie" %}
+                                        {% set url = path('app_movie_tmdb', {id: prod.id}) %} {# , slug: prod.slug #}
+                                    {% endif %}
+                                    <a href="{{ url }}">
+                                        <div class="title">
+                                            {% if prod.media_type == 'movie' %}
+                                                {{ ux_icon('mdi:filmstrip-box', {height: '16px', width: '16px', 'data-title': 'Movie'|trans}) }}
+                                            {% endif %}
+                                            {% if prod.media_type == 'tv' %}
+                                                {{ ux_icon('mdi:tv', {height: '16px', width: '16px', 'data-title': 'Series'|trans}) }}
+                                            {% endif %}
+                                            {{ prod.title }}
+                                            {% if prod.localized_title %}
+                                                <span class="localized">{{ prod.localized_title }}</span>
+                                            {% endif %}
+                                        </div>
+                                    </a>
+                                    {% if prod.character|length %}
+                                        {% if prod.character %}
+                                            &nbsp;&nbsp;—
+                                            <div class="character">{{ prod.character }}</div>
+                                        {% endif %}
+                                    {% endif %}
+
+                                    <div class="extras">
+                                        {% if prod.favorite %}
+                                            <div class="favorite">
+                                                {{ ux_icon('mdi:heart') }}
+                                            </div>
+                                        {% endif %}
+                                        {% if prod.rating %}
+                                            <div class="rating">
+                                                {% for i in 1..prod.rating %}
+                                                    {{ ux_icon('mdi:star') }}
+                                                {% endfor %}
+                                                {% if prod.rating < 5 %}
+                                                    {% for i in (prod.rating+1)..5 %}
+                                                        {{ ux_icon('mdi:star-outline') }}
+                                                    {% endfor %}
+                                                {% endif %}
+                                            </div>
+                                        {% endif %}
+                                        {% if prod.user_added %}
+                                            <div class="progress">
+                                                {% set icon = 'mdi:battery-outline' %}
+                                                {% if prod.progress==100 %}
+                                                    {% set icon = 'mdi:battery' %}
+                                                {% else %}
+                                                    {% if prod.progress > 0 and prod.progress <= 15 %}
+                                                        {% set icon = 'mdi:battery-10' %}
+                                                    {% elseif prod.progress > 15 and prod.progress <= 25 %}
+                                                        {% set icon = 'mdi:battery-20' %}
+                                                    {% elseif prod.progress > 25 and prod.progress <= 35 %}
+                                                        {% set icon = 'mdi:battery-30' %}
+                                                    {% elseif prod.progress > 35 and prod.progress <= 45 %}
+                                                        {% set icon = 'mdi:battery-40' %}
+                                                    {% elseif prod.progress > 45 and prod.progress <= 55 %}
+                                                        {% set icon = 'mdi:battery-50' %}
+                                                    {% elseif prod.progress > 55 and prod.progress <= 65 %}
+                                                        {% set icon = 'mdi:battery-60' %}
+                                                    {% elseif prod.progress > 65 and prod.progress <= 75 %}
+                                                        {% set icon = 'mdi:battery-70' %}
+                                                    {% elseif prod.progress > 75 and prod.progress <= 85 %}
+                                                        {% set icon = 'mdi:battery-80' %}
+                                                    {% elseif prod.progress > 86 and prod.progress <= 95 %}
+                                                        {% set icon = 'mdi:battery-90' %}
+                                                    {% endif %}
+                                                {% endif %}
+                                                {{ ux_icon(icon, {height: '24px', width: '24px'}) }}
+                                                {{ prod.progress }}%
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                {% set lastDate = date|slice(0,4) %}
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                    {% if credits.crew|length %}
+                        {% for department, prod in credits.crew %}
+                            <h2>{{ department|trans }}</h2>
+                            <div class="sub-credits">
+                                {% for date, sub_prod in prod %}
+                                    {% if loop.index0 %}
+                                        {% if date|length == 10 and date|slice(0,4) != lastDate %}
+                                            <div class="separation"></div>
+                                        {% endif %}
+                                    {% endif %}
+                                    <div class="date">
+                                        {% if loop.index0 %}
+                                            {% if date|length == 10 and date|slice(0,4) != lastDate %}
+                                                <div class="year">{{ date|length == 10 ? (date|slice(0,4)) : "—" }}</div>
+                                            {% else %}
+                                                <div class="year"></div>
+                                            {% endif %}
+                                        {% else %}
+                                            <div class="year">{{ date|length == 10 ? (date|slice(0,4)) : "—" }}</div>
+                                        {% endif %}
+                                        <div class="info" data-id="{{ sub_prod.id }}" data-title="{{ sub_prod.title }}" data-type="{{ sub_prod.media_type }}" data-poster="{{ sub_prod.poster_path }}">
+                                            {{ ux_icon('mdi:information-outline') }}
+                                        </div>
+                                        {% if sub_prod.media_type == "movie" %}
+                                            {% set url = path('app_movie_tmdb', {id: sub_prod.id}) %}
+                                        {% endif %}
+                                        {% if sub_prod.media_type == "tv" %}
+                                            {% set url = path('app_tv_tmdb', {id: sub_prod.id, slug: sub_prod.slug}) %}
+                                        {% endif %}
+                                        <a href="{{ url }}">
+                                            <div class="title">
+                                                {% if sub_prod.media_type == 'movie' %}
+                                                    {{ ux_icon('mdi:filmstrip-box', {height: '16px', width: '16px', 'data-title': 'Movie'|trans}) }}
+                                                {% endif %}
+                                                {% if sub_prod.media_type == 'tv' %}
+                                                    {{ ux_icon('mdi:tv', {height: '16px', width: '16px', 'data-title': 'Series'|trans}) }}
+                                                {% endif %}
+                                                {{ sub_prod.title }}
+                                            </div>
+                                        </a>
+                                        {% if sub_prod.job|length %}
+                                            <div class="job">{{ 'as.job'|trans }} {{ ('job.' ~ sub_prod.job ~ (people.gender == 1 ? '.she':'.he'))|trans }}</div>
+                                        {% endif %}
+                                    </div>
+                                    {% set lastDate = date|slice(0,4) %}
+                                {% endfor %}
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+<div class="pop-infos">
+    <div class="content">
+        <div class="poster"></div>
+        <div class="body">
+            <div class="title"></div>
+            <div class="overview"></div>
+            <div class="spinner">
+                <div class="circle1">
+                    <div class="circle2">
+                        <div class="circle3">
+                            <div class="circle4"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="close">
+                {{ ux_icon('mdi:close') }}
+            </div>
+        </div>
+    </div>
+    <div class="tail"></div>
+</div>

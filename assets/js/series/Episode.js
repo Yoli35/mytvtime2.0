@@ -2,6 +2,7 @@ import {AddCast} from 'AddCast';
 import {EpisodeActions} from "EpisodeActions";
 import {FetchEpisodeCards} from "FetchEpisodeCards";
 import {Location} from "Location";
+import {PeopleCard} from "PeopleCard";
 import {SeasonComments} from "SeasonComments";
 import {WhatNext} from "WhatNext";
 
@@ -94,6 +95,11 @@ export class Episode {
         const filmingLocations = this.globsMap.locations;
         const locationImagePath = this.globsMap.locationImagePath;
         console.log(this.globsMap);
+
+        /******************************************************************************
+         * Initialize people cards                                                    *
+         ******************************************************************************/
+        new PeopleCard();
 
         /******************************************************************************
          * cast and crew preferred name change monitoring                             *

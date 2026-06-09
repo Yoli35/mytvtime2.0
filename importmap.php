@@ -94,6 +94,9 @@ return [
     'NetworkAndProvider' => [
         'path' => './assets/js/user/NetworkAndProvider.js',
     ],
+    'PeopleCard' => [
+        'path' => './assets/js/people/PeopleCard.js',
+    ],
     'PeopleShow' => [
         'path' => './assets/js/people/PeopleShow.js',
     ],
