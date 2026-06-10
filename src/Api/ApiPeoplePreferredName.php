@@ -2,10 +2,8 @@
 
 namespace App\Api;
 
-use App\Entity\PeopleLocalizedBiography;
 use App\Entity\PeopleUserPreferredName;
 use App\Entity\User;
-use App\Repository\PeopleLocalizedBiographyRepository;
 use App\Repository\PeopleUserPreferredNameRepository;
 use App\Service\TMDBService;
 use Closure;
@@ -14,9 +12,8 @@ use Symfony\Component\DependencyInjection\Attribute\AutowireMethodOf;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
-use Symfony\Component\Routing\Requirement\Requirement;
+use Symfony\Component\Security\Http\Attribute\CurrentUser;
 
-/** @method User|null getUser() */
 #[Route('/api/people/preferred-name', name: 'api_people_preferred_name_')]
 readonly class ApiPeoplePreferredName
 {
@@ -31,10 +28,9 @@ readonly class ApiPeoplePreferredName
     {}
 
     #[Route('/save', name: 'save', methods: ['POST'])]
-    public function save(Request $request): Response
+    public function save(#[CurrentUser] User $user, Request $request): Response
     {
         $data = json_decode($request->getContent(), true);
-        $user = $this->getUser();
 
         $id = $data['id'];
         $name = $data['name'] ? trim($data['name']) : false;
