@@ -6419,11 +6419,11 @@ h2 {
     left: 0;
     position: absolute;
     top: 0;
+    transition: all 0.3s ease-in-out;
     width: 30rem;
     z-index: 9999;
 
     &.growable {
-        transition: all 0.3s ease-in-out;
         background-color: hsla(from var(--orange-30) h s l / .75);
         backdrop-filter: blur(1rem);
     }

@@ -114,17 +114,27 @@ export class PeopleCard {
     closeCard() {
         const peopleBigCard = document.querySelector('.people-big-card');
         const peopleCard = this.currentPeopleCard;
-        const bounds = peopleCard.getBoundingClientRect();
+        const photoDiv = peopleCard.querySelector('.photo');
+        const bounds = photoDiv.getBoundingClientRect();
         const scrollY = window.scrollY;
+        const profileDiv = peopleBigCard.querySelector('.profile');
+
+        profileDiv.style.position = 'absolute';
+        profileDiv.style.left = '0';
+        profileDiv.style.top = '0';
+        profileDiv.style.width = '100%';
+        profileDiv.style.height = '100%';
+        profileDiv.style.transition = 'all 0.3s ease-in-out';
 
         peopleBigCard.style.left = `${bounds.left}px`;
         peopleBigCard.style.top = `${bounds.top + scrollY}px`;
         peopleBigCard.style.width = `${bounds.width}px`;
         peopleBigCard.style.height = `${bounds.height}px`;
+
         setTimeout(() => {
             peopleBigCard.classList.remove('growable');
+            document.body.removeChild(peopleBigCard);
         }, 300);
-        document.body.removeChild(peopleBigCard);
         document.removeEventListener('keydown', this.closeOnEscapeKey)
         body.classList.remove('frozen');
         this.currentPeopleCard = null;
