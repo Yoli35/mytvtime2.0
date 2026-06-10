@@ -35,6 +35,11 @@
             outline-offset: 0;
             width: 100%;
 
+            > a {
+                height: 100%;
+                width: 100%;
+            }
+
             &:hover {
                 outline-color: var(--orange-50);
             }
@@ -134,7 +139,7 @@
         display: flex;
         font-size: 2rem;
         justify-content: center;
-        margin-block-end: 2rem;
+        margin-block-start: 2rem;
         position: relative;
         width: 100%;
 

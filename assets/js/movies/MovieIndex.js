@@ -131,11 +131,15 @@ export class MovieIndex {
                     });
 
                     const currentPaginationSections = document.querySelectorAll('section[id^=pagination-section]');
-                    currentPaginationSections.forEach((section, index) => {
-                        const aside = section.closest('aside');
+                    currentPaginationSections.forEach((oldSectionElement, index) => {
                         const tempDiv = document.createElement('div');
                         tempDiv.innerHTML = paginationSections[index];
-                        aside.replaceChild(tempDiv.firstChild, section);
+                        const newSectionElement = tempDiv.querySelector('section');
+                        if (newSectionElement) {
+                            oldSectionElement.replaceWith(newSectionElement);
+                        } else {
+                            oldSectionElement.style.display = 'none';
+                        }
                     });
                 })
                 .catch(error => console.error(error));

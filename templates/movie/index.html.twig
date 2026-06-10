@@ -11,6 +11,11 @@
 {% block body %}
     {% include('_blocks/_menu.html.twig') %}
     <div class="container-fluid movie-index filter-page">
+        <article>
+            {#{% if firstMovie.userMovieId is null or userMovieCount < 20 %}#}
+            {{ include('_blocks/movie/_search.html.twig') }}
+            {#{% endif %}#}
+        </article>
         {% set firstMovie = userMovies|first %}
         <h1>{{ 'My movies'|trans }} (<span id="movie-count">{{ userMovieCount }}</span>)</h1>
         <aside>
@@ -32,17 +37,17 @@
                     </header>
                     <div class="filters{% if filterBoxOpen == 0 %} collapse{% endif %}">
                         <div class="filter">
+                            <label for="title-filter">{{ 'Title'|trans }}
+                                <input type="search" id="title-filter" name="title-filter" value="{{ filters.title }}" {% if filters.title|length %} autofocus{% endif %}>
+                            </label>
+                        </div>
+                        <div class="filter">
                             <label for="limit">{{ 'Number of elements per page'|trans }}
                                 <select id="limit">
                                     {% for number in [10, 20, 50, 100] %}
                                         <option value="{{ number }}"{% if filters.limit==number %} selected{% endif %}>{{ number }}</option>
                                     {% endfor %}
                                 </select>
-                            </label>
-                        </div>
-                        <div class="filter">
-                            <label for="title-filter">{{ 'Title'|trans }}
-                                <input type="search" id="title-filter" name="title-filter" value="{{ filters.title }}" {% if filters.title|length %} autofocus{% endif %}>
                             </label>
                         </div>
                         <div class="filter">
@@ -68,11 +73,6 @@
             {{ include('_blocks/_pagination.html.twig', {index: 1, current_page: filters.page, total_pages: pages}) }}
         </aside>
         <main>
-            <article>
-                {% if firstMovie.userMovieId is null or userMovieCount < 20 %}
-                    {{ include('_blocks/movie/_search.html.twig') }}
-                {% endif %}
-            </article>
             <article>
                 {% if firstMovie.userMovieId is null %}
                     <div class="no-movies-header">{{ 'Your list does not contain any movies'|trans }}</div>

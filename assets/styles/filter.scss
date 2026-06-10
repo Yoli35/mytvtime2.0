@@ -86,9 +86,10 @@
                         appearance: none;
                         background-color: var(--ardoise-80);
                         border: 1px solid var(--ardoise-50);
-                        border-radius: .25rem;
+                        border-radius: 5rem;
                         margin-inline-start: auto;
-                        padding-inline: .5rem;
+                        padding-block: .5rem;
+                        padding-inline: .75rem;
                     }
                 }
             }
