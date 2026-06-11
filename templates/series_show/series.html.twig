@@ -29,42 +29,42 @@
     <div class="container-fluid {# backgroundImageOverlay #}">
         <div class="series-show user-series-show" data-theme="none" data-series-id="{{ series.id }}">
             <div class="header">
-                {% if tv.backdrop_path and series.posterPath %}
-                    <div class="backdrop">
-                        <picture>
-                            <source media="(orientation: portrait)" srcset="/series/posters{{ series.posterPath }}">
-                            <img src="/series/backdrops{{ tv.backdrop_path }}" alt="{{ tv.name }} backdrop">
-                        </picture>
-                    </div>
-                {% elseif tv.backdrop_path %}
-                    <div class="backdrop">
-                        <img src="/series/backdrops{{ tv.backdrop_path }}" alt="{{ series.name }}">
-                    </div>
-                {% elseif series.posterPath %}
-                    <div class="backdrop">
-                        <img src="/series/posters{{ series.posterPath }}" alt="{{ series.name }}">
-                    </div>
-                {% endif %}
-                <div class="poster-container">
-                    <div class="poster">
-                        {% if series.posterPath %}
-                            <img src="/series/posters{{ series.posterPath }}" alt="{{ series.name }}">
-                        {% else %}
-                            <div class="text">{{ 'No poster'|trans }}</div>
-                            <div class="icon">{{ ux_icon('mdi:image-off-outline') }}</div>
-                        {% endif %}
-                        {% if series.firstAirDate %}
-                            <div class="progress" data-value="{{ userSeries.progress }}">
-                                <div class="progress-bar"></div>
-                            </div>
-                        {% endif %}
-                        {% if app.environment == 'dev' %}
-                            <div class="debug">{{ series.id }} / {{ userSeries.id }} / {{ tv.id }}</div>
-                        {% endif %}
-                    </div>
-                </div>
-                <div class="go-to-map" data-target="#series-map-content" data-title="{{ 'Filming locations map'|trans }}">{{ ux_icon('mdi:map-outline') }}</div>
                 <div class="infos">
+                    {% if tv.backdrop_path and series.posterPath %}
+                        <div class="backdrop">
+                            <picture>
+                                <source media="(orientation: portrait)" srcset="/series/posters{{ series.posterPath }}">
+                                <img src="/series/backdrops{{ tv.backdrop_path }}" alt="{{ tv.name }} backdrop">
+                            </picture>
+                        </div>
+                    {% elseif tv.backdrop_path %}
+                        <div class="backdrop">
+                            <img src="/series/backdrops{{ tv.backdrop_path }}" alt="{{ series.name }}">
+                        </div>
+                    {% elseif series.posterPath %}
+                        <div class="backdrop">
+                            <img src="/series/posters{{ series.posterPath }}" alt="{{ series.name }}">
+                        </div>
+                    {% endif %}
+                    <div class="poster-container">
+                        <div class="poster">
+                            {% if series.posterPath %}
+                                <img src="/series/posters{{ series.posterPath }}" alt="{{ series.name }}">
+                            {% else %}
+                                <div class="text">{{ 'No poster'|trans }}</div>
+                                <div class="icon">{{ ux_icon('mdi:image-off-outline') }}</div>
+                            {% endif %}
+                            {% if series.firstAirDate %}
+                                <div class="progress" data-value="{{ userSeries.progress }}">
+                                    <div class="progress-bar"></div>
+                                </div>
+                            {% endif %}
+                            {% if app.environment == 'dev' %}
+                                <div class="debug">{{ series.id }} / {{ userSeries.id }} / {{ tv.id }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="go-to-map" data-target="#series-map-content" data-title="{{ 'Filming locations map'|trans }}">{{ ux_icon('mdi:map-outline') }}</div>
                     <div class="infos-content">
                         <div class="name">
                             <h1>

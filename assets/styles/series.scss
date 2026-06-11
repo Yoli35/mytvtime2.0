@@ -754,178 +754,10 @@ h2 {
     }
 
     .header {
-        align-items: stretch;
-        display: flex;
-        gap: 1rem;
-        justify-content: flex-start;
         position: relative;
         width: 100%;
 
-        /*&:has(.poster) {
-            height: 50vh;
-        }*/
-
-        .backdrop {
-            height: calc(100% + 10rem);
-            inset: -5rem;
-            mask-image: linear-gradient(to bottom, #000 90%, #ffffff00 100%);
-            mask-mode: alpha;
-            position: absolute;
-            width: calc(100% + 10rem);
-            z-index: -1;
-
-            picture {
-                mask-image: linear-gradient(to bottom, #000 90%, #ffffff00 100%);
-                mask-size: cover;
-            }
-
-            img {
-                border-radius: .5rem;
-                height: 100%;
-                object-fit: cover;
-                width: 100%;
-            }
-        }
-
-        .poster-container {
-            left: 2rem;
-            position: absolute;
-            top: 2rem;
-        }
-
-        .go-to-map {
-            --svgSize: 2rem;
-
-            align-items: center;
-            aspect-ratio: 1;
-            background-color: var(--orange-50);
-            border-radius: 5rem;
-            color: var(--ardoise-10);
-            cursor: pointer;
-            display: flex;
-            height: 3rem;
-            justify-content: center;
-            position: absolute;
-            right: 2rem;
-            top: 2rem;
-            transition: all 0.3s ease-in-out;
-            width: 3rem;
-            z-index: 2;
-
-            &:hover {
-                --svgSize: 4rem;
-                height: 6rem;
-                width: 6rem;
-            }
-        }
-
-        .poster {
-            align-items: center;
-            aspect-ratio: 2 / 3;
-            background-color: var(--ardoise-80);
-            border-radius: .5rem;
-            color: var(--ardoise-10);
-            display: flex;
-            flex-shrink: 0;
-            height: 5rem;
-            justify-content: center;
-            position: relative;
-            transition: height 0.3s ease-in-out;
-            width: auto;
-            z-index: 2;
-
-            &:hover {
-                height: 90vh;
-
-                .debug {
-                    display: block;
-                    left: 6rem;
-                    top: 6rem;
-                }
-
-                div.text {
-                    font-size: 2vw; /* No poster */
-                    display: block;
-                }
-
-                div.icon {
-                    svg {
-                        height: 0;
-                        width: 0;
-                    }
-                }
-            }
-
-            img {
-                border-radius: .5rem;
-                height: 100%;
-                object-fit: cover;
-                width: 100%;
-            }
-
-            div.text {
-                font-size: 0; /* No poster */
-                display: none;
-                transition: font-size 0.3s ease-in-out;
-            }
-
-            div.icon {
-                svg {
-                    height: 2rem;
-                    transition: height 0.3s ease-in-out;
-                    width: 2rem;
-                }
-            }
-
-            .progress {
-                background-color: var(--orange-20);
-                border: .125rem solid var(--orange-50);
-                border-radius: 999px;
-                bottom: 1rem;
-                color: transparent;
-                height: 1rem;
-                left: 1rem;
-                position: absolute;
-                right: 1rem;
-                width: calc(100% - 2rem);
-
-                &.full {
-                    background-color: var(--green-80);
-                    border-color: var(--green-70);
-                    transition: background-color 2s ease-out, border-color 2s ease-out;
-
-                    .progress-bar {
-                        background-color: var(--green-40);
-                        transition: background-color 2s ease-out;
-                    }
-                }
-
-                .progress-bar {
-                    background-color: var(--orange-50);
-                    border-radius: 999px;
-                    height: 100%;
-                    width: 0;
-
-                    &.set {
-                        transition: width 2s ease-out;
-                    }
-                }
-            }
-
-            .debug {
-                display: none;
-                font-size: 2rem;
-                font-weight: 300;
-                left: 2rem;
-                line-height: 1.25em;
-                position: absolute;
-                top: 2rem;
-                width: fit-content;
-            }
-        }
-
         .infos {
-            /*height: calc(40vw * calc(117 / 78));*/
             align-items: flex-end;
             display: flex;
             flex-grow: 1;
@@ -933,13 +765,171 @@ h2 {
             padding-block-start: 40%;
             position: relative;
             transition: padding-block-start 0.3s ease-in-out;
-            /*width: calc(60vw - 3rem);*/
 
             &:hover {
                 padding-block-start: 0;
 
                 .series-overview, .overviews, .season-overview {
                     opacity: 1 !important;
+                }
+            }
+
+            .backdrop {
+                height: calc(100% + 10rem);
+                inset: -5rem;
+                mask-image: linear-gradient(to bottom, #000 90%, #ffffff00 100%);
+                mask-mode: alpha;
+                position: absolute;
+                width: calc(100% + 10rem);
+                z-index: -1;
+
+                picture {
+                    mask-image: linear-gradient(to bottom, #000 90%, #ffffff00 100%);
+                    mask-size: cover;
+                }
+
+                img {
+                    border-radius: .5rem;
+                    height: 100%;
+                    object-fit: cover;
+                    width: 100%;
+                }
+            }
+
+            .poster-container {
+                left: 2rem;
+                position: absolute;
+                top: 2rem;
+            }
+
+            .poster {
+                align-items: center;
+                aspect-ratio: 2 / 3;
+                background-color: var(--ardoise-80);
+                border-radius: .5rem;
+                color: var(--ardoise-10);
+                display: flex;
+                flex-shrink: 0;
+                height: 5rem;
+                justify-content: center;
+                position: relative;
+                transition: height 0.3s ease-in-out;
+                width: auto;
+                z-index: 2;
+
+                &:hover {
+                    height: 90vh;
+
+                    .debug {
+                        display: block;
+                        left: 6rem;
+                        top: 6rem;
+                    }
+
+                    div.text {
+                        font-size: 2vw; /* No poster */
+                        display: block;
+                    }
+
+                    div.icon {
+                        svg {
+                            height: 0;
+                            width: 0;
+                        }
+                    }
+                }
+
+                img {
+                    border-radius: .5rem;
+                    height: 100%;
+                    object-fit: cover;
+                    width: 100%;
+                }
+
+                div.text {
+                    font-size: 0; /* No poster */
+                    display: none;
+                    transition: font-size 0.3s ease-in-out;
+                }
+
+                div.icon {
+                    svg {
+                        height: 2rem;
+                        transition: height 0.3s ease-in-out;
+                        width: 2rem;
+                    }
+                }
+
+                .progress {
+                    background-color: var(--orange-20);
+                    border: .125rem solid var(--orange-50);
+                    border-radius: 999px;
+                    bottom: 1rem;
+                    color: transparent;
+                    height: 1rem;
+                    left: 1rem;
+                    position: absolute;
+                    right: 1rem;
+                    width: calc(100% - 2rem);
+
+                    &.full {
+                        background-color: var(--green-80);
+                        border-color: var(--green-70);
+                        transition: background-color 2s ease-out, border-color 2s ease-out;
+
+                        .progress-bar {
+                            background-color: var(--green-40);
+                            transition: background-color 2s ease-out;
+                        }
+                    }
+
+                    .progress-bar {
+                        background-color: var(--orange-50);
+                        border-radius: 999px;
+                        height: 100%;
+                        width: 0;
+
+                        &.set {
+                            transition: width 2s ease-out;
+                        }
+                    }
+                }
+
+                .debug {
+                    display: none;
+                    font-size: 2rem;
+                    font-weight: 300;
+                    left: 2rem;
+                    line-height: 1.25em;
+                    position: absolute;
+                    top: 2rem;
+                    width: fit-content;
+                }
+            }
+
+            .go-to-map {
+                --svgSize: 2rem;
+
+                align-items: center;
+                aspect-ratio: 1;
+                background-color: var(--orange-50);
+                border-radius: 5rem;
+                color: var(--ardoise-10);
+                cursor: pointer;
+                display: flex;
+                height: 3rem;
+                justify-content: center;
+                position: absolute;
+                right: 2rem;
+                top: 2rem;
+                transition: all 0.3s ease-in-out;
+                width: 3rem;
+                z-index: 2;
+
+                &:hover {
+                    --svgSize: 4rem;
+                    height: 6rem;
+                    width: 6rem;
                 }
             }
 
@@ -1149,118 +1139,118 @@ h2 {
                     padding-inline: 2.5rem;
                 }
             }
-        }
 
-        .progress {
-            background-color: var(--orange-20);
-            border: .125rem solid var(--orange-50);
-            border-radius: 5rem;
-            bottom: 1rem;
-            color: transparent;
-            height: 1rem;
-            left: 2rem;
-            position: absolute;
-            right: 2rem;
+            .progress {
+                background-color: var(--orange-20);
+                border: .125rem solid var(--orange-50);
+                border-radius: 5rem;
+                bottom: 1rem;
+                color: transparent;
+                height: 1rem;
+                left: 2rem;
+                position: absolute;
+                right: 2rem;
 
-            &.full {
-                background-color: var(--green-80);
-                border-color: var(--green-70);
-                transition: background-color 2s ease-out, border-color 2s ease-out;
+                &.full {
+                    background-color: var(--green-80);
+                    border-color: var(--green-70);
+                    transition: background-color 2s ease-out, border-color 2s ease-out;
 
-                .progress-bar {
-                    background-color: var(--green-40);
-                    transition: background-color 2s ease-out;
-                }
-            }
-
-            .progress-bar {
-                background-color: var(--orange-50);
-                border-radius: 999px;
-                height: 100%;
-                width: 0;
-
-                &.set {
-                    transition: width 2s ease-out;
-                }
-            }
-        }
-
-        .updates {
-            display: flex;
-            overflow-x: auto;
-            width: 100%;
-
-            .wrapper {
-                align-items: center;
-                display: flex;
-                flex-shrink: 0;
-                gap: .5rem;
-                justify-content: flex-start;
-                padding-block-end: .5rem;
-
-                .update {
-                    background-color: var(--orange-50);
-                    border-radius: .25rem;
-                    color: var(--ardoise-10);
-                    flex-shrink: 0;
-                    font-size: 1rem;
-                    font-weight: 300;
-                    padding-block: .25rem;
-                    padding-inline: .75rem;
-                }
-            }
-        }
-
-        .series-back {
-            display: none;
-            position: absolute;
-            right: 2rem;
-            top: 7rem;
-
-            a {
-                align-items: center;
-                display: flex;
-                flex-direction: column;
-                gap: 0.25rem;
-                justify-content: center;
-
-                .poster-back {
-                    align-items: center;
-                    background-color: var(--ardoise-80);
-                    border-radius: .25rem;
-                    color: var(--ardoise-10);
-                    display: flex;
-                    height: 9rem;
-                    justify-content: center;
-                    width: 6rem;
-
-                    img {
-                        border-radius: .25rem;
-                        height: 9rem;
-                        object-fit: cover;
-                        width: 6rem;
+                    .progress-bar {
+                        background-color: var(--green-40);
+                        transition: background-color 2s ease-out;
                     }
                 }
 
-                .series-back-link {
-                    align-items: center;
-                    background-color: hsla(from var(--ardoise-70) h s l / .75);
-                    border-radius: .25rem;
-                    color: var(--ardoise-10);
-                    display: flex;
-                    font-size: 1rem;
-                    font-weight: 300;
-                    gap: .25rem;
-                    justify-content: center;
-                    line-height: 1rem;
-                    padding-block: .25rem;
-                    padding-inline: .5rem;
+                .progress-bar {
+                    background-color: var(--orange-50);
+                    border-radius: 999px;
+                    height: 100%;
+                    width: 0;
+
+                    &.set {
+                        transition: width 2s ease-out;
+                    }
                 }
             }
-        }
 
-        &:hover .series-back {
-            display: flex;
+            .updates {
+                display: flex;
+                overflow-x: auto;
+                width: 100%;
+
+                .wrapper {
+                    align-items: center;
+                    display: flex;
+                    flex-shrink: 0;
+                    gap: .5rem;
+                    justify-content: flex-start;
+                    padding-block-end: .5rem;
+
+                    .update {
+                        background-color: var(--orange-50);
+                        border-radius: .25rem;
+                        color: var(--ardoise-10);
+                        flex-shrink: 0;
+                        font-size: 1rem;
+                        font-weight: 300;
+                        padding-block: .25rem;
+                        padding-inline: .75rem;
+                    }
+                }
+            }
+
+            .series-back {
+                display: none;
+                position: absolute;
+                right: 2rem;
+                top: 7rem;
+
+                a {
+                    align-items: center;
+                    display: flex;
+                    flex-direction: column;
+                    gap: 0.25rem;
+                    justify-content: center;
+
+                    .poster-back {
+                        align-items: center;
+                        background-color: var(--ardoise-80);
+                        border-radius: .25rem;
+                        color: var(--ardoise-10);
+                        display: flex;
+                        height: 9rem;
+                        justify-content: center;
+                        width: 6rem;
+
+                        img {
+                            border-radius: .25rem;
+                            height: 9rem;
+                            object-fit: cover;
+                            width: 6rem;
+                        }
+                    }
+
+                    .series-back-link {
+                        align-items: center;
+                        background-color: hsla(from var(--ardoise-70) h s l / .75);
+                        border-radius: .25rem;
+                        color: var(--ardoise-10);
+                        display: flex;
+                        font-size: 1rem;
+                        font-weight: 300;
+                        gap: .25rem;
+                        justify-content: center;
+                        line-height: 1rem;
+                        padding-block: .25rem;
+                        padding-inline: .5rem;
+                    }
+                }
+            }
+
+            &:hover .series-back {
+                display: flex;
+            }
         }
     }
 
@@ -4221,10 +4211,10 @@ h2 {
 #series-season {
     .header {
         .quick-episodes-top {
-            position: absolute;
+            position: -webkit-sticky;
+            position: sticky;
             right: 1rem;
-            top: 1rem;
-            z-index: 50;
+            top: 4rem;
         }
 
         .infos {

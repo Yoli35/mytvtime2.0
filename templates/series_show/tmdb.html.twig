@@ -21,32 +21,32 @@
     <div class="container-fluid backgroundImageOverlay">
         <div class="series-show">
             <div class="header">
-                {% if tv.backdrop_path and tv.poster_path %}
-                    <div class="backdrop">
-                        <picture>
-                            <source media="(orientation: portrait)" srcset="/series/posters{{ tv.poster_path }}">
-                            <img src="/series/backdrops{{ tv.backdrop_path }}" alt="{{ tv.name }} backdrop">
-                        </picture>
-                    </div>
-                {% elseif tv.backdrop_path %}
-                    <div class="backdrop">
-                        <img src="/series/backdrops{{ tv.backdrop_path }}" alt="{{ tv.name }}">
-                    </div>
-                {% elseif tv.poster_path %}
-                    <div class="backdrop">
-                        <img src="/series/posters{{ tv.poster_path }}" alt="{{ tv.name }}">
-                    </div>
-                {% endif %}
-                <div class="poster-container">
-                    <div class="poster">
-                        {% if tv.poster_path %}
-                            <img src="/series/posters{{ tv.poster_path }}" alt="{{ tv.name }}">
-                        {% else %}
-                            <div>{{ 'No poster'|trans }}</div>
-                        {% endif %}
-                    </div>
-                </div>
                 <div class="infos">
+                    {% if tv.backdrop_path and tv.poster_path %}
+                        <div class="backdrop">
+                            <picture>
+                                <source media="(orientation: portrait)" srcset="/series/posters{{ tv.poster_path }}">
+                                <img src="/series/backdrops{{ tv.backdrop_path }}" alt="{{ tv.name }} backdrop">
+                            </picture>
+                        </div>
+                    {% elseif tv.backdrop_path %}
+                        <div class="backdrop">
+                            <img src="/series/backdrops{{ tv.backdrop_path }}" alt="{{ tv.name }}">
+                        </div>
+                    {% elseif tv.poster_path %}
+                        <div class="backdrop">
+                            <img src="/series/posters{{ tv.poster_path }}" alt="{{ tv.name }}">
+                        </div>
+                    {% endif %}
+                    <div class="poster-container">
+                        <div class="poster">
+                            {% if tv.poster_path %}
+                                <img src="/series/posters{{ tv.poster_path }}" alt="{{ tv.name }}">
+                            {% else %}
+                                <div>{{ 'No poster'|trans }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
                     <div class="infos-content">
                         <div class="name">
                             <h1>

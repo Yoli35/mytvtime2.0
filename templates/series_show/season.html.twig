@@ -142,30 +142,30 @@
                             <img src="/series/posters{{ season.poster_path }}" alt="{{ season.name }}">
                         </div>
                     {% endif %}
+                    {% set episodeCount = season.progress.episodeCount %}
+                    {% set episodeWatchedCount = season.progress.episodeWatchedCount %}
+                    {% if episodeCount > 1 %}
+                        <div class="progress" data-value="{{ season.progress.value }}" data-title="{{ episodeWatchedCount }} / {{ episodeCount }}">
+                            <div class="progress-bar"></div>
+                        </div>
+                    {% endif %}
+                    {% if series.posterPath %}
+                        <div class="poster" id="top">
+                            <a href="{{ path('app_tv_series', {id: series.id, slug: season.series_localized_name.slug ?? series.slug}) }}">
+                                <img src="/series/posters{{ series.posterPath }}" alt="{{ series.name }}">
+                            </a>
+                        </div>
+                    {% else %}
+                        <div class="series-back">
+                            <a href="{{ path('app_tv_series', {id: series.id, slug: season.series_localized_name.slug ?? series.slug}) }}">
+                                <div class="series-back-link">
+                                    {{ ux_icon('mdi:arrow-left') }}
+                                    <span>{{ 'Back to series'|trans }}</span>
+                                </div>
+                            </a>
+                        </div>
+                    {% endif %}
                 </div>
-                {% set episodeCount = season.progress.episodeCount %}
-                {% set episodeWatchedCount = season.progress.episodeWatchedCount %}
-                {% if episodeCount > 1 %}
-                    <div class="progress" data-value="{{ season.progress.value }}" data-title="{{ episodeWatchedCount }} / {{ episodeCount }}">
-                        <div class="progress-bar"></div>
-                    </div>
-                {% endif %}
-                {% if series.posterPath %}
-                    <div class="poster" id="top">
-                        <a href="{{ path('app_tv_series', {id: series.id, slug: season.series_localized_name.slug ?? series.slug}) }}">
-                            <img src="/series/posters{{ series.posterPath }}" alt="{{ series.name }}">
-                        </a>
-                    </div>
-                {% else %}
-                    <div class="series-back">
-                        <a href="{{ path('app_tv_series', {id: series.id, slug: season.series_localized_name.slug ?? series.slug}) }}">
-                            <div class="series-back-link">
-                                {{ ux_icon('mdi:arrow-left') }}
-                                <span>{{ 'Back to series'|trans }}</span>
-                            </div>
-                        </a>
-                    </div>
-                {% endif %}
             </div>
 
             {#            {{ include('_blocks/series/_changes.html.twig') }} #}
@@ -249,6 +249,10 @@
                                             {% elseif episode.stills|length %}{# is defined and ue.still #}
                                                 {% set still = episode.stills|last %}
                                                 <img src="/series/stills/{{ still.path }}" alt="{{ episode.name }}">
+                                            {% elseif season.backdrop_path %}
+                                                <img src="/series/backdrops{{ season.backdrop_path }}" alt="{{  series.name ~ ' ' ~ episode.name }}">
+                                            {% elseif season.poster_path %}
+                                                <img src="/series/posters{{ season.poster_path }}" alt="{{ season.name ~ ' ' ~ episode.name }}">
                                             {% else %}
                                                 <div class="no-poster">{{ 'No poster'|trans }}</div>
                                             {% endif %}
