@@ -118,7 +118,7 @@ export class PeopleShow {
 
     hideInfos(evt) {
         const popInfos = document.querySelector(".pop-infos");
-        if (popInfos.classList.contains("fade")) {
+        if (popInfos && popInfos.classList.contains("fade")) {
             evt.preventDefault();
             popInfos.classList.remove("fade");
             setTimeout(() => {
@@ -262,7 +262,7 @@ export class PeopleShow {
                 newBlockDiv.remove();
 
                 // form and submit button have been replaced
-                const preferredNameForm = document.querySelector(".preferred-name");
+                const preferredNameForm = document.querySelector("form.preferred-name");
                 const preferredNameSubmit = preferredNameForm.querySelector("button[type=submit]");
                 preferredNameSubmit.addEventListener("click", self.preferredName);
 

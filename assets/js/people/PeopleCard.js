@@ -1,9 +1,11 @@
 import {PeopleShow} from "PeopleShow";
+import {PreferredName} from "PreferredName";
 
 export class PeopleCard {
     constructor() {
         this.currentPeopleCard = null;
         this.peopleShow = null;
+        this.preferredName = new PreferredName();
         this.handleCardClick = this.handleCardClick.bind(this);
         this.fetchData = this.fetchData.bind(this);
         this.openCard = this.openCard.bind(this);
@@ -138,6 +140,8 @@ export class PeopleCard {
         document.removeEventListener('keydown', this.closeOnEscapeKey)
         body.classList.remove('frozen');
         this.currentPeopleCard = null;
+
+        this.preferredName.syncFromSessionStorage();
     }
 
     closeOnEscapeKey(e) {
