@@ -424,12 +424,12 @@ final class SeriesShowController extends AbstractController
         }
 
 //        $userEpisodes = $this->userEpisodeRepository->getUserEpisodesDB($userSeries->getId(), $season['season_number'], $locale, true);
-        $stills = $this->episodeStillRepository->getSeasonStills([$episode['id']]);
+//        $stills = $this->episodeStillRepository->getSeasonStills([$episode['id']]);
 
         if ($episode['still_path'] == null && $season['episodes'][$episodeNumber - 1]['still_path'] != null) {
             $episode['still_path'] = $season['episodes'][$episodeNumber - 1]['still_path'];
         }
-        $episode = $this->seasonEpisode($episode, $userSeries, $userEpisodes, $seasonNumber, $finaleEpisodeNumber, $stills);
+        $episode = $this->seasonEpisode($episode, $userSeries, $userEpisodes, $seasonNumber, $finaleEpisodeNumber/*, $stills*/);
         $profileUrl = $this->imageConfiguration->getUrl('profile_sizes', 2);
         $peopleUserPreferredNames = $this->getPreferredNames($user);
         $episode['guest_stars'] = $this->episodeGuestStars($episode, new AsciiSlugger(), $series, $profileUrl, $peopleUserPreferredNames);
@@ -447,7 +447,12 @@ final class SeriesShowController extends AbstractController
         $episode['next_episode_is_available'] = $nextEpisode && $nextEpisode['air_date'] && $this->isNextEpisodeAvailable($user, $nextEpisode['air_date']);
 
         $episode['show_id'] = $series->getTmdbId();
-        $episode['stills'] = $this->episodeStillRepository->findBy(['episodeId' => $episode['id']], ['id' => 'DESC']);
+        $episode['stills'] = array_map(function($still) {
+            return '/series/stills/' . $still->getUrl();
+        }, $this->episodeStillRepository->findBy(['episodeId' => $episode['id']], ['id' => 'DESC']));
+        if (!count($episode['stills']) && $series->getBackdropPath()) {
+            $episode['still_fallback']= '/series/backdrops' . $series->getBackdropPath();
+        }
 
         $providers = $this->watchLinkApi->getWatchProviders($country);
         $devices = $this->deviceRepository->deviceArray();
@@ -699,7 +704,7 @@ final class SeriesShowController extends AbstractController
         return $peopleUserPreferredNames;
     }
 
-    private function seasonEpisode(array $episode, UserSeries $userSeries, array $userEpisodes, int $seasonNumber, int $finaleEpisodeNumber, array $stills): array
+    private function seasonEpisode(array $episode, UserSeries $userSeries, array $userEpisodes, int $seasonNumber, int $finaleEpisodeNumber, ?array $stills = null): array
     {
         $user = $userSeries->getUser();
         if ($episode['episode_number'] > $finaleEpisodeNumber) {
@@ -746,9 +751,11 @@ final class SeriesShowController extends AbstractController
         $stillUrl = $this->imageConfiguration->getUrl('still_sizes', 3);
 
         $episode['still_path'] = $episode['still_path'] ? $stillUrl . $episode['still_path'] : null; // w300
-        $episode['stills'] = array_filter($stills, function ($still) use ($episode) {
-            return $still['episode_id'] == $episode['id'];
-        });
+        if ($stills) {
+            $episode['stills'] = array_filter($stills, function ($still) use ($episode) {
+                return $still['episode_id'] == $episode['id'];
+            });
+        }
         if ($userEpisode['custom_date']) {
             $episode['air_date'] = $userEpisode['custom_date'];
         }

@@ -18,7 +18,9 @@
         {% set still = episode.still_path %}
     {% elseif episode.stills|length %}{# is defined and ue.still #}
         {% set still = episode.stills|last %}
-        {% set still = "/series/stills/" ~ still.path %}
+        {% set still = still.path %}
+    {% elseif episode.still_fallback %}
+        {% set still = episode.still_fallback %}
     {% else %}
         {% set still = '' %}
     {% endif %}
