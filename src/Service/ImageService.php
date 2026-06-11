@@ -145,7 +145,7 @@ class ImageService extends AbstractController
         $source = $base_url . $poster_path;
 
         $destination = pathinfo($poster_path, PATHINFO_FILENAME) . '.webp';
-        $tempFile = $kernelProjectDir . '/public/images/temp'.$poster_path;
+        $tempFile = $kernelProjectDir . '/public/images/temp' . $poster_path;
         $imagePath = $kernelProjectDir . '/public/series/season_posters/';
 
         $this->saveImageFromUrl($source, $tempFile, true);
@@ -719,32 +719,29 @@ class ImageService extends AbstractController
 
     public function saveImageFromUrl(string $imageUrl, string $localeFile, bool $dontValidate = false): bool
     {
-        if (!file_exists($localeFile)) {
+        if (file_exists($localeFile) && filesize($localeFile) == 0) {
+            unlink($localeFile);
+        }
 
-            // Vérifier si l'URL de l'image est valide
-            if ($dontValidate || filter_var($imageUrl, FILTER_VALIDATE_URL)) {
-                // Récupérer le contenu de l'image à partir de l'URL
-                try {
-                    $imageContent = file_get_contents($imageUrl);
+        if (file_exists($localeFile)) {
+            return true;
+        }
 
-                    // Ouvrir un fichier en mode écriture binaire
-                    $file = fopen($localeFile, 'wb');
+        if ($dontValidate || filter_var($imageUrl, FILTER_VALIDATE_URL)) {
+            try {
+                $imageContent = file_get_contents($imageUrl);
 
-                    // Écrire le contenu de l'image dans le fichier
-                    fwrite($file, $imageContent);
+                $file = fopen($localeFile, 'wb');
+                fwrite($file, $imageContent);
+                fclose($file);
 
-                    // Fermer le fichier
-                    fclose($file);
-
-                    return true;
-                } catch (Exception) {
-                    return false;
-                }
-            } else {
+                return true;
+            } catch (Exception) {
                 return false;
             }
+        } else {
+            return false;
         }
-        return true;
     }
 
     public function getProjectDir(): string
