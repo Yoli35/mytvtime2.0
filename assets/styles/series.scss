@@ -4211,8 +4211,7 @@ h2 {
 #series-season {
     .header {
         .quick-episodes-top {
-            position: -webkit-sticky;
-            position: sticky;
+            position: absolute;
             right: 1rem;
             top: 4rem;
         }
