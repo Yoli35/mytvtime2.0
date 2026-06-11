@@ -1,6 +1,6 @@
 import {Diaporama} from "Diaporama";
 import {ToolTips} from "ToolTips";
-import {TranslationsForms} from "TranslationsForms";
+/*import {TranslationsForms} from "TranslationsForms";*/
 
 let self = null;
 
@@ -21,11 +21,13 @@ export class PeopleShow {
     }
 
     start() {
-        const episodeCardMain = document.querySelector("main#people-card");
-        if (!episodeCardMain) {
+        const peopleCardMain = document.querySelector("main#people-card");
+        if (!peopleCardMain) {
             return;
         }
-        const infos = episodeCardMain.querySelector(".credits").querySelectorAll(".info");
+        const rightColumnDiv = peopleCardMain.querySelector(".right-column");
+        rightColumnDiv.style.borderColor = 'var(--orange)';
+        const infos = peopleCardMain.querySelector(".credits").querySelectorAll(".info");
         infos.forEach(info => {
             info.addEventListener("click", this.showInfos);
         });
@@ -53,8 +55,8 @@ export class PeopleShow {
         /******************************************************************************
          * Menu to add a localized name or an overview and additional overview        *
          ******************************************************************************/
-        const id = document.querySelector(".person").getAttribute("data-id");
-        new TranslationsForms(id, 'people', this.toolTips,this.translations);
+        /*const id = document.querySelector(".person").getAttribute("data-id");
+        new TranslationsForms(id, 'people', this.toolTips,this.translations);*/
     }
 
     initInfos() {
@@ -79,7 +81,7 @@ export class PeopleShow {
             const poster = evt.target.closest(".info").getAttribute("data-poster");
             const screenW = window.innerWidth;
 
-            const x = evt.clientX, y = evt.clientY + evt.view.scrollY - 16;
+            const x = evt.clientX, y = evt.clientY - 16;
 
             let img = document.createElement("img");
             if (poster.length) {
@@ -132,12 +134,12 @@ export class PeopleShow {
         const poster = document.querySelector(".person").querySelector(".poster-hover");
         const pageHeight = window.innerHeight;
         const pageWidth = window.innerWidth;
-        const top = evt.pageY + 16;
+        const top = evt.clientY + 16;
         const imageHeight = Math.min(.75 * pageHeight, pageHeight - top - 32);
         const imageWidth = imageHeight * 78 / 117;
         const posterHeight = imageHeight + 32;
         const posterWidth = imageWidth + 32;
-        const left = Math.min(evt.pageX - 144, pageWidth - posterWidth - 32);
+        const left = Math.min(evt.clientX - 144, pageWidth - posterWidth - 32);
 
         poster.setAttribute("style", "left: " + left + "px; top: " + top + "px; height: " + posterHeight + "px; width: " + posterWidth + "px;");
 

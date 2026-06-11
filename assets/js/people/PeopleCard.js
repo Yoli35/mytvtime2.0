@@ -49,14 +49,14 @@ export class PeopleCard {
                         peopleBigCardContent.innerHTML = data['view'];
                         this.addCloseButton(peopleBigCardContent);
                         peopleBigCardContent.classList.remove('fade-out');
+
+                        if (this.peopleShow === null) {
+                            this.peopleShow = new PeopleShow(data['globs']);
+                        } else {
+                            this.peopleShow.start();
+                        }
                     }, 300);
                 }, 0);
-
-                if (this.peopleShow === null) {
-                    this.peopleShow = new PeopleShow(data['globs']);
-                } else {
-                    this.peopleShow.start();
-                }
             })
             .catch(error => {
                 console.error('Error fetching data:', error);
