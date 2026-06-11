@@ -12,6 +12,7 @@ use App\Repository\UserEpisodeRepository;
 use App\Repository\WatchProviderRepository;
 use App\Service\DateService;
 use App\Service\ImageConfiguration;
+use App\Service\ImageService;
 use App\Service\TMDBService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -44,6 +45,7 @@ class SeriesSeasonEpisodes extends AbstractController
         private readonly EpisodeStillRepository             $episodeStillRepository,
         private readonly EpisodeSubstituteNameRepository    $episodeSubstituteNameRepository,
         private readonly ImageConfiguration                 $imageConfiguration,
+        private readonly ImageService                       $imageService,
         private readonly SeriesBroadcastDateRepository      $seriesBroadcastDateRepository,
         private readonly TMDBService                        $tmdbService,
         private readonly TranslatorInterface                $translator,
@@ -143,6 +145,24 @@ class SeriesSeasonEpisodes extends AbstractController
                 'watchedAt' => $userInfos['watchedAt'] ? ucfirst($this->dateService->formatDateRelativeLong($userInfos['watchedAt']->format("Y-m-d H:i"), $this->timezone, $this->locale)) : null,
             ];
         }, $season['episodes'] ?? []);
+
+        $isMissingStill = array_filter($episodes, function ($episode) {
+            return !$episode['still'];
+        });
+        if (count($isMissingStill) > 0) {
+            $tv = json_decode($this->tmdbService->getTv($tmdbId, $locale), true);
+            if ($tv['backdrop_path']) {
+                $backdrop_path = $tv['backdrop_path'];
+                $backdropUrl = $this->imageConfiguration->getUrl('backdrop_sizes', 3);
+                $this->imageService->saveImage("backdrops", $backdrop_path, $backdropUrl);
+                $episodes = array_map(function ($episode) use ($backdrop_path) {
+                    if (!$episode['still']) {
+                        $episode['still'] = '/series/backdrops'.$backdrop_path;
+                    }
+                    return $episode;
+                }, $episodes);
+            }
+        }
 
         $episodeCards = array_map(function ($episode) {
             return $this->renderView('_blocks/series/_season_episode_card.html.twig', [
