@@ -755,6 +755,8 @@ final class SeriesShowController extends AbstractController
             $episode['stills'] = array_filter($stills, function ($still) use ($episode) {
                 return $still['episode_id'] == $episode['id'];
             });
+        } else {
+            $episode['stills'] = [];
         }
         if ($userEpisode['custom_date']) {
             $episode['air_date'] = $userEpisode['custom_date'];
