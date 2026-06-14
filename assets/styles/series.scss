@@ -1913,6 +1913,13 @@ h2 {
                         padding: 1rem;
                     }
 
+                    .scheduled-days {
+                        align-items: flex-start;
+                        display: flex;
+                        flex-direction: column;
+                        gap: .5rem;
+                    }
+
                     .scheduled-day {
                         align-items: center;
                         display: flex;
