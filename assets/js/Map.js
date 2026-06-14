@@ -111,7 +111,7 @@ export class Map {
             });
             if (whichMarker ==='first' && firstMarker) {
                 const el = firstMarker.getElement();
-                const lat = parseFloat(el.getAttribute('data-latitude'));
+                const lat = parseFloat(el.getAttribute('data-latitude')) + .0025;
                 const lng = parseFloat(el.getAttribute('data-longitude'));
                 setTimeout(() => {
                     this.map.flyTo({center: [lng, lat], duration: 8000, zoom: 15, curve: 2, easing: (n) => n, essential: true});
@@ -122,10 +122,10 @@ export class Map {
             }
             if (whichMarker ==='last' && lastMarker) {
                 const el = lastMarker.getElement();
-                const lat = parseFloat(el.getAttribute('data-latitude'));
+                const lat = parseFloat(el.getAttribute('data-latitude')) + .0025;
                 const lng = parseFloat(el.getAttribute('data-longitude'));
                 setTimeout(() => {
-                    this.map.flyTo({center: [lng, lat + .004], duration: 4000, zoom: 15, curve: 2, easing: (n) => n, essential: true});
+                    this.map.flyTo({center: [lng, lat], duration: 4000, zoom: 15, curve: 2, easing: (n) => n, essential: true});
                     setTimeout(() => {
                         lastMarker.togglePopup();
                     }, 5000);
@@ -424,14 +424,16 @@ export class Map {
                     targetMapDiv.addEventListener('click', (event) => {
                         event.preventDefault();
                         const locId = targetMapDiv.getAttribute('data-loc-id');
-                        const lat = targetMapDiv.getAttribute('data-lat');
-                        const lng = targetMapDiv.getAttribute('data-lng');
+                        const lat = parseFloat(targetMapDiv.getAttribute('data-lat')) + .0025;
+                        const lng = parseFloat(targetMapDiv.getAttribute('data-lng'));
                         // Center map to location (lat, lng)
                         this.map.flyTo({center: [lng, lat], duration: 5000, zoom: 15, curve: 2, easing: (n) => n, essential: true});
-                        const markerElement = document.querySelector('div[data-target-id="' + locId + '"]');
-                        if (markerElement) {
-                            markerElement.click();
-                        }
+                        setTimeout(() => {
+                            const markerElement = document.querySelector('div[data-target-id="' + locId + '"]');
+                            if (markerElement) {
+                                markerElement.click();
+                            }
+                        }, 5500);
                     });
                 })
 

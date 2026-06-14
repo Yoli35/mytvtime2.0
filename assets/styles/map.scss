@@ -11,7 +11,7 @@
     .map-controller {
         --svgSize: 2rem;
 
-        aspect-ratio: 4 / 3;
+        aspect-ratio: 4 / 2;
         border-radius: 1rem;
         /*border: 2px solid var(--ardoise-50);*/
         overflow: hidden;
@@ -926,6 +926,31 @@
 @media (orientation: landscape) {
     .map-container {
         .map-controller {
+        }
+    }
+
+    .container-fluid:has(#map-last) {
+        gap: 1rem;
+        flex-direction: row-reverse;
+        height: calc(100vh - 4rem);
+
+        .series-map {
+            width: 50%;
+
+            .map-container {
+                height: calc(100% - 3.5rem);
+
+                .map-controller {
+                    aspect-ratio: unset;
+                    height: 100%;
+                }
+            }
+        }
+
+        .series-map-list {
+            height: calc(100% - 5.5rem);
+            margin-block-start: 4rem;
+            width: 50%;
         }
     }
 }
