@@ -218,17 +218,17 @@ readonly class ApiSeriesEpisode
         $airDate = $sbd ? $sbd->getDate() : $userEpisode->getAirDate();
         $ue = $this->userEpisodeRepository->getUserEpisodeDB($userEpisode->getId(), $user->getPreferredLanguage() ?? $request->getLocale());
         if ($ue['custom_date']) {
-            $cd = $this->dateService->newDateImmutable($ue['custom_date'], 'Europe/Paris');
+            $cd = $this->dateService->newDateImmutable($ue['custom_date'], null/*'Europe/Paris'*/);
             $ue['custom_date'] = $cd->format('Y-m-d H:i O'); // "2026-04-26 17:30:00" → 2026-04-26 17:30 +02:00
         }
         if ($ue['air_at']) {
             // 10:00:00 → 10:00
-            $ue['air_at'] = $this->dateService->newDateImmutable($ue['air_at'], 'Europe/Paris');
+            $ue['air_at'] = $this->dateService->newDateImmutable($ue['air_at'], null/*'Europe/Paris'*/);
             $ue['air_at'] = $ue['air_at']->format('H:i');
         }
         $ue['watch_at_db'] = $ue['watch_at'];
         if ($ue['watch_at']) {
-            $ue['watch_at'] = $this->dateService->newDateImmutable($ue['watch_at'], 'UTC');
+            $ue['watch_at'] = $this->dateService->newDateImmutable($ue['watch_at'], null/*'UTC'*/);
         }
         $arr = $this->userEpisodeRepository->getUserEpisodeViews($user->getId(), $id);
         $ues = array_map(function ($ue) {
@@ -268,7 +268,7 @@ readonly class ApiSeriesEpisode
                 'still' => $inputBag->get('episodeStill'),
                 'userEpisodeId' => $ueId,
                 'vote' => $userEpisode->getVote(),
-                'watchedAt' => ucfirst($this->dateService->formatDateRelativeLong($userEpisode->getWatchAt()->format("Y-m-d H:i"), $inputBag->get('timezone'), $locale)),
+                'watchedAt' => ucfirst($this->dateService->formatDateRelativeLong($userEpisode->getWatchAt()->format("Y-m-d H:i"), null/*$inputBag->get('timezone')*/, $locale)),
             ];
             $episodeCardBlock = ($this->renderView)('_blocks/series/_season_episode_card.html.twig', [
                 'episode' => $e,
