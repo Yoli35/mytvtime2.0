@@ -138,8 +138,11 @@
                 {% endif %}
                 {% if networks|length %}
                     <div class="episode-networks">
-                    {% for network in networks %}
-                        <img src="{{ logoUrl }}{{ network.logoPath }}" alt="{{ network.name }}" data-title="{{ network.name }} - {{ network.headquarters }} {{ getEmojiFlag(network.originCountry) }}">
+                    {% for n in networks %}
+                        <img
+                                src="{{ logoUrl }}{{ n.logoPath }}"
+                                alt="{{ n.name }}"
+                                data-title="{{ n.name }}{% if n.headquarters or n.originCountry %} - {% if n.headquarters %}{{ n.headquarters }} {% endif %}{% if n.originCountry %}{{ getEmojiFlag(n.originCountry) }}{% endif %}{% endif %}">
                     {% endfor %}
                     </div>
                 {% endif %}
