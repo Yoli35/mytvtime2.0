@@ -430,6 +430,19 @@
             }
         }
 
+        .episode-networks {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            justify-content: center;
+            margin-block-start: 1rem;
+
+            img {
+                height: 10rem;
+                width: auto;
+            }
+        }
+
         .series-map .map-container .map-controller {
             aspect-ratio: 16 / 9;
         }

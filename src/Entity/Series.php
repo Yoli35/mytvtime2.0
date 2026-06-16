@@ -629,6 +629,16 @@ class Series
         return $this->networks;
     }
 
+
+    public function getNetworkArray(): array
+    {
+        $networks = [];
+        foreach ($this->networks as $network) {
+            $networks[] = $network->toArray();
+        }
+        return $networks;
+    }
+
     public function addNetwork(Network $network): static
     {
         if (!$this->networks->contains($network)) {

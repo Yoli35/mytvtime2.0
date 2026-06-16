@@ -136,6 +136,13 @@
                 {% if addWatchNextDiv is defined %}
                     <div class="what-to-watch-next"></div>
                 {% endif %}
+                {% if networks|length %}
+                    <div class="episode-networks">
+                    {% for network in networks %}
+                        <img src="{{ logoUrl }}{{ network.logoPath }}" alt="{{ network.name }}" data-title="{{ network.name }} - {{ network.headquarters }} {{ getEmojiFlag(network.originCountry) }}">
+                    {% endfor %}
+                    </div>
+                {% endif %}
                 {{ include('_blocks/series/_credits.html.twig', {credits: season.credits, seriesLocalizedName: season.series_localized_name, seriesName: series.name, seriesId: series.id, seasonNumber: season.season_number}) }}
                 {{ include('_blocks/series/_guest_stars.html.twig', {guest_stars: episode.guest_stars, episode_page: true}) }}
                 {{ include('_blocks/series/_map.html.twig', {locations: locations, mapSettings: mapSettings}) }}

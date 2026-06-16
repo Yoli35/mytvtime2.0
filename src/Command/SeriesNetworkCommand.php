@@ -70,6 +70,7 @@ class SeriesNetworkCommand
                 if (!$dbNetwork) {
                     $this->io->write('    New network: ' . $network['name']);
                     $dbNetwork = new Network(
+                        $network['headquarters'],
                         $network['logo_path'],
                         $network['name'],
                         $networkId,

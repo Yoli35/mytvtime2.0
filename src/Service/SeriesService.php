@@ -801,7 +801,7 @@ readonly class SeriesService
                     ($this->addFlash)('error', $this->translator->trans('network.not_found') . ' → ' . $tvNetwork['name'] . ' (ID: ' . $id . ')');
                     continue;
                 }
-                $networkDb = new Network($tmdbNetwork['logo_path'], $tmdbNetwork['name'], $id, $tmdbNetwork['origin_country'], $now);
+                $networkDb = new Network($tmdbNetwork['headquarters'], $tmdbNetwork['logo_path'], $tmdbNetwork['name'], $id, $tmdbNetwork['origin_country'], $now);
                 $networkDb->setHeadquarters($tmdbNetwork['headquarters']);
                 $networkDb->setHomepage($tmdbNetwork['homepage']);
                 $this->networkRepository->save($networkDb);

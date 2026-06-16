@@ -35,8 +35,9 @@ class Network
     #[ORM\Column(nullable: true)]
     private ?DateTimeImmutable $updatedAt;
 
-    public function __construct(?string $logoPath, string $name, int $networkId, ?string $originCountry, DateTimeImmutable $updatedAt)
+    public function __construct(?string $headquarters, ?string $logoPath, string $name, int $networkId, ?string $originCountry, DateTimeImmutable $updatedAt)
     {
+        $this->headquarters = $headquarters;
         $this->logoPath = $logoPath;
         $this->name = $name;
         $this->networkId = $networkId;
@@ -47,6 +48,19 @@ class Network
     public function __toString(): string
     {
         return $this->name;
+    }
+
+    public function toArray(): array
+    {
+        return [
+            'id' => $this->id,
+            'headquarters' => $this->headquarters,
+            'logoPath' => $this->logoPath,
+            'name' => $this->name,
+            'networkId' => $this->networkId,
+            'originCountry' => $this->originCountry,
+            'updatedAt' => $this->updatedAt,
+        ];
     }
 
     public function getId(): ?int

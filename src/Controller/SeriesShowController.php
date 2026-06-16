@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Api\ApiWatchLink;
 use App\Entity\EpisodeLocalizedOverview;
+use App\Entity\Network;
 use App\Entity\Series;
 use App\Entity\SeriesExternal;
 use App\Entity\SeriesImage;
@@ -18,6 +19,7 @@ use App\Repository\DeviceRepository;
 use App\Repository\EpisodeLocalizedOverviewRepository;
 use App\Repository\EpisodeStillRepository;
 use App\Repository\FilmingLocationRepository;
+use App\Repository\NetworkRepository;
 use App\Repository\PeopleUserPreferredNameRepository;
 use App\Repository\SeasonLocalizedOverviewRepository;
 use App\Repository\SeriesCastRepository;
@@ -67,6 +69,7 @@ final class SeriesShowController extends AbstractController
         private readonly ImageConfiguration                 $imageConfiguration,
         private readonly ImageService                       $imageService,
         private readonly MonologLogger                      $logger,
+        private readonly NetworkRepository                  $networkRepository,
         private readonly PeopleUserPreferredNameRepository  $peopleUserPreferredNameRepository,
         private readonly ProviderService                    $providerService,
         private readonly SeasonLocalizedOverviewRepository  $seasonLocalizedOverviewRepository,
@@ -423,9 +426,6 @@ final class SeriesShowController extends AbstractController
             }
         }
 
-//        $userEpisodes = $this->userEpisodeRepository->getUserEpisodesDB($userSeries->getId(), $season['season_number'], $locale, true);
-//        $stills = $this->episodeStillRepository->getSeasonStills([$episode['id']]);
-
         if ($episode['still_path'] == null && $season['episodes'][$episodeNumber - 1]['still_path'] != null) {
             $episode['still_path'] = $season['episodes'][$episodeNumber - 1]['still_path'];
         }
@@ -462,6 +462,8 @@ final class SeriesShowController extends AbstractController
             'series' => $series,
             'season' => $season,
             'episode' => $episode,
+            'networks' => $this->getNetworks($series, $user),
+            'logoUrl' => $this->imageConfiguration->getUrl('logo_sizes', 5),
             'seasonVotes' => $seasonVotes,
             'slug' => $slug,
             'timezone' => $user->getTimezone() ?? 'Europe/Paris',
@@ -478,6 +480,29 @@ final class SeriesShowController extends AbstractController
             'providers' => $providers,
             'devices' => $devices,
         ]);
+    }
+
+    private function getNetworks(Series $series, User $user): array
+    {
+        if (count($series->getNetworks())) {
+            return $series->getNetworkArray();
+        }
+        $tv = json_decode($this->tmdbService->getTv($series->getTmdbId(), 'en-US'), true);
+
+        if (count($tv['networks'])) {
+            $now = $this->now($user);
+            foreach ($tv['networks'] as $network) {
+                $dbNetwork = $this->networkRepository->findOneBy(['name' => $network['name']]);
+                if (!$dbNetwork) {
+                    $tmdbNetwork = $this->tmdbService->getNetworkDetails($network['id']);
+                    $dbNetwork = new Network($network['headquarters'], $tmdbNetwork['logo_path'], $tmdbNetwork['name'], $tmdbNetwork['id'], $tmdbNetwork['origin_country'] ?? null, $now);
+                    $this->networkRepository->save($dbNetwork);
+                }
+                $series->addNetwork($dbNetwork);
+            }
+            $this->seriesRepository->save($series, true);
+        }
+        return $series->getNetworkArray();
     }
 
     private function isNextEpisodeAvailable(User $user, string $dateString): bool
