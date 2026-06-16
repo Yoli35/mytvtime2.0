@@ -242,7 +242,7 @@ export class EpisodeActions {
 
                 if (substituteNameDiv) substituteNameDiv.classList.add('watched');
 
-                if (episodeWatchLinks) episodeWatchLinks.closest('.user-actions').classList.add('d-none');
+                if (episodeWatchLinks && !episodePage) episodeWatchLinks.closest('.user-actions').classList.add('d-none');
 
                 finaleDivs.forEach(f => {
                     f.classList.add('watched');
@@ -885,7 +885,7 @@ export class EpisodeActions {
                 /******************************************************************************
                  * Fetch episode stills for each season.                                      *
                  ******************************************************************************/
-                self.fetchEpisodeCards.init(parseInt(selectDeviceDiv.dataset.id), true);
+                /*self.fetchEpisodeCards.init(parseInt(selectDeviceDiv.dataset.id), true);*/
             }
         });
     }
