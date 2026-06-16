@@ -3732,6 +3732,9 @@ h2 {
             }
 
             .line-3 {
+                --select-background-color: var(--ardoise-10);
+                --select-border-color: var(--ardoise-10);
+
                 align-items: center;
                 display: none;
                 font-size: 0.875rem;
@@ -3831,11 +3834,13 @@ h2 {
                 }
 
                 .provider-logo {
-                    height: 2rem;
-                    width: 2rem;
+                    border: 2px solid var(--select-background-color);
+                    border-radius: 5rem;
+                    height: 2.25rem;
+                    width: 2.25rem;
 
                     img {
-                        border-radius: .25rem;
+                        border-radius: 5rem;
                         aspect-ratio: 1 / 1;
                         height: 100%;
                         object-fit: cover;
