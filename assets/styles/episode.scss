@@ -437,9 +437,15 @@
             justify-content: center;
             margin-block-start: 1rem;
 
-            img {
-                height: 10rem;
-                width: auto;
+            .episode-network {
+                padding: 1rem;
+                background-color: hsl(from var(--ardoise-80) h s l / .1);
+                border-radius: 1rem;
+
+                img {
+                    height: clamp(2rem, 10vw, 10rem);
+                    width: auto;
+                }
             }
         }
 

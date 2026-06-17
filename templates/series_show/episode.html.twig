@@ -138,12 +138,14 @@
                 {% endif %}
                 {% if networks|length %}
                     <div class="episode-networks">
-                    {% for n in networks %}
-                        <img
-                                src="{{ logoUrl }}{{ n.logoPath }}"
-                                alt="{{ n.name }}"
-                                data-title="{{ n.name }}{% if n.headquarters or n.originCountry %} - {% if n.headquarters %}{{ n.headquarters }} {% endif %}{% if n.originCountry %}{{ getEmojiFlag(n.originCountry) }}{% endif %}{% endif %}">
-                    {% endfor %}
+                        {% for n in networks %}
+                            <div class="episode-network">
+                                <img
+                                        src="{{ logoUrl }}{{ n.logoPath }}"
+                                        alt="{{ n.name }}"
+                                        data-title="{{ n.name }}{% if n.headquarters or n.originCountry %} - {% if n.headquarters %}{{ n.headquarters }} {% endif %}{% if n.originCountry %}{{ getEmojiFlag(n.originCountry) }}{% endif %}{% endif %}">
+                            </div>
+                        {% endfor %}
                     </div>
                 {% endif %}
                 {{ include('_blocks/series/_credits.html.twig', {credits: season.credits, seriesLocalizedName: season.series_localized_name, seriesName: series.name, seriesId: series.id, seasonNumber: season.season_number}) }}
