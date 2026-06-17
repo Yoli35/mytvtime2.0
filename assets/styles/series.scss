@@ -757,6 +757,14 @@ h2 {
         position: relative;
         width: 100%;
 
+        @media (aspect-ratio <= 2 / 3) {
+            aspect-ratio: 2 / 3;
+        }
+
+        @media (aspect-ratio > 2 / 3) {
+            aspect-ratio: 16 / 9;
+        }
+
         .infos {
             align-items: flex-end;
             display: flex;
@@ -2906,18 +2914,6 @@ h2 {
                 }
             }
         }
-    }
-}
-
-@media (orientation: portrait) {
-    .series-show > .header {
-        aspect-ratio: 2 / 3;
-    }
-}
-
-@media (orientation: landscape) {
-    .series-show > .header {
-        aspect-ratio: 16 / 9;
     }
 }
 
