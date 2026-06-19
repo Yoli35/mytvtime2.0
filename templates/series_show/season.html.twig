@@ -129,8 +129,8 @@
                     {% if season.backdrop_path and season.poster_path %}
                         <div class="backdrop">
                             <picture>
-                                <source media="(orientation: portrait)" srcset="/series/posters{{ season.poster_path }}">
-                                <img src="/series/backdrops{{ season.backdrop_path }}" alt="{{ season.name }} backdrop">
+                                <source media="(max-aspect-ratio: 2 / 3)" srcset="/series/posters{{ series.posterPath }}">
+                                <img src="/series/backdrops{{ tv.backdrop_path }}" alt="{{ tv.name }} backdrop">
                             </picture>
                         </div>
                     {% elseif season.backdrop_path %}

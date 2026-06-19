@@ -13,6 +13,8 @@
     accent-color: hsl(32, 76%, 50%);
     --accent-color: hsl(32, 76%, 50%);
 
+    --container-background: light-dark(hsl(0 0 100% / .25), hsl(0 0 0 / .25));
+
     --error: hsl(0, 50%, 50%);
     --background: light-dark(hsl(202, 18%, 95%), hsl(202, 18%, 5%));
     --background-gradient-0: light-dark(hsl(212, 18%, 84%), hsl(212, 18%, 16%));

@@ -322,14 +322,14 @@ label:has(select) {
     }
 
     select {
-        appearance: none;
+        appearance: base-select;
         background-color: var(--ardoise-80);
         border: 1px solid var(--ardoise-50);
         border-radius: 5rem;
         color: var(--ardoise-10);
         outline: none;
         padding-block: .5rem;
-        padding-inline: 1rem 2rem;
+        padding-inline: 1rem;
         width: 100%;
     }
 
@@ -340,7 +340,7 @@ label:has(select) {
         }
     }
 
-    &::after {
+    /*&::after {
         border: 6px solid transparent;
         border-top-color: var(--orange-90);
         content: '';
@@ -351,7 +351,7 @@ label:has(select) {
         top: 1rem;
         width: 6px;
         z-index: 2;
-    }
+    }*/
 }
 
 .all-my-series, .home {
