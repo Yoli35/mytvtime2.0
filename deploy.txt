@@ -1,3 +1,9 @@
+// lancer un serveur en local accéssible sur le réseau local
+
+symfony -q serve --allow-all-ip --no-tls --port=8000
+
+// Déploiement
+
 1- cons app:ep:ai;
 2- Ajuster l'option -mmin (minutes) de la command find selon la fréquence de vos modifications dans /public
 3- .env: APP_ENV: prod
