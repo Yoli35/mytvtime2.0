@@ -299,10 +299,10 @@ class UserSeriesRepository extends ServiceEntityRepository
 
         $sort = match ($sort) {
             'lastWatched' => 'us.`last_watch_at`',
-            'episodeAirDate' => 'lue.`air_date`',
+            'episodeAirDate' => 'last_episode_air_date',/*'lue.`air_date`',*/
             'name' => 's.`name`',
             'addedAt' => 'us.`added_at`',
-            'finalAirDate' => 'IF(sbd.id IS NULL, nue.`air_date`, sbd.`date`)',
+            'finalAirDate' => 'IF(sbd.id IS NULL, nue.`air_date`, nsbd.`date`)',
             default => 's.`first_air_date`',
         };
         if ($network !== 'all') {
@@ -337,24 +337,25 @@ class UserSeriesRepository extends ServiceEntityRepository
 
         $sql = <<<SQL
                 SELECT DISTINCT
-                    s.`id`                                         AS id,
-                    s.`name`                                       AS name,
-                    s.`poster_path`                                AS poster_path, 
-                    s.`tmdb_id`                                    AS tmdb_id,
-                    s.`slug`                                       AS slug,
-                    s.`status`                                     AS status,
-                    (s.first_air_date <= NOW())                    AS released,
-                    us.`user_id`                                   AS user_id, 
-                    us.`added_at`                                  AS added_at,
-                    us.`progress`                                  AS progress,
-                    us.`favorite`                                  AS favorite, 
-                    us.`last_watch_at`                             AS last_watched_at, 
-                    sln.`name`                                     AS sln_name,
-                    sln.`slug`                                     AS sln_slug,
-                    nue.air_date                                   AS next_episode_air_date,
-                    nue.season_number                              AS next_episode_season_number,
-                    nue.episode_number                             AS next_episode_episode_number,
-                    IF(sbd.id IS NULL, nue.`air_date`, sbd.`date`) AS final_air_date,
+                    s.`id`                                           AS id,
+                    s.`name`                                         AS name,
+                    s.`poster_path`                                  AS poster_path, 
+                    s.`tmdb_id`                                      AS tmdb_id,
+                    s.`slug`                                         AS slug,
+                    s.`status`                                       AS status,
+                    (s.first_air_date <= NOW())                      AS released,
+                    us.`user_id`                                     AS user_id, 
+                    us.`added_at`                                    AS added_at,
+                    us.`progress`                                    AS progress,
+                    us.`favorite`                                    AS favorite, 
+                    us.`last_watch_at`                               AS last_watched_at, 
+                    sln.`name`                                       AS sln_name,
+                    sln.`slug`                                       AS sln_slug,
+                    nue.air_date                                     AS next_episode_air_date,
+                    nue.season_number                                AS next_episode_season_number,
+                    nue.episode_number                               AS next_episode_episode_number,
+                    IF(nsbd.id IS NULL, nue.`air_date`, nsbd.`date`) AS final_air_date,
+                    IF(lsbd.id IS NULL, lue.`air_date`, lsbd.`date`) AS last_episode_air_date,
                     (SELECT COUNT(*)
                         FROM user_episode ue2
                         WHERE ue2.user_series_id = us.id
@@ -370,10 +371,10 @@ class UserSeriesRepository extends ServiceEntityRepository
                     $innerJoin
                     LEFT JOIN `series` s ON s.`id`=us.`series_id`
                     LEFT JOIN `series_localized_name` sln ON sln.`series_id`=s.`id` AND sln.`locale` = :locale 
-                    LEFT JOIN series_broadcast_schedule sbs ON s.id = sbs.series_id AND sbs.season_number = nue.season_number AND IF(sbs.multi_part, nue.episode_number BETWEEN sbs.season_part_first_episode AND (sbs.season_part_first_episode + sbs.season_part_episode_count - 1), 1)
-                    LEFT JOIN `series_broadcast_date` sbd ON sbd.series_broadcast_schedule_id = sbs.id AND sbd.`episode_id`=nue.`episode_id`
+                    LEFT JOIN `series_broadcast_date` nsbd ON nsbd.`episode_id`=nue.`episode_id`
+                    LEFT JOIN `series_broadcast_date` lsbd ON lsbd.`episode_id`=lue.`episode_id`
                 WHERE us.`user_id` = :userId
-                    AND IF(sbd.`date`, DATE(sbd.`date`)<=NOW(), nue.`air_date`<=NOW())
+                    AND IF(nsbd.`date`, DATE(nsbd.`date`)<=NOW(), nue.`air_date`<=NOW())
                     AND nue.`season_number`>0
                 ORDER BY $sort $order
                 LIMIT :limit OFFSET :offset
