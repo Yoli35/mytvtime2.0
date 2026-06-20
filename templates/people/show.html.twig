@@ -201,32 +201,37 @@
                                                 {% endif %}
                                                 {% if prod.user_added %}
                                                     <div class="progress">
-                                                        {% set icon = 'mdi:battery-outline' %}
-                                                        {% if prod.progress==100 %}
-                                                            {% set icon = 'mdi:battery' %}
-                                                        {% else %}
-                                                            {% if prod.progress > 0 and prod.progress <= 15 %}
-                                                                {% set icon = 'mdi:battery-10' %}
-                                                            {% elseif prod.progress > 15 and prod.progress <= 25 %}
-                                                                {% set icon = 'mdi:battery-20' %}
-                                                            {% elseif prod.progress > 25 and prod.progress <= 35 %}
-                                                                {% set icon = 'mdi:battery-30' %}
-                                                            {% elseif prod.progress > 35 and prod.progress <= 45 %}
-                                                                {% set icon = 'mdi:battery-40' %}
-                                                            {% elseif prod.progress > 45 and prod.progress <= 55 %}
-                                                                {% set icon = 'mdi:battery-50' %}
-                                                            {% elseif prod.progress > 55 and prod.progress <= 65 %}
-                                                                {% set icon = 'mdi:battery-60' %}
-                                                            {% elseif prod.progress > 65 and prod.progress <= 75 %}
-                                                                {% set icon = 'mdi:battery-70' %}
-                                                            {% elseif prod.progress > 75 and prod.progress <= 85 %}
-                                                                {% set icon = 'mdi:battery-80' %}
-                                                            {% elseif prod.progress > 86 and prod.progress <= 95 %}
-                                                                {% set icon = 'mdi:battery-90' %}
+                                                        {% if prod.media_type == "tv" %}
+                                                            {% set icon = 'mdi:battery-outline' %}
+                                                            {% set progress = prod.progress ~ '%' %}
+                                                            {% if prod.progress==100 %}
+                                                                {% set icon = 'mdi:battery' %}
+                                                            {% else %}
+                                                                {% if prod.progress > 0 and prod.progress <= 15 %}
+                                                                    {% set icon = 'mdi:battery-10' %}
+                                                                {% elseif prod.progress > 15 and prod.progress <= 25 %}
+                                                                    {% set icon = 'mdi:battery-20' %}
+                                                                {% elseif prod.progress > 25 and prod.progress <= 35 %}
+                                                                    {% set icon = 'mdi:battery-30' %}
+                                                                {% elseif prod.progress > 35 and prod.progress <= 45 %}
+                                                                    {% set icon = 'mdi:battery-40' %}
+                                                                {% elseif prod.progress > 45 and prod.progress <= 55 %}
+                                                                    {% set icon = 'mdi:battery-50' %}
+                                                                {% elseif prod.progress > 55 and prod.progress <= 65 %}
+                                                                    {% set icon = 'mdi:battery-60' %}
+                                                                {% elseif prod.progress > 65 and prod.progress <= 75 %}
+                                                                    {% set icon = 'mdi:battery-70' %}
+                                                                {% elseif prod.progress > 75 and prod.progress <= 85 %}
+                                                                    {% set icon = 'mdi:battery-80' %}
+                                                                {% elseif prod.progress > 86 and prod.progress <= 95 %}
+                                                                    {% set icon = 'mdi:battery-90' %}
+                                                                {% endif %}
                                                             {% endif %}
+                                                            {{ ux_icon(icon, {height: '24px', width: '24px'}) }}
+                                                        {% else %}
+                                                            {% set progress = prod.progress %}
                                                         {% endif %}
-                                                        {{ ux_icon(icon, {height: '24px', width: '24px'}) }}
-                                                        {{ prod.progress }}%
+                                                        {{ progress }}
                                                     </div>
                                                 {% endif %}
                                             </div>

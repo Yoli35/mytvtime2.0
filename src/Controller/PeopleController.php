@@ -233,10 +233,9 @@ class PeopleController extends AbstractController
             $role['user_added'] = in_array($cast['id'], $typeTv ? $seriesIds : $movieIds);
             if ($role['user_added']) {
                 $role['localized_title'] = $indexedSeriesInfos[$cast['id']]['localized_name'] ?? null;
-                $role['progress'] = $typeTv ? ($indexedSeriesInfos[$cast['id']]['progress'] ?? null) : ($indexedMovieInfos[$cast['id']]['lastViewedAt'] != null ? 100 : 0 ?? null);
-                if ($role['progress']) {
-                    $role['progress'] = round($role['progress'], 2);
-                }
+
+                $role['progress'] = $this->getProgress($typeTv, $cast, $indexedSeriesInfos, $indexedMovieInfos);//$typeTv ? ($indexedSeriesInfos[$cast['id']]['progress'] ?? null) : ($indexedMovieInfos[$cast['id']]['lastViewedAt'] != null ? 100 : 0 ?? null);
+
                 $role['rating'] = $typeTv ? ($indexedSeriesInfos[$cast['id']]['rating'] ?? null) : ($indexedMovieInfos[$cast['id']]['rating'] ?? null);
                 $role['favorite'] = $typeTv ? ($indexedSeriesInfos[$cast['id']]['favorite'] ?? null) : ($indexedMovieInfos[$cast['id']]['favorite'] ?? null);
             } else {
@@ -294,7 +293,7 @@ class PeopleController extends AbstractController
         $credits['crew'] = $sortedCrew;
         krsort($knownFor);
         $credits['known_for'] = $knownFor;
-
+dump($credits);
         return $this->render('people/show.html.twig', [
             'people' => $people,
             'credits' => $credits,
@@ -302,6 +301,18 @@ class PeopleController extends AbstractController
             'user' => $user,
             'imageConfig' => $this->imageConfiguration->getConfig(),
         ]);
+    }
+
+    private function getProgress(bool $isTv, array $cast, array $indexedSeriesInfos, array $indexedMovieInfos): float|string
+    {
+        if ($isTv) {
+            return round(($indexedSeriesInfos[$cast['id']]['progress'] ?? 0), 2);
+        } else {
+            if ($indexedMovieInfos[$cast['id']]['lastViewedAt']) {
+                return ucfirst($this->dateService->formatDateRelativeShort($indexedMovieInfos[$cast['id']]['lastViewedAt'], 'UTC', 'fr'));
+            }
+        }
+        return 0;
     }
 
     #[Route('/rating', name: 'rating', methods: ['POST'])]
