@@ -152,10 +152,10 @@
                                             <div class="mark-as-viewed-plus">{{ ux_icon('mdi:plus') }}</div>
                                         </div>
                                         {% for viewDate in userMovie.viewArray %}
-                                            <div class="watched-at" data-watched-at="{{ viewDate|date("Y-m-d H:i:s", "UTC") }}"> {{ viewDate|format_date('relative_full')|capitalize }}</div>
+                                            <div class="watched-at" data-watched-at="{{ viewDate|date("Y-m-d H:i:s", "UTC") }}"> {{ viewDate|format_datetime('relative_full', 'short')|capitalize }}</div>
                                         {% endfor %}
                                         {% if userMovie.lastViewedAt %}
-                                            <div class="watched-at" data-watched-at="{{ userMovie.lastViewedAt|date("Y-m-d H:i:s", "UTC") }}"> {{ userMovie.lastViewedAt|format_date('relative_full')|capitalize }}</div>
+                                            <div class="watched-at" data-watched-at="{{ userMovie.lastViewedAt|date("Y-m-d H:i:s", "UTC") }}"> {{ userMovie.lastViewedAt|format_datetime('relative_full', 'short')|capitalize }}</div>
                                         {% endif %}
                                     </div>
                                     <div class="rating">
