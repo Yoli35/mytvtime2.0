@@ -794,8 +794,11 @@ final class SeriesShowController extends AbstractController
         $episode['user_episode'] = $userEpisode;
         $episode['user_episodes'] = $userEpisodeList;
 
+        if (strlen($episode['overview'])) {
+            return $episode;
+        }
         $language = $episode['language_query'];
-        $noOverview = !strlen($episode['overview']) && !strlen($userEpisode['localized_overview'] ?? '');
+        $noOverview = !strlen($userEpisode['localized_overview'] ?? '');
         $noFRName = $language === 'fr-FR' && $episode['name'] && str_starts_with($episode['name'], 'Épisode ') && !$userEpisode['substitute_name'];
 
         if (($noOverview || $noFRName) && $language !== 'en-US') {
