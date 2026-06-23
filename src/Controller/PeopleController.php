@@ -293,7 +293,7 @@ class PeopleController extends AbstractController
         $credits['crew'] = $sortedCrew;
         krsort($knownFor);
         $credits['known_for'] = $knownFor;
-dump($credits);
+
         return $this->render('people/show.html.twig', [
             'people' => $people,
             'credits' => $credits,
