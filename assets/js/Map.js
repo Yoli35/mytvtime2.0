@@ -1,5 +1,4 @@
 import mapboxgl from 'mapbox-gl';
-import {MapboxSearchBox} from '@mapbox/search-js-web'
 
 let self = null;
 
@@ -39,19 +38,6 @@ export class Map {
                 return;
             }
             this.controlsInitialized = true;
-            const searchBox = new MapboxSearchBox();
-            // set the mapbox access token, search box API options
-            searchBox.accessToken = mapboxgl.accessToken;
-            searchBox.options = {
-                types: 'address,poi',
-                language: 'fr',
-                proximity: 'auto',
-            };
-            // set the mapboxgl library to use for markers and enable the marker functionality
-            searchBox.mapboxgl = mapboxgl;
-            searchBox.marker = true;
-            searchBox.componentOptions = {allowReverse: true, flipCoordinates: true};
-            this.map.addControl(searchBox);
 
             this.map.addControl(new mapboxgl.NavigationControl());
             this.map.addControl(new mapboxgl.GeolocateControl({
