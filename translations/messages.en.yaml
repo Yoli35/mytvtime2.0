@@ -43,6 +43,8 @@ Last 7 days: Last 7 days
 Last added series: Last added series
 Latest series added: Latest series added
 Light: Light
+'in %count% day': 'in %count% day'
+'in %count% days': 'in %count% days'
 My account: My account
 My networks: My networks
 My providers: My providers
@@ -77,6 +79,8 @@ Your country will be used to determine the correct time for TV shows and movies.
 Your preferred language for series descriptions and reviews. You can change this later.: Your preferred language for series descriptions and reviews. You can change this later.
 Your series: Your series
 Your timezone will be used to determine the correct time for TV shows and movies.: Your timezone will be used to determine the correct time for TV shows and movies.
+'%count% day ago': '%count% day ago'
+'%count% days ago': '%count% days ago'
 remaining episode to see: remaining episode to see
 remaining episodes to see: remaining episodes to see
 series: series

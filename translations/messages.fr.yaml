@@ -117,6 +117,8 @@ Last added series: Dernières séries ajoutées
 Last viewed movies: Derniers films regardés
 Latest series added: Dernières séries ajoutées
 Light: Clair
+in %count% day: dans %count% jour
+in %count% days: dans %count% jours
 My account: Mon compte
 My networks: Mes réseaux
 My providers: Mes plateformes de streaming
@@ -165,6 +167,8 @@ Your country will be used to determine the correct time for TV shows and movies.
 Your preferred language for series descriptions and reviews. You can change this later.: Votre langue préférée pour les descriptions et les critiques de séries. Vous pouvez changer cela plus tard.
 Your series: Vos séries
 Your timezone will be used to determine the correct time for TV shows and movies.: Votre fuseau horaire sera utilisé pour déterminer l'heure correcte pour les émissions de télévision et les films.
+'%count% day ago': il y a %count% jour
+'%count% days ago': il y a %count% jours
 history entries: entrées d'historique
 network.added: Plateforme ajoutée
 network.updated: Plateforme mise à jour
