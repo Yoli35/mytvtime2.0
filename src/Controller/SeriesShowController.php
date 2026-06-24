@@ -7,14 +7,10 @@ use App\Entity\EpisodeLocalizedOverview;
 use App\Entity\Network;
 use App\Entity\Series;
 use App\Entity\SeriesExternal;
-use App\Entity\SeriesImage;
-use App\Entity\SeriesVideo;
 use App\Entity\Settings;
 use App\Entity\User;
 use App\Entity\UserEpisode;
 use App\Entity\UserSeries;
-use App\Form\AddBackdropType;
-use App\Form\SeriesVideoType;
 use App\Repository\DeviceRepository;
 use App\Repository\EpisodeLocalizedOverviewRepository;
 use App\Repository\EpisodeStillRepository;
@@ -43,7 +39,6 @@ use DateTimeImmutable;
 use DateTimeInterface;
 use Psr\Log\LoggerInterface as MonologLogger;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -75,10 +70,8 @@ final class SeriesShowController extends AbstractController
         private readonly SeasonLocalizedOverviewRepository  $seasonLocalizedOverviewRepository,
         private readonly SeriesCastRepository               $seriesCastRepository,
         private readonly SeriesExternalRepository           $seriesExternalRepository,
-        private readonly SeriesImageRepository              $seriesImageRepository,
         private readonly SeriesRepository                   $seriesRepository,
         private readonly SeriesService                      $seriesService,
-        private readonly SeriesVideoRepository              $seriesVideoRepository,
         private readonly SettingsRepository                 $settingsRepository,
         private readonly SourceRepository                   $sourceRepository,
         private readonly TMDBService                        $tmdbService,
@@ -163,7 +156,10 @@ final class SeriesShowController extends AbstractController
         $locale = $user->getPreferredLanguage() ?? $request->getLocale();
         $country = $user->getCountry() ?? 'FR';
 
-        $forms = $this->handleSerieShowForms($request, $series);
+        $forms = [
+            'backdropForm' => $this->seriesService->handleSerieBackdropForm($request, $series),
+            'videoForm' => $this->seriesService->handleSerieVideoForm($request, $series)
+        ];
 
         $userSeries = $this->userSeriesRepository->findOneBy(['user' => $user, 'series' => $series]);
         $userEpisodes = $this->userEpisodeRepository->findBy(['userSeries' => $userSeries, 'previousOccurrence' => null], ['seasonNumber' => 'ASC', 'episodeNumber' => 'ASC']);
@@ -448,7 +444,7 @@ final class SeriesShowController extends AbstractController
 
         $episode['show_id'] = $series->getTmdbId();
         $episode['stills'] = array_map(function($still) {
-            return '/series/stills/' . $still->getUrl();
+            return '/series/stills/' . $still->getPath();
         }, $this->episodeStillRepository->findBy(['episodeId' => $episode['id']], ['id' => 'DESC']));
         if (!count($episode['stills']) && $series->getBackdropPath()) {
             $episode['still_fallback']= '/series/backdrops' . $series->getBackdropPath();
@@ -512,40 +508,6 @@ final class SeriesShowController extends AbstractController
         $now = $this->dateService->newDateImmutable('now', $timezone);
 
         return $date->getTimestamp() <= $now->getTimestamp();
-    }
-
-    private function handleSerieShowForms(Request $request, Series $series): array
-    {
-        $addBackdropForm = $this->createForm(AddBackdropType::class);
-        $addBackdropForm->handleRequest($request);
-        if ($addBackdropForm->isSubmitted() && $addBackdropForm->isValid()) {
-            $data = $addBackdropForm->getData();
-            $this->addBackdrop($series, $data['file']);
-        }
-        $addVideoForm = $this->createForm(SeriesVideoType::class, new SeriesVideo($series, "", ""));
-        $addVideoForm->handleRequest($request);
-        if ($addVideoForm->isSubmitted() && $addVideoForm->isValid()) {
-            $data = $addVideoForm->getData();
-            $this->addVideo($data);
-        }
-        return ['backdropForm' => $addBackdropForm->createView(), 'videoForm' => $addVideoForm->createView()];
-    }
-
-    private function addBackdrop(Series $series, UploadedFile $backdropFile): void
-    {
-        $source = $backdropFile->getPathname();
-        $serverPath = '/public/series/backdrops/';
-        $destination = $this->getParameter('kernel.project_dir') . $serverPath . $backdropFile->getClientOriginalName();
-        if (copy($source, $destination)) {
-            $seriesImage = new SeriesImage($series, "backdrop", '/' . $backdropFile->getClientOriginalName());
-            $this->seriesImageRepository->save($seriesImage, true);
-            $this->addFlash('success', 'The backdrop has been added.');
-        }
-    }
-
-    private function addVideo(SeriesVideo $video): void
-    {
-        $this->seriesVideoRepository->save($video, true);
     }
 
     private function updateUserSeries(UserSeries $userSeries, array $tv): UserSeries

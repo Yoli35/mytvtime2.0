@@ -649,6 +649,7 @@ export class Show {
          ******************************************************************************/
         const addVideoButton = document.querySelector('.add-video');
         const addVideoDialog = document.querySelector('.add-video-dialog');
+        const addVideoSubmitButton = addVideoDialog.querySelector('button[name="add"]');
         const addVideoCancelButton = addVideoDialog.querySelector('button[name="cancel"]');
 
         addVideoButton.addEventListener('click', () => {
@@ -656,6 +657,40 @@ export class Show {
         });
         addVideoCancelButton.addEventListener('click', () => {
             addVideoDialog.close();
+        });
+        addVideoSubmitButton.addEventListener('click', (e) => {
+            e.preventDefault();
+            const title = addVideoDialog.querySelector('input[id="series_video_title"]').value;
+            const link = addVideoDialog.querySelector('input[id="series_video_link"]').value;
+            if (title.length > 0 && link.length >= 11) {
+                fetch('/api/series/video/add', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest'
+                    },
+                    body: JSON.stringify({
+                        'seriesId': seriesId,
+                        'title': title,
+                        'link': link
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        addVideoDialog.close();
+                        const block = data.block;
+                        const tempDiv = document.createElement('div');
+                        tempDiv.innerHTML = block;
+                        const newVideoSection = tempDiv.querySelector('#series-videos');
+                        const existingVideos = document.querySelector('#series-videos');
+                        existingVideos.replaceWith(newVideoSection);
+                        self.flashMessage.add('success', data['message']);
+                    } else {
+                        self.flashMessage.add('danger', data['message']);
+                    }
+                });
+            }
         });
 
         /******************************************************************************

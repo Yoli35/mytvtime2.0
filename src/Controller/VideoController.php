@@ -74,7 +74,7 @@ final class VideoController extends AbstractController
 
         $newLink = $request->query->get('link');
         if ($newLink) {
-            $link = $this->parseLink($newLink);
+            $link = $this->videoService->parseLink($newLink);
             if ($link) {
                 $newId = $this->addVideo($link, $now);
                 return $this->redirectToRoute('app_video_show', [
@@ -264,22 +264,6 @@ final class VideoController extends AbstractController
         $this->videoRepository->save($video, true);
 
         return new JsonResponse(['message' => 'Category removed successfully', 'id' => $category->getId()]);
-    }
-
-    private function parseLink(string $userLink): ?string
-    {
-        // Check if the link is a valid YouTube URL and extract the video ID
-        $pattern = '/(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:[^\/\n\s]+\/\S+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([a-zA-Z0-9_-]{11})/';
-        preg_match($pattern, $userLink, $matches);
-        if (key_exists(1, $matches) && strlen($matches[1]) === 11) {
-            $videoLink = $matches[1];
-        } else {
-            // And another pattern for YouTube short links: https://youtube.com/shorts/VsMVTAOY9h4?si=NLj0Ztc-WtneY5yG
-            $pattern = '/https?:\/\/(?:www\.)?youtube\.com\/shorts\/([a-zA-Z0-9_-]{11})/';
-            preg_match($pattern, $userLink, $matches);
-            $videoLink = $matches[1] ?? null;
-        }
-        return $videoLink;
     }
 
     private function getYouTubeVideo(string $videoId): ?VideoListResponse

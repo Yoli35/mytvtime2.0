@@ -9,19 +9,19 @@ use App\Entity\Series;
 use App\Entity\SeriesBroadcastSchedule;
 use App\Entity\SeriesImage;
 use App\Entity\SeriesLocalizedName;
-
-//use App\Entity\SeriesLocalizedOverview;
+use App\Entity\SeriesVideo;
 use App\Entity\Settings;
 use App\Entity\User;
 use App\Entity\UserEpisode;
 use App\Entity\UserSeries;
+use App\Form\AddBackdropType;
+use App\Form\SeriesVideoType;
 use App\Repository\FilmingLocationRepository;
 use App\Repository\NetworkRepository;
 use App\Repository\SeriesImageRepository;
 use App\Repository\SeriesLocalizedNameRepository;
-
-//use App\Repository\SeriesLocalizedOverviewRepository;
 use App\Repository\SeriesRepository;
+use App\Repository\SeriesVideoRepository;
 use App\Repository\SettingsRepository;
 use App\Repository\SourceRepository;
 use App\Repository\UserEpisodeRepository;
@@ -32,6 +32,9 @@ use DateTimeImmutable;
 use Psr\Log\LoggerInterface as MonologLogger;
 use Symfony\Bundle\FrameworkBundle\Controller\ControllerHelper;
 use Symfony\Component\DependencyInjection\Attribute\AutowireMethodOf;
+use Symfony\Component\Form\FormView;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\String\Slugger\AsciiSlugger;
 use Symfony\Component\Uid\Uuid;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -43,7 +46,11 @@ readonly class SeriesService
         #[AutowireMethodOf(ControllerHelper::class)]
         private Closure                       $addFlash,
         #[AutowireMethodOf(ControllerHelper::class)]
+        private Closure                       $createForm,
+        #[AutowireMethodOf(ControllerHelper::class)]
         private Closure                       $generateUrl,
+        #[AutowireMethodOf(ControllerHelper::class)]
+        private Closure                       $getParameter,
         #[AutowireMethodOf(ControllerHelper::class)]
         private Closure                       $getUser,
         private DateService                   $dateService,
@@ -57,8 +64,8 @@ readonly class SeriesService
         private SeasonService                 $seasonService,
         private SeriesImageRepository         $seriesImageRepository,
         private SeriesLocalizedNameRepository $seriesLocalizedNameRepository,
-//        private readonly SeriesLocalizedOverviewRepository $seriesLocalizedOverviewRepository,
         private SeriesRepository              $seriesRepository,
+        private SeriesVideoRepository         $seriesVideoRepository,
         private SettingsRepository            $settingsRepository,
         private SourceRepository              $sourceRepository,
         private TMDBService                   $tmdbService,
@@ -149,6 +156,45 @@ readonly class SeriesService
         }
 
         return $tv;
+    }
+
+    public function handleSerieBackdropForm(Request $request, Series $series): FormView
+    {
+        $addBackdropForm = ($this->createForm)(AddBackdropType::class);
+        $addBackdropForm->handleRequest($request);
+        if ($addBackdropForm->isSubmitted() && $addBackdropForm->isValid()) {
+            $data = $addBackdropForm->getData();
+            $this->addBackdrop($series, $data['file']);
+        }
+        return $addBackdropForm->createView();
+    }
+
+    public function handleSerieVideoForm(Request $request, Series $series): FormView
+    {
+        $addVideoForm = ($this->createForm)(SeriesVideoType::class, new SeriesVideo($series, "", ""));
+        $addVideoForm->handleRequest($request);
+        if ($addVideoForm->isSubmitted() && $addVideoForm->isValid()) {
+            $data = $addVideoForm->getData();
+            $this->addVideo($data);
+        }
+        return $addVideoForm->createView();
+    }
+
+    private function addBackdrop(Series $series, UploadedFile $backdropFile): void
+    {
+        $source = $backdropFile->getPathname();
+        $serverPath = '/public/series/backdrops/';
+        $destination = ($this->getParameter)('kernel.project_dir') . $serverPath . $backdropFile->getClientOriginalName();
+        if (copy($source, $destination)) {
+            $seriesImage = new SeriesImage($series, "backdrop", '/' . $backdropFile->getClientOriginalName());
+            $this->seriesImageRepository->save($seriesImage, true);
+            ($this->addFlash)('success', 'The backdrop has been added.');
+        }
+    }
+
+    private function addVideo(SeriesVideo $video): void
+    {
+        $this->seriesVideoRepository->save($video, true);
     }
 
     public function updateSeries(Series $series, array $tv, array $seriesImages): Series
