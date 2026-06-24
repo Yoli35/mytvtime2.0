@@ -14,6 +14,8 @@ readonly class TMDBService
     {
     }
 
+    // Modifier une fiche sur tmdb : https://www.themoviedb.org/tv/[tv-id]-[slug]/season/1
+
     public function imageConfiguration(): ?string
     {
         $request = "https://api.themoviedb.org/3/configuration";
