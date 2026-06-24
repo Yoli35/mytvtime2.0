@@ -266,8 +266,8 @@ export class PeopleShow {
                 const preferredNameSubmit = preferredNameForm.querySelector("button[type=submit]");
                 preferredNameSubmit.addEventListener("click", self.preferredName);
 
-                // display the new preferred name in the h1
-                const h1 = document.querySelector("h1");
+                // display the new preferred name in the h1 or div.people-name
+                const h1 = document.querySelector("div.people-name") || document.querySelector("h1");
                 let preferredNameSpan = h1.querySelector("span.preferred-name");
                 if (!preferredNameSpan) {
                     preferredNameSpan = document.createElement("span");

@@ -4778,7 +4778,7 @@ h2 {
                 height: 100%;
                 position: relative;
                 transition: width .3s ease-in-out;
-                width: calc(100% - calc(calc(var(--episode-height) * var(--episode-aspect-ratio) + 4.75rem)));
+                width: calc(100% - calc(calc(var(--episode-height) * var(--episode-aspect-ratio)) + 4.75rem));
 
                 .infos-content {
                     display: flex;
@@ -6466,6 +6466,17 @@ h2 {
                     height: 100%;
                     max-height: unset;
                     min-height: unset;
+                }
+
+                .right-column {
+                    .content {
+                        .name {
+                            .people-name {
+                                font-size: 2rem;
+                                font-weight: 300;
+                            }
+                        }
+                    }
                 }
             }
         }

@@ -75,7 +75,7 @@
         <div class="right-column">
             <div class="content">
                 <div class="name">
-                    <h1>{{ people.name }}{% if preferredName %}<span class="preferred-name"> - {{ preferredName }}</span>{% endif %}</h1>
+                    <div class="people-name">{{ people.name }}{% if preferredName %}<span class="preferred-name"> - {{ preferredName }}</span>{% endif %}</div>
                     {{ include('_blocks/translations/_tools.html.twig', {type: 'people', hidden: 0}) }}
                 </div>
                 {{ include('_blocks/forms/_localized_biography.html.twig') }}
