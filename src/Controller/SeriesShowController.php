@@ -385,13 +385,14 @@ final class SeriesShowController extends AbstractController
         $locale = $user->getPreferredLanguage() ?? $request->getLocale();
         $countries = ['fr' => 'FR', 'en' => 'US', 'ko' => 'KR'];
         $country = $user->getCountry() ?? $countries[$locale] ?? 'FR';
+        $language = $locale . '-' . $country;
         $status = null;
         $statusTitle = null;
 
         $this->logger->info('showEpisode', ['series' => $series->getId(), 'season' => $seasonNumber, 'episode' => $episodeNumber, 'slug' => $slug]);
 
         $userSeries = $this->userSeriesRepository->findOneBy(['user' => $user, 'series' => $series]);
-        $season = json_decode($this->tmdbService->getTvSeason($series->getTmdbId(), $seasonNumber, $locale, ['credits', 'watch/providers']), true);
+        $season = json_decode($this->tmdbService->getTvSeason($series->getTmdbId(), $seasonNumber, $language, ['credits', 'watch/providers']), true);
         if (key_exists('error', $season)) {
             $this->seriesService->removeUserEpisodes($userSeries, $seasonNumber);
             $this->addFlash('error', $this->translator->trans('The season could not be loaded'));
@@ -402,7 +403,7 @@ final class SeriesShowController extends AbstractController
 //        $season['episodes'] = $seasonEpisodes;
         $userEpisodes = $this->userEpisodeRepository->getUserEpisodesDB($userSeries->getId(), $season['season_number'], $locale, true);
         $seasonVotes = $this->getSeasonVotes($userEpisodes);
-        $episode = json_decode($this->tmdbService->getTvEpisode($series->getTmdbId(), $seasonNumber, $episodeNumber, $locale, ['credits', 'watch/providers']), true);
+        $episode = json_decode($this->tmdbService->getTvEpisode($series->getTmdbId(), $seasonNumber, $episodeNumber, $language, ['credits', 'watch/providers']), true);
         if (key_exists('error', $episode)) {
             $this->addFlash('error', $this->translator->trans('The episode could not be loaded'));
             return $this->redirectToRoute('app_tv_season', ['_locale' => $locale, 'id' => $series->getId(), 'slug' => $series->getSlug(), 'seasonNumber' => $seasonNumber]);
@@ -421,11 +422,7 @@ final class SeriesShowController extends AbstractController
                 $status = $tv['status'];
             }
         }
-
-        if ($episode['still_path'] == null && $season['episodes'][$episodeNumber - 1]['still_path'] != null) {
-            $episode['still_path'] = $season['episodes'][$episodeNumber - 1]['still_path'];
-        }
-        $episode = $this->seasonEpisode($episode, $userSeries, $userEpisodes, $seasonNumber, $finaleEpisodeNumber/*, $stills*/);
+        $episode = $this->seasonEpisode($episode, $userSeries, $userEpisodes, $seasonNumber, $finaleEpisodeNumber, $language/*, $stills*/);
         $profileUrl = $this->imageConfiguration->getUrl('profile_sizes', 2);
         $peopleUserPreferredNames = $this->getPreferredNames($user);
         $episode['guest_stars'] = $this->episodeGuestStars($episode, new AsciiSlugger(), $series, $profileUrl, $peopleUserPreferredNames);
@@ -598,6 +595,8 @@ final class SeriesShowController extends AbstractController
         $series = $userSeries->getSeries();
         $slugger = new AsciiSlugger();
         $locale = $user->getPreferredLanguage() ?? 'fr';
+        $country = $user->getCountry() ?? 'FR';
+        $language = $locale . '-' . $country;
         $seasonEpisodes = [];
         $episodeArr = [];
         $userEpisodes = $this->userEpisodeRepository->getUserEpisodesDB($userSeries->getId(), $season['season_number'], $locale, true);
@@ -618,7 +617,7 @@ final class SeriesShowController extends AbstractController
 //            $episode['substitute_name'] = $this->userEpisodeRepository->getSubstituteName($episode['id']);
             $episode['locale'] = $locale;
             $episode['language_query'] = $locale . '-' . $country;
-            $episodeArr[] = $this->seasonEpisode($episode, $userSeries, $userEpisodes, $season['season_number'], $finaleEpisodeNumber, $stills);
+            $episodeArr[] = $this->seasonEpisode($episode, $userSeries, $userEpisodes, $season['season_number'], $finaleEpisodeNumber, $language, $stills);
         }
         $profileUrl = $this->imageConfiguration->getUrl('profile_sizes', 2);
         foreach ($episodeArr as $episode) {
@@ -691,7 +690,7 @@ final class SeriesShowController extends AbstractController
         return $peopleUserPreferredNames;
     }
 
-    private function seasonEpisode(array $episode, UserSeries $userSeries, array $userEpisodes, int $seasonNumber, int $finaleEpisodeNumber, ?array $stills = null): array
+    private function seasonEpisode(array $episode, UserSeries $userSeries, array $userEpisodes, int $seasonNumber, int $finaleEpisodeNumber, $language, ?array $stills = null): array
     {
         $user = $userSeries->getUser();
         if ($episode['episode_number'] > $finaleEpisodeNumber) {
@@ -736,6 +735,14 @@ final class SeriesShowController extends AbstractController
         $userEpisodeList = $this->getUserEpisodes($userEpisodes, $episode['episode_number']);
 
         $stillUrl = $this->imageConfiguration->getUrl('still_sizes', 3);
+
+        if ($episode['still_path'] == null && $language != 'en-US') {
+            $episodeUS = json_decode($this->tmdbService->getTvEpisode($series->getTmdbId(), $seasonNumber, $episode['episode_number'], 'en-US', ['credits', 'watch/providers']), true);
+            $episode['still_path'] = $episodeUS['still_path'];
+        }
+        /*if ($episode['still_path'] == null && $season['episodes'][$episode['episode_number'] - 1]['still_path'] != null) {
+            $episode['still_path'] = $season['episodes'][$episode['episode_number'] - 1]['still_path'];
+        }*/
 
         $episode['still_path'] = $episode['still_path'] ? $stillUrl . $episode['still_path'] : null; // w300
         if ($stills) {
