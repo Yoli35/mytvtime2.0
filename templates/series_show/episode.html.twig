@@ -19,7 +19,7 @@
     {% elseif episode.stills|length %}{# is defined and ue.still #}
         {% set still = episode.stills|last %}
         {% set still = still.path %}
-    {% elseif episode.still_fallback %}
+    {% elseif episode.still_fallback is defined %}
         {% set still = episode.still_fallback %}
     {% else %}
         {% set still = '' %}
