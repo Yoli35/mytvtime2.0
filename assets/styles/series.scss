@@ -6353,13 +6353,19 @@ h2 {
                     color: var(--orange-80);
                     margin-inline: auto;
                     padding-inline: .75rem;
+                    text-align: center;
                     text-wrap: balance;
                     transition: border-color 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
                     width: fit-content;
 
-                    &.update {
+                    &.updated {
                         border-color: var(--orange-50);
-                        box-shadow: 0 0 2rem 0.5rem var(--orange-50);
+                    }
+
+                    &.update {
+                        background-color: hsl(from var(--orange-50) h s l /.5);
+                        box-shadow: 0 0 2rem var(--orange-50);
+                        padding-block: .25rem;
                     }
                 }
 
