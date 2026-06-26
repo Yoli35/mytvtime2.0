@@ -1,5 +1,6 @@
 import './bootstrap.js';
 
+import {AdminApi} from "AdminApi";
 import {AdminKeyword} from "AdminKeyword";
 import {AdminMovieEdit} from "AdminMovieEdit";
 import {AdminPointsOfInterest} from "AdminPointsOfInterest";
@@ -52,6 +53,10 @@ window.addEventListener("DOMContentLoaded", () => {
     if (admin) {
         if (admin.querySelector(".admin__tools")) {
             new AdminTools(toolTips);
+            return;
+        }
+        if (admin.querySelector(".admin__api")) {
+            new AdminApi(toolTips);
             return;
         }
         if (admin.querySelector(".admin__keywords")) {

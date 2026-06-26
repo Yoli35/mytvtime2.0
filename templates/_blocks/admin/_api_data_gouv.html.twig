@@ -1,0 +1,50 @@
+
+<h2>{{ ux_icon('mdi:api') }} <span><b>data.gouv.fr</b></span></h2>
+<form id="data-gouv-form" class="form">
+    <div class="form-row">
+        <div class="form-field">
+            <label for="data_gouv_base">{{ 'Base url'|trans }}
+                <input type="search" id="data_gouv_base" name="data_gouv_base" value="{{ data.base }}">
+            </label>
+        </div>
+    </div>
+    <div class="form-row">
+        <div class="form-field">
+            <label for="data_gouv_api">{{ 'Api'|trans }}
+                <input type="search" id="data_gouv_api" name="data_gouv_api" value="{{ data.api }}">
+            </label>
+        </div>
+    </div>
+    <div class="form-row">
+        <div class="form-field">
+            {% set recent = data.recents|last %}
+            <label for="data_gouv_rid">{{ 'Api'|trans }}
+                <input type="search" id="data_gouv_rid" name="data_gouv_rid" value="{{ recent.rid }}">
+            </label>
+        </div>
+    </div>
+    <div class="form-row">
+        <div class="form-field">
+            <label for="data_gouv_swagger">{{ 'Modules'|trans }}
+                <select id="data_gouv_swagger" name="data_gouv_swagger">
+                    {% for sw in data.swagger %}
+                        <option value="{{ sw.value }}">{{ sw.name|trans }}</option>
+                    {% endfor %}
+                </select>
+            </label>
+        </div>
+    </div>
+    <div class="form-row">
+        <div class="form-field">
+            <div class="form-row">
+                <button type="submit" class="admin__button" value="exec">{{ 'Execute'|trans }}</button>
+            </div>
+        </div>
+    </div>
+    <div class="form-results">
+        <table class="data-gouv-table">
+            <tbody>
+            </tbody>
+        </table>
+    </div>
+</form>

@@ -37,6 +37,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Routing\Requirement\Requirement;
+use Symfony\Component\Security\Http\Attribute\CurrentUser;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
@@ -163,7 +164,7 @@ class AdminController extends AbstractController
     #[Route('/message/block/name/{id}', name: 'message_block_name', requirements: ['id' => Requirement::DIGITS], methods: ['POST'])]
     public function messageBlockName(ContactMessage $message, Request $request): Response
     {
-        if (!$this->isCsrfTokenValid('admin_message_block_name_' . $message->getId(), (string) $request->request->get('_token'))) {
+        if (!$this->isCsrfTokenValid('admin_message_block_name_' . $message->getId(), (string)$request->request->get('_token'))) {
             throw $this->createAccessDeniedException();
         }
 
@@ -176,7 +177,7 @@ class AdminController extends AbstractController
     #[Route('/message/unblock/name/{id}', name: 'message_unblock_name', requirements: ['id' => Requirement::DIGITS], methods: ['POST'])]
     public function messageUnlockName(ContactMessage $message, Request $request): Response
     {
-        if (!$this->isCsrfTokenValid('admin_message_unblock_name_' . $message->getId(), (string) $request->request->get('_token'))) {
+        if (!$this->isCsrfTokenValid('admin_message_unblock_name_' . $message->getId(), (string)$request->request->get('_token'))) {
             throw $this->createAccessDeniedException();
         }
 
@@ -189,7 +190,7 @@ class AdminController extends AbstractController
     #[Route('/message/block/email/{id}', name: 'message_block_email', requirements: ['id' => Requirement::DIGITS], methods: ['POST'])]
     public function messageBlockEmail(ContactMessage $message, Request $request): Response
     {
-        if (!$this->isCsrfTokenValid('admin_message_block_email_' . $message->getId(), (string) $request->request->get('_token'))) {
+        if (!$this->isCsrfTokenValid('admin_message_block_email_' . $message->getId(), (string)$request->request->get('_token'))) {
             throw $this->createAccessDeniedException();
         }
 
@@ -202,7 +203,7 @@ class AdminController extends AbstractController
     #[Route('/message/unblock/email/{id}', name: 'message_unblock_email', requirements: ['id' => Requirement::DIGITS], methods: ['POST'])]
     public function messageUnblockEmail(ContactMessage $message, Request $request): Response
     {
-        if (!$this->isCsrfTokenValid('admin_message_unblock_email_' . $message->getId(), (string) $request->request->get('_token'))) {
+        if (!$this->isCsrfTokenValid('admin_message_unblock_email_' . $message->getId(), (string)$request->request->get('_token'))) {
             throw $this->createAccessDeniedException();
         }
 
@@ -289,9 +290,8 @@ class AdminController extends AbstractController
     }
 
     #[Route('/api/modules', name: 'api_modules', methods: ['GET'])]
-    public function apiModules(): JsonResponse
+    public function apiModules(#[CurrentUser] User $user): JsonResponse
     {
-        $user = $this->getUser();
         $settings = $this->settingsRepository->findOneBy(['user' => $user, 'name' => 'api data.nantes.metropole.fr']);
         if (!$settings) {
             $modules = [
@@ -337,6 +337,66 @@ class AdminController extends AbstractController
         return $this->json([
             'modules' => $modules,
             'block' => $block->getContent(),
+        ]);
+    }
+
+    #[Route('/api/data/gouv', name: 'api_data_gouv', methods: ['GET'])]
+    public function apiDataGouv(#[CurrentUser] User $user): JsonResponse
+    {
+        $settings = $this->settingsRepository->findOneBy(['user' => $user, 'name' => 'api data.gouv.fr']);
+        if (!$settings) {
+            $data = [
+                'base' => 'https://tabular-api.data.gouv.fr',
+                'api' => '/api/resources/',
+                'health' => '/health',
+                'swagger' => [
+                    'metadata' =>[
+                        'name' => 'Metadata',
+                        'value' => '/',
+                    ],
+                    'profile' => [
+                        'name' => 'Profile',
+                        'value' => '/profile/',
+                    ],
+                    'spec'=>[
+                        'name' => 'Swagger',
+                        'value' => '/swagger/',
+                    ],
+                    'data json'=>[
+                        'name' => 'Data (json)',
+                        'value' => '/data/',
+                    ],
+                    'data csv'=>[
+                        'name' => 'Data (csv)',
+                        'value' => '/data/cvs/',
+                    ],
+                    'data json stream'=>[
+                        'name' => 'Data (json stream)',
+                        'value' => '/data/json/',
+                    ],
+                ],
+                'recents' => [
+                    [
+                        'name' => 'VigiEau',
+                        'rid' => '0391a8b8-c850-45c7-a372-1f95bd204159', // https://www.sandre.eaufrance.fr/atlas/srv/fre/catalog.search#/metadata/0391a8b8-c850-45c7-a372-1f95bd204159
+                    ],
+                ]
+            ];
+            $settings = new Settings($user, 'api data.gouv.fr', $data);
+            $this->settingsRepository->save($settings, true);
+        }
+        $data = $settings->getData();
+        $block = $this->renderView('_blocks/admin/_api_data_gouv.html.twig', [
+            'baseUrl' => "https://data.nantesmetropole.fr/api/explore/v2.1/catalog/datasets",
+            'data' => $data,
+        ]);
+        $url = $data['base'] . $data['api'] . array_last($data['recents'])['rid'] . $data['swagger']['data json']['value'];
+        dump($url);
+
+        return $this->json([
+            'data' => $data,
+            'block' => $block,
+            'url' => $url,
         ]);
     }
 

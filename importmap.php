@@ -31,6 +31,7 @@ return [
     '@hotwired/turbo' => ['version' => '8.0.23'],
     '@symfony/stimulus-bundle' => ['path' => './vendor/symfony/stimulus-bundle/assets/dist/loader.js'],
     'AddCast' => ['path' => './assets/js/series/AddCast.js'],
+    'AdminApi' => ['path' => './assets/js/admin/AdminApi.js'],
     'AdminKeyword' => ['path' => './assets/js/admin/AdminKeyword.js'],
     'AdminMovieEdit' => ['path' => './assets/js/admin/AdminMovieEdit.js'],
     'AdminPointsOfInterest' => ['path' => './assets/js/admin/AdminPointsOfInterest.js'],
