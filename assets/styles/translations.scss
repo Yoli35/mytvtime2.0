@@ -65,7 +65,8 @@
 }
 
 dialog.watch-link-dialog::backdrop {
-    background-color: hsl(from var(--orange-10) h s l / .75);
+    background-color: hsl(from var(--orange-10) h s l / .25);
+    transition: all 600ms ease-in-out;
 }
 
 .biography-form,
@@ -232,7 +233,7 @@ dialog.watch-link-dialog::backdrop {
 }
 
 ::backdrop {
-    backdrop-filter: blur(10px);
+    backdrop-filter: blur(8px);
 }
 
 .keyword-translation-form {
