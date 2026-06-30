@@ -1,0 +1,20 @@
+<div class="episodes-today">
+    <div class="wrapper">
+        {% for episode in episodes %}
+            <a href="{{ episode.link }}">
+                <div class="episode-today">
+                    <div class="poster">
+                        <img src="{{ episode.poster_path }}" alt="{{ episode.name }}">
+                    </div>
+                    <div class="infos">
+                        <div>{{ episode.name }}</div>
+                        <div>{{ episode.number }}{% if episode.sbs_time %} - {{ episode.sbs_time }}{% endif %}</div>
+                    </div>
+                </div>
+            </a>
+        {% endfor %}
+    </div>
+    <div class="toggler" data-title="{{ 'Episodes of the day'|trans }}">
+        {{ ux_icon('mdi:chevron-double-right') }}
+    </div>
+</div>

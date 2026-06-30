@@ -476,6 +476,51 @@ class UserEpisodeRepository extends ServiceEntityRepository
         }
     }
 
+    public function episodesOfTheDayV2(int $userId, string $locale = 'fr'): array
+    {
+        $today = new \DateTime('today');
+
+        $params = [
+            'userId' => $userId,
+            'locale' => $locale,
+            'today' => $today->format('Y-m-d'),
+        ];
+        $types = [
+            'userId' => ParameterType::INTEGER,
+            'locale' => ParameterType::STRING,
+            'today' => ParameterType::STRING,
+        ];
+
+        $sql = <<<SQL
+            SELECT DISTINCT s.`id` as id,
+                ue.`episode_number` as ueep,
+                IF(sln.`id`, sln.`name`, s.`name`) as name,
+                CONCAT('S', LPAD(ue.`season_number`, 2, '0'), 'E', LPAD(ue.`episode_number`, 2, '0')) as `number`,
+                CONCAT('/tv/episode/', s.id, '-', IF(sln.`id`, sln.`slug`, s.`slug`), '/', ue.`season_number`, '/', ue.`episode_number`) as `link`,
+                s.`poster_path` as poster_path,
+                IF(sbd.`id`, DATE(sbd.`date`), ue.`air_date`) as episode_air_date,
+                ue.air_date as air_date, /* Pour vérifier */
+                DATE(sbd.`date`) as sbd_date, /* Pour vérifier */
+                sbs.`air_at` as sbs_time,
+                wp.`background_color` as wpbc,
+                wp.`color` as wpc,
+                wp.`logo_path` as wplp,
+                wp.`provider_name` as wppn
+            FROM `user_episode` ue
+                LEFT JOIN `series_broadcast_date` sbd ON ue.`episode_id`=sbd.`episode_id`
+                LEFT JOIN `user_series` us ON us.`id`=ue.`user_series_id`
+                LEFT JOIN `series` s ON s.`id`=us.`series_id`
+                LEFT JOIN `series_broadcast_schedule` sbs ON sbs.`series_id`=s.`id`
+                LEFT JOIN `series_localized_name` sln ON sln.`series_id`=s.`id` AND sln.`locale`=:locale
+                LEFT JOIN `series_watch_link` swl ON swl.`series_id`=s.`id` AND (swl.`season_number`=-1 OR swl.`season_number`=ue.`season_number`)
+                LEFT JOIN `watch_provider` wp ON wp.`provider_id`=swl.`provider_id`
+            WHERE ue.`user_id`=:userId AND IF(sbd.`id`, DATE(sbd.`date`), ue.`air_date`)=:today
+            ORDER BY sbs_time, wppn, ueep;
+        SQL;
+
+        return $this->getAll($sql, $params, $types);
+    }
+
     public function episodesOneOfTheDay(User $user, bool $next7Days = true, ?string $startDate = null, ?string $endDate = null): array
     {
         $params = ['userId' => $user->getId()];

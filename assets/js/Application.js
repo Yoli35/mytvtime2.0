@@ -80,5 +80,27 @@ export class Application {
                 toggler();
             });
         }
+
+        /******************************************************************************************
+         * Get episodes of the day
+         ******************************************************************************************/
+        fetch("/api/episode/today", {})
+            .then(response => response.json())
+            .then(data => {
+                /*console.log('Episodes of the day:', data);*/
+                const body = document.querySelector("body");
+                const tempDiv = document.createElement('div');
+                tempDiv.innerHTML = data['view'];
+                const episodesTodayDiv = tempDiv.querySelector(".episodes-today");
+                const togglerDiv = episodesTodayDiv.querySelector(".toggler");
+                togglerDiv.addEventListener("click", () => {
+                    episodesTodayDiv.classList.toggle("show");
+                });
+                body.appendChild(episodesTodayDiv);
+            })
+            .catch(error => {
+                console.error("Error fetching episodes of the day:", error);
+            });
+
     }
 }
