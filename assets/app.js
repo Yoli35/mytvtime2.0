@@ -40,13 +40,13 @@ window.addEventListener("DOMContentLoaded", () => {
     const menu = new Menu();
     menu.init();
 
-    new Application(menu);
-
     // Flash messages
     const flashMessage = new FlashMessage();
 
     // Tooltips
     const toolTips = new ToolTips();
+
+    new Application(menu, toolTips);
 
     // Admin page
     const admin = document.querySelector(".admin");

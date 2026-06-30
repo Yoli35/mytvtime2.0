@@ -1,9 +1,10 @@
 let self;
 
 export class Application {
-    constructor(menu) {
+    constructor(menu, toolTips) {
         self = this;
         this.menu = menu;
+        this.toolTips = toolTips;
 
         this.initialize();
     }
@@ -97,6 +98,7 @@ export class Application {
                     episodesTodayDiv.classList.toggle("show");
                 });
                 body.appendChild(episodesTodayDiv);
+                self.toolTips.initElement(togglerDiv);
             })
             .catch(error => {
                 console.error("Error fetching episodes of the day:", error);
