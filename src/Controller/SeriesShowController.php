@@ -175,7 +175,22 @@ final class SeriesShowController extends AbstractController
 
         $tv = $this->seriesService->getTv($series, $country, $locale);
 
-        if (!$tv) {
+        if (key_exists('error', $tv)) {
+            // [▼
+            //  "error" => "Response error: HTTP/2 502  returned for "https://api.themoviedb.org/3/tv/278168?language=fr&append_to_response=changes,credits,external_ids,images,keywords,lis ▶"
+            //  "message" => "HTTP/2 502  returned for "https://api.themoviedb.org/3/tv/278168?language=fr&append_to_response=changes,credits,external_ids,images,keywords,lists,similar,trans ▶"
+            //  "code" => 502
+            //  "response" => "{"status_code":43,"status_message":"Couldn't connect to the backend server.","success":false}\n"
+            //  "request" => "https://api.themoviedb.org/3/tv/278168?language=fr&append_to_response=changes,credits,external_ids,images,keywords,lists,similar,translations,videos,watch/provi ▶"
+            //]
+            if ($tv['code'] >= 500) {
+                $this->addFlash('warning', 'Error on TMDB: ' . $tv['message']);
+                return $this->redirectToRoute('app_error_tmdb', [
+                    'series' => ['id'=>$series->getId(), 'name'=>$series->getName()],
+                    'tv' => $tv,
+                ]);
+            }
+
             $series->setUpdates(['Series not found']);
             $noTv['additional_overviews'] = $series->getSeriesAdditionalLocaleOverviews($locale);
             $noTv['credits'] = $this->castAndCrew($tv, $series);

@@ -76,7 +76,7 @@ readonly class SeriesService
     {
     }
 
-    public function getTv(Series $series, string $country, string $locale): ?array
+    public function getTv(Series $series, string $country, string $locale): null|array
     {
         $seriesTmdbId = $series->getTmdbId();
         $tv = json_decode($this->tmdbService->getTv($seriesTmdbId, $locale, [
@@ -94,7 +94,7 @@ readonly class SeriesService
 
         if (key_exists('error', $tv)) {
             $this->logger->error("TMDB TV show not found", ['series_id' => $series->getId(), 'tmdb_id' => $seriesTmdbId]);
-            return null;
+            return $tv;
         }
 
         if (!$tv) {
