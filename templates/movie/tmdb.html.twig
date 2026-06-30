@@ -81,6 +81,14 @@
                                         {% endfor %}
                                     </div>
                                 </div>
+                                {% if movie.keywords.keywords|length %}
+                                    <div class="movie-keywords">
+                                        <div class="content keyword-block">
+                                            <div class="label">{{ 'Keywords'|trans }}</div>
+                                            {{ include('_blocks/_keywords.html.twig', {id: movie.id, keywords: movie.keywords.keywords, missing: []}) }}
+                                        </div>
+                                    </div>
+                                {% endif %}
                                 <div class="runtime">
                                     <div class="label">{{ 'Runtime'|trans }}</div>
                                     <div class="content">{{ movie.runtime|time }}</div>
