@@ -1,0 +1,22 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}My Tv Time → Oups!{% endblock %}
+
+{% block body %}
+    <div class="container-fluid error">
+
+        <div class="error-page">
+            <h1>{{ 'Oops!'|trans }}</h1>
+            <p>{{ 'An error occurred while processing your request.'|trans }}</p>
+            <p>{{ 'Please try again later or contact support if the issue persists.'|trans }}</p>
+            <div class="exception">
+                <div class="exception__message">Message: {{ tv.message }}</div>
+                <div class="exception__code">Code: {{ tv.code }}</div>
+                //  "response" => "{"status_code":43,"status_message":"Couldn't connect to the backend server.","success":false}\n"
+                <div class="exception__code">Response status code: {{ tv.response.status_code }}</div>
+                <div class="exception__message">Response status message: {{ tv.response.status_message }}</div>
+            </div>
+        </div>
+    </div>
+    {% include '_blocks/_footer.html.twig' %}
+{% endblock %}
