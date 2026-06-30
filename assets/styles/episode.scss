@@ -444,8 +444,12 @@
                 border-radius: 1rem;
 
                 img {
-                    height: clamp(2rem, 10vw, 10rem);
+                    height: clamp(2rem, 6vw, 10rem);
                     width: auto;
+                }
+
+                &:hover {
+                    background-color: hsl(from var(--ardoise-20) h s l / .25);
                 }
             }
         }

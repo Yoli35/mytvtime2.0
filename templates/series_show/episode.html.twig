@@ -18,7 +18,6 @@
         {% set still = episode.still_path %}
     {% elseif episode.stills|length %}{# is defined and ue.still #}
         {% set still = episode.stills|last %}
-        {% set still = still.path %}
     {% elseif episode.still_fallback is defined %}
         {% set still = episode.still_fallback %}
     {% else %}
@@ -69,7 +68,7 @@
                     {{ include('_blocks/series/_episode_stats.html.twig', {episode: episode}) }}
                     <div class="overview-block">
                         {% set overview = episode.user_episode.localized_overview ?: episode.overview %}
-                        <div class="overview">{{ overview }}</div>
+                        <div class="overview">{{ overview|nl2br }}</div>
                         <button class="overview-edit" popovertarget="episode-overview-edit" popovertargetaction="show" data-title="{{ 'Edit episode overview'|trans }}">
                             {{ ux_icon('mdi:pencil', {height: '24px', width: '24px'}) }}
                         </button>
