@@ -494,6 +494,8 @@ class UserEpisodeRepository extends ServiceEntityRepository
         $sql = <<<SQL
             SELECT DISTINCT s.`id` as id,
                 ue.`episode_number` as ueep,
+                ue.`watch_at` as wat,
+                ue.`episode_id` as episode_id,
                 IF(sln.`id`, sln.`name`, s.`name`) as name,
                 CONCAT('S', LPAD(ue.`season_number`, 2, '0'), 'E', LPAD(ue.`episode_number`, 2, '0')) as `number`,
                 CONCAT('/tv/episode/', s.id, '-', IF(sln.`id`, sln.`slug`, s.`slug`), '/', ue.`season_number`, '/', ue.`episode_number`) as `link`,

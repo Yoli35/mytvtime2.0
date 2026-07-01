@@ -3,7 +3,7 @@
         <div class="wrapper">
             {% for episode in episodes %}
                 <a href="{{ episode.link }}">
-                    <div class="episode-today">
+                    <div class="episode-today{% if episode.wat %} watched{% endif %}" data-id="{{ episode.episode_id }}">
                         <div class="poster">
                             <img src="{{ episode.poster_path }}" alt="{{ episode.name }}">
                         </div>

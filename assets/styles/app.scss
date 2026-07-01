@@ -3255,7 +3255,9 @@ section:has(.pages) {
         align-items: center;
         backdrop-filter: blur(8px);
         background-color: hsl(from var(--ardoise-10) h s l / .25);
-        border-radius: .5rem;
+        border-radius: 0 1rem 1rem 0;
+        border: 4px solid hsl(from var(--ardoise-10) h s l/ .25);
+        border-left: none;
         color: var(--ardoise-10);
         display: flex;
         gap: 1rem;
@@ -3271,6 +3273,12 @@ section:has(.pages) {
 
             &:hover {
                 border-color: var(--orange);
+            }
+
+            &.watched {
+                .infos {
+                    background-color: var(--green-50);
+                }
             }
 
             .poster {
