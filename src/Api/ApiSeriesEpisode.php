@@ -27,6 +27,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\ControllerHelper;
 use Symfony\Component\DependencyInjection\Attribute\AutowireMethodOf;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Symfony\Component\HttpFoundation\InputBag;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -81,7 +82,7 @@ readonly class ApiSeriesEpisode
         $lastEpisode = $inputBag->get('lastEpisode') == "1";
         $seasonNumber = $inputBag->get('seasonNumber');
         $episodeNumber = $inputBag->get('episodeNumber');
-        $ueId = $inputBag->get('ueid');
+        $userEpisodeId = $inputBag->get('userEpisodeId');
         $episodePage = $inputBag->get('episodePage');
         $isNextEpisodeCard = $inputBag->get('isNextEpisodeCard');
         $new = false;
@@ -93,7 +94,7 @@ readonly class ApiSeriesEpisode
         $seriesLocalizedName = $series->getLocalizedName($locale);
         $userSeries = $this->userSeriesRepository->findOneBy(['user' => $user, 'series' => $series]);
         $userSeriesEpisodes = $this->userEpisodeRepository->findBy(['userSeries' => $userSeries], ['seasonNumber' => 'ASC', 'episodeNumber' => 'ASC']);
-        $userEpisode = $this->userEpisodeRepository->findOneBy(['id' => $ueId]);
+        $userEpisode = $this->userEpisodeRepository->findOneBy(['id' => $userEpisodeId]);
         $userEpisodes = $this->userEpisodeRepository->findBy(['userSeries' => $userSeries, 'episodeId' => $id], ['id' => 'ASC']);
 
         $now = $this->now($user);
@@ -214,74 +215,21 @@ readonly class ApiSeriesEpisode
             ]);
         }
 
-        $sbd = $this->seriesBroadcastDateRepository->findOneBy(['episodeId' => $id]);
-        $airDate = $sbd ? $sbd->getDate() : $userEpisode->getAirDate();
-        $ue = $this->userEpisodeRepository->getUserEpisodeDB($userEpisode->getId(), $user->getPreferredLanguage() ?? $request->getLocale());
-        if ($ue['custom_date']) {
-            $cd = $this->dateService->newDateImmutable($ue['custom_date'], null/*'Europe/Paris'*/);
-            $ue['custom_date'] = $cd->format('Y-m-d H:i O'); // "2026-04-26 17:30:00" → 2026-04-26 17:30 +02:00
-        }
-        if ($ue['air_at']) {
-            // 10:00:00 → 10:00
-            $ue['air_at'] = $this->dateService->newDateImmutable($ue['air_at'], null/*'Europe/Paris'*/);
-            $ue['air_at'] = $ue['air_at']->format('H:i');
-        }
-        $ue['watch_at_db'] = $ue['watch_at'];
-        if ($ue['watch_at']) {
-            $ue['watch_at'] = $this->dateService->newDateImmutable($ue['watch_at'], null/*'UTC'*/);
-        }
-        $arr = $this->userEpisodeRepository->getUserEpisodeViews($user->getId(), $id);
-        $ues = array_map(function ($ue) {
-            $ue['watch_at_db'] = $ue['watch_at'];
-            $ue['watch_at'] = $this->dateService->newDateImmutable($ue['watch_at'], 'UTC');
-            return $ue;
-        }, $arr);
-
-        $airDateBlock = ($this->renderView)('_blocks/series/_episode_air_date.html.twig', [
-            'episode' => ['id' => $id, 'air_date' => $airDate->format('Y-m-d')],
-            'ue' => $ue, //['watch_at' => $userEpisode->getWatchAt()->format('Y-m-d')],
-            'ues' => $ues,
-        ]);
+        $airDateArr = $this->airDateBlock($userEpisode, $locale);
 
         if ($episodePage && !$new) {
-            $d = $ue['custom_date'] ?? $airDate->format('Y-m-d') . $ue['air_at'] ?? (' ' . $ue['watch_at']) ?? null;
-            $referer = $request->headers->get('referer');
-            $wpId = $userEpisode->getProviderId();
-            if ($wpId) {
-                $wp = $this->providerService->getOne($wpId);
-                $logoUrl = $this->imageConfiguration->getUrl('logo_sizes', 3);
-                $path = $wp->getLogoPath();
-            }
-            $e = [
-                'airing' => true,
-                'air_date' => ucfirst($this->dateService->formatDateRelativeLong($d, 'UTC', $locale)),
-                'episode_number' => $episodeNumber,
-                'id' => $id,
-                'link' => $referer,
-                'name' => $inputBag->get('episodeName'),
-                'overview' => $inputBag->get('episodeOverview'),
-                'provider_name' => $wpId ? $wp->getProviderName() : null,
-                'provider_path' => $wpId ? (str_starts_with($path, '+') ? '/images/providers' . substr($path, 1) : $logoUrl . $path) : null,
-                'vote_color_background' => $wpId ? '#' . $wp->getBackgroundColor() : '#eeeeee',
-                'vote_color' => $wpId ? '#' . $wp->getColor() : '#111111',
-                'runtime' => $inputBag->get('episodeRuntime'),
-                'still' => $inputBag->get('episodeStill'),
-                'userEpisodeId' => $ueId,
-                'vote' => $userEpisode->getVote(),
-                'watchedAt' => ucfirst($this->dateService->formatDateRelativeLong($userEpisode->getWatchAt()->format("Y-m-d H:i"), null/*$inputBag->get('timezone')*/, $locale)),
-            ];
-            $episodeCardBlock = ($this->renderView)('_blocks/series/_season_episode_card.html.twig', [
-                'episode' => $e,
-            ]);
+            $episodeCardBlock = $this->episodeCardBlock($userEpisode, $inputBag, $airDateArr['date'], $request->headers->get('referer'), $locale);
+        } else {
+            $episodeCardBlock = '';
         }
 
         return ($this->json)([
             'ok' => true,
             'redirect' => false,
-            'airDateBlock' => $airDateBlock,
-            'episodeCardBlock' => $episodeCardBlock ?? '',
+            'airDateBlock' => $airDateArr['block'],
+            'episodeCardBlock' => $episodeCardBlock,
             'new' => $new,
-            'views' => $this->translator->trans('Watched %time% times', ['%time%' => count($ues)]),
+            'views' => $this->translator->trans('Watched %time% times', ['%time%' => $airDateArr['time']]),
             'series_progress' => $userSeries->getProgress(),
             'season_progress' => $this->userEpisodeRepository->seasonProgress($userSeries, $seasonNumber),
             'messages' => $messages,
@@ -346,12 +294,14 @@ readonly class ApiSeriesEpisode
     #[Route('/remove', name: 'remove', methods: ['POST'])]
     public function remove(#[CurrentUser] User $user, Request $request): Response
     {
-        $data = json_decode($request->getContent(), true);
-        $showId = $data['showId'];
-        $userEpisodeId = $data['userEpisodeId'];
-        $seasonNumber = $data['seasonNumber'];
-        $episodeNumber = $data['episodeNumber'];
         $locale = $request->getLocale();
+        $inputBag = $request->getPayload();
+
+        $showId = $inputBag->get('showId');
+        $userEpisodeId = $inputBag->get('userEpisodeId');
+        $seasonNumber = $inputBag->get('seasonNumber');
+        $episodeNumber = $inputBag->get('episodeNumber');
+        $episodePage = $inputBag->get('episodePage');
 
         $series = $this->seriesRepository->findOneBy(['tmdbId' => $showId]);
         $userSeries = $this->userSeriesRepository->findOneBy(['user' => $user, 'series' => $series]);
@@ -397,10 +347,11 @@ readonly class ApiSeriesEpisode
                         $userSeries->setProgress(($viewedEpisodes - 1) / $numberOfEpisode * 100);
                         $userSeries->setBinge(false);
                         $this->userSeriesRepository->save($userSeries, true);
-                        return ($this->json)([
+                        /*return ($this->json)([
                             'ok' => true,
                             'progress' => $this->userEpisodeRepository->seasonProgress($userSeries, $seasonNumber),
-                        ]);
+                        ]);*/
+                        break 2;
                     }
                 }
             }
@@ -414,9 +365,20 @@ readonly class ApiSeriesEpisode
             $userSeries->setProgress(0);
         }
         $this->userSeriesRepository->save($userSeries, true);
+
+        $airDateArr = $this->airDateBlock($userEpisode, $locale);
+dump($episodePage);
+        if ($episodePage) {
+            $episodeCardBlock = $this->episodeCardBlock($userEpisode, $inputBag, $airDateArr['date'], $request->headers->get('referer'), $locale);
+        } else {
+            $episodeCardBlock = '';
+        }
         return ($this->json)([
             'ok' => true,
             'progress' => $this->userEpisodeRepository->seasonProgress($userSeries, $seasonNumber),
+            'episodeCardBlock' => $episodeCardBlock,
+            'airDateBlock' => $airDateArr['block'],
+            'views' => $this->translator->trans('Watched %time% times', ['%time%' => $airDateArr['time']]),
         ]);
     }
 
@@ -648,6 +610,92 @@ readonly class ApiSeriesEpisode
             'ok' => $copy,
             'image' => $imagePath,
         ]);
+    }
+
+    private function episodeCardBlock(UserEpisode $userEpisode, InputBag $inputBag, string $airDate, string $referer, string $locale): string
+    {
+        $wpId = $userEpisode->getProviderId();
+        if ($wpId) {
+            $wp = $this->providerService->getOne($wpId);
+            $logoUrl = $this->imageConfiguration->getUrl('logo_sizes', 3);
+            $path = $wp->getLogoPath();
+        }
+        $watchedAt = $userEpisode->getWatchAt();
+        $e = [
+            'air_date' => ucfirst($this->dateService->formatDateRelativeLong($airDate, 'UTC', $locale)),
+            'airing' => true,
+            'episode_number' => $userEpisode->getEpisodeNumber(),
+            'id' => $userEpisode->getEpisodeId(),
+            'last' => $inputBag->get('lastEpisode'),
+            'link' => $referer,
+            'name' => $inputBag->get('episodeName'),
+            'overview' => $inputBag->get('episodeOverview'),
+            'provider_name' => $wpId ? $wp->getProviderName() : null,
+            'provider_path' => $wpId ? (str_starts_with($path, '+') ? '/images/providers' . substr($path, 1) : $logoUrl . $path) : null,
+            'runtime' => $inputBag->get('episodeRuntime'),
+            'season_number' => $userEpisode->getSeasonNumber(),
+            'series_id' => $inputBag->get('seriesId'),
+            'show_id' => $inputBag->get('showId'),
+            'still' => $inputBag->get('episodeStill'),
+            'userEpisodeId' => $userEpisode->getId(),
+            'vote' => $userEpisode->getVote(),
+            'vote_color' => $wpId ? '#' . $wp->getColor() : '#111111',
+            'vote_color_background' => $wpId ? '#' . $wp->getBackgroundColor() : '#eeeeee',
+            'watchedAt' => $watchedAt ? ucfirst($this->dateService->formatDateRelativeLong($userEpisode->getWatchAt()->format("Y-m-d H:i"), null, $locale)) : null,
+        ];
+        return ($this->renderView)('_blocks/series/_season_episode_card.html.twig', [
+            'episode' => $e,
+        ]);
+    }
+
+    private function airDateBlock(UserEpisode $userEpisode, string $locale): array
+    {
+        $user = $userEpisode->getUser();
+        $id = $userEpisode->getEpisodeId();
+
+        $sbd = $this->seriesBroadcastDateRepository->findOneBy(['episodeId' => $id]);
+        $airDate = $sbd ? $sbd->getDate() : $userEpisode->getAirDate();
+
+        $ue = $this->userEpisodeRepository->getUserEpisodeDB($userEpisode->getId(), $user->getPreferredLanguage() ?? $locale);
+
+        if ($ue['custom_date']) {
+            $cd = $this->dateService->newDateImmutable($ue['custom_date'], null/*'Europe/Paris'*/);
+            $ue['custom_date'] = $cd->format('Y-m-d H:i O'); // "2026-04-26 17:30:00" → 2026-04-26 17:30 +02:00
+        }
+        if ($ue['air_at']) {
+            // 10:00:00 → 10:00
+            $ue['air_at'] = $this->dateService->newDateImmutable($ue['air_at'], null/*'Europe/Paris'*/);
+            $ue['air_at'] = $ue['air_at']->format('H:i');
+        }
+        $ue['watch_at_db'] = $ue['watch_at'];
+        if ($ue['watch_at']) {
+            $ue['watch_at'] = $this->dateService->newDateImmutable($ue['watch_at'], null/*'UTC'*/);
+        }
+        $arr = $this->userEpisodeRepository->getUserEpisodeViews($user->getId(), $id);
+        $ues = array_map(function ($ue) {
+            $ue['watch_at_db'] = $ue['watch_at'];
+            if ($ue['watch_at']) {
+                $ue['watch_at'] = $this->dateService->newDateImmutable($ue['watch_at'], 'UTC');
+            }
+            return $ue;
+        }, $arr);
+
+        $airDateBlock = ($this->renderView)('_blocks/series/_episode_air_date.html.twig', [
+            'episode' => ['id' => $id, 'air_date' => $airDate->format('Y-m-d')],
+            'ue' => $ue, //['watch_at' => $userEpisode->getWatchAt()->format('Y-m-d')],
+            'ues' => $ues,
+        ]);
+        $d = $ue['custom_date'] ?? $airDate->format('Y-m-d') . $ue['air_at'] ?? (' ' . $ue['watch_at']) ?? null;
+        dump([
+            'block' => $airDateBlock,
+            'date' => $d,
+            'time' => count($ues),
+        ]);
+        return [
+            'block' => $airDateBlock,
+            'date' => $d,
+            'time' => count($ues),
+        ];
     }
 
     private function isBinge(UserSeries $userSeries, int $seasonNumber, int $numberOfEpisode): bool

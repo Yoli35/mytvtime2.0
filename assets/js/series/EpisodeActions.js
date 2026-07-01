@@ -107,6 +107,19 @@ export class EpisodeActions {
         });
     }
 
+    initEpisodeCard(card) {
+        const self = this;
+        const markThisEpisodeAsWatched = card.querySelectorAll('.mark-this-episode-as-watched');
+        markThisEpisodeAsWatched.forEach(mark => {
+            mark.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                self.addEpisode(e);
+                mark.remove();
+            });
+        });
+    }
+
     setProgress(progress) {
         console.log(progress);
         const progressDiv = document.querySelector('.header .progress');
@@ -163,24 +176,23 @@ export class EpisodeActions {
                 'X-Requested-With': 'XMLHttpRequest'
             },
             body: JSON.stringify({
-                seriesId: seriesId,
-                showId: sId,
-                lastEpisode: lastEpisode,
-                seasonNumber: seasonNumber,
-                episodeNumber: episodeNumber,
-                ueid: ueId,
-                episodePage: isEpisodePage,
-                isNextEpisodeCard: isNextEpisodeCard,
                 episodeName: isEpisodePage ? self.globs.episodeName : '',
+                episodeNumber: episodeNumber,
                 episodeOverview: isEpisodePage ? self.globs.episodeOverview : '',
+                episodePage: isEpisodePage,
                 episodeRuntime: isEpisodePage ? self.globs.episodeRuntime : '',
                 episodeStill: isEpisodePage ? self.globs.episodeStill : '',
+                isNextEpisodeCard: isNextEpisodeCard,
+                lastEpisode: lastEpisode,
+                seasonNumber: seasonNumber,
+                seriesId: seriesId,
+                showId: sId,
                 timezone: isEpisodePage ? self.globs.timezone : 'Europe/Paris',
+                userEpisodeId: ueId,
             })
         }).then((response) => response.json())
             .then(data => {
-                // TODO: Vérifier "data"
-                console.log(data);
+                /*console.log(data);*/
                 if (data['redirect']) {
                     window.location.href = data['url'];
                     return;
@@ -382,6 +394,14 @@ export class EpisodeActions {
                     self.fetchEpisodeCards.initVoteBlock(newEpisodeCardDiv.querySelectorAll('.episode-vote-block'), self);
                     episodeCard.replaceWith(newEpisodeCardDiv);
                 }
+
+                /******************************************************************************
+                 * Update episode of the day status                                           *
+                 ******************************************************************************/
+                const episodeTodayDiv = document.querySelector('.episode-today[data-id="' + id + '"]');
+                if (episodeTodayDiv) {
+                    episodeTodayDiv.classList.add('watched');
+                }
             });
     }
 
@@ -394,6 +414,8 @@ export class EpisodeActions {
         const seasonNumber = episode.getAttribute('data-s-number');
         const lastEpisode = episode.getAttribute('data-last-episode');
         const seriesId = episode.getAttribute('data-series-id');
+        const episodeCard = document.querySelector('.episode-card.this-is-my-page');
+        const isEpisodePage = !!episodeCard;
         let views = parseInt(episode.getAttribute('data-views'));
 
         fetch('/api/episode/remove', {
@@ -403,10 +425,18 @@ export class EpisodeActions {
                 'X-Requested-With': 'XMLHttpRequest'
             },
             body: JSON.stringify({
-                showId: sId,
-                userEpisodeId: ueId,
+                episodeName: isEpisodePage ? self.globs.episodeName : '',
+                episodeNumber: episodeNumber,
+                episodeOverview: isEpisodePage ? self.globs.episodeOverview : '',
+                episodePage: isEpisodePage,
+                episodeRuntime: isEpisodePage ? self.globs.episodeRuntime : '',
+                episodeStill: isEpisodePage ? self.globs.episodeStill : '',
+                lastEpisode: lastEpisode,
                 seasonNumber: seasonNumber,
-                episodeNumber: episodeNumber
+                seriesId: seriesId,
+                showId: sId,
+                timezone: isEpisodePage ? self.globs.timezone : 'Europe/Paris',
+                userEpisodeId: ueId,
             })
         }).then((response) => response.json())
             .then(data => {
@@ -416,7 +446,7 @@ export class EpisodeActions {
                 const episodeContainer = episode.closest('.episode') || episode.closest('.episode-show');
                 const numberDiv = episodeContainer.querySelector('.number');
                 if (numberDiv) {
-                    numberDiv.setAttribute('data-title', "x" + views);
+                    numberDiv.setAttribute('data-title', data['views']);
                     this.toolTips.init(numberDiv);
                 }
                 if (views > 0) {
@@ -480,9 +510,25 @@ export class EpisodeActions {
                 episode.remove();
 
                 /******************************************************************************
-                 * Fetch episode stills for each season.                                      *
+                 * Update episode card if needed                                              *
                  ******************************************************************************/
-                self.fetchEpisodeCards.init(parseInt(id), true);
+                if (episodeCard) {
+                    const block = document.createElement('div');
+                    block.innerHTML = data['episodeCardBlock'];
+                    const newEpisodeCardDiv = block.querySelector('.episode-card');
+                    newEpisodeCardDiv.classList.add('this-is-my-page');
+                    self.fetchEpisodeCards.initVoteBlock(newEpisodeCardDiv.querySelectorAll('.episode-vote-block'), self);
+                    episodeCard.replaceWith(newEpisodeCardDiv);
+                    self.initEpisodeCard(newEpisodeCardDiv);
+                }
+
+                /******************************************************************************
+                 * Update episode of the day status                                           *
+                 ******************************************************************************/
+                const episodeTodayDiv = document.querySelector('.episode-today[data-id="' + id + '"]');
+                if (episodeTodayDiv) {
+                    episodeTodayDiv.classList.remove('watched');
+                }
             });
     }
 
@@ -891,7 +937,6 @@ export class EpisodeActions {
     }
 
     saveVote(episodeId, voteValue, selectVoteDiv = null) {
-        console.log(voteValue);
         fetch('/api/episode/vote/' + episodeId, {
             method: 'POST',
             headers: {
