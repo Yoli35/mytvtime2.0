@@ -48,10 +48,10 @@ final class ErrorController extends AbstractController
     public function tmdb(Request $request): Response
     {
         $parameters = $request->getPayload();
-        dump($parameters);
+
         $series = $parameters['series'] ?? null;
         $tv = $parameters['tv'] ?? null;
-dump($series, $tv);
+
         return $this->render('error/tmdb.html.twig', [
             'series' => $series,
             'tv' => $tv,

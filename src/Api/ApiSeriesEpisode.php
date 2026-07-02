@@ -367,7 +367,6 @@ readonly class ApiSeriesEpisode
         $this->userSeriesRepository->save($userSeries, true);
 
         $airDateArr = $this->airDateBlock($userEpisode, $locale);
-dump($episodePage);
         if ($episodePage) {
             $episodeCardBlock = $this->episodeCardBlock($userEpisode, $inputBag, $airDateArr['date'], $request->headers->get('referer'), $locale);
         } else {
@@ -686,11 +685,6 @@ dump($episodePage);
             'ues' => $ues,
         ]);
         $d = $ue['custom_date'] ?? $airDate->format('Y-m-d') . $ue['air_at'] ?? (' ' . $ue['watch_at']) ?? null;
-        dump([
-            'block' => $airDateBlock,
-            'date' => $d,
-            'time' => count($ues),
-        ]);
         return [
             'block' => $airDateBlock,
             'date' => $d,

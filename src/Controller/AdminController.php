@@ -391,7 +391,6 @@ class AdminController extends AbstractController
             'data' => $data,
         ]);
         $url = $data['base'] . $data['api'] . array_last($data['recents'])['rid'] . $data['swagger']['data json']['value'];
-        dump($url);
 
         return $this->json([
             'data' => $data,

@@ -21,7 +21,6 @@ readonly class ApiAdminExternalApi
     public function dataGouv(Request $request): JsonResponse
     {
         $payload = $request->getPayload();
-        dump($payload);
         $url = $payload->get('url');
         try {
             $response = $this->client->request('GET', $url, [
@@ -29,8 +28,6 @@ readonly class ApiAdminExternalApi
                     'accept: application/json',
                 ]
             ]);
-            dump($response);
-            dump($response->toArray());
             return new JsonResponse($response->toArray());
         } catch (Throwable $e) {
             $code = $e->getCode();
