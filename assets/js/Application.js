@@ -94,7 +94,9 @@ export class Application {
                 tempDiv.innerHTML = data['view'];
                 const episodesTodayDiv = tempDiv.querySelector(".episodes-today");
                 const togglerDiv = episodesTodayDiv.querySelector(".toggler");
-                togglerDiv.addEventListener("click", () => {
+                togglerDiv.addEventListener("click", (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
                     episodesTodayDiv.classList.toggle("show");
                 });
                 body.appendChild(episodesTodayDiv);

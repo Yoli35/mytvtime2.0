@@ -224,6 +224,10 @@ export class Menu {
                     this.closeMenu(menu.closest(".navbar-item"), menu);
                 }
             });
+            const episodesTodayDiv = document.querySelector(".episodes-today.show");
+            if (episodesTodayDiv) {
+                episodesTodayDiv.classList.remove("show");
+            }
         });
 
         navbarItems.forEach((item) => {
@@ -770,7 +774,7 @@ export class Menu {
                     }
                     if (type === 'movie' && result['release_date']) {
                         const date = new Date(result['release_date']).toLocaleDateString(self.lang, {year: 'numeric', month: 'long', day: 'numeric'});
-                        titleDiv.innerHTML += ` (Release: ${date})`;
+                        titleDiv.innerHTML += ` (${date})`;
                     }
                     aDiv.appendChild(titleDiv);
                     li.appendChild(aDiv);

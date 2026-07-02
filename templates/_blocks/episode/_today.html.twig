@@ -6,8 +6,13 @@
                     <div class="episode-today{% if episode.wat %} watched{% endif %}" data-id="{{ episode.episode_id }}">
                         <div class="poster">
                             <img src="{{ episode.poster_path }}" alt="{{ episode.name }}">
+                            {% if episode.wplp %}
+                                <div class="provider">
+                                    <img src="{{ episode.wplp }}" alt="{{ episode.wppn }}" title="{{ episode.wppn }}">
+                                </div>
+                            {% endif %}
                         </div>
-                        <div class="infos">
+                        <div class="infos"{% if episode.wpbc %} style="background-color: {{ episode.wpbc }}; color: {{ episode.wpc }};"{% endif %}>
                             <div>{{ episode.name }}</div>
                             <div>{{ episode.number }}{% if episode.sbs_time %} - {{ episode.sbs_time }}{% endif %}</div>
                         </div>

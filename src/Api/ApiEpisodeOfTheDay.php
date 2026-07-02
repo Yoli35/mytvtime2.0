@@ -39,6 +39,8 @@ readonly class ApiEpisodeOfTheDay
             $episode['poster_path'] = $episode['poster_path'] ? $posterUrl . $episode['poster_path'] : null;
             $episode['sbs_time'] = $episode['sbs_time'] ? substr($episode['sbs_time'], 0, 5) : null;
             $episode['wplp'] = $this->providerService->getProviderLogoFullPath($episode['wplp'], $logoUrl);
+            $episode['wpbc'] = $episode['wpbc'] ? "#" . $episode['wpbc'] : null;
+            $episode['wpc'] = $episode['wpc'] ? "#" . $episode['wpc'] : null;
             return $episode;
         }, $this->userEpisodeRepository->episodesOfTheDayV2($user->getId(), $locale));
 

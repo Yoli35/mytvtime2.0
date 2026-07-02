@@ -500,9 +500,9 @@ class UserEpisodeRepository extends ServiceEntityRepository
                 CONCAT('S', LPAD(ue.`season_number`, 2, '0'), 'E', LPAD(ue.`episode_number`, 2, '0')) as `number`,
                 CONCAT('/tv/episode/', s.id, '-', IF(sln.`id`, sln.`slug`, s.`slug`), '/', ue.`season_number`, '/', ue.`episode_number`) as `link`,
                 s.`poster_path` as poster_path,
-                IF(sbd.`id`, DATE(sbd.`date`), ue.`air_date`) as episode_air_date,
-                ue.air_date as air_date, /* Pour vérifier */
-                DATE(sbd.`date`) as sbd_date, /* Pour vérifier */
+              --  IF(sbd.`id`, DATE(sbd.`date`), ue.`air_date`) as episode_air_date,
+              --  ue.air_date as air_date, /* Pour vérifier */
+              --  DATE(sbd.`date`) as sbd_date, /* Pour vérifier */
                 sbs.`air_at` as sbs_time,
                 wp.`background_color` as wpbc,
                 wp.`color` as wpc,
