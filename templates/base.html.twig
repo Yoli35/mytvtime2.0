@@ -34,6 +34,9 @@
     <div class="preview-toggler" data-title="{{ 'Toggle image preview'|trans }}">{{ ux_icon('mdi:eye') }}</div>
 </div>
 <div class="diaporama"></div>
+{% if app.user %}
+    <div class="episodes-today"></div>
+{% endif %}
 </body>
 </html>
 {% if app.user and route is not null %}

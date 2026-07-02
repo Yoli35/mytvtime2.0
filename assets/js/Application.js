@@ -85,26 +85,28 @@ export class Application {
         /******************************************************************************************
          * Get episodes of the day
          ******************************************************************************************/
-        fetch("/api/episode/today", {})
-            .then(response => response.json())
-            .then(data => {
-                /*console.log('Episodes of the day:', data);*/
-                const body = document.querySelector("body");
-                const tempDiv = document.createElement('div');
-                tempDiv.innerHTML = data['view'];
-                const episodesTodayDiv = tempDiv.querySelector(".episodes-today");
-                const togglerDiv = episodesTodayDiv.querySelector(".toggler");
-                togglerDiv.addEventListener("click", (e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    episodesTodayDiv.classList.toggle("show");
+        const episodesTodayDiv = document.querySelector(".episodes-today");
+        if (episodesTodayDiv) {
+            fetch("/api/episode/today", {})
+                .then(response => response.json())
+                .then(data => {
+                    /*console.log('Episodes of the day:', data);*/
+                    const body = document.querySelector("body");
+                    const tempDiv = document.createElement('div');
+                    tempDiv.innerHTML = data['view'];
+                    const newEpisodesTodayDiv = tempDiv.querySelector(".episodes-today");
+                    const togglerDiv = newEpisodesTodayDiv.querySelector(".toggler");
+                    togglerDiv.addEventListener("click", (e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        newEpisodesTodayDiv.classList.toggle("show");
+                    });
+                    body.replaceChild(newEpisodesTodayDiv, episodesTodayDiv);
+                    self.toolTips.initElement(togglerDiv);
+                })
+                .catch(error => {
+                    console.error("Error fetching episodes of the day:", error);
                 });
-                body.appendChild(episodesTodayDiv);
-                self.toolTips.initElement(togglerDiv);
-            })
-            .catch(error => {
-                console.error("Error fetching episodes of the day:", error);
-            });
-
+        }
     }
 }
