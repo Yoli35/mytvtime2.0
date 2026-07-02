@@ -238,7 +238,8 @@
                     {% if app.user.avatar %}
                         <img src="/images/users/avatars/{{ app.user.avatar }}" alt="{{ app.user.username }}">
                     {% else %}
-                        <img src="/images/users/avatars/default.png" alt="{{ app.user ? app.user.username : ('Guest'|trans) }}">
+                        <img src="https://i.pravatar.cc/450?img={{ app.user.id }}" alt="{{ app.user.username }}'s avatar">
+                        {#<img src="/images/users/avatars/default.png" alt="{{ app.user ? app.user.username : ('Guest'|trans) }}">#}
                     {% endif %}
                 {% else %}
                     <div class="svg">

@@ -22,9 +22,10 @@
             {% if u.avatar %}
                 <img src="/images/users/avatars/{{ u.avatar }}" class="user__avatar" alt="{{ u.username }}">
             {% else %}
-                <div class="user__avatar">
-                    {{ ux_icon('mdi:user-outline') }}
-                </div>
+{#                <div class="user__avatar">#}
+                    <img src="https://i.pravatar.cc/450?img={{ u.id }}" class="user__avatar" alt="{{ u.username }}'s avatar">
+                    {#{{ ux_icon('mdi:user-outline') }}#}
+{#                </div>#}
             {% endif %}
             <div class="user__id">{{ u.id }}</div>
             <div class="user__name">{{ u.username }}</div>
