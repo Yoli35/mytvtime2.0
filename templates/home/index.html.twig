@@ -85,6 +85,17 @@
                 </div>
             </div>
 
+            <div class="series-group">
+                <h2>{{ 'Latest LGBT & bl Series'|trans }}</h2>
+                <div class="wrapper">
+                    <div class="content">
+                        {% for s in keywordSeries %}
+                            {{ include('_blocks/series/_card.html.twig', { series: s, dataTitle: s.date }) }}
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+
             {% if 0 %}
                 {#            {% if movieVideos.firstVideo|length %} #}
                 {% set video = movieVideos.firstVideo %}

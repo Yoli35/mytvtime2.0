@@ -165,6 +165,7 @@ class HomeController extends AbstractController
         $filteredSeries = $this->getProviderSeries($provider, $slugger, $country, $timezone, $language);
         $seriesSelection = $this->getSeriesSelection($slugger, $country, $timezone, $language, true);
         $movieSelection = $this->getMovieSelection($slugger, $country, $timezone, $language, true);
+        $keywordSeries = $this->getKeywordSeries([289844,158718,163037,266959,195624,165614,173669,280179,366199,363827,372005], 1);
 
         $movieId = $movieSelection[rand(0, count($movieSelection) - 1)]['id'];
         $movie = json_decode($this->tmdbService->getMovie($movieId, $language, ['watch/providers', 'videos']), true);
@@ -187,6 +188,7 @@ class HomeController extends AbstractController
         return $this->render('home/index.html.twig', [
             'highlightedSeries' => $seriesSelection,
             'highlightedMovies' => $movieSelection,
+            'keywordSeries' => $keywordSeries,
             'statusArray' => $statusArray,
             'userSeries' => $userSeries,
             'episodesOfTheDay' => $episodesOfTheDay,
@@ -482,5 +484,11 @@ class HomeController extends AbstractController
         return '/images/providers' . substr($path, 1);
     }
 
-//    public function getAdditionalInfos
+    private function getKeywordSeries(array $keywordIds, int $page, string $separator = '|'): array
+    {
+        $k = implode($separator, $keywordIds);
+        $filterString = "include_adult=false&include_null_first_air_dates=true&language=en-US&page=$page&sort_by=first_air_date.desc&with_keywords=$k";
+
+        return $this->getSelection('tv', $filterString, new AsciiSlugger(), 'FR', 'Europe/Paris', 'en-US');
+    }
 }
