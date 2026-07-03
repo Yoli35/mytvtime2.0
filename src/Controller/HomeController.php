@@ -165,7 +165,13 @@ class HomeController extends AbstractController
         $filteredSeries = $this->getProviderSeries($provider, $slugger, $country, $timezone, $language);
         $seriesSelection = $this->getSeriesSelection($slugger, $country, $timezone, $language, true);
         $movieSelection = $this->getMovieSelection($slugger, $country, $timezone, $language, true);
-        $keywordSeries = $this->getKeywordSeries([289844,158718,163037,266959,195624,165614,173669,280179,366199,363827,372005], 1);
+        $keywordSeries = $this->getKeywordSeries([
+            // bl
+            289844,
+            // lgbt-ish
+            158718,163037,266959,195624,165614,173669,280179,366199,363827,372005,
+            // gay-ish
+            10199,258533,240305,247821,265777,4569,322850,359231,190751,347864,249749,352268,41515,325223,173672,363345,15130,346769,336035], [1,2,3,4]);
 
         $movieId = $movieSelection[rand(0, count($movieSelection) - 1)]['id'];
         $movie = json_decode($this->tmdbService->getMovie($movieId, $language, ['watch/providers', 'videos']), true);
@@ -484,11 +490,15 @@ class HomeController extends AbstractController
         return '/images/providers' . substr($path, 1);
     }
 
-    private function getKeywordSeries(array $keywordIds, int $page, string $separator = '|'): array
+    private function getKeywordSeries(array $keywordIds, array $pages, string $separator = '|'): array
     {
         $k = implode($separator, $keywordIds);
-        $filterString = "include_adult=false&include_null_first_air_dates=true&language=en-US&page=$page&sort_by=first_air_date.desc&with_keywords=$k";
-
-        return $this->getSelection('tv', $filterString, new AsciiSlugger(), 'FR', 'Europe/Paris', 'en-US');
+        $results = [];
+        foreach ($pages as $page) {
+            $filterString = "include_adult=false&include_null_first_air_dates=true&language=en-US&page=$page&sort_by=first_air_date.desc&with_keywords=$k";
+            $results = array_merge($results, $this->getSelection('tv', $filterString, new AsciiSlugger(), 'FR', 'Europe/Paris', 'en-US'));
+        }
+        dump($results);
+        return $results;
     }
 }
