@@ -29,23 +29,23 @@
     <div class="container-fluid {# backgroundImageOverlay #}">
         <div class="series-show user-series-show" data-theme="none" data-series-id="{{ series.id }}">
             <div class="header">
+                {% if tv.backdrop_path and series.posterPath %}
+                    <div class="backdrop">
+                        <picture>
+                            <source media="(max-aspect-ratio: 2 / 3)" srcset="/series/posters{{ series.posterPath }}">
+                            <img src="/series/backdrops{{ tv.backdrop_path }}" alt="{{ tv.name }} backdrop">
+                        </picture>
+                    </div>
+                {% elseif tv.backdrop_path %}
+                    <div class="backdrop">
+                        <img src="/series/backdrops{{ tv.backdrop_path }}" alt="{{ series.name }}">
+                    </div>
+                {% elseif series.posterPath %}
+                    <div class="backdrop">
+                        <img src="/series/posters{{ series.posterPath }}" alt="{{ series.name }}">
+                    </div>
+                {% endif %}
                 <div class="infos">
-                    {% if tv.backdrop_path and series.posterPath %}
-                        <div class="backdrop">
-                            <picture>
-                                <source media="(max-aspect-ratio: 2 / 3)" srcset="/series/posters{{ series.posterPath }}">
-                                <img src="/series/backdrops{{ tv.backdrop_path }}" alt="{{ tv.name }} backdrop">
-                            </picture>
-                        </div>
-                    {% elseif tv.backdrop_path %}
-                        <div class="backdrop">
-                            <img src="/series/backdrops{{ tv.backdrop_path }}" alt="{{ series.name }}">
-                        </div>
-                    {% elseif series.posterPath %}
-                        <div class="backdrop">
-                            <img src="/series/posters{{ series.posterPath }}" alt="{{ series.name }}">
-                        </div>
-                    {% endif %}
                     <div class="poster-container">
                         <div class="poster">
                             {% if series.posterPath %}

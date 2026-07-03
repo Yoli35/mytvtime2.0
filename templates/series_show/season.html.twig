@@ -26,6 +26,22 @@
     <div class="container-fluid backgroundImageOverlay">
         <div id="series-season" class="series-show" data-theme="none" data-series-id="{{ series.id }}">
             <div class="header">
+                {% if season.backdrop_path and season.poster_path %}
+                    <div class="backdrop">
+                        <picture>
+                            <source media="(max-aspect-ratio: 2 / 3)" srcset="/series/posters{{ series.posterPath }}">
+                            <img src="/series/backdrops{{ tv.backdrop_path }}" alt="{{ tv.name }} backdrop">
+                        </picture>
+                    </div>
+                {% elseif season.backdrop_path %}
+                    <div class="backdrop">
+                        <img src="/series/backdrops{{ season.backdrop_path }}" alt="{{ season.name }}">
+                    </div>
+                {% elseif season.poster_path %}
+                    <div class="backdrop">
+                        <img src="/series/posters{{ season.poster_path }}" alt="{{ season.name }}">
+                    </div>
+                {% endif %}
                 {% if quickLinks.count > 1 %}
                     <div class="quick-episodes-top">
                         <div class="quick-episodes" data-season-number="{{ season.season_number }}" style="height: {{ 32 * quickLinks.lineCount + 4 * (quickLinks.lineCount - 1) + 20 }}px; width: {{ 32 * quickLinks.itemPerLine + 4 * (quickLinks.itemPerLine - 1) + 20 }}px;">
@@ -74,20 +90,20 @@
                         </div>
                         {% if season.overview %}
                             <div class="season-overview">
-                                <div class="header">
+                                <div class="season-overview-header">
                                     {% if season.is_series_overview %}
                                         {{ 'Overview for the series'|trans }}
                                     {% else %}
                                         {{ 'Overview for the season'|trans }}
                                     {% endif %}
                                 </div>
-                                <div class="body">{{ season.overview|nl2br }}</div>
+                                <div class="season-overview-body">{{ season.overview|nl2br }}</div>
                             </div>
                         {% endif %}
                         {% if season.series_localized_overviews|length %}
                             <div class="season-overview">
-                                <div class="header">{{ 'Localized overviews for the series'|trans }}</div>
-                                <div class="body">
+                                <div class="season-overview-header">{{ 'Localized overviews for the series'|trans }}</div>
+                                <div class="season-overview-body">
                                     {% for overview in season.series_localized_overviews %}
                                         <div class="content" data-overview="{{ overview.overview }}" data-id="{{ overview.id }}">
                                             {{ overview.overview|nl2br }}
@@ -107,8 +123,8 @@
                         {% endif %}
                         {% if season.series_additional_overviews|length %}
                             <div class="season-overview">
-                                <div class="header">{{ 'Additional overviews for the series'|trans }}</div>
-                                <div class="body">
+                                <div class="season-overview-header">{{ 'Additional overviews for the series'|trans }}</div>
+                                <div class="season-overview-body">
                                     {% for overview in season.series_additional_overviews %}
                                         <div class="content" data-overview="{{ overview.overview }}" data-id="{{ overview.id }}" data-source-id="{{ overview.source.id }}">
                                             {{ overview.overview|nl2br }}
@@ -126,22 +142,6 @@
                             </div>
                         {% endif %}
                     </div>
-                    {% if season.backdrop_path and season.poster_path %}
-                        <div class="backdrop">
-                            <picture>
-                                <source media="(max-aspect-ratio: 2 / 3)" srcset="/series/posters{{ series.posterPath }}">
-                                <img src="/series/backdrops{{ tv.backdrop_path }}" alt="{{ tv.name }} backdrop">
-                            </picture>
-                        </div>
-                    {% elseif season.backdrop_path %}
-                        <div class="backdrop">
-                            <img src="/series/backdrops{{ season.backdrop_path }}" alt="{{ season.name }}">
-                        </div>
-                    {% elseif season.poster_path %}
-                        <div class="backdrop">
-                            <img src="/series/posters{{ season.poster_path }}" alt="{{ season.name }}">
-                        </div>
-                    {% endif %}
                     {% set episodeCount = season.progress.episodeCount %}
                     {% set episodeWatchedCount = season.progress.episodeWatchedCount %}
                     {% if episodeCount > 1 %}

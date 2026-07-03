@@ -758,6 +758,8 @@ h2 {
     }
 
     .header {
+        align-items: flex-end;
+        display: flex;
         isolation: isolate;
         position: relative;
         width: 100%;
@@ -770,54 +772,55 @@ h2 {
             aspect-ratio: 16 / 9;
         }
 
+        .backdrop {
+            height: calc(100% + 10rem);
+            inset: -5rem;
+            mask-image: linear-gradient(to bottom, black 80%, transparent 100%);
+            mask-mode: alpha;
+            mask-size: cover;
+            position: absolute;
+            width: calc(100% + 10rem);
+            z-index: -1;
+
+            picture {
+                mask-image: inherit;
+                mask-mode: inherit;
+                mask-size: inherit;
+            }
+
+            img {
+                border-radius: .5rem;
+                height: 100%;
+                object-fit: cover;
+                width: 100%;
+            }
+        }
+
         .infos {
             align-items: flex-end;
             display: flex;
             flex-grow: 1;
-            height: 100%;
-            padding-block-start: 40%;
+            height: fit-content;
             position: relative;
             transition: padding-block-start 0.3s ease-in-out;
 
             &:hover {
-                padding-block-start: 0;
-
-                .series-overview, .overviews, .season-overview {
-                    opacity: 1 !important;
-                }
-            }
-
-            .backdrop {
-                height: calc(100% + 10rem);
-                inset: -5rem;
-                mask-image: linear-gradient(to bottom, black 80%, transparent 100%);
-                mask-mode: alpha;
-                mask-size: cover;
-                position: absolute;
-                width: calc(100% + 10rem);
-                z-index: -1;
-
-                picture {
-                    mask-image: inherit;
-                    mask-mode: inherit;
-                    mask-size: inherit;
-                }
-
-                img {
-                    border-radius: .5rem;
-                    height: 100%;
-                    object-fit: cover;
-                    width: 100%;
+                .infos-content {
+                    .series-overview, .overviews, .season-overview {
+                        height: unset !important;
+                        opacity: 1 !important;
+                    }
                 }
             }
 
             .poster-container {
+                display: none;
                 left: 2rem;
                 position: absolute;
                 top: 2rem;
             }
 
-            .poster {
+            /*.poster {
                 align-items: center;
                 aspect-ratio: 2 / 3;
                 background-color: var(--ardoise-80);
@@ -842,7 +845,7 @@ h2 {
                     }
 
                     div.text {
-                        font-size: 2vw; /* No poster */
+                        font-size: 2vw; !* No poster *!
                         display: block;
                     }
 
@@ -862,7 +865,7 @@ h2 {
                 }
 
                 div.text {
-                    font-size: 0; /* No poster */
+                    font-size: 0; !* No poster *!
                     display: none;
                     transition: font-size 0.3s ease-in-out;
                 }
@@ -920,7 +923,7 @@ h2 {
                     top: 2rem;
                     width: fit-content;
                 }
-            }
+            }*/
 
             .go-to-map {
                 --svgSize: 2rem;
@@ -966,8 +969,8 @@ h2 {
                 width: 100%;
 
                 &:hover {
-                    backdrop-filter: blur(5rem);
-                    background: linear-gradient(to bottom, hsla(from var(--ardoise-90) h s l / .25) 0%, hsla(from var(--ardoise-90) h s l / .75) 100%);
+                    background: linear-gradient(to bottom, hsla(from var(--ardoise-90) h s l / .25) 0%, hsla(from var(--ardoise-90) h s l / .5) 100%);
+                    box-shadow: inset 0 0 5rem 1rem hsl(0 0 0 /.5), 0 0 .5rem hsl(0 0 0 /.5);
                 }
 
                 .name {
@@ -1011,19 +1014,24 @@ h2 {
                     font-size: clamp(1rem, 1.5vw, 2rem);
                     font-weight: 300;
                     gap: .5rem;
+                    height: 0;
                     justify-content: flex-start;
                     line-height: clamp(1.25rem, 1.875vw, 2.5rem);
                     opacity: 0;
-                    transition: opacity 0.3s ease-in-out;
+                    transition-behavior: allow-discrete;
+                    transition: opacity 0.3s ease-in-out, height 0.3s ease-in-out;
                 }
 
                 .overviews {
                     display: flex;
                     flex-direction: column;
                     gap: .5rem;
+                    height: 0;
                     justify-content: center;
                     opacity: 0;
-                    transition: opacity 0.3s ease-in-out;
+                    overflow: hidden;
+                    transition-behavior: allow-discrete;
+                    transition: opacity 0.3s ease-in-out, height 0.3s ease-in-out;
                     width: 100%;
 
                     &.localized, &.additional {
@@ -1033,8 +1041,7 @@ h2 {
                     }
 
                     .localized-h4, .additional-h4 {
-                        /*color: var(--orange-70);*/
-                        font-size: clamp(1.25rem, 1.875vw, 2.5rem);
+                        font-size: clamp(1.25rem, 1.5vw, 2.5rem);
                         font-weight: 300;
                         padding-block: .25rem;
                         padding-inline: .5rem;
@@ -1047,9 +1054,9 @@ h2 {
                     .overview {
                         align-items: center;
                         display: flex;
-                        font-size: clamp(1rem, 1.5vw, 2rem);
+                        font-size: clamp(1rem, 1.25vw, 1.75rem);
                         gap: .5rem;
-                        line-height: clamp(1.25rem, 1.875vw, 2.5rem);
+                        line-height: 1.1em;
                         justify-content: flex-start;
                         width: 100%;
 
@@ -2720,6 +2727,254 @@ h2 {
     }
 }
 
+#series-season.series-show {
+    .user-actions:has(+ .quick-episodes) {
+        justify-content: center;
+
+        .watch-links {
+            margin-inline-end: unset;
+        }
+    }
+
+    .wrapper {
+        justify-content: flex-start;
+
+        .watch-links {
+            background-color: var(--orange-50);
+            border-radius: 5rem;
+            color: hsl(0, 0%, 100%);
+            gap: .125rem;
+            padding-block: .125rem;
+            padding-inline: .75rem .125rem;
+            transition: background-color 0.5s ease-in-out;
+
+            .label {
+                font-weight: 600;
+                padding-inline-end: .5rem;
+            }
+
+            &.copy {
+                background-color: var(--green);
+                cursor: pointer;
+                gap: .5rem;
+
+                .label {
+                    padding-inline-end: unset;
+                }
+            }
+
+            &.copied {
+                box-shadow: 0 0 1rem var(--orange);
+            }
+        }
+    }
+
+    .header {
+        gap: 0;
+
+        .quick-episodes-top {
+            position: absolute;
+            right: 1rem;
+            top: 4rem;
+        }
+
+        .poster {
+            bottom: 3rem;
+            height: calc(5rem * calc(117 / 78));
+            position: absolute;
+            right: 2rem;
+            transition: all 0.5s ease-in-out;
+            width: 5rem;
+            z-index: 2;
+
+            &:hover {
+                height: calc(40vw * calc(117 / 78));
+                width: 40vw;
+            }
+
+            a {
+                height: 100%;
+                width: 100%;
+            }
+        }
+
+        .backdrop {
+            height: calc(100% + 15rem);
+            inset: -5rem -5rem -10rem -5rem;
+            mask-image: linear-gradient(to bottom, #000 90%, #ffffff00 100%);
+            mask-size: cover;
+            width: calc(100% + 10rem);
+        }
+
+        .infos {
+            width: 100%;
+
+            .infos-content {
+                transition: all 0.5s ease-in-out;
+                width: 100%;
+
+                h1 {
+                    font-size: clamp(2rem, 5vw, 6rem);
+                    font-weight: 300;
+                    line-height: 1.1em;
+                }
+
+                .season-name {
+                    font-size: clamp(1.5rem, 5vw, 4rem);
+                    font-weight: 100;
+                    line-height: clamp(1.25rem, 6.25vw, 5rem);
+                }
+
+                .season-overview {
+                    font-size: 1.25rem;
+                    font-weight: 100;
+                    height: 0;
+                    line-height: 1.25em;
+                    opacity: 0;
+                    overflow: hidden;
+                    transition-behavior: allow-discrete;
+                    transition: opacity 0.5s ease-in-out, height 0.5s ease-in-out;
+
+                    .season-overview-header {
+                        background-color: transparent;
+                        padding: .25rem 1rem;
+                    }
+
+                    .season-overview-body {
+                        border-radius: .5rem;
+                        display: flex;
+                        flex-direction: column;
+                        gap: 1rem;
+                        margin: .25rem 3rem;
+                        text-wrap: pretty;
+
+                        .content {
+                            margin-block-end: unset;
+                            padding: .5rem;
+                            position: relative;
+
+                            &:hover {
+                                .tools {
+                                    opacity: 1;
+                                }
+                            }
+
+                            .tools {
+                                background-color: hsla(from var(--ardoise-90) h s l / .5);
+                                border-radius: 5rem;
+                                display: flex;
+                                flex-direction: column;
+                                gap: .125rem;
+                                margin-inline-start: auto;
+                                opacity: 0;
+                                padding: .5rem;
+                                position: absolute;
+                                right: -1rem;
+                                top: 1rem;
+                                transition: opacity 0.3s ease-in-out;
+
+                                .source, .locale {
+                                    align-items: center;
+                                    background-color: var(--orange-50);
+                                    border-radius: .25rem;
+                                    color: var(--orange-90);
+                                    display: flex;
+                                    font-size: 1rem;
+                                    font-weight: 300;
+                                    height: 2.75rem;
+                                    justify-content: center;
+                                    width: 2.75rem;
+
+                                    img {
+                                        border-radius: .25rem;
+                                        height: 2.75rem;
+                                        object-fit: cover;
+                                        width: 2.75rem;
+                                    }
+
+                                    &:first-child {
+                                        border-top-left-radius: 5rem;
+                                        border-top-right-radius: 5rem;
+
+                                        img {
+                                            border-top-left-radius: 5rem;
+                                            border-top-right-radius: 5rem;
+                                        }
+                                    }
+
+                                    &:last-child {
+                                        border-bottom-left-radius: 5rem;
+                                        border-bottom-right-radius: 5rem;
+
+                                        img {
+                                            border-bottom-left-radius: 5rem;
+                                            border-bottom-right-radius: 5rem;
+                                        }
+                                    }
+                                }
+                            }
+
+                            &:nth-child(odd) {
+                                border-left: 4px solid hsl(from var(--orange) h s l / .5);
+                            }
+
+                            &:nth-child(even) {
+                                border-left: 4px solid hsl(from var(--green) h s l / .5);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    .externals {
+        background-color: unset;
+
+        h2 {
+            padding: 0 1rem;
+        }
+    }
+
+    .user-actions {
+        .watch-links {
+            .label {
+                font-size: 1rem;
+            }
+
+            > :last-child {
+                padding-inline-end: 0;
+            }
+
+            .watch-link {
+                img {
+                    height: 2rem;
+                    width: 2rem;
+                }
+
+                &:last-child {
+                    border-bottom-right-radius: 5rem;
+                    border-top-right-radius: 5rem;
+
+                    img {
+                        border-bottom-right-radius: 5rem;
+                        border-top-right-radius: 5rem;
+                    }
+                }
+
+                .watch-link-tools {
+                    background-color: hsla(from var(--ardoise-90) h s l / .8);
+                    top: 2rem;
+
+                    .watch-link-name {
+                        padding-inline-end: 1rem;
+                    }
+                }
+            }
+        }
+    }
+}
+
 .series-show[data-theme="dark"], .episode-show[data-theme="dark"] {
     color: var(--ardoise-90) !important;
 }
@@ -2951,104 +3206,6 @@ h2 {
         color: var(--orange-90);
         flex-grow: 1;
         padding-inline: .5rem;
-    }
-}
-
-#series-season.series-show {
-    .user-actions:has(+ .quick-episodes) {
-        justify-content: center;
-
-        .watch-links {
-            margin-inline-end: unset;
-        }
-    }
-
-    .wrapper {
-        justify-content: flex-start;
-
-        .watch-links {
-            background-color: var(--orange-50);
-            border-radius: 5rem;
-            color: hsl(0, 0%, 100%);
-            gap: .125rem;
-            padding-block: .125rem;
-            padding-inline: .75rem .125rem;
-            transition: background-color 0.5s ease-in-out;
-
-            .label {
-                font-weight: 600;
-                padding-inline-end: .5rem;
-            }
-
-            &.copy {
-                background-color: var(--green);
-                cursor: pointer;
-                gap: .5rem;
-
-                .label {
-                    padding-inline-end: unset;
-                }
-            }
-
-            &.copied {
-                box-shadow: 0 0 1rem var(--orange);
-            }
-        }
-    }
-
-    .header {
-        gap: 0;
-
-        .poster {
-            bottom: 3rem;
-            height: calc(5rem * calc(117 / 78));
-            position: absolute;
-            right: 2rem;
-            transition: all 0.5s ease-in-out;
-            width: 5rem;
-            z-index: 2;
-
-            &:hover {
-                height: calc(40vw * calc(117 / 78));
-                width: 40vw;
-            }
-
-            a {
-                height: 100%;
-                width: 100%;
-            }
-        }
-
-        .infos {
-            width: 100%;
-
-            .infos-content {
-                /*padding-block-end: 3rem;*/
-                /*padding-inline: 1rem;*/
-                transition: all 0.5s ease-in-out;
-                width: 100%;
-
-                h1 {
-                    font-size: clamp(2rem, 5vw, 6rem);
-                    font-weight: 300;
-                    line-height: 1.1em;
-                }
-
-                .season-name {
-                    font-size: clamp(1.5rem, 5vw, 4rem);
-                    font-weight: 100;
-                    line-height: clamp(1.25rem, 6.25vw, 5rem);
-                }
-            }
-
-            .backdrop {
-                height: calc(100% + 15rem);
-                inset: -5rem -5rem -10rem -5rem;
-                mask-image: linear-gradient(to bottom, #000 90%, #ffffff00 100%);
-                mask-size: cover;
-                width: calc(100% + 10rem);
-            }
-        }
     }
 }
 
@@ -4226,163 +4383,6 @@ h2 {
     > div:last-child {
         border-bottom-right-radius: 5rem;
         border-top-right-radius: 5rem;
-    }
-}
-
-#series-season {
-    .header {
-        .quick-episodes-top {
-            position: absolute;
-            right: 1rem;
-            top: 4rem;
-        }
-
-        .infos {
-            .infos-content {
-                .season-overview {
-                    font-size: 1.25rem;
-                    font-weight: 100;
-                    line-height: 1.25em;
-                    opacity: 0;
-                    transition: opacity 0.5s ease-in-out;
-
-                    .header {
-                        background-color: transparent;
-                        padding: .25rem 1rem;
-                    }
-
-                    .body {
-                        border-radius: .5rem;
-                        display: flex;
-                        flex-direction: column;
-                        gap: 1rem;
-                        margin: .25rem 3rem;
-                        text-wrap: pretty;
-
-                        .content {
-                            margin-block-end: unset;
-                            padding: .5rem;
-                            position: relative;
-
-                            &:hover {
-                                .tools {
-                                    opacity: 1;
-                                }
-                            }
-
-                            .tools {
-                                background-color: hsla(from var(--ardoise-90) h s l / .5);
-                                border-radius: 5rem;
-                                display: flex;
-                                flex-direction: column;
-                                gap: .125rem;
-                                margin-inline-start: auto;
-                                opacity: 0;
-                                padding: .5rem;
-                                position: absolute;
-                                right: -1rem;
-                                top: 1rem;
-                                transition: opacity 0.3s ease-in-out;
-
-                                .source, .locale {
-                                    align-items: center;
-                                    background-color: var(--orange-50);
-                                    border-radius: .25rem;
-                                    color: var(--orange-90);
-                                    display: flex;
-                                    font-size: 1rem;
-                                    font-weight: 300;
-                                    height: 2.75rem;
-                                    justify-content: center;
-                                    width: 2.75rem;
-
-                                    img {
-                                        border-radius: .25rem;
-                                        height: 2.75rem;
-                                        object-fit: cover;
-                                        width: 2.75rem;
-                                    }
-
-                                    &:first-child {
-                                        border-top-left-radius: 5rem;
-                                        border-top-right-radius: 5rem;
-
-                                        img {
-                                            border-top-left-radius: 5rem;
-                                            border-top-right-radius: 5rem;
-                                        }
-                                    }
-
-                                    &:last-child {
-                                        border-bottom-left-radius: 5rem;
-                                        border-bottom-right-radius: 5rem;
-
-                                        img {
-                                            border-bottom-left-radius: 5rem;
-                                            border-bottom-right-radius: 5rem;
-                                        }
-                                    }
-                                }
-                            }
-
-                            &:nth-child(odd) {
-                                border-left: 4px solid hsl(from var(--orange) h s l / .5);
-                            }
-
-                            &:nth-child(even) {
-                                border-left: 4px solid hsl(from var(--green) h s l / .5);
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    .externals {
-        background-color: unset;
-
-        h2 {
-            padding: 0 1rem;
-        }
-    }
-
-    .user-actions {
-        .watch-links {
-            .label {
-                font-size: 1rem;
-            }
-
-            > :last-child {
-                padding-inline-end: 0;
-            }
-
-            .watch-link {
-                img {
-                    height: 2rem;
-                    width: 2rem;
-                }
-
-                &:last-child {
-                    border-bottom-right-radius: 5rem;
-                    border-top-right-radius: 5rem;
-
-                    img {
-                        border-bottom-right-radius: 5rem;
-                        border-top-right-radius: 5rem;
-                    }
-                }
-
-                .watch-link-tools {
-                    background-color: hsla(from var(--ardoise-90) h s l / .8);
-                    top: 2rem;
-
-                    .watch-link-name {
-                        padding-inline-end: 1rem;
-                    }
-                }
-            }
-        }
     }
 }
 
