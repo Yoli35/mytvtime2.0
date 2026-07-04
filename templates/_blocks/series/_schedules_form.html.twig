@@ -36,8 +36,15 @@
                     </div>
                     <div class="date-time group full">
                         <label for="timezone-{{ schedule.id }}">{{ 'Timezone'|trans }}
-                            <select name="timezone-{{ schedule.id }}" onchange="convertDateTime({{ schedule.id }})" id="timezone-{{ schedule.id }}">
+                            <select name="timezone-{{ schedule.id }}" onchange="convertDateTime({{ schedule.id }}, 'time-zone')" id="timezone-{{ schedule.id }}">
                                 {% for code, tz in series.timezoneMenu %}
+                                    <option value="{{ code }}"{% if code == schedule.timezone %} selected{% endif %}>{{ tz }}</option>
+                                {% endfor %}
+                            </select>
+                        </label>
+                        <label for="timezone-bookmark-{{ schedule.id }}">{{ 'Bookmarks'|trans }}
+                            <select name="timezone-bookmark-{{ schedule.id }}" onchange="convertDateTime({{ schedule.id }}, 'timezone-bookmark')" id="timezone-{{ schedule.id }}">
+                                {% for code, tz in series.timezoneBookmarkMenu %}
                                     <option value="{{ code }}"{% if code == schedule.timezone %} selected{% endif %}>{{ tz }}</option>
                                 {% endfor %}
                             </select>

@@ -25,6 +25,7 @@ use App\Repository\SeriesRepository;
 use App\Repository\SeriesVideoRepository;
 use App\Repository\SettingsRepository;
 use App\Repository\SourceRepository;
+use App\Repository\TimezoneBookmarkRepository;
 use App\Repository\UserEpisodeRepository;
 use App\Repository\UserSeriesRepository;
 use App\Repository\WatchProviderRepository;
@@ -74,6 +75,7 @@ final class SeriesShowController extends AbstractController
         private readonly SeriesService                      $seriesService,
         private readonly SettingsRepository                 $settingsRepository,
         private readonly SourceRepository                   $sourceRepository,
+        private readonly TimezoneBookmarkRepository         $timezoneBookmarkRepository,
         private readonly TMDBService                        $tmdbService,
         private readonly TranslatorInterface                $translator,
         private readonly UserEpisodeRepository              $userEpisodeRepository,
@@ -233,6 +235,7 @@ final class SeriesShowController extends AbstractController
         $seriesArr['userVotes'] = $this->seriesService->getUserVotes($tv['seasons'], $userEpisodes);
         $seriesArr['schedules'] = $schedules;
         $seriesArr['timezoneMenu'] = (new IntlExtension)->getTimezoneNames('fr_FR');
+        $seriesArr['timezoneBookmarkMenu'] = array_column($this->timezoneBookmarkRepository->listAll(), 'name', 'code');
         $seriesArr['emptySchedule'] = $this->seriesService->emptySchedule();
         $seriesArr['alternateSchedules'] = $alternateSchedules;
 //        $seriesArr['seriesInProgress'] = $this->userEpisodeRepository->isFullyReleased($userSeries);

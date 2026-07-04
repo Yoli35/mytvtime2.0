@@ -130,13 +130,13 @@
             });
     }
 
-    function convertDateTime(id) {
+    function convertDateTime(id, selectName) {
         const form = document.getElementById('schedule-form-' + id);
         const dateSelector = 'input[name="date-' + id + '"]';
         const date = form.querySelector(dateSelector).value;
         const timeSelector = 'input[name="time-' + id + '"]';
         const time = form.querySelector(timeSelector).value;
-        const timezoneSelector = 'select[name="timezone-' + id + '"]';
+        const timezoneSelector = 'select[name="'+selectName+'-' + id + '"]';
         const timezone = form.querySelector(timezoneSelector).value;
 
         const data = {
