@@ -235,7 +235,7 @@ final class SeriesShowController extends AbstractController
         $seriesArr['userVotes'] = $this->seriesService->getUserVotes($tv['seasons'], $userEpisodes);
         $seriesArr['schedules'] = $schedules;
         $seriesArr['timezoneMenu'] = (new IntlExtension)->getTimezoneNames('fr_FR');
-        $seriesArr['timezoneBookmarkMenu'] = array_column($this->timezoneBookmarkRepository->listAll(), 'name', 'code');
+        $seriesArr['timezoneBookmarkMenu'] = array_column($this->timezoneBookmarkRepository->listAll($request->getLocale()), 'name', 'code');
         $seriesArr['emptySchedule'] = $this->seriesService->emptySchedule();
         $seriesArr['alternateSchedules'] = $alternateSchedules;
 //        $seriesArr['seriesInProgress'] = $this->userEpisodeRepository->isFullyReleased($userSeries);

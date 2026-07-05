@@ -35,13 +35,26 @@ class TimezoneBookmarkRepository extends ServiceEntityRepository
         if ($flush) $this->em->flush();
     }
 
-    public function listAll(): array
+    public function listAll(string $locale = 'fr'): array
     {
-        $sql = <<<SQL
-            SELECT * FROM timezone_bookmark ORDER BY name
-        SQL;
+        switch ($locale) {
+            case 'fr':
+                $sql = <<<SQL
+                    SELECT code, name_fr AS name FROM timezone_bookmark ORDER BY name_fr
+                SQL;
+                break;
+            case 'ko':
+                $sql = <<<SQL
+                    SELECT code, name_ko AS name FROM timezone_bookmark ORDER BY name_ko
+                SQL;
+                break;
+            default:
+                $sql = <<<SQL
+                    SELECT code, name_en AS name FROM timezone_bookmark ORDER BY name_en
+                SQL;
+        }
 
-        return $this->getAll($sql);
+        return $this->getAll($sql, [], ['name' => 'string']);
     }
 
     public function getAll($sql, array $params = [], array $types = []): array

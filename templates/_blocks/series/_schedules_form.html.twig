@@ -44,6 +44,7 @@
                         </label>
                         <label for="timezone-bookmark-{{ schedule.id }}">{{ 'Bookmarks'|trans }}
                             <select name="timezone-bookmark-{{ schedule.id }}" onchange="convertDateTime({{ schedule.id }}, 'timezone-bookmark')" id="timezone-{{ schedule.id }}">
+                                <option value="">{{ 'Select timezone'|trans }}</option>
                                 {% for code, tz in series.timezoneBookmarkMenu %}
                                     <option value="{{ code }}"{% if code == schedule.timezone %} selected{% endif %}>{{ tz }}</option>
                                 {% endfor %}
