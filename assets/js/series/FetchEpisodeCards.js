@@ -41,9 +41,15 @@ export class FetchEpisodeCards {
                     if (targetEpisodeCard) {
                         setTimeout(function () {
                             targetEpisodeCard.classList.add('this-is-my-page');
-                            targetEpisodeCard.scrollIntoView({behavior: 'instant', block: 'nearest', inline: 'center'});
-                            document.querySelector('.episode-show').scrollIntoView({block: "nearest", inline: "center"});
-                            document.querySelector(".user-episode").scrollIntoView({block: "end"});
+                            const containerWidth = newEpisodeCardsDiv.clientWidth;
+                            const cardLeft = targetEpisodeCard.offsetLeft;
+                            const cardWidth = targetEpisodeCard.offsetWidth;
+                            const nextScrollLeft = Math.max(0, cardLeft - (containerWidth - cardWidth) / 2);
+
+                            newEpisodeCardsDiv.scrollTo({
+                                left: nextScrollLeft,
+                                behavior: 'auto'
+                            });
                         }, 0);
                     }
                 }
