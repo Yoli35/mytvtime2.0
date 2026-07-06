@@ -451,7 +451,7 @@ export class SeasonComments {
                 imageDiv.appendChild(img);
                 imagesDiv.appendChild(imageDiv);
             });
-            coreDiv.appendChild(imagesDiv);
+            messageDiv.appendChild(imagesDiv);
         }
 
         return coreDiv;
