@@ -3346,6 +3346,9 @@ section:has(.pages) {
                 height: 5rem;
                 justify-content: center;
                 overflow-y: auto;
+                text-align: center;
+                text-wrap: balance;
+                width: 14rem;
             }
         }
     }
