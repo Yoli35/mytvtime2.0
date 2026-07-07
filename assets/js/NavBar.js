@@ -37,15 +37,15 @@ export class NavBar {
         const multiSearchDiv = navbar.querySelector('.multi-search.dev');
         if (multiSearchDiv) {
             const labels = {
-                'en': 'Summer',
-                'fr': 'Été',
-                'ko': '여름'
+                'en': 'Fall',
+                'fr': 'Automne',
+                'ko': '가을'
             }
             const label = labels[document.documentElement.lang];
             const countDownDiv = document.createElement('div');
             countDownDiv.classList.add('count-down');
             navbar.insertBefore(countDownDiv, multiSearchDiv);
-            const initialDate = new Date('2026-06-21T08:24:30.000Z');
+            const initialDate = new Date('2026-09-23T00:05:00.000Z');
             const countDownInterval = setInterval(() => {
                 const currentDate = new Date();
                 const timeDifference = initialDate - currentDate;
