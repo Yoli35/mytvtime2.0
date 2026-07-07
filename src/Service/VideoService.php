@@ -40,6 +40,10 @@ readonly class VideoService
 
     public function parseLink(string $userLink): ?string
     {
+        // userlinkk may be a video link (11 characters)
+        if (strlen($userLink) === 11) {
+            return $userLink;
+        }
         // Check if the link is a valid YouTube URL and extract the video ID
         $pattern = '/(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:[^\/\n\s]+\/\S+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([a-zA-Z0-9_-]{11})/';
         preg_match($pattern, $userLink, $matches);
