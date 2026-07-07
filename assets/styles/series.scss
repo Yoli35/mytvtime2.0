@@ -6358,11 +6358,7 @@ h2 {
                     transition: border-color 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
                     width: fit-content;
 
-                    &.updated {
-                        border-color: var(--orange-50);
-                    }
-
-                    &.update {
+                    &.updated, &.update {
                         background-color: hsl(from var(--orange-50) h s l /.5);
                         box-shadow: 0 0 2rem var(--orange-50);
                         padding-block: .25rem;

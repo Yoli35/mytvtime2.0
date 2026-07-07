@@ -23,6 +23,9 @@ export class PeopleCard {
     }
 
     handleCardClick(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        e.stopImmediatePropagation();
         this.currentPeopleCard = e.currentTarget;
         const peopleCard = e.currentTarget;
         const id = peopleCard.getAttribute('data-id');
@@ -47,16 +50,20 @@ export class PeopleCard {
                 setTimeout(() => {
                     peopleBigCardContent.classList.add('fade-out');
                     setTimeout(() => {
-                        peopleBigCardContent.removeChild(newImg);
+                        if (newImg) {
+                            peopleBigCardContent.removeChild(newImg);
+                        }
                         peopleBigCardContent.innerHTML = data['view'];
                         this.addCloseButton(peopleBigCardContent);
                         peopleBigCardContent.classList.remove('fade-out');
 
-                        if (this.peopleShow === null) {
-                            this.peopleShow = new PeopleShow(data['globs']);
-                        } else {
-                            this.peopleShow.start();
-                        }
+                        setTimeout(() => {
+                            if (this.peopleShow === null) {
+                                this.peopleShow = new PeopleShow(data['globs']);
+                            } else {
+                                this.peopleShow.start();
+                            }
+                        }, 300);
                     }, 300);
                 }, 0);
             })
@@ -97,6 +104,10 @@ export class PeopleCard {
         const peopleBigCardContent = document.createElement('div');
         peopleBigCardContent.classList.add('people-big-card-content');
         const peoplePhotoImg = peopleCard.querySelector('img');
+        if (peoplePhotoImg === null) {
+            peopleBigCard.appendChild(peopleBigCardContent);
+            return;
+        }
         peopleBigCardContent.appendChild(peoplePhotoImg.cloneNode(true));
         peopleBigCardContent.querySelector('img').classList.add('growing-image');
         peopleBigCard.appendChild(peopleBigCardContent);
@@ -121,12 +132,14 @@ export class PeopleCard {
         const scrollY = window.scrollY;
         const profileDiv = peopleBigCard.querySelector('.profile');
 
-        profileDiv.style.position = 'absolute';
-        profileDiv.style.left = '0';
-        profileDiv.style.top = '0';
-        profileDiv.style.width = '100%';
-        profileDiv.style.height = '100%';
-        profileDiv.style.transition = 'all 0.3s ease-in-out';
+        if (profileDiv) {
+            profileDiv.style.position = 'absolute';
+            profileDiv.style.left = '0';
+            profileDiv.style.top = '0';
+            profileDiv.style.width = '100%';
+            profileDiv.style.height = '100%';
+            profileDiv.style.transition = 'all 0.3s ease-in-out';
+        }
 
         peopleBigCard.style.left = `${bounds.left}px`;
         peopleBigCard.style.top = `${bounds.top + scrollY}px`;

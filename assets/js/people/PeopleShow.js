@@ -155,7 +155,7 @@ export class PeopleShow {
 
     hidePoster() {
         const poster = document.querySelector(".person").querySelector(".poster-hover");
-        poster.classList.remove("show");
+        if (poster) poster.classList.remove("show");
     }
 
     rate(evt) {
