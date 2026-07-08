@@ -448,7 +448,7 @@ readonly class SeriesService
             return;
         }
         $this->userEpisodeRepository->flush();
-}
+    }
 
     public function getFinaleEpisodeNumber(array $tvSeason): int
     {
@@ -986,6 +986,7 @@ readonly class SeriesService
         // 11 - Weekly, four at a time
         //  6 - Weekly, two, then one
         //  7 - Weekly, three, then one
+        // 13 - Weekly, three, then two
         //  8 - Weekly, four, then one
         //  9 - Weekly, four, then two
         // 10 - Weekly, selected days
@@ -1079,6 +1080,19 @@ readonly class SeriesService
                     $date = $this->dateModify($date, '+1 week');
                 }
                 break;
+            case 13: // 3, then 2
+                $dayArr[] = ['date' => $date, 'episodeId' => $this->getEpisodeId($userEpisodes, $seasonNumber, $firstEpisode), 'episodeNumber' => $firstEpisode, 'episode' => sprintf('S%02dE%02d', $seasonNumber, $firstEpisode), 'watched' => $this->isEpisodeWatched($userEpisodes, $seasonNumber, $firstEpisode), 'future' => $now < $date];
+                $dayArr[] = ['date' => $date, 'episodeId' => $this->getEpisodeId($userEpisodes, $seasonNumber, $firstEpisode + 1), 'episodeNumber' => $firstEpisode + 1, 'episode' => sprintf('S%02dE%02d', $seasonNumber, $firstEpisode + 1), 'watched' => $this->isEpisodeWatched($userEpisodes, $seasonNumber, $firstEpisode + 1), 'future' => $now < $date];
+                $dayArr[] = ['date' => $date, 'episodeId' => $this->getEpisodeId($userEpisodes, $seasonNumber, $firstEpisode + 2), 'episodeNumber' => $firstEpisode + 2, 'episode' => sprintf('S%02dE%02d', $seasonNumber, $firstEpisode + 2), 'watched' => $this->isEpisodeWatched($userEpisodes, $seasonNumber, $firstEpisode + 2), 'future' => $now < $date];
+                $date = $this->dateModify($date, '+1 week');
+                for ($i = $firstEpisode + 3; $i <= $lastEpisode; $i += 2) {
+                    $dayArr[] = ['date' => $date, 'episodeId' => $this->getEpisodeId($userEpisodes, $seasonNumber, $i), 'episodeNumber' => $i, 'episode' => sprintf('S%02dE%02d', $seasonNumber, $i), 'watched' => $this->isEpisodeWatched($userEpisodes, $seasonNumber, $i), 'future' => $now < $date];
+                    if ($i + 1 <= $lastEpisode) {
+                        $dayArr[] = ['date' => $date, 'episodeId' => $this->getEpisodeId($userEpisodes, $seasonNumber, $i + 1), 'episodeNumber' => $i, 'episode' => sprintf('S%02dE%02d', $seasonNumber, $i + 1), 'watched' => $this->isEpisodeWatched($userEpisodes, $seasonNumber, $i + 1), 'future' => $now < $date];
+                    }
+                    $date = $this->dateModify($date, '+1 week');
+                }
+                break;
             case 8: // 4, then 1
                 $dayArr[] = ['date' => $date, 'episodeId' => $this->getEpisodeId($userEpisodes, $seasonNumber, $firstEpisode), 'episodeNumber' => $firstEpisode, 'episode' => sprintf('S%02dE%02d', $seasonNumber, $firstEpisode), 'watched' => $this->isEpisodeWatched($userEpisodes, $seasonNumber, $firstEpisode), 'future' => $now < $date];
                 $dayArr[] = ['date' => $date, 'episodeId' => $this->getEpisodeId($userEpisodes, $seasonNumber, $firstEpisode + 1), 'episodeNumber' => $firstEpisode + 1, 'episode' => sprintf('S%02dE%02d', $seasonNumber, $firstEpisode + 1), 'watched' => $this->isEpisodeWatched($userEpisodes, $seasonNumber, $firstEpisode + 1), 'future' => $now < $date];
@@ -1093,7 +1107,9 @@ readonly class SeriesService
                 $dayArr[] = ['date' => $date, 'episodeId' => $this->getEpisodeId($userEpisodes, $seasonNumber, $firstEpisode + 1), 'episodeNumber' => $firstEpisode + 1, 'episode' => sprintf('S%02dE%02d', $seasonNumber, $firstEpisode + 1), 'watched' => $this->isEpisodeWatched($userEpisodes, $seasonNumber, $firstEpisode + 1), 'future' => $now < $date];
                 for ($i = $firstEpisode + 2; $i <= $lastEpisode; $i += 2) {
                     $dayArr[] = ['date' => $date, 'episodeId' => $this->getEpisodeId($userEpisodes, $seasonNumber, $i), 'episodeNumber' => $i, 'episode' => sprintf('S%02dE%02d', $seasonNumber, $i), 'watched' => $this->isEpisodeWatched($userEpisodes, $seasonNumber, $i), 'future' => $now < $date];
-                    $dayArr[] = ['date' => $date, 'episodeId' => $this->getEpisodeId($userEpisodes, $seasonNumber, $i + 1), 'episodeNumber' => $i, 'episode' => sprintf('S%02dE%02d', $seasonNumber, $i + 1), 'watched' => $this->isEpisodeWatched($userEpisodes, $seasonNumber, $i + 1), 'future' => $now < $date];
+                    if ($i + 1 <= $lastEpisode) {
+                        $dayArr[] = ['date' => $date, 'episodeId' => $this->getEpisodeId($userEpisodes, $seasonNumber, $i + 1), 'episodeNumber' => $i, 'episode' => sprintf('S%02dE%02d', $seasonNumber, $i + 1), 'watched' => $this->isEpisodeWatched($userEpisodes, $seasonNumber, $i + 1), 'future' => $now < $date];
+                    }
                     $date = $this->dateModify($date, '+1 week');
                 }
                 break;
