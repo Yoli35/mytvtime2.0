@@ -87,26 +87,48 @@ export class Application {
          ******************************************************************************************/
         const episodesTodayDiv = document.querySelector(".episodes-today");
         if (episodesTodayDiv) {
-            fetch("/api/episode/today", {})
-                .then(response => response.json())
-                .then(data => {
-                    /*console.log('Episodes of the day:', data);*/
-                    const body = document.querySelector("body");
-                    const tempDiv = document.createElement('div');
-                    tempDiv.innerHTML = data['view'];
-                    const newEpisodesTodayDiv = tempDiv.querySelector(".episodes-today");
-                    const togglerDiv = newEpisodesTodayDiv.querySelector(".toggler");
-                    togglerDiv.addEventListener("click", (e) => {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        newEpisodesTodayDiv.classList.toggle("show");
-                    });
-                    body.replaceChild(newEpisodesTodayDiv, episodesTodayDiv);
-                    self.toolTips.initElement(togglerDiv);
-                })
-                .catch(error => {
-                    console.error("Error fetching episodes of the day:", error);
-                });
+            this.fetchEpisodesOfTheDay(episodesTodayDiv);
         }
     }
+
+    fetchEpisodesOfTheDay(episodesTodayDiv, show = false) {
+        fetch("/api/episode/today", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-Requested-With": "XMLHttpRequest"
+            },
+            body: JSON.stringify({show: show ? 1 : 0}),
+        })
+            .then(response => response.json())
+            .then(data => {
+                /*console.log('Episodes of the day:', data);*/
+                const body = document.querySelector("body");
+                const tempDiv = document.createElement('div');
+                tempDiv.innerHTML = data['view'];
+                const newEpisodesTodayDiv = tempDiv.querySelector(".episodes-today");
+                const togglerDiv = newEpisodesTodayDiv.querySelector(".toggler");
+                togglerDiv.addEventListener("click", (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    newEpisodesTodayDiv.classList.toggle("show");
+                    if (newEpisodesTodayDiv.classList.contains("show")) {
+                        // Date au format Y-m-d
+                        const date = new Date().toISOString().split('T')[0];
+                        console.log(date);
+                        const episodesTodayDivDate = newEpisodesTodayDiv.getAttribute("data-date");
+                        if (date !== episodesTodayDivDate) {
+                            console.log('Reloading episodes of the day due to date change:', date);
+                            self.fetchEpisodesOfTheDay(newEpisodesTodayDiv);
+                        }
+                    }
+                });
+                body.replaceChild(newEpisodesTodayDiv, episodesTodayDiv);
+                self.toolTips.initElement(togglerDiv);
+            })
+            .catch(error => {
+                console.error("Error fetching episodes of the day:", error);
+            });
+    }
+
 }

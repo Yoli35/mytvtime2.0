@@ -1,5 +1,5 @@
 {% if episodes|length %}
-    <div class="episodes-today">
+    <div class="episodes-today{% if show %} show{% endif %}" data-date="{{ date }}">
         <div class="wrapper">
             {% for episode in episodes %}
                 <a href="{{ episode.link }}">

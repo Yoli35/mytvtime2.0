@@ -7,6 +7,7 @@ use App\Repository\UserEpisodeRepository;
 use App\Service\ImageConfiguration;
 use App\Service\ProviderService;
 use Closure;
+use DateTime;
 use Symfony\Bundle\FrameworkBundle\Controller\ControllerHelper;
 use Symfony\Component\DependencyInjection\Attribute\AutowireMethodOf;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -27,12 +28,16 @@ readonly class ApiEpisodeOfTheDay
     {
     }
 
-    #[Route('/today', name: 'today')]
+    #[Route('/today', name: 'today', methods: ['POST'])]
     public function get(#[CurrentUser] User $user, Request $request): JsonResponse
     {
         $locale = $request->getLocale();
         $posterUrl = $this->imageConfiguration->getUrl('poster_sizes', 2);
         $logoUrl = $this->imageConfiguration->getUrl('logo_sizes', 2);
+        $date = new DateTime()->format('Y-m-d');
+
+        $inputBag = $request->getPayload();
+        $show = $inputBag->getBoolean('show');
 
         $episodes = array_map(function ($episode) use ($locale, $posterUrl, $logoUrl) {
             $episode['link'] = '/' . $locale . $episode['link'];
@@ -44,7 +49,7 @@ readonly class ApiEpisodeOfTheDay
             return $episode;
         }, $this->userEpisodeRepository->episodesOfTheDayV2($user->getId(), $locale));
 
-        $block = ($this->renderView)('_blocks/episode/_today.html.twig', ['episodes' => $episodes]);
+        $block = ($this->renderView)('_blocks/episode/_today.html.twig', ['date' => $date, 'episodes' => $episodes, 'show' => $show]);
 
         return new JsonResponse(['view' => $block]);
     }
