@@ -188,7 +188,7 @@ final class SeriesShowController extends AbstractController
             if ($tv['code'] >= 500) {
                 $this->addFlash('warning', 'Error on TMDB: ' . $tv['message']);
                 return $this->redirectToRoute('app_error_tmdb', [
-                    'series' => ['id'=>$series->getId(), 'name'=>$series->getName()],
+                    'series' => ['id' => $series->getId(), 'name' => $series->getName()],
                     'tv' => $tv,
                 ]);
             }
@@ -458,13 +458,25 @@ final class SeriesShowController extends AbstractController
         $episode['next_episode_is_available'] = $nextEpisode && $nextEpisode['air_date'] && $this->isNextEpisodeAvailable($user, $nextEpisode['air_date']);
 
         $episode['show_id'] = $series->getTmdbId();
-        $episode['stills'] = array_map(function($still) {
+        $stillSettings = $this->settingsRepository->getSettingsByName($user->getId(), 'episode_force_user_still-' . $season['id'] . '-' . $episode['id']);
+        $forcedStillPath = array_first(array_column($stillSettings, 'data')
+                |> (fn($x) => array_map(function ($item) {
+                    $arr = json_decode($item, true);
+                    if ($arr['force']) return ['episode' => $arr['episode'], 'still' => '/series/stills/' . $arr['filename']];
+                    return ['episode' => $arr['episode'], 'still' => null];
+                }, $x))
+                |> (fn($x) => array_column($x, 'still', 'episode')));
+        if ($forcedStillPath) {
+            $episode['still_path'] = $forcedStillPath;
+        }
+        dump(['still data' => $forcedStillPath]);
+        $episode['stills'] = array_map(function ($still) {
             return '/series/stills/' . $still->getPath();
         }, $this->episodeStillRepository->findBy(['episodeId' => $episode['id']], ['id' => 'DESC']));
         if (!count($episode['stills']) && $series->getBackdropPath()) {
-            $episode['still_fallback']= '/series/backdrops' . $series->getBackdropPath();
+            $episode['still_fallback'] = '/series/backdrops' . $series->getBackdropPath();
         }
-
+        dump($episode);
         $providers = $this->watchLinkApi->getWatchProviders($country);
         $devices = $this->deviceRepository->deviceArray();
 

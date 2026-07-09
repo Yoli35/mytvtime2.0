@@ -8,6 +8,7 @@ use App\Repository\EpisodeLocalizedOverviewRepository;
 use App\Repository\EpisodeStillRepository;
 use App\Repository\EpisodeSubstituteNameRepository;
 use App\Repository\SeriesBroadcastDateRepository;
+use App\Repository\SettingsRepository;
 use App\Repository\UserEpisodeRepository;
 use App\Repository\WatchProviderRepository;
 use App\Service\DateService;
@@ -47,6 +48,7 @@ class SeriesSeasonEpisodes extends AbstractController
         private readonly ImageConfiguration                 $imageConfiguration,
         private readonly ImageService                       $imageService,
         private readonly SeriesBroadcastDateRepository      $seriesBroadcastDateRepository,
+        private readonly SettingsRepository                 $settingsRepository,
         private readonly TMDBService                        $tmdbService,
         private readonly TranslatorInterface                $translator,
         private readonly UserEpisodeRepository              $userEpisodeRepository,
@@ -100,6 +102,14 @@ class SeriesSeasonEpisodes extends AbstractController
             });
         }
         // Fin TODO
+        $stillSettings = $this->settingsRepository->getSettingsByName($user->getId(), 'episode_force_user_still-' . $season['id']);
+        $stillData = array_column($stillSettings, 'data')
+                |> (fn($x) => array_map(function ($item) {
+                    $arr = json_decode($item, true);
+                    if ($arr['force']) return ['episode' => $arr['episode'], 'still' => '/series/stills/' . $arr['filename']];
+                    return ['episode' => $arr['episode'], 'still' => null];
+                }, $x))
+                |> (fn($x) => array_column($x, 'still', 'episode'));
 
         $episodes = array_map(function ($episode) use ($baseLink, $id, $tmdbId, $seasonNumber, $finalEpisodeNumber) {
             // Substitute Name
@@ -145,6 +155,15 @@ class SeriesSeasonEpisodes extends AbstractController
                 'watchedAt' => $userInfos['watchedAt'] ? ucfirst($this->dateService->formatDateRelativeLong($userInfos['watchedAt']->format("Y-m-d H:i"), $this->timezone, $this->locale)) : null,
             ];
         }, $season['episodes'] ?? []);
+
+        if (count($stillData)) {
+            $episodes = array_map(function ($episode) use ($stillData) {
+                if (key_exists($episode['id'], $stillData)) {
+                    $episode['still'] = $stillData[$episode['id']];
+                }
+                return $episode;
+            }, $episodes);
+        }
 
         $isMissingStill = array_filter($episodes, function ($episode) {
             return !$episode['still'];
