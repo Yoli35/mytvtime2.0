@@ -1,0 +1,25 @@
+<div class="episode-card" data-episode-id="{{ episode.id }}">
+    <div class="episode-still"{% if episode.overview|length %} data-title="{{ episode.overview }}"{% else %} data-title="{{ episode.name }}"{% endif %} data-title-width="32rem">
+        {% if episode.still_path %}
+            <img src="{{ stillUrl ~ episode.still_path }}" alt="{{ episode.name }}">
+        {% elseif still %}
+            <img src="{{ still }}" alt="{{ episode.name }}">
+        {% else %}
+            <div class="no-image">{{ 'No image'|trans }}</div>
+        {% endif %}
+    </div>
+    <div class="episode-infos">
+        <div class="line-1">
+            <div class="episode-number">{{ episode.episode_number }}</div>
+            <div class="episode-name">{{ episode.name }}</div>
+        </div>
+        <div class="line-2">
+            <div class="episode-air-date">
+                {% if episode.air_date %}{{ ux_icon('mdi:broadcast') }} {{ episode.air_date }}{% endif %}
+            </div>
+            <div class="episode-runtime">
+                {% if episode.runtime %}{{ episode.runtime }} {{ 'minutes'|trans }}{% endif %}
+            </div>
+        </div>
+    </div>
+</div>
