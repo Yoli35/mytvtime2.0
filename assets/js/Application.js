@@ -108,6 +108,18 @@ export class Application {
                 tempDiv.innerHTML = data['view'];
                 const newEpisodesTodayDiv = tempDiv.querySelector(".episodes-today");
                 const togglerDiv = newEpisodesTodayDiv.querySelector(".toggler");
+                const links = newEpisodesTodayDiv.querySelectorAll("a");
+                links.forEach(link => {
+                    link.addEventListener("click", (e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        const href = link.getAttribute("href");
+                        newEpisodesTodayDiv.classList.remove("show");
+                        setTimeout(() => {
+                            window.location.href = href;
+                        }, 300)
+                    });
+                });
                 togglerDiv.addEventListener("click", (e) => {
                     e.preventDefault();
                     e.stopPropagation();
