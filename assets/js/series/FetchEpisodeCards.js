@@ -32,7 +32,10 @@ export class FetchEpisodeCards {
                 newEpisodeCardsDiv.setAttribute('data-season-number', seasonNumber);
                 newEpisodeCardsDiv.setAttribute('data-series-slug', seriesSlug);
                 newEpisodeCardsDiv.innerHTML = data['episodeCards'];
-                if (simpleUpdate === false) newEpisodeCardsDiv.style.opacity = "0";
+                if (simpleUpdate === false) {
+                    episodeCardsDiv.style.opacity = "0";
+                    newEpisodeCardsDiv.style.opacity = "0";
+                }
                 episodeCardsDiv.replaceWith(newEpisodeCardsDiv);
                 newEpisodeCardsDiv.scrollLeft = scrollX;
                 self.toolTips.init(newEpisodeCardsDiv);

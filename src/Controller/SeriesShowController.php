@@ -469,14 +469,12 @@ final class SeriesShowController extends AbstractController
         if ($forcedStillPath) {
             $episode['still_path'] = $forcedStillPath;
         }
-        dump(['still data' => $forcedStillPath]);
         $episode['stills'] = array_map(function ($still) {
             return '/series/stills/' . $still->getPath();
         }, $this->episodeStillRepository->findBy(['episodeId' => $episode['id']], ['id' => 'DESC']));
         if (!count($episode['stills']) && $series->getBackdropPath()) {
             $episode['still_fallback'] = '/series/backdrops' . $series->getBackdropPath();
         }
-        dump($episode);
         $providers = $this->watchLinkApi->getWatchProviders($country);
         $devices = $this->deviceRepository->deviceArray();
 
@@ -502,6 +500,7 @@ final class SeriesShowController extends AbstractController
             'translations' => $this->seriesService->getEpisodeShowTranslations(),
             'providers' => $providers,
             'devices' => $devices,
+            'stillUrl' => $this->imageConfiguration->getUrl('still_sizes', 2),
         ]);
     }
 

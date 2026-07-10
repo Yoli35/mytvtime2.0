@@ -119,7 +119,7 @@ export class Application {
                         const episodesTodayDivDate = newEpisodesTodayDiv.getAttribute("data-date");
                         if (date !== episodesTodayDivDate) {
                             console.log('Reloading episodes of the day due to date change:', date);
-                            self.fetchEpisodesOfTheDay(newEpisodesTodayDiv);
+                            self.fetchEpisodesOfTheDay(newEpisodesTodayDiv, true);
                         }
                     }
                 });
