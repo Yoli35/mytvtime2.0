@@ -45,6 +45,8 @@
                         <img src="/series/posters{{ series.posterPath }}" alt="{{ series.name }}">
                     </div>
                 {% endif %}
+                <div class="go-to-map go-to-button" data-target="#series-map-content" data-title="{{ 'Filming locations map'|trans }}">{{ ux_icon('mdi:map-outline') }}</div>
+                <div class="go-to-cast go-to-button" data-target="#series-credit" data-title="{{ 'Series credits'|trans }}">{{ ux_icon('mdi:user-outline') }}</div>
                 <div class="infos">
                     <div class="poster-container">
                         <div class="poster">
@@ -64,7 +66,6 @@
                             {% endif %}
                         </div>
                     </div>
-                    <div class="go-to-map" data-target="#series-map-content" data-title="{{ 'Filming locations map'|trans }}">{{ ux_icon('mdi:map-outline') }}</div>
                     <div class="infos-content">
                         <div class="name">
                             <h1>
@@ -371,7 +372,7 @@
                 </div>
             {% endif %}
 
-            <div class="content column">
+            <div id="series-credit" class="content column">
                 <div class="content-seasons">
                     {{ include('_blocks/series/_credits.html.twig', {credits: tv.credits, seriesLocalizedName: tv.localized_name?tv.localized_name.name:null, seriesName: series.name, seriesId: series.id, seasonNumber: -1}) }}
                 </div>
