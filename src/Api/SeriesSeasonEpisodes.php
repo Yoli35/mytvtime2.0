@@ -57,9 +57,12 @@ class SeriesSeasonEpisodes extends AbstractController
     {
     }
 
-    #[Route('/season/episode/stills/{id}/{tmdbId}/{seasonNumber}/{slug}', name: 'seasons_episodes', requirements: ['id' => '\d+', 'tmdbId' => '\d+', 'season_number' => '\d+', 'slug' => '.+'], methods: ['GET'])]
+    #[Route('/season/episode/stills/{id}/{tmdbId}/{seasonNumber}/{slug}', name: 'seasons_episodes', requirements: ['id' => '\d+', 'tmdbId' => '\d+', 'season_number' => '\d+', 'slug' => '.+'], methods: ['POST'])]
     public function next(Request $request, int $id, int $tmdbId, int $seasonNumber, string $slug): JsonResponse
     {
+        $inputBag = $request->getPayload();
+        $targetId = $inputBag->get('targetId');
+
         $user = $this->getUser();
         $locale = $user?->getPreferredLanguage() ?? $request->getLocale();
         $this->logoUrl = $this->imageConfiguration->getUrl('logo_sizes', 2);
@@ -183,9 +186,10 @@ class SeriesSeasonEpisodes extends AbstractController
             }
         }
 
-        $episodeCards = array_map(function ($episode) {
+        $episodeCards = array_map(function ($episode) use ($targetId) {
             return $this->renderView('_blocks/series/_season_episode_card.html.twig', [
                 'episode' => $episode,
+                'thisIsMyPage' => $episode['id'] === $targetId,
             ]);
         }, $episodes);
 

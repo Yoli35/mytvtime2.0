@@ -644,6 +644,7 @@ readonly class ApiSeriesEpisode
         ];
         return ($this->renderView)('_blocks/series/_season_episode_card.html.twig', [
             'episode' => $e,
+            'thisIsMyPage' => true,
         ]);
     }
 

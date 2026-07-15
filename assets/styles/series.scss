@@ -3756,6 +3756,17 @@ h2 {
     }
 }
 
+aside:has(.episode__cards) {
+    position: relative;
+
+    .episode__cards.replacing-episodes {
+        inset: 0;
+        opacity: 0;
+        position: absolute;
+        z-index: 1;
+    }
+}
+
 .episode__cards {
     align-items: center;
     display: flex;

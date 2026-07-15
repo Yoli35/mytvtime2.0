@@ -1,4 +1,4 @@
-<div class="episode-card" data-episode-id="{{ episode.id }}">
+<div class="episode-card{% if thisIsMyPage %} this-is-my-page{% endif %}" data-episode-id="{{ episode.id }}">
     <div class="episode-still"{% if episode.overview|length %} data-title="{{ episode.overview }}"{% else %} data-title="{{ episode.name }}"{% endif %} data-title-width="32rem">
         {% if episode.still_path %}
             <img src="{{ stillUrl ~ episode.still_path }}" alt="{{ episode.name }}">

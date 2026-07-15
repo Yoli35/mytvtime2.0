@@ -15,47 +15,56 @@ export class FetchEpisodeCards {
     load(cards, index, length, targetId, simpleUpdate, episodeActions = null) {
         if (!length) return;
         const episodeCardsDiv = cards.item(index);
-        const scrollX = episodeCardsDiv.scrollLeft;
+        const width = episodeCardsDiv.clientWidth;
         const id = episodeCardsDiv.getAttribute('data-id');
         const tmdbId = episodeCardsDiv.getAttribute('data-tmdb-id');
         const seasonNumber = episodeCardsDiv.getAttribute('data-season-number');
         const seriesSlug = episodeCardsDiv.getAttribute('data-series-slug');
-        fetch('/api/series/season/episode/stills/' + id + '/' + tmdbId + '/' + seasonNumber + '/' + seriesSlug, {method: 'GET'})
+        fetch('/api/series/season/episode/stills/' + id + '/' + tmdbId + '/' + seasonNumber + '/' + seriesSlug,
+            {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                body: JSON.stringify({
+                    targetId: targetId,
+                    simpleUpdate: simpleUpdate
+                })
+            })
             .then(function (response) {
                 return response.json();
             })
             .then(function (data) {
                 const newEpisodeCardsDiv = document.createElement('div');
-                newEpisodeCardsDiv.classList.add('episode__cards');
+                newEpisodeCardsDiv.classList.add('episode__cards', 'replacing-episodes');
                 newEpisodeCardsDiv.setAttribute('data-id', id);
                 newEpisodeCardsDiv.setAttribute('data-tmdb-id', tmdbId);
                 newEpisodeCardsDiv.setAttribute('data-season-number', seasonNumber);
                 newEpisodeCardsDiv.setAttribute('data-series-slug', seriesSlug);
                 newEpisodeCardsDiv.innerHTML = data['episodeCards'];
-                if (simpleUpdate === false) {
-                    episodeCardsDiv.style.opacity = "0";
-                    newEpisodeCardsDiv.style.opacity = "0";
-                }
-                episodeCardsDiv.replaceWith(newEpisodeCardsDiv);
-                newEpisodeCardsDiv.scrollLeft = scrollX;
-                self.toolTips.init(newEpisodeCardsDiv);
-                if (targetId !== -1) {
-                    const targetEpisodeCard = newEpisodeCardsDiv.querySelector(`[data-episode-id="${targetId}"]`);
-                    if (targetEpisodeCard) {
-                        setTimeout(function () {
-                            targetEpisodeCard.classList.add('this-is-my-page');
-                            const containerWidth = newEpisodeCardsDiv.clientWidth;
-                            const cardLeft = targetEpisodeCard.offsetLeft;
-                            const cardWidth = targetEpisodeCard.offsetWidth;
-                            const nextScrollLeft = Math.max(0, cardLeft - (containerWidth - cardWidth) / 2);
 
-                            newEpisodeCardsDiv.scrollTo({
-                                left: nextScrollLeft,
-                                behavior: 'auto'
-                            });
-                        }, 0);
-                    }
+                const aside = episodeCardsDiv.closest('aside');
+                if (aside) { // episode page
+                    aside.appendChild(newEpisodeCardsDiv);
+                    const targetEpisodeCard = newEpisodeCardsDiv.querySelector(`[data-episode-id="${targetId}"]`);
+                    const cardLeft = targetEpisodeCard.offsetLeft;
+                    const cardWidth = targetEpisodeCard.offsetWidth;
+                    newEpisodeCardsDiv.scrollLeft = Math.max(0, cardLeft - (width - cardWidth) / 2);
+                    setTimeout(function () {
+                        newEpisodeCardsDiv.style.opacity = "1";
+                        episodeCardsDiv.style.opacity = "0";
+                    }, 0);
+                    setTimeout(function () {
+                        episodeCardsDiv.remove();
+                        newEpisodeCardsDiv.classList.remove('replacing-episodes');
+                    }, 600)
+                } else // series page
+                {
+                    episodeCardsDiv.replaceWith(newEpisodeCardsDiv);
                 }
+
+                self.toolTips.init(newEpisodeCardsDiv);
 
                 self.initVoteBlock(newEpisodeCardsDiv.querySelectorAll('.episode-vote-block'), episodeActions);
                 episodeActions.initEpisodeCards();

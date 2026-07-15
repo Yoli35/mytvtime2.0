@@ -129,9 +129,17 @@
 {#                        <div class="blue-light" style="--delay: 600ms"></div>#}
 {#                    </div>#}
                     {% for ep in season.episodes %}
-                        {{ include('_blocks/series/_season_episode_card_preview.html.twig', {'episode': ep}) }}
+                        {{ include('_blocks/series/_season_episode_card_preview.html.twig', {episode: ep, thisIsMyPage: ep.id === episode.id}) }}
                     {% endfor %}
                 </div>
+                <script>
+                        const episodeCardsDiv = document.querySelector('.episode__cards');
+                        const width = episodeCardsDiv.clientWidth;
+                        const targetEpisodeCard = episodeCardsDiv.querySelector(`[data-episode-id="{{ episode.id }}"]`);
+                        const cardLeft = targetEpisodeCard.offsetLeft;
+                        const cardWidth = targetEpisodeCard.offsetWidth;
+                        episodeCardsDiv.scrollLeft = Math.max(0, cardLeft - (width - cardWidth) / 2);
+                </script>
             </aside>
             <main>
                 <div class="episodes-comments"></div>
