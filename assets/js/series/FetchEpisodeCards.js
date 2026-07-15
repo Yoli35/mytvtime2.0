@@ -44,7 +44,7 @@ export class FetchEpisodeCards {
                 newEpisodeCardsDiv.setAttribute('data-series-slug', seriesSlug);
                 newEpisodeCardsDiv.innerHTML = data['episodeCards'];
 
-                const aside = episodeCardsDiv.closest('aside');
+                const aside = episodeCardsDiv.closest('aside[id="episode-cards"]');
                 if (aside) { // episode page
                     aside.appendChild(newEpisodeCardsDiv);
                     const targetEpisodeCard = newEpisodeCardsDiv.querySelector(`[data-episode-id="${targetId}"]`);
@@ -57,6 +57,7 @@ export class FetchEpisodeCards {
                     }, 0);
                     setTimeout(function () {
                         episodeCardsDiv.remove();
+                        aside.querySelector('script').remove();
                         newEpisodeCardsDiv.classList.remove('replacing-episodes');
                     }, 600)
                 } else // series page
