@@ -47,6 +47,7 @@ export class WatchLinkCrud {
             {needle: 'www.viki.com', providerId: 1390},
             {needle: 'wetv.vip', providerId: 623},
             {needle: 'youtube.com', providerId: 192},
+            {needle: 'www.arte.tv', providerId: 234},
         ];
 
         this.init();
