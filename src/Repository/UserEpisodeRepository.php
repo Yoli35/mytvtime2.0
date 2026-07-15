@@ -512,7 +512,7 @@ class UserEpisodeRepository extends ServiceEntityRepository
                 LEFT JOIN `series_broadcast_date` sbd ON ue.`episode_id`=sbd.`episode_id`
                 LEFT JOIN `user_series` us ON us.`id`=ue.`user_series_id`
                 LEFT JOIN `series` s ON s.`id`=us.`series_id`
-                LEFT JOIN `series_broadcast_schedule` sbs ON sbs.`series_id`=s.`id`
+                LEFT JOIN `series_broadcast_schedule` sbs ON sbs.`series_id`=s.`id` AND ue.`season_number`=sbs.`season_number`
                 LEFT JOIN `series_localized_name` sln ON sln.`series_id`=s.`id` AND sln.`locale`=:locale
                 LEFT JOIN `series_watch_link` swl ON swl.`series_id`=s.`id` AND (swl.`season_number`=-1 OR swl.`season_number`=ue.`season_number`)
                 LEFT JOIN `watch_provider` wp ON wp.`provider_id`=swl.`provider_id`
