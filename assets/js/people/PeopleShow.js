@@ -159,13 +159,20 @@ export class PeopleShow {
     }
 
     rate(evt) {
-        const rating = evt.currentTarget.getAttribute("data-rating");
+        const star = evt.currentTarget;
+        let rating = parseInt(star.getAttribute("data-rating"));
         const stars = document.querySelector(".rating.user").querySelectorAll(".star");
+        const isCurrentRating = star.classList.contains("rate");
         stars.forEach(star => {
-            star.classList.remove("active");
+            star.classList.remove("active", "rate");
         });
-        for (let i = 0; i < rating; i++) {
-            stars[i].classList.add("active");
+        if (!isCurrentRating) {
+            for (let i = 0; i < rating; i++) {
+                stars[i].classList.add("active");
+            }
+            stars[rating - 1].classList.add("rate");
+        } else {
+            rating = 0;
         }
         const id = document.querySelector(".person").getAttribute("data-id");
         const data = {
@@ -182,7 +189,7 @@ export class PeopleShow {
             })
             .then(response => response.json())
             .then(data => {
-                console.log(data);
+                /*console.log(data);*/
                 const leftColumn = document.querySelector(".left-column");
                 const ratingInfos = leftColumn.querySelector(".rating-infos");
                 const newBlockDiv = document.createElement("div");

@@ -46,7 +46,24 @@ class PeopleUserRatingRepository extends ServiceEntityRepository
                 FROM people_user_rating 
                 WHERE user_id = :userId AND tmdb_id = :id) as rating
             FROM people_user_rating  pur
-            WHERE tmdb_id = $id
+            WHERE tmdb_id = :id
+        SQL;
+
+        return $this->getOne($sql, $p, $t);
+    }
+
+    public function getPeopleAverageRating(int $id): array
+    {
+        $p = [
+            'id' => $id
+        ];
+        $t = [
+            'id' => ParameterType::INTEGER,
+        ];
+        $sql = <<<SQL
+            SELECT AVG(pur.rating) as avg_rating
+            FROM people_user_rating  pur
+            WHERE tmdb_id = :id
         SQL;
 
         return $this->getOne($sql, $p, $t);
@@ -68,5 +85,11 @@ class PeopleUserRatingRepository extends ServiceEntityRepository
         } catch (Exception) {
             return [];
         }
+    }
+
+    public function remove(PeopleUserRating $peopleUserRating): void
+    {
+        $this->em->remove($peopleUserRating);
+        $this->em->flush();
     }
 }

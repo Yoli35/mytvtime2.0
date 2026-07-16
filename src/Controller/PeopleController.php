@@ -88,7 +88,7 @@ class PeopleController extends AbstractController
         /********************************************************************************
          * User Star People                                                             *
          ********************************************************************************/
-        $starPeople = $this->peopleUserRatingRepository->findBy(['user' => $user], ['rating' => 'DESC'], 20);
+        $starPeople = $this->peopleUserRatingRepository->findBy(['user' => $user], ['rating' => 'DESC']);
         $starPeopleCount = $this->peopleUserRatingRepository->count(['user' => $user]);
         $starPeopleIds = array_map(fn($star) => $star->getTmdbId(), $starPeople);
         /* Gender
@@ -327,16 +327,23 @@ class PeopleController extends AbstractController
 
         $peopleUserRating = $this->peopleUserRatingRepository->findOneBy(['user' => $user, 'tmdbId' => $id]);
 
-        if (!$peopleUserRating) {
-            $peopleUserRating = new PeopleUserRating($user, $id, $rating);
+        if ($rating == 0 && $peopleUserRating) {
+            $this->peopleUserRatingRepository->remove($peopleUserRating);
+            $rating = 0;
+            $peopleUserAverageRating = $this->peopleUserRatingRepository->getPeopleAverageRating($id);
+            $avgRating = $peopleUserAverageRating['avg_rating'] ?? 0;
         } else {
-            $peopleUserRating->setRating($rating);
-        }
-        $this->peopleUserRatingRepository->save($peopleUserRating, true);
+            if (!$peopleUserRating) {
+                $peopleUserRating = new PeopleUserRating($user, $id, $rating);
+            } else {
+                $peopleUserRating->setRating($rating);
+            }
+            $this->peopleUserRatingRepository->save($peopleUserRating, true);
 
-        $peopleUserRating = $this->peopleUserRatingRepository->getPeopleUserRating($user->getId(), $id);
-        $rating = $peopleUserRating['rating'] ?? 0;
-        $avgRating = $peopleUserRating['avg_rating'] ?? 0;
+            $peopleUserRating = $this->peopleUserRatingRepository->getPeopleUserRating($user->getId(), $id);
+            $rating = $peopleUserRating['rating'] ?? 0;
+            $avgRating = $peopleUserRating['avg_rating'] ?? 0;
+        }
 
         $ratingInfosBlock = $this->renderView('_blocks/people/_rating.html.twig', [
             'rating' => $rating,
