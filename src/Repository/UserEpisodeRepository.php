@@ -468,12 +468,7 @@ class UserEpisodeRepository extends ServiceEntityRepository
             ORDER BY date, sbs.air_at, ue.season_number, ue.episode_number
         SQL;
 
-        try {
-            return $this->em->getConnection()->executeQuery($sql, $params, $types)->fetchAllAssociative();
-        } catch (\Exception $e) {
-            $this->logger->error('Erreur episodesOfTheDay: ' . $e->getMessage());
-            return [];
-        }
+        return $this->getAll($sql, $params, $types);
     }
 
     public function episodesOfTheDayV2(int $userId, string $locale = 'fr'): array
@@ -504,18 +499,19 @@ class UserEpisodeRepository extends ServiceEntityRepository
               --  ue.air_date as air_date, /* Pour vérifier */
               --  DATE(sbd.`date`) as sbd_date, /* Pour vérifier */
                 sbs.`air_at` as sbs_time,
-                wp.`background_color` as wpbc,
-                wp.`color` as wpc,
-                wp.`logo_path` as wplp,
-                wp.`provider_name` as wppn
+                IF(sbs.id, wp2.`background_color`, wp1.`background_color`) as wpbc,
+                IF(sbs.id, wp2.`color`, wp1.`color`) as wpc,
+                IF(sbs.id, wp2.`logo_path`, wp1.`logo_path`) as wplp,
+                IF(sbs.id, wp2.`provider_name`, wp1.`provider_name`) as wppn
             FROM `user_episode` ue
                 LEFT JOIN `series_broadcast_date` sbd ON ue.`episode_id`=sbd.`episode_id`
                 LEFT JOIN `user_series` us ON us.`id`=ue.`user_series_id`
                 LEFT JOIN `series` s ON s.`id`=us.`series_id`
-                LEFT JOIN `series_broadcast_schedule` sbs ON sbs.`series_id`=s.`id` AND ue.`season_number`=sbs.`season_number`
+                LEFT JOIN `series_broadcast_schedule` sbs ON IF(sbd.`id`, sbs.`id`=sbd.`series_broadcast_schedule_id`, sbs.`series_id`=s.`id` AND ue.`season_number`=sbs.`season_number`)
                 LEFT JOIN `series_localized_name` sln ON sln.`series_id`=s.`id` AND sln.`locale`=:locale
                 LEFT JOIN `series_watch_link` swl ON swl.`series_id`=s.`id` AND (swl.`season_number`=-1 OR swl.`season_number`=ue.`season_number`)
-                LEFT JOIN `watch_provider` wp ON wp.`provider_id`=swl.`provider_id`
+                LEFT JOIN `watch_provider` wp1 ON wp1.`provider_id`=swl.`provider_id`
+                LEFT JOIN `watch_provider` wp2 ON wp2.`provider_id`=sbs.`provider_id`
             WHERE ue.`user_id`=:userId AND IF(sbd.`id`, DATE(sbd.`date`), ue.`air_date`)=:today
             ORDER BY sbs_time, wppn, ueep;
         SQL;
@@ -562,12 +558,7 @@ class UserEpisodeRepository extends ServiceEntityRepository
             ORDER BY date, ue.season_number
         SQL;
 
-        try {
-            return $this->em->getConnection()->executeQuery($sql, $params, $types)->fetchAllAssociative();
-        } catch (\Exception $e) {
-            $this->logger->error('Erreur episodesOneOfTheDay: ' . $e->getMessage());
-            return [];
-        }
+        return $this->getAll($sql, $params, $types);
     }
 
     public function episodesToWatch(User $user, string $locale = 'fr', int $page = 1, int $limit = 20): array
