@@ -1786,10 +1786,10 @@ label:has(input[type="text"]) {
                 animation-delay: var(--ball-delay);
                 background-color: var(--orange);
                 border-radius: 50%;
-                bottom: calc(var(--y) + calc(cos(var(--angle1)) * var(--amplitude)));
+                bottom: calc(var(--y) + calc(sin(var(--angle1)) * var(--amplitude)));
                 counter-increment: ball;
                 height: var(--ball-size);
-                left: calc(var(--x) + cos(var(--angle2)) * var(--radius));
+                left: calc(var(--x) + sin(var(--angle2)) * var(--radius));
                 position: absolute;
                 width: var(--ball-size);
             }
