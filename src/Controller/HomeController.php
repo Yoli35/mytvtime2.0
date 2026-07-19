@@ -498,7 +498,7 @@ class HomeController extends AbstractController
             $filterString = "include_adult=false&include_null_first_air_dates=true&language=en-US&page=$page&sort_by=first_air_date.desc&with_keywords=$k";
             $results = array_merge($results, $this->getSelection('tv', $filterString, new AsciiSlugger(), 'FR', 'Europe/Paris', 'en-US'));
         }
-        dump($results);
+        /*dump($results);*/
         return $results;
     }
 }
