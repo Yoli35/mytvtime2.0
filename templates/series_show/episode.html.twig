@@ -76,7 +76,19 @@
                             <form class="episode-overview-form">
                                 <div class="form-row">
                                     <label for="overview-textarea">{{ 'Episode overview'|trans }}
-                                        <textarea id="overview-textarea" class="overview-textarea" rows="4" cols="50" placeholder="{{ 'Write your overview here'|trans }}">{{ overview }}</textarea>
+                                        <textarea id="overview-textarea" class="overview-textarea" rows="4" cols="64" placeholder="{{ 'Write your overview here'|trans }}">{{ overview }}</textarea>
+                                        <script>
+                                            /** @Type {HTMLTextAreaElement} */
+                                            const textarea = document.getElementById('overview-textarea');
+                                            textarea.addEventListener('input', resize);
+                                            textarea.addEventListener('paste', resize);
+                                            textarea.addEventListener('focus', resize);
+                                            window.addEventListener('resize', resize);
+                                            function resize() {
+                                                textarea.style.height = 'auto';
+                                                textarea.style.height = `${textarea.scrollHeight}px`;
+                                            }
+                                        </script>
                                     </label>
                                 </div>
                                 <div class="form-row">
