@@ -1157,7 +1157,7 @@ final class SeriesShowController extends AbstractController
         $seriesCountries = $series ? $series->getOriginCountry() : $countries;
         $dbExternals = $this->seriesExternalRepository->findAll();
         $externals = [];
-        $displayName = $series ? $series->getLocalizedName($locale)?->getName() ?? $series->getName() : $name;
+        $displayName = trim($series ? $series->getLocalizedName($locale)?->getName() ?? $series->getName() : $name);
 
         /** @var SeriesExternal $dbExternal */
         foreach ($dbExternals as $dbExternal) {
