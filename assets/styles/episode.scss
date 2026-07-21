@@ -1,3 +1,7 @@
+.container-fluid:has(.episode-show) {
+    overflow-x: clip;
+}
+
 .episode-show {
     header {
         display: flex;
@@ -23,6 +27,11 @@
                 object-fit: cover;
                 width: 100%;
             }
+        }
+
+        .user-episode-block {
+            border-radius: 1rem;
+            flex-grow: 1;
         }
 
         .infos {
@@ -230,11 +239,12 @@
         .user-episode {
             flex-direction: row;
             height: 3.75rem;
-            left: 2rem;
-            position: absolute;
-            top: 4rem;
-            transition: all 300ms ease-in-out;
+            left: 50%;
+            position: sticky;
+            top: 5rem;
+            translate: -50%;
             width: 12rem;
+            z-index: 1;
 
             &:has(.remove-this-episode) {
                 width: 32rem;

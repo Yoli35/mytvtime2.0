@@ -43,6 +43,9 @@
                         <img src="{{ asset('/series/backdrops' ~ series.backdropPath) }}" alt="{{ series.name }} backdrop image">
                     {% endif %}
                 </div>
+                <div class="user-episode-block">
+                    {{ include('_blocks/series/_user_episode.html.twig', {ue: episode.user_episode, episode: episode, series: series, season: season}) }}
+                </div>
                 <div class="infos">
                     <div class="name-block">
                         {% set name = episode.user_episode.substitute_name ?: episode.name %}
@@ -126,7 +129,6 @@
                         <div class="what-s-next" data-id="{{ series.tmdbId }}" data-language="{{ language }}" data-title="{{ 'What else to watch?'|trans }}">{{ ux_icon('mdi:chevron-right-last') }}</div>
                     {% endif %}
                 </div>
-                {{ include('_blocks/series/_user_episode.html.twig', {ue: episode.user_episode, episode: episode, series: series, season: season}) }}
                 {{ include('_blocks/series/_watch_links.html.twig', {watchLinks: series.seriesWatchLinks, seasonNumber: season.season_number, hidden: (episode.user_episode.watch_at != null)}) }}
             </header>
             <aside id="episode-cards">
