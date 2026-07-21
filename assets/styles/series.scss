@@ -2049,16 +2049,15 @@ h2 {
 
                     label:has(.provider-logo) {
                         .provider-logo {
-                            border: 2px dashed var(--orange-50);
-                            border-radius: .5rem;
+                            border: 2px solid transparent;
+                            border-radius: 5rem;
                             flex-shrink: 0;
                             height: 3rem;
                             object-fit: cover;
                             width: 3rem;
 
                             &:has(img) {
-                                border-radius: 5rem;
-                                border-style: solid;
+                                border-color: var(--orange-50);
 
                                 img {
                                     border-radius: 5rem;
