@@ -147,7 +147,8 @@ export class Menu {
             "tv": "/api/search/tmdb/tv",
             "tv_id": "/api/search/tmdb/tv/",
             "dbtv": "/api/search/db/tv",
-            "people": "/api/search/people"
+            "people": "/api/search/people",
+            "person": "/api/search/people"
         }
         this.resultNames = {
             'movie': 'title',
@@ -157,7 +158,8 @@ export class Menu {
             'tv': 'name',
             'tv_id': 'name',
             'dbtv': 'display_name',
-            'people': 'name'
+            'people': 'name',
+            'person': 'name',
         }
         this.hRefs = {
             'movie': 'movie/tmdb/',
@@ -168,6 +170,7 @@ export class Menu {
             'tv_id': 'tv/tmdb/',
             'dbtv': 'tv/series/',
             'people': 'people/show/',
+            'person': 'people/show/',
             'multi': 'search/all?q='
         };
         this.resultPaths = {
@@ -178,7 +181,8 @@ export class Menu {
             'tv': 'poster_path',
             'tv_id': 'poster_path',
             'dbtv': 'poster_path',
-            'people': 'profile_path'
+            'people': 'profile_path',
+            'person': 'profile_path'
         };
         // See getTMDBConfig()
         this.posterUrl = null;
@@ -369,8 +373,9 @@ export class Menu {
 
         const cookie = document.cookie;
         let initialValue = "multi";
+        console.log(cookie);
         if (cookie) {
-            const re = new RegExp(/mytvtime_2_multi_search_sub_type=(\w+);/);
+            const re = new RegExp(/mytvtime_2_multi_search_sub_type=(\w+)/);
             const result = re.exec(cookie);
             if (result) {
                 initialValue = result[1];
@@ -699,7 +704,7 @@ export class Menu {
         fetch(url, options)
             .then(res => res.json())
             .then(json => {
-                // console.log(json);
+                console.log(json);
                 const openInNewTab = document.querySelector(".navbar .multi-search .multi-search-options-menu #new-tab-toggler").checked;
                 console.log(openInNewTab);
                 const addCastBlock = searchInput.closest('.cast-search-block');
@@ -1470,6 +1475,8 @@ export class Menu {
     }
 
     toSlug(str) {
+        if (!str || str === '') str = 'no-slug';
+
         str = str.replace(/^\s+|\s+$/g, ''); // trim
         str = str.toLowerCase();
 
