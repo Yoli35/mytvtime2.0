@@ -110,6 +110,13 @@ export class Show {
         this.flashMessage = new FlashMessage();
         this.fetchEpisodeCards = new FetchEpisodeCards(this.toolTips);
         this.preferredName = preferredName;
+
+        this.svgRightArrow = document.querySelector('div#svgs div#arrow-right');
+        this.svgRightArrow = this.svgRightArrow.cloneNode(true);
+        this.svgRightArrow.removeAttribute('id');
+        this.svgCheck = document.querySelector('div#svgs div#check');
+        this.svgCheck = this.svgCheck.cloneNode(true);
+        this.svgCheck.removeAttribute('id');
     }
 
     init(menu) {
@@ -332,38 +339,38 @@ export class Show {
                             span1.innerHTML = translations["Season completed"];
                         }
                         if (upToDate) {
-                            span1.innerHTML = translations["Up to date"];
+                            span1.innerHTML = self.svgCheck.outerHTML;
                         }
                         if (!seasonCompleted && !upToDate) {
                             span1.innerHTML = span1Value + ', ' + translations["available"];
                         }
                     }
-                    span2.innerHTML = translations["since"] + " " + (d ? (days + "<br>") : "") + elapsedTime;
+                    span2.innerHTML = /*self.svgRightArrow.outerHTML + " " +*/ (d ? (days + " ") : "") + elapsedTime;
                 } else {
                     let dayPart; // today, tomorrow, after tomorrow, x days
                     let day = Math.floor((airDay - currentDay) / (1000 * 3600 * 24));
                     if (day === 0) {
                         if (airDayOfMonth === currentDayOfMonth) {
-                            dayPart = translations["Today"] + "<br>";
+                            dayPart = translations["Today"] + " ";
                         } else {
-                            dayPart = translations["Tomorrow"] + "<br>";
+                            dayPart = translations["Tomorrow"] + "  ";
                         }
                     } else if (day === 1) {
                         if (currentDayOfMonth - airDayOfMonth === 1) {
                             dayPart = translations["Tomorrow"];
                         } else {
-                            dayPart = translations["After tomorrow"] + "<br>";
+                            dayPart = translations["After tomorrow"] + " ";
                         }
                     } else if (day === 2) {
                         if (currentDayOfMonth - airDayOfMonth === 2) {
-                            dayPart = translations["After tomorrow"] + "<br>";
+                            dayPart = translations["After tomorrow"] + " ";
                         } else {
                             dayPart = "";/*d + " " + translations['days'];*/
                         }
                     } else {
                         dayPart = "";/*d + " " + translations['days'];*/
                     }
-                    span2.innerHTML = dayPart + (d ? (days + "<br>") : "") + elapsedTime;
+                    span2.innerHTML = /*dayPart +*/ (d ? (days + " ") : "") + elapsedTime;
                 }
             }, 1000);
         });

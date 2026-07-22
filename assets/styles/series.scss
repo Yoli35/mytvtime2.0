@@ -1621,23 +1621,98 @@ h2 {
 
         .episode, .next-episode {
             align-items: center;
-            background-color: hsla(from var(--ardoise-90) h s l / .2);
-            border-radius: .5rem;
-            box-shadow: 0 0 1rem #0000003f;
             color: var(--ardoise-10);
             display: flex;
-            flex-direction: column;
             flex-shrink: 0;
             gap: .5rem;
-            justify-content: center;
-            padding: 1rem;
+            height: 3rem;
+            justify-content: flex-start;
             position: relative;
-            width: 12rem;
+            width: 32rem;
             z-index: 1;
+        }
+
+        .next-episode {
+            background-color: var(--green-70);
+            border-radius: .5rem .5rem 0 0;
+            cursor: pointer;
+
+            > div {
+                align-items: center;
+                display: flex;
+                height: 100%;
+            }
+
+            .season {
+                font-size: 1.25rem;
+                height: 100%;
+                justify-content: center;
+                min-width: 3rem;
+            }
+
+            .provider {
+                height: 3rem;
+                width: 3rem;
+
+                img {
+                    border-radius: .25rem;
+                    height: 3rem;
+                    object-fit: cover;
+                    width: 3rem;
+                }
+            }
+
+            .remaining {
+                background-color: var(--green-60);
+                border-radius: .25rem;
+                gap: .5rem;
+                height: 2rem;
+                justify-content: center;
+                padding-inline: .75rem;
+            }
+
+            .badges {
+                gap: .5rem;
+                position: absolute;
+                right: .5rem;
+
+                .override, .type {
+                    align-items: center;
+                    border: 2px solid var(--ardoise-10);
+                    border-radius: 50%;
+                    color: var(--ardoise-10);
+                    display: flex;
+                    height: 2rem;
+                    justify-content: center;
+                    width: 2rem;
+                }
+
+                .override {
+                    bottom: .5rem;
+                }
+
+                .type {
+                    top: .5rem;
+                }
+            }
+        }
+
+        .episode {
+            padding-inline-start: .5rem;
+
+            > div {
+                align-items: center;
+                display: flex;
+                height: 100%;
+            }
 
             &.user {
                 background-color: var(--orange-50);
                 color: var(--orange-90);
+            }
+
+            &.next {
+                border-radius: 0 0 .5rem .5rem;
             }
 
             &.user.last-of-group {
@@ -1666,105 +1741,27 @@ h2 {
                 color: var(--green-20);
             }
 
-            .override, .type {
-                align-items: center;
-                border: 2px solid var(--ardoise-10);
-                border-radius: 50%;
-                color: var(--ardoise-10);
-                display: flex;
-                height: 2rem;
-                justify-content: center;
-                position: absolute;
-                top: .5rem;
-                width: 2rem;
-            }
-
-            .override {
-                left: .5rem;
-            }
-
-            .type {
-                right: .5rem;
-            }
-        }
-
-        .episode {
-            .episode-number {
-                font-size: 3rem;
-                font-weight: 100;
-                line-height: 1.25em;
-            }
-
             .episode-info {
-                background-color: var(--orange-20-alpha-25);
-                border-radius: .25rem;
-                max-width: 8rem;
-                padding: .25rem;
-            }
-
-            .episode-info, .episode-name, .episode-air-date {
-                font-size: 1.25rem;
-                font-weight: 300;
-                line-height: 1.25em;
-                text-align: center;
-                text-wrap: balance;
-            }
-        }
-
-        .next-episode {
-            background-color: var(--green-70);
-            cursor: pointer;
-
-            .details {
-                display: flex;
-                gap: .5rem;
-            }
-
-            .season {
-                font-size: 1.25rem;
-                margin-block-start: 1.5rem;
-                text-align: center;
-                text-wrap: balance;
-                width: 100%;
-            }
-
-            .country, .local-air, .remaining {
-                align-items: center;
-                border-radius: .25rem;
-                color: var(--ardoise-10);
-                display: flex;
-                line-height: 1.1em;
-                text-align: center;
-                text-wrap: balance;
-            }
-
-            .country {
-                font-size: 3rem;
-            }
-
-            .provider {
-                height: 3rem;
                 width: 3rem;
 
-                img {
-                    border-radius: .25rem;
-                    height: 3rem;
-                    object-fit: cover;
-                    width: 3rem;
+                svg {
+                    height: 2rem;
+                    width: 2rem;
                 }
             }
 
-            .remaining {
-                align-items: center;
-                display: flex;
-                flex-direction: column;
+            .episode-number {
+                background-color: var(--orange-40);
+                border-radius: .25rem;
+                font-size: 1.5rem;
+                height: 2rem;
                 justify-content: center;
+                width: 7rem;
+            }
 
-                span {
-                    line-height: 1.25em;
-                    text-align: center;
-                    text-wrap: balance;
-                }
+            .episode-name, .episode-air-date {
+                font-size: 1.25rem;
+                width: 11.5rem;
             }
         }
 
@@ -1783,15 +1780,14 @@ h2 {
 
                 .schedule {
                     align-items: stretch;
-                    /*background-color: hsla(from var(--ardoise-90) h s l / .2);*/
-                    /*border-bottom: .5rem solid var(--orange-50);*/
-                    border-radius: .5rem;
+                    border: 4px solid hsla(from var(--ardoise-20) h s l / .25);
+                    border-radius: .75rem;
                     color: var(--ardoise-10);
                     display: flex;
+                    flex-direction: column;
                     flex-shrink: 0;
-                    gap: .5rem;
                     justify-content: center;
-                    padding: .5rem 1rem;
+                    margin-inline: auto;
                 }
 
                 &:has(.alternate-schedule) {
