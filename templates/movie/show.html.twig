@@ -32,7 +32,7 @@
                 {% if movie.backdrop_path and movie.poster_path %}
                     <div class="backdrop">
                         <picture>
-                            <source media="(orientation: portrait)" srcset="/movies/posters{{ movie.poster_path }}">
+                            <source media="(max-aspect-ratio: 2 / 3)" srcset="/movies/posters{{ movie.poster_path }}">
                             <img src="/movies/backdrops{{ movie.backdrop_path }}" alt="{{ movie.title }} backdrop">
                         </picture>
                     </div>
@@ -66,6 +66,9 @@
                                     <span title="{{ movie.release_date|date("d/m/Y") }}">({{ movie.release_date|date("Y") }})</span>
                                 {% endif %}
                             </h1>
+                            {% if movie.vote_average %}
+                                <div class="movie-rating"><span>{{ ux_icon('mdi:star') }}</span>{{ movie.vote_average|round(1) }}</div>
+                            {% endif %}
                             {{ include('_blocks/translations/_tools.html.twig', {type: 'movie', hidden: 0}) }}
                         </div>
                         {{ include('_blocks/forms/_delete_overview.html.twig') }}
