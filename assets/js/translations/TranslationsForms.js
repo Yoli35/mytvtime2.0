@@ -194,7 +194,7 @@ export class TranslationsForms {
         hiddenInputTool.setAttribute('data-overview-id', "-1");
         firstRow.classList.add('hide');
         if (isSeriesPage) {
-            const seriesOverview = document.querySelector('.series-overview');
+            const seriesOverview = document.querySelector('.series-overview') || document.querySelector('.movie-overview');
             overviewText = seriesOverview.innerText;
         }
         const submitButton = this.overviewForm.querySelector('button[type="submit"]');

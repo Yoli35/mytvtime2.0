@@ -235,8 +235,8 @@ class SeriesSeasonEpisodes extends AbstractController
                     $colors = $this->detectColors($pathForColor);
                     if ($colors === true) {
                         $colors = [
-                            'bgcolor' => '#69968C',
-                            'color' => '#E1E7EA',
+                            'bgcolor' => '69968C',
+                            'color' => 'E1E7EA',
                         ];
                     }
                     $wp->setColor($colors['color']);
