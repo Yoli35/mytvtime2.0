@@ -40,11 +40,14 @@ class SeriesExternal
     #[ORM\Column]
     private array $keywords = [];
 
-    #[ORM\Column(length: 1, nullable: true)]
+    #[ORM\Column(length: 3, nullable: true)]
     private ?string $searchSeparator = null;
 
     #[ORM\Column(length: 16, nullable: true)]
     private ?string $searchType = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?array $networks = null;
 
     public function getId(): ?int
     {
@@ -143,5 +146,17 @@ class SeriesExternal
     public function setKeywords(array $keywords): void
     {
         $this->keywords = $keywords;
+    }
+
+    public function getNetworks(): ?array
+    {
+        return $this->networks;
+    }
+
+    public function setNetworks(?array $networks): static
+    {
+        $this->networks = $networks;
+
+        return $this;
     }
 }

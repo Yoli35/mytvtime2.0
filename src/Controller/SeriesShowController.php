@@ -140,7 +140,7 @@ final class SeriesShowController extends AbstractController
                 return $carry + $item;
             }, 0) / $c : 0;
 
-        $externals = $this->getExternals($series, $tv['name'], $tv['origin_country'], $tv['keywords']['results'], $tv['external_ids'] ?? [], $locale);
+        $externals = $this->getExternals($series, $tv['name'], $tv['origin_country'], $tv['networks'], $tv['keywords']['results'], $tv['external_ids'] ?? [], $locale);
 
         return $this->render('series_show/tmdb.html.twig', [
             'tv' => $tv,
@@ -277,7 +277,7 @@ final class SeriesShowController extends AbstractController
             'addLocationFormData' => $this->seriesService->getLocationFormData($tv['id'], $series->getId()),
             'fieldList' => ['series-id', 'tmdb-id', 'crud-type', 'crud-id', 'title', 'location', 'season-number', 'episode-number', 'description', 'latitude', 'longitude', 'radius', "source-name", "source-url"],
             'mapSettings' => $this->settingsRepository->findOneBy(['name' => 'mapbox']),
-            'externals' => $this->getExternals($series, $tv['name'], $tv['origin_country'], $tv['keywords']['results'], $tv['external_ids'] ?? [], $locale),
+            'externals' => $this->getExternals($series, $tv['name'], $tv['origin_country'], $tv['networks'], $tv['keywords']['results'], $tv['external_ids'] ?? [], $locale),
             'translations' => $this->seriesService->getSeriesShowTranslations(),
             'forms' => $forms,
             'oldSeriesAdded' => $request->query->get('oldSeriesAdded') === 'true',
@@ -392,7 +392,7 @@ final class SeriesShowController extends AbstractController
             'statusTitle' => null,
             'providers' => $providers,
             'devices' => $devices,
-//            'externals' => $this->getExternals($series, $tv['name'], $tv['origin_country'], $tvKeywords['results'] ?? [], $tvExternalIds, $request->getLocale()),
+//            'externals' => $this->getExternals($series, $tv['name'], $tv['origin_country'], $tv['networks'], $tvKeywords['results'] ?? [], $tvExternalIds, $request->getLocale()),
         ]);
     }
 
@@ -1150,9 +1150,10 @@ final class SeriesShowController extends AbstractController
         ];
     }
 
-    private function getExternals(?Series $series, string $name, array $countries, array $keywords, array $externalIds, string $locale): array
+    private function getExternals(?Series $series, string $name, array $countries, $networks, array $keywords, array $externalIds, string $locale): array
     {
         $keywordIds = array_map(fn($k) => $k['id'], $keywords);
+        $networkIds = array_map(fn($n) => $n['id'], $networks);
 
         $seriesCountries = $series ? $series->getOriginCountry() : $countries;
         $dbExternals = $this->seriesExternalRepository->findAll();
@@ -1162,7 +1163,11 @@ final class SeriesShowController extends AbstractController
         /** @var SeriesExternal $dbExternal */
         foreach ($dbExternals as $dbExternal) {
             $dbKeywordIds = array_map(fn($k) => $k['id'], $dbExternal->getKeywords());
+            $dbNetworkIds = $dbExternal->getNetworks();
             if (count($dbKeywordIds) && !array_intersect($keywordIds, $dbKeywordIds)) {
+                continue;
+            }
+            if ($dbNetworkIds && !array_intersect($networkIds, $dbNetworkIds)) {
                 continue;
             }
             $countries = $dbExternal->getCountries();
@@ -1170,7 +1175,12 @@ final class SeriesShowController extends AbstractController
             $searchType = $dbExternal->getSearchType();
             if ($searchType == "name") {
                 $searchSeparator = $dbExternal->getSearchSeparator();
-                $searchName = strtolower($searchSeparator ? str_replace(' ', $searchSeparator, $displayName) : $displayName);
+                if ($searchSeparator) {
+                    $displayName = strtolower($displayName);
+                    $searchName = preg_replace("/[-\s+]+/m", $searchSeparator, $displayName);
+                } else {
+                    $searchName = strtolower($displayName);
+                }
                 if (!count($countries) || array_intersect($seriesCountries, $countries)) {
                     $dbExternal->fullUrl = $searchQuery ? $searchName : null;
                     $externals[] = $dbExternal;
