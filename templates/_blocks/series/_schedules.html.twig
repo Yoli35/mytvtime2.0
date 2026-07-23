@@ -52,13 +52,9 @@ Mandatory variables:
                         </div>
                         {% set ule = schedule.userLastEpisode %}
                         {% set une = schedule.userNextEpisode %}
-                        {#                        {% set tvle = schedule.tvLastEpisode %} #}
-                        {#                        {% set tvne = schedule.tvNextEpisode %} #}
                         {% if ule %}
                             <a href="{{ path('app_tv_episode', {'id': series.id, 'slug': series.slug, 'seasonNumber': ule.season_number, 'episodeNumber': ule.episode_number}) }}" class="last user episode">
-                                {#<div class="type">{{ ux_icon('mdi:user-outline', {height: "18px", width: "18px"}) }}</div>#}
                                 <div class="episode-info" data-title="{{ 'Last episode watched'|trans }}">{{ ux_icon('mdi:eye-outline') }}</div>
-{#                                <div class="episode-info">{{ 'Last episode watched'|trans }}</div>#}
                                 <div class="episode-number">{{ "S%02dE%02d"|format(ule.season_number, ule.episode_number) }}</div>
                                 <div class="episode-air-date" data-title="{{ 'Episode air date'|trans }}">{{ ule.air_date|format_date("relative_short")|capitalize }}</div>
                                 <div class="episode-air-date" data-title="{{ 'View date'|trans }}">{{ ule.watch_at|format_datetime("relative_short", "short")|capitalize }}</div>
@@ -66,52 +62,21 @@ Mandatory variables:
                         {% endif %}
                         {% if une %}
                             <a href="{{ path('app_tv_episode', {'id': series.id, 'slug': series.slug, 'seasonNumber': une.season_number, 'episodeNumber': une.episode_number}) }}" class="next user episode" data-ref="{{ une.episode }}">
-                                {#<div class="type">{{ ux_icon('mdi:user-outline', {height: "18px", width: "18px"}) }}</div>#}
                                 <div class="episode-info" data-title="{{ 'Next episode to watch'|trans }}">{{ ux_icon('mdi:eye-off-outline') }}</div>
-{#                                <div class="episode-info">{{ 'Next episode to watch'|trans }}</div>#}
                                 <div class="episode-number">{{ "S%02dE%02d"|format(une.season_number, une.episode_number) }}</div>
                                 <div class="episode-air-date" data-title="{{ 'Episode air date'|trans }}">{{ une.air_date|format_date("relative_short")|capitalize }}</div>
                                 <div class="episode-air-date" data-title="{{ 'View date'|trans }}">{{ 'Not watched yet'|trans }}</div>
                             </a>
                             {% if schedule.multiple %}
                                 {% set ulne = schedule.userLastNextEpisode %}
-                                <div class="episode user last-of-group">
-                                    <div class="type">{{ ux_icon('mdi:user-outline', {height: "18px", width: "18px"}) }}</div>
-                                    <div class="episode-info">{{ 'Last to watch'|trans }}</div>
+                                <div class="next user episode">
+                                    <div class="episode-info" data-title="{{ 'Last to watch'|trans }}">{{ ux_icon('mdi:eye-off-outline') }}</div>
                                     <div class="episode-number">{{ "S%02dE%02d"|format(ulne.season_number, ulne.episode_number) }}</div>
                                     <div class="episode-air-date" data-title="{{ 'Episode air date'|trans }}">{{ ulne.air_date|format_date("relative_short")|capitalize }}</div>
                                     <div class="episode-air-date" data-title="{{ 'View date'|trans }}">{{ 'Not watched yet'|trans }}</div>
                                 </div>
                             {% endif %}
                         {% endif %}
-                        {#     {% if tvle %}
-                            <div class="episode tv">
-                                <div class="type">{{ ux_icon('mdi:tv', {height: "18px", width: "18px"}) }}</div>
-                                <div class="episode-info">{{ 'Last episode to air'|trans }}</div>
-                                <div class="episode-number">{{ "S%02dE%02d"|format(tvle.season_number, tvle.episode_number) }}</div>
-                                <div class="episode-name">{{ tvle.name }}</div>
-                                <div class="episode-air-date">{{ tvle.air_date|format_date("relative_short")|capitalize }}</div>
-                            </div>
-                        {% endif %}
-                        {% if tvne %}
-                            <div class="episode tv">
-                                <div class="type">{{ ux_icon('mdi:tv', {height: "18px", width: "18px"}) }}</div>
-                                <div class="episode-info">{{ 'Next episode to air'|trans }}</div>
-                                <div class="episode-number">{{ "S%02dE%02d"|format(tvne.season_number, tvne.episode_number) }}</div>
-                                <div class="episode-name">{{ tvne.name }}</div>
-                                <div class="episode-air-date">{{ tvne.air_date|format_date("relative_short")|capitalize }}</div>
-                            </div>
-                            {% if schedule.multiple %}
-                                {% set ulne = schedule.userLastNextEpisode %}
-                                <div class="episode tv last-of-group">
-                                    <div class="type">{{ ux_icon('mdi:tv', {height: "18px", width: "18px"}) }}</div>
-                                    <div class="episode-info">{{ 'Last to air'|trans }}</div>
-                                    <div class="episode-number">{{ "S%02dE%02d"|format(ulne.season_number, ulne.episode_number) }}</div>
-                                    <div class="episode-name">{{ 'Episode'|trans ~ ' ' ~ ulne.episode_number }}</div>
-                                    <div class="episode-air-date">{{ ulne.air_date_offset|format_date("relative_short")|capitalize }}</div>
-                                </div>
-                            {% endif %}
-                        {% endif %} #}
                     </div>
                     {{ include('_blocks/series/_schedules_form.html.twig', {schedule: schedule, country: user.country ?? 'FR'}) }}
                 </div>
