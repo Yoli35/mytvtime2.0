@@ -839,7 +839,7 @@ h2 {
             &:hover {
                 .infos-content {
                     .series-overview, .overviews, .season-overview {
-                        height: unset !important;
+                        height: fit-content !important;
                         opacity: 1 !important;
                     }
                 }
@@ -1024,8 +1024,8 @@ h2 {
                     justify-content: flex-start;
                     line-height: clamp(1.25rem, 1.875vw, 2.5rem);
                     opacity: 0;
-                    transition-behavior: allow-discrete;
                     transition: opacity 0.3s ease-in-out, height 0.3s ease-in-out;
+                    transition-behavior: allow-discrete;
                 }
 
                 .overviews {
@@ -1036,8 +1036,8 @@ h2 {
                     justify-content: center;
                     opacity: 0;
                     overflow: hidden;
-                    transition-behavior: allow-discrete;
                     transition: opacity 0.3s ease-in-out, height 0.3s ease-in-out;
+                    transition-behavior: allow-discrete;
                     width: 100%;
 
                     &.localized, &.additional {
