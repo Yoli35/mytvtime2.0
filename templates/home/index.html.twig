@@ -152,6 +152,42 @@
                         {% endfor %}
                     </div>
                 </div>
+                <div class="series-status">
+                    {% set total = providerMonthArray|reduce((carry, s) => carry + s.count) %}
+                    <div class="status-title">{{ 'Providers this month (episode count)'|trans }}</div>
+                    <div class="status-items">
+                        <div class="status-item">
+                            <div class="name">{{ 'Total'|trans }}</div>
+                            <div class="count">{{ total }}</div>
+                            <div class="percent">100%</div>
+                        </div>
+                        {% for p in providerMonthArray %}
+                            <div class="status-item">
+                                <div class="name">{{ p.provider_name }}</div>
+                                <div class="count">{{ p.count }}</div>
+                                <div class="percent">{{ (100 * p.count / total)|round(1) }}%</div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                <div class="series-status">
+                    {% set total = providerAllArray|reduce((carry, s) => carry + s.count) %}
+                    <div class="status-title">{{ 'Providers (episode count)'|trans }}</div>
+                    <div class="status-items">
+                        <div class="status-item">
+                            <div class="name">{{ 'Total'|trans }}</div>
+                            <div class="count">{{ total }}</div>
+                            <div class="percent">100%</div>
+                        </div>
+                        {% for p in providerAllArray %}
+                            <div class="status-item">
+                                <div class="name">{{ p.provider_name }}</div>
+                                <div class="count">{{ p.count }}</div>
+                                <div class="percent">{{ (100 * p.count / total)|round(1) }}%</div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
                 {% if episodesOfTheDay|length %}
                     <div class="series-group">
                         <h2>{{ 'Episodes of the day'|trans }} ({{ episodesOfTheDay|length }})</h2>
@@ -166,7 +202,7 @@
                 {% endif %}
                 {% if episodesToWatch|length %}
                     <div class="series-group">
-                        <h2>{{ 'Episodes to watch'|trans }} {# ({{ episodesToWatch|length }}) #}</h2>
+                        <h2>{{ 'Episodes to watch'|trans }} {#@ ({{ episodesToWatch|length }}) #}</h2>
                         <div class="wrapper">
                             <div class="content">
                                 {% for s in episodesToWatch %}

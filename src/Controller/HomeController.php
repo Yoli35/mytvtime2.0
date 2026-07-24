@@ -126,6 +126,8 @@ class HomeController extends AbstractController
             $historyEpisode = $this->seriesController->getEpisodeHistory($user, $dayCount, $language);
 
             $statusArray = $this->userSeriesRepository->getUserSeriesStatus($user);
+            $providerMonthArray = $this->userSeriesRepository->getUserEpisodeByProvider($user);
+            $providerAllArray = $this->userSeriesRepository->getUserAllEpisodeByProvider($user);
 
             $lastViewedMovies = $this->userMovieRepository->lastViewedMovies($user->getId());
         } else {
@@ -138,6 +140,8 @@ class HomeController extends AbstractController
             $dayCount = 0;
             $historySeries = [];
             $statusArray = [];
+            $providerMonthArray = [];
+            $providerAllArray = [];
         }
 
         /*
@@ -196,6 +200,8 @@ class HomeController extends AbstractController
             'highlightedMovies' => $movieSelection,
             'keywordSeries' => $keywordSeries,
             'statusArray' => $statusArray,
+            'providerMonthArray' => $providerMonthArray,
+            'providerAllArray' => $providerAllArray,
             'userSeries' => $userSeries,
             'episodesOfTheDay' => $episodesOfTheDay,
             'episodesToWatch' => $episodesToWatch,

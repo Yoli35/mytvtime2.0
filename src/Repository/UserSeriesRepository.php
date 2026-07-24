@@ -106,7 +106,45 @@ class UserSeriesRepository extends ServiceEntityRepository
                 GROUP BY s.`status`
             SQL;
 
-        return $this->getAll($sql, ["userId" => $user->getId()], ['status' => ParameterType::INTEGER]);
+        return $this->getAll($sql, ["userId" => $user->getId()], ['userId' => ParameterType::INTEGER]);
+    }
+
+    public function getUserEpisodeByProvider(User $user): array
+    {
+        $sql = <<<SQL
+                -- Plateformes par ordre d'épisodes vus (1 mois)
+                SELECT ue.`provider_id`,
+                    wp.`provider_name`,
+                    wp.`logo_path`,
+                    COUNT(ue.`provider_id`) AS count
+                FROM `user_episode` ue
+                    LEFT JOIN `watch_provider` wp ON wp.`provider_id`=ue.`provider_id`
+                WHERE ue.`user_id`=1 AND ue.`provider_id` IS NOT NULL AND DATE(ue.`watch_at`) > SUBDATE(CURDATE(), INTERVAL 1 MONTH)
+                GROUP BY ue.`provider_id`,
+                    wp.`provider_name`,
+                    wp.`logo_path`
+                ORDER BY count DESC;
+            SQL;
+
+        return $this->getAll($sql, ["userId" => $user->getId()], ['userId' => ParameterType::INTEGER]);
+    }
+
+    public function getUserAllEpisodeByProvider(User $user): array
+    {
+        $sql = <<<SQL
+                -- Plateformes par ordre d'épisodes vus (tout)
+                SELECT ue.`provider_id`,
+                    wp.`provider_name`,
+                    wp.`logo_path`,
+                    COUNT(ue.`provider_id`) AS count
+                FROM `user_episode` ue
+                    LEFT JOIN `watch_provider` wp ON wp.`provider_id`=ue.`provider_id`
+                WHERE ue.`user_id`=1 AND ue.`provider_id` IS NOT NULL
+                GROUP BY ue.`provider_id`, wp.`provider_name`, wp.`logo_path`
+                ORDER BY count DESC;
+            SQL;
+
+        return $this->getAll($sql, ["userId" => $user->getId()], ['userId' => ParameterType::INTEGER]);
     }
 
     public function seriesToStart(User $user, string $locale, string $sort, string $order): array
