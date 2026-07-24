@@ -27,7 +27,7 @@
     {% endif %}
     {% include '_blocks/_menu.html.twig' %}
     <div class="container-fluid {# backgroundImageOverlay #}">
-        <div class="series-show user-series-show" data-theme="none" data-series-id="{{ series.id }}">
+        <div class="series-show user-series-show" data-theme="none" data-series-id="{{ series.id }}" data-theme-type="{{ themeType|default('') }}" data-theme-id="{{ themeId|default('') }}" data-theme-setting="{{ themeSetting|default('') }}">
             <div class="header">
                 {% if tv.backdrop_path and series.posterPath %}
                     <div class="backdrop">

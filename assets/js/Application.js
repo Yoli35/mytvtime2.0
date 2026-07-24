@@ -37,21 +37,49 @@ export class Application {
         const page = document.querySelector(".series-show") || document.querySelector(".episode-show");
         const themeToggler = document.querySelector(".theme-toggler");
         if (page) {
-            console.log(page.dataset.theme)
+            const html = document.querySelector("html");
+
+            // Restore the saved text-color theme for this series / season / episode.
+            // When a setting exists (dark | light) we apply it and mark the toggler
+            // active. Its presence also disables the automatic, background-luminosity
+            // based text color forcing done in app.js.
+            const savedTheme = page.dataset.themeSetting;
+            if (savedTheme === 'dark' || savedTheme === 'light') {
+                themeToggler.classList.add("active");
+                page.dataset.theme = savedTheme;
+            }
+            // Reflect the current state through the toggler icon
+            // (none -> auto, dark -> moon, light -> sun).
+            themeToggler.dataset.themeState = page.dataset.theme;
+
             themeToggler.addEventListener("click", () => {
-                themeToggler.classList.toggle("active");
-                 if (page.dataset.theme === 'none') {
-                     const html = document.querySelector("html");
-                     const htmlTheme = html.dataset.theme;
-                     const seasonInfosDivs = document.querySelectorAll(".seasons .season .infos");
-                     seasonInfosDivs.forEach(seasonInfo => {
-                         seasonInfo.style = '';
-                     })
-                    page.dataset.theme = htmlTheme === 'dark' ? 'light' : 'dark'
-                } else if (page.dataset.theme === 'dark') {
-                    page.dataset.theme = 'light'
+                if (page.dataset.theme === 'none') {
+                    const seasonInfosDivs = document.querySelectorAll(".seasons .season .infos");
+                    seasonInfosDivs.forEach(seasonInfo => {
+                        seasonInfo.style = '';
+                    })
+                    page.dataset.theme = 'light';
+                    themeToggler.classList.add("active");
                 } else if (page.dataset.theme === 'light') {
-                    page.dataset.theme = 'dark'
+                    page.dataset.theme = 'dark';
+                } else if (page.dataset.theme === 'dark') {
+                    themeToggler.classList.remove("active");
+                    page.dataset.theme = 'none';
+                }
+                themeToggler.dataset.themeState = page.dataset.theme;
+
+                // Persist the chosen theme value (series / season / episode).
+                const themeType = page.dataset.themeType;
+                const themeId = page.dataset.themeId;
+                if (themeType && themeId) {
+                    fetch(`/api/settings/theme/update/${themeType}/${themeId}`, {
+                        method: "POST",
+                        headers: {"Content-Type": "application/json"},
+                        body: JSON.stringify({theme: page.dataset.theme})
+                    })
+                        .catch(() => {
+                            console.log("Failed to persist theme");
+                        });
                 }
             })
 

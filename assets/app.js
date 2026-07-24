@@ -156,26 +156,33 @@ window.addEventListener("DOMContentLoaded", () => {
                 body.style.backgroundImage = "unset";
                 body.style.backgroundColor = "oklch(" + color.lch.l / 100 + " " + color.lch.c / 100 + " " + ((color.lch.h + 180) % 360) + ")"
             }
-            if (color.lch.l > 50) {
-                seriesPage.style.color = "hsl(202, 18%, 10%)";
-                if (keywordDivs) {
-                    keywordDivs.forEach(div => {
-                        div.classList.add("dark");
+            // Force the text color according to the background luminosity ONLY when
+            // the user has not saved a theme setting for this series. When a setting
+            // exists, it is applied by Application.js (via [data-theme]) and must win.
+            if (!seriesPage.dataset.themeSetting) {
+                if (color.lch.l > 50) {
+                    seriesPage.style.color = "hsl(202, 18%, 10%)";
+                    if (keywordDivs) {
+                        keywordDivs.forEach(div => {
+                            div.classList.add("dark");
+                        });
+                    }
+                    if (seasonInfosDivs) {
+                        seasonInfosDivs.forEach(seasonInfosDiv => {
+                            seasonInfosDiv.style.color = "hsl(202, 18%, 10%)";
+                        });
+                    }
+                } else {
+                    seriesPage.style.color = "hsl(202, 18%, 90%)";
+                    if (keywordDivs) {
+                        keywordDivs.forEach(div => {
+                            div.classList.add("light");
+                        });
+                    }
+                    if (seasonInfosDivs) seasonInfosDivs.forEach(seasonInfosDiv => {
+                        seasonInfosDiv.style.color = "hsl(202, 18%, 90%)";
                     });
                 }
-                if (seasonInfosDivs) seasonInfosDivs.forEach(seasonInfosDiv => {
-                    seasonInfosDiv.style.color = "hsl(202, 18%, 10%)";
-                });
-            } else {
-                seriesPage.style.color = "hsl(202, 18%, 90%)";
-                if (keywordDivs) {
-                    keywordDivs.forEach(div => {
-                        div.classList.add("light");
-                    });
-                }
-                if (seasonInfosDivs) seasonInfosDivs.forEach(seasonInfosDiv => {
-                    seasonInfosDiv.style.color = "hsl(202, 18%, 90%)";
-                });
             }
         }
     }

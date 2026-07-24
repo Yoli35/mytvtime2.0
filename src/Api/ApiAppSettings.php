@@ -11,6 +11,7 @@ use Symfony\Component\DependencyInjection\Attribute\AutowireMethodOf;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Routing\Requirement\Requirement;
 
 /** @method User|null getUser() */
 #[Route('/api/settings', name: 'api_settings_')]
@@ -150,6 +151,49 @@ readonly class ApiAppSettings
         return ($this->json)([
             'ok' => true,
             'update' => true,
+        ]);
+    }
+
+    /**
+     * Persist the chosen text-color theme for a series, season or episode.
+     * $type is "series", "season" or "episode" and $id the matching TMDB id;
+     * the setting is stored under the name "theme_<type>_<id>" with
+     * data ['theme' => 'dark'|'light'].
+     */
+    #[Route('/theme/update/{type}/{id}', name: 'theme_update', requirements: ['type' => 'series|season|episode', 'id' => Requirement::DIGITS], methods: ['POST'])]
+    public function themeUpdate(Request $request, string $type, int $id): Response
+    {
+        $user = ($this->getUser)();
+        if (!$user) {
+            return ($this->json)([
+                'ok' => true,
+                'update' => false,
+            ]);
+        }
+
+        $theme = (string) $request->getPayload()->get('theme');
+        if (!in_array($theme, ['dark', 'light', 'none'], true)) {
+            return ($this->json)([
+                'ok' => false,
+                'update' => false,
+                'error' => 'Invalid theme value',
+            ]);
+        }
+
+        $name = 'theme_' . $type . '_' . $id;
+
+        $settings = $this->settingsRepository->findOneBy(['user' => $user, 'name' => $name]);
+        if (!$settings) {
+            $settings = new Settings($user, $name, ['theme' => $theme]);
+        } else {
+            $settings->setData(['theme' => $theme]);
+        }
+        $this->settingsRepository->save($settings, true);
+
+        return ($this->json)([
+            'ok' => true,
+            'update' => true,
+            'theme' => $theme,
         ]);
     }
 

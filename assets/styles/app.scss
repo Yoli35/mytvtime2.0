@@ -3173,6 +3173,28 @@ section:has(.pages) {
             color: var(--green-20);
         }
     }
+
+    // Theme toggler: show a single icon reflecting the current state.
+    // none -> mdi:theme-light-dark, dark -> mdi:moon-and-stars, light -> mdi:weather-sunny
+    .theme-toggler {
+        .icon-auto, .icon-dark, .icon-light {
+            align-items: center;
+            display: none;
+            justify-content: center;
+        }
+    }
+
+    .theme-toggler[data-theme-state="none"] .icon-auto {
+        display: flex;
+    }
+
+    .theme-toggler[data-theme-state="dark"] .icon-dark {
+        display: flex;
+    }
+
+    .theme-toggler[data-theme-state="light"] .icon-light {
+        display: flex;
+    }
 }
 
 .episodes-today {
@@ -3247,6 +3269,7 @@ section:has(.pages) {
 
                 &:hover {
                     border-color: var(--green);
+
                     .poster .checked {
                         opacity: 1;
                     }

@@ -265,10 +265,15 @@ final class SeriesShowController extends AbstractController
             ];
         }
 
+        $themeSettings = $this->settingsRepository->findOneBy(['user' => $user, 'name' => 'theme_series_' . $series->getTmdbId()]);
+
         return $this->render("series_show/series.html.twig", [
             'series' => $seriesArr,
             'tv' => $tv,
             'userSeries' => $userSeries,
+            'themeType' => 'series',
+            'themeId' => $series->getTmdbId(),
+            'themeSetting' => $themeSettings?->getData()['theme'] ?? '',
             'messages' => $messages ?? [],
             'providers' => $this->watchLinkApi->getWatchProviders($country),
             'locations' => $filmingLocationsWithBounds['filmingLocations'],
@@ -374,10 +379,15 @@ final class SeriesShowController extends AbstractController
 
         $filmingLocation = $this->filmingLocationRepository->location($series->getTmdbId());
 
+        $themeSettings = $this->settingsRepository->findOneBy(['user' => $user, 'name' => 'theme_season_' . $season['id']]);
+
         return $this->render('series_show/season.html.twig', [
             'series' => $series,
             'userSeries' => $userSeries,
             'seasonVotes' => $seasonVotes,
+            'themeType' => 'season',
+            'themeId' => $season['id'],
+            'themeSetting' => $themeSettings?->getData()['theme'] ?? '',
             'tv' => $tv,
             'translations' => $this->seriesService->getSeasonShowTranslations(),
             'quickLinks' => $this->getQuickLinks($user, $season['episodes']),
@@ -478,11 +488,16 @@ final class SeriesShowController extends AbstractController
         $providers = $this->watchLinkApi->getWatchProviders($country);
         $devices = $this->deviceRepository->deviceArray();
 
+        $themeSettings = $this->settingsRepository->findOneBy(['user' => $user, 'name' => 'theme_episode_' . $episode['id']]);
+
         return $this->render('series_show/episode.html.twig', [
             'userSeries' => $userSeries,
             'series' => $series,
             'season' => $season,
             'episode' => $episode,
+            'themeType' => 'episode',
+            'themeId' => $episode['id'],
+            'themeSetting' => $themeSettings?->getData()['theme'] ?? '',
             'networks' => $this->getNetworks($series, $user),
             'logoUrl' => $this->imageConfiguration->getUrl('logo_sizes', 5),
             'seasonVotes' => $seasonVotes,

@@ -24,7 +24,7 @@
     </script>
     {{ include('_blocks/_menu.html.twig', {seriesName: season.series_localized_name ? season.series_localized_name.name:series.name, seriesLink: path('app_tv_series', {id: series.id, slug: season.series_localized_name.slug ?? series.slug}) }) }}
     <div class="container-fluid backgroundImageOverlay">
-        <div id="series-season" class="series-show" data-theme="none" data-series-id="{{ series.id }}">
+        <div id="series-season" class="series-show" data-theme="none" data-series-id="{{ series.id }}" data-theme-type="{{ themeType|default('') }}" data-theme-id="{{ themeId|default('') }}" data-theme-setting="{{ themeSetting|default('') }}">
             <div class="header">
                 {% if season.backdrop_path and season.poster_path %}
                     <div class="backdrop">

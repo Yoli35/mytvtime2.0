@@ -30,7 +30,11 @@
 {% include "_blocks/list/_tools_submenu_list.html.twig" %}
 <div class="global-tools{% if app.environment is same as 'dev' %} dev{% endif %}">
     <div class="to-top" data-title="{{ 'Back to top'|trans }}">{{ ux_icon('mdi:arrow-up') }}</div>
-    <div class="theme-toggler" data-title="{{ 'Toggle text color'|trans }}">{{ ux_icon('mdi:theme-light-dark') }}</div>
+    <div class="theme-toggler" data-title="{{ 'Toggle text color'|trans }}" data-theme-state="none">
+        <span class="icon-auto">{{ ux_icon('mdi:theme-light-dark') }}</span>
+        <span class="icon-dark">{{ ux_icon('mdi:moon-and-stars') }}</span>
+        <span class="icon-light">{{ ux_icon('mdi:weather-sunny') }}</span>
+    </div>
     <div class="preview-toggler" data-title="{{ 'Toggle image preview'|trans }}">{{ ux_icon('mdi:eye') }}</div>
 </div>
 <div class="diaporama"></div>
