@@ -23,7 +23,7 @@
                             <input type="number" name="season-part-first-episode-{{ schedule.id }}" value="{{ schedule.seasonPartFirstEpisode }}" id="season-part-first-episode-{{ schedule.id }}"{% if schedule.multiPart==0 %} disabled{% endif %}>
                         </label>
                         <label for="season-part-episode-count-{{ schedule.id }}">{{ 'Episode count'|trans }}
-                            <input type="number" name="season-part-episode-count-{{ schedule.id }}" value="{{ schedule.seasonPartEpisodeCount }}" id="season-part-first-episode-{{ schedule.id }}"{% if schedule.multiPart==0 %} disabled{% endif %}>
+                            <input type="number" name="season-part-episode-count-{{ schedule.id }}" value="{{ schedule.seasonPartEpisodeCount }}" id="season-part-episode-count-{{ schedule.id }}"{% if schedule.multiPart==0 %} disabled{% endif %}>
                         </label>
                     </div>
                     <div class="date-time group full">
@@ -43,7 +43,7 @@
                             </select>
                         </label>
                         <label for="timezone-bookmark-{{ schedule.id }}">{{ 'Bookmarks'|trans }}
-                            <select name="timezone-bookmark-{{ schedule.id }}" onchange="convertDateTime({{ schedule.id }}, 'timezone-bookmark')" id="timezone-{{ schedule.id }}">
+                            <select name="timezone-bookmark-{{ schedule.id }}" onchange="convertDateTime({{ schedule.id }}, 'timezone-bookmark')" id="timezone-bookmark-{{ schedule.id }}">
                                 <option value="">{{ 'Select timezone'|trans }}</option>
                                 {% for code, tz in series.timezoneBookmarkMenu %}
                                     <option value="{{ code }}"{% if code == schedule.timezone %} selected{% endif %}>{{ tz }}</option>
