@@ -2480,9 +2480,10 @@ h2 {
                     }
 
                     .networks {
+                        align-items: center;
                         display: flex;
                         flex-wrap: wrap;
-                        gap: .25rem;
+                        gap: 1rem;
                         justify-content: center;
 
                         .network-detail {
@@ -2530,6 +2531,15 @@ h2 {
                             }
                         }
 
+                        .homepage-link {
+                            background-color: var(--orange-50);
+                            border-radius: .5rem;
+                            color: var(--orange-90);
+                            font-size: 1.5rem;
+                            line-height: 1.1;
+                            padding: 1rem 2rem;
+                            text-decoration: none;
+                        }
                     }
                 }
 

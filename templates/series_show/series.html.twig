@@ -462,6 +462,9 @@
                         <div class="facts">
                             <div class="fact">
                                 <div class="networks">
+                                    {% if tv.homepage %}
+                                        <a href="{{ tv.homepage }}" target="_blank" rel="noopener noreferrer" class="homepage-link">{{ 'Homepage'|trans }}</a>
+                                    {% endif %}
                                     {% for network in tv.networks %}
                                         <div class="network-detail">
                                             <div class="frame" data-title="{{ network.name }}{% if network.headquarters %} - {{ network.headquarters }}{% endif %} ({{ network.id }})" data-title-bg="grey">
