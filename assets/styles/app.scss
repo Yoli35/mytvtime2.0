@@ -181,6 +181,12 @@ body:has(dialog[open]) {
     gap: 1rem;
 }
 
+@property --svgSize {
+    syntax: "<length>";
+    inherits: true;
+    initial-value: 18px;
+}
+
 svg {
     fill: currentColor;
     height: var(--svgSize);
@@ -2319,6 +2325,7 @@ section:has(.pages) {
     right: 1rem;
     text-align: center;
     transition: --add-this-fill-start 300ms ease-in-out, --add-this-fill-end 300ms ease-in-out;
+    z-index: 1000;
 
     &:hover,
     &:focus-visible {

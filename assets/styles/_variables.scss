@@ -4,12 +4,6 @@
 
     color-scheme: light dark;
 
-    @property --svgSize {
-        syntax: "<length>";
-        inherits: true;
-        initial-value: 18px;
-    }
-
     accent-color: hsl(32, 76%, 50%);
     --accent-color: hsl(32, 76%, 50%);
 
