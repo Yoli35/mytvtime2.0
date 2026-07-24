@@ -25,13 +25,29 @@
     <div class="container-fluid backgroundImageOverlay">
         <div class="movie-show">
             <header>
-                <div class="backdrop">
-                    {% if movie.backdrop_path %}
-                        <img src="/movies/backdrops{{ movie.backdrop_path }}" alt="{{ movie.title }} {{ 'backdrop'|trans }}">
-                    {% elseif movie.poster_path %}
-                        <img src="/movies/posters{{ movie.poster_path }}" alt="{{ movie.title }} {{ 'backdrop'|trans }}">
-                    {% endif %}
-                </div>
+{#                <div class="backdrop">#}
+{#                    {% if movie.backdrop_path %}#}
+{#                        <img src="/movies/backdrops{{ movie.backdrop_path }}" alt="{{ movie.title }} {{ 'backdrop'|trans }}">#}
+{#                    {% elseif movie.poster_path %}#}
+{#                        <img src="/movies/posters{{ movie.poster_path }}" alt="{{ movie.title }} {{ 'backdrop'|trans }}">#}
+{#                    {% endif %}#}
+{#                </div>#}
+                {% if movie.backdrop_path and movie.poster_path %}
+                    <div class="backdrop">
+                        <picture>
+                            <source media="(max-aspect-ratio: 2 / 3)" srcset="/movies/posters{{ movie.poster_path }}">
+                            <img src="/movies/backdrops{{ movie.backdrop_path }}" alt="{{ movie.title }} backdrop">
+                        </picture>
+                    </div>
+                {% elseif movie.backdrop_path %}
+                    <div class="backdrop">
+                        <img src="/movies/backdrops{{ movie.backdrop_path }}" alt="{{ movie.title }}">
+                    </div>
+                {% elseif movie.poster_path %}
+                    <div class="backdrop">
+                        <img src="/movies/posters{{ movie.poster_path }}" alt="{{ movie.title }}">
+                    </div>
+                {% endif %}
                 <div class="poster">
                     {% if movie.poster_path %}
                         <img src="/movies/posters{{ movie.poster_path }}" alt="{{ movie.title }} {{ 'poster'|trans }}">
