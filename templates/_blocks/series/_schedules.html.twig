@@ -69,12 +69,14 @@ Mandatory variables:
                             </a>
                             {% if schedule.multiple %}
                                 {% set ulne = schedule.userLastNextEpisode %}
-                                <div class="next user episode">
-                                    <div class="episode-info" data-title="{{ 'Last to watch'|trans }}">{{ ux_icon('mdi:eye-off-outline') }}</div>
-                                    <div class="episode-number">{{ "S%02dE%02d"|format(ulne.season_number, ulne.episode_number) }}</div>
-                                    <div class="episode-air-date" data-title="{{ 'Episode air date'|trans }}">{{ ulne.air_date|format_date("relative_short")|capitalize }}</div>
-                                    <div class="episode-air-date" data-title="{{ 'View date'|trans }}">{{ 'Not watched yet'|trans }}</div>
-                                </div>
+                                {% if ulne.episode_number > une.episode_number %}
+                                    <div class="next user episode">
+                                        <div class="episode-info" data-title="{{ 'Last to watch'|trans }}">{{ ux_icon('mdi:eye-off-outline') }}</div>
+                                        <div class="episode-number">{{ "S%02dE%02d"|format(ulne.season_number, ulne.episode_number) }}</div>
+                                        <div class="episode-air-date" data-title="{{ 'Episode air date'|trans }}">{{ ulne.air_date|format_date("relative_short")|capitalize }}</div>
+                                        <div class="episode-air-date" data-title="{{ 'View date'|trans }}">{{ 'Not watched yet'|trans }}</div>
+                                    </div>
+                                {% endif %}
                             {% endif %}
                         {% endif %}
                     </div>
