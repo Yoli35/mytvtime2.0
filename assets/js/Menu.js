@@ -114,6 +114,7 @@ export class Menu {
         this.userConnected = this.userMenu.getAttribute("data-user-connected") === "true";
         this.accentColor = this.userMenu.querySelector(".accent-color-settings");
         this.scheduleMenuSettings = this.userMenu.querySelector(".schedule-range-settings");
+        this.discoverTvSettings = this.userMenu.querySelector(".discover-tv-settings");
         this.whatNext = this.userMenu.querySelector(".what-next-settings");
         this.menuPreview = this.userMenu.querySelector(".menu-preview-settings");
         this.menuThemes = this.userMenu.querySelectorAll(".menu-theme");
@@ -126,7 +127,8 @@ export class Menu {
         this.checkTheme = this.checkTheme.bind(this);
         this.getAccentColor = this.getAccentColor.bind(this);
         this.getScheduleMenuSettings = this.getScheduleMenuSettings.bind(this);
-        this.lang = document.documentElement.lang;
+        this.getDiscoverTvSettings = this.getDiscoverTvSettings.bind(this);
+        this.lang = this.root.lang;
         this.isMultiSearchOpen = false;
         this.initialPreviewSetting = null;
         this.posterUrl = null;
@@ -505,6 +507,7 @@ export class Menu {
         if (this.userConnected) {
             this.accentColor.addEventListener("click", this.setAccentColor);
             this.scheduleMenuSettings.addEventListener("click", this.setScheduleMenuSettings);
+            this.discoverTvSettings.addEventListener("click", this.setDiscoverTvSettings);
             this.whatNext.addEventListener("click", this.setWhatNext);
             this.menuPreview.addEventListener("click", this.togglePreview);
             this.initPreview();
@@ -984,6 +987,57 @@ export class Menu {
             .then(response => response.json())
             .then(data => {
                 console.log(data);
+            })
+            .catch((error) => {
+                console.log(error);
+            });
+    }
+
+    setDiscoverTvSettings() {
+        document.documentElement.click();
+        /** @type HTMLDialogElement */
+        const discoverTvSettingsDialog = document.querySelector("#discoverTvSettingsDialog");
+        const submitButton = discoverTvSettingsDialog.querySelector("button[type=submit]");
+        const cancelButton = discoverTvSettingsDialog.querySelector("button[type=button]");
+
+        self.getDiscoverTvSettings('values');
+
+        cancelButton.addEventListener("click", () => {
+            discoverTvSettingsDialog.close();
+        });
+        submitButton.addEventListener("click", () => {
+            /*const linkToSelected = discoverTvSettingsDialog.querySelector('input[name="schedule_menu_settings_link_to"]:checked').value;
+            self.updateScheduleRange(startInput.value, endInput.value, linkToSelected);*/
+            discoverTvSettingsDialog.close();
+        });
+        discoverTvSettingsDialog.showModal();
+    }
+
+    getDiscoverTvSettings(type) {
+        fetch("/api/settings/discover/tv/read?t=" + type)
+            .then(response => response.json())
+            .then(data => {
+                console.log(data);
+                const discoverTvSettingsDialog = document.querySelector("#discoverTvSettingsDialog");
+                const selectList = discoverTvSettingsDialog.querySelector("select[id=discover_tv_list]");
+                const sortBySelect = discoverTvSettingsDialog.querySelector("select[id=discover_tv_order_by]");
+
+                selectList.querySelectorAll("option").forEach(option => {
+                    option.remove();
+                });
+                const newOptions = data['lists'].map(list => {
+                    const newOption = document.createElement('option');
+                    newOption.value = list['id'];
+                    newOption.text = list['name_'+self.lang];
+                    return newOption;
+                });
+                selectList.append(...newOptions);
+                selectList.querySelectorAll("option").forEach(option => {
+                    option.selected = parseInt(option.value) === data['selected_list'];
+                });
+                sortBySelect.querySelectorAll("option").forEach(option => {
+                    option.selected = option.value === data['order_by'];
+                });
             })
             .catch((error) => {
                 console.log(error);

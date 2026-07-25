@@ -124,6 +124,55 @@ readonly class ApiAppSettings
         ]);
     }
 
+    #[Route('/discover/tv/read', name: 'discover_tv_settings_read', methods: ['GET'])]
+    public function discoverTvRead(Request $request): Response
+    {
+        $user = ($this->getUser)();
+        if (!$user) {
+            return ($this->json)([
+                'ok' => true,
+                'read' => false,
+            ]);
+        }
+
+        $locale = $request->getLocale();
+
+        $settings = array_map(fn($setting) => json_decode($setting['data'], true), $this->settingsRepository->getSettingsByName($user->getId(), 'user_home_keyword_list_'));
+        if (!$settings) {
+            $settings[0] = new Settings($user, 'user_home_keyword_list_0', [
+                "list" => 1,
+                "order_by" => "popularity.desc"
+            ]);
+            $this->settingsRepository->save($settings[0]);
+            $settings[1] = new Settings($user, 'user_home_keyword_list_1', [
+                "id" => 1,
+                "pages" => [1, 2, 3],
+                "name_en" => "Popular Sci-Fi Series",
+                "name_fr" => "Séries SF populaires",
+                "name_ko" => "인기 SF 드라마",
+                "keywords" => [
+                    ["id" => 504, "name" => "science fiction", "keyword_id" => 281358],
+                    ["id" => 432, "name" => "distant future", "keyword_id" => 11239],
+                    ["id" => 403, "name" => "post-apocalyptic future", "keyword_id" => 4458]
+                ]
+            ]);
+            $this->settingsRepository->save($settings[1], true);
+        }
+        $list = $settings[0]['list'];
+        $orderBy = $settings[0]['order_by'] ?? 'popularity.desc';
+
+        // Retirer le premier élément du tableau
+        array_shift($settings);
+
+        return ($this->json)([
+            'ok' => true,
+            'read' => true,
+            'selected_list' => $list,
+            'order_by' => $orderBy,
+            'lists' => $settings,
+        ]);
+    }
+
     #[Route('/schedule-range/update', name: 'schedule_menu_settings_update', methods: ['POST'])]
     public function SRUpdate(Request $request): Response
     {
@@ -171,7 +220,7 @@ readonly class ApiAppSettings
             ]);
         }
 
-        $theme = (string) $request->getPayload()->get('theme');
+        $theme = (string)$request->getPayload()->get('theme');
         if (!in_array($theme, ['dark', 'light', 'none'], true)) {
             return ($this->json)([
                 'ok' => false,
