@@ -85,16 +85,18 @@
                 </div>
             </div>
 
-            <div class="series-group">
-                <h2>{{ 'Latest LGBT & bl Series'|trans }} ({{ keywordSeries|length }})</h2>
-                <div class="wrapper">
-                    <div class="content">
-                        {% for s in keywordSeries %}
-                            {{ include('_blocks/series/_card.html.twig', { series: s, dataTitle: s.date }) }}
-                        {% endfor %}
+            {% if keywordSeries.name %}
+                <div class="series-group">
+                    <h2>{{ keywordSeries.name }} ({{ keywordSeries.results|length }})</h2>
+                    <div class="wrapper">
+                        <div class="content">
+                            {% for s in keywordSeries.results %}
+                                {{ include('_blocks/series/_card.html.twig', { series: s, dataTitle: s.date }) }}
+                            {% endfor %}
+                        </div>
                     </div>
                 </div>
-            </div>
+            {% endif %}
 
             {% if 0 %}
                 {#            {% if movieVideos.firstVideo|length %} #}
@@ -152,17 +154,21 @@
                         {% endfor %}
                     </div>
                 </div>
-                <div class="series-status">
+                <div class="provider-ranking">
                     {% set total = providerMonthArray|reduce((carry, s) => carry + s.count) %}
-                    <div class="status-title">{{ 'Providers this month (episode count)'|trans }}</div>
-                    <div class="status-items">
-                        <div class="status-item">
+                    <div class="ranking-title">{{ 'Providers this month (episode count)'|trans }}</div>
+                    <div class="ranking-items">
+                        <div class="ranking-item">
                             <div class="name">{{ 'Total'|trans }}</div>
                             <div class="count">{{ total }}</div>
                             <div class="percent">100%</div>
                         </div>
                         {% for p in providerMonthArray %}
-                            <div class="status-item">
+                            <div class="ranking-item">
+                                <div class="logo">
+                                    <img src="{{ p.logo_path }}" alt="{{ p.provider_name }}">
+                                </div>
+                                <div class="index">{{ loop.index }}</div>
                                 <div class="name">{{ p.provider_name }}</div>
                                 <div class="count">{{ p.count }}</div>
                                 <div class="percent">{{ (100 * p.count / total)|round(1) }}%</div>
@@ -170,17 +176,21 @@
                         {% endfor %}
                     </div>
                 </div>
-                <div class="series-status">
+                <div class="provider-ranking">
                     {% set total = providerAllArray|reduce((carry, s) => carry + s.count) %}
-                    <div class="status-title">{{ 'Providers (episode count)'|trans }}</div>
-                    <div class="status-items">
-                        <div class="status-item">
+                    <div class="ranking-title">{{ 'Providers (episode count)'|trans }}</div>
+                    <div class="ranking-items">
+                        <div class="ranking-item">
                             <div class="name">{{ 'Total'|trans }}</div>
                             <div class="count">{{ total }}</div>
                             <div class="percent">100%</div>
                         </div>
                         {% for p in providerAllArray %}
-                            <div class="status-item">
+                            <div class="ranking-item">
+                                <div class="logo">
+                                    <img src="{{ p.logo_path }}" alt="{{ p.provider_name }}">
+                                </div>
+                                <div class="index">{{ loop.index }}</div>
                                 <div class="name">{{ p.provider_name }}</div>
                                 <div class="count">{{ p.count }}</div>
                                 <div class="percent">{{ (100 * p.count / total)|round(1) }}%</div>

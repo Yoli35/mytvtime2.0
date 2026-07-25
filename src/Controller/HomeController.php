@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\User;
 use App\Entity\UserSeries;
+use App\Repository\SettingsRepository;
 use App\Repository\UserEpisodeRepository;
 use App\Repository\UserMovieRepository;
 use App\Repository\UserSeriesRepository;
@@ -11,6 +12,7 @@ use App\Repository\WatchProviderRepository;
 use App\Service\DateService;
 use App\Service\ImageConfiguration;
 use App\Service\ImageService;
+use App\Service\ProviderService;
 use App\Service\TMDBService;
 use App\Service\WhatNextSettingsService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -28,10 +30,12 @@ class HomeController extends AbstractController
         private readonly DateService             $dateService,
         private readonly ImageConfiguration      $imageConfiguration,
         private readonly ImageService            $imageService,
+        private readonly ProviderService         $providerService,
         private readonly SeriesController        $seriesController,
         private readonly UserEpisodeRepository   $userEpisodeRepository,
         private readonly UserMovieRepository     $userMovieRepository,
         private readonly UserSeriesRepository    $userSeriesRepository,
+        private readonly SettingsRepository      $settingsRepository,
         private readonly TMDBService             $tmdbService,
         private readonly TranslatorInterface     $translator,
         private readonly WhatNextSettingsService $whatNextSettingsService,
@@ -125,9 +129,16 @@ class HomeController extends AbstractController
             $dayCount = $request->query->get('daycount', $cookieDayCount);
             $historyEpisode = $this->seriesController->getEpisodeHistory($user, $dayCount, $language);
 
+            $logoUrl = $this->imageConfiguration->getUrl('logo_sizes', 2);
             $statusArray = $this->userSeriesRepository->getUserSeriesStatus($user);
-            $providerMonthArray = $this->userSeriesRepository->getUserEpisodeByProvider($user);
-            $providerAllArray = $this->userSeriesRepository->getUserAllEpisodeByProvider($user);
+            $providerMonthArray = array_map(function ($provider) use ($logoUrl) {
+                $provider['logo_path'] = $this->providerService->getProviderLogoFullPath($provider['logo_path'], $logoUrl);
+                return $provider;
+            }, $this->userSeriesRepository->getUserEpisodeByProvider($user));
+            $providerAllArray = array_map(function ($provider) use ($logoUrl) {
+                $provider['logo_path'] = $this->providerService->getProviderLogoFullPath($provider['logo_path'], $logoUrl);
+                return $provider;
+            }, $this->userSeriesRepository->getUserAllEpisodeByProvider($user));
 
             $lastViewedMovies = $this->userMovieRepository->lastViewedMovies($user->getId());
         } else {
@@ -169,13 +180,7 @@ class HomeController extends AbstractController
         $filteredSeries = $this->getProviderSeries($provider, $slugger, $country, $timezone, $language);
         $seriesSelection = $this->getSeriesSelection($slugger, $country, $timezone, $language, true);
         $movieSelection = $this->getMovieSelection($slugger, $country, $timezone, $language, true);
-        $keywordSeries = $this->getKeywordSeries([
-            // bl
-            289844,
-            // lgbt-ish
-            158718,163037,266959,195624,165614,173669,280179,366199,363827,372005,
-            // gay-ish
-            10199,258533,240305,247821,265777,4569,322850,359231,190751,347864,249749,352268,41515,325223,173672,363345,15130,346769,336035], [1,2,3,4]);
+        $keywordSeries = $this->getKeywordSeries($user, $request->getLocale());
 
         $movieId = $movieSelection[rand(0, count($movieSelection) - 1)]['id'];
         $movie = json_decode($this->tmdbService->getMovie($movieId, $language, ['watch/providers', 'videos']), true);
@@ -496,15 +501,31 @@ class HomeController extends AbstractController
         return '/images/providers' . substr($path, 1);
     }
 
-    private function getKeywordSeries(array $keywordIds, array $pages, string $separator = '|'): array
+    private function getKeywordSeries(?User $user, string $locale): array
     {
-        $k = implode($separator, $keywordIds);
+        if (!$user) return ['name' => null, 'results' => []];
+//        $settings = $this->settingsRepository->findOneBy(['user' => $user, 'name' => 'user_home_keyword_list_2']);
+        $settings = array_map(fn($setting) => json_decode($setting['data'], true), $this->settingsRepository->getSettingsByName($user->getId(), 'user_home_keyword_list_'));
+        if (!$settings) return ['name' => null, 'results' => []];
+        $list = $settings[0]['list'];
+        $orderBy = $settings[0]['order_by'] ?? 'popularity.desc';
+        if (!$list) return ['name' => null, 'results' => []];
+        $data = $settings[$list];
+        if (!$data) return ['name' => null, 'results' => []];
+        dump($data);
+
+        $dataKeywords = $data['keywords'] ?? [];
+        $dataKeywordIds = array_column($dataKeywords, 'keyword_id');
+        $dataPages = $data['pages'] ?? [];
+        $dataName = $data["name_$locale"] ?? '';
+
+        $k = implode("|", $dataKeywordIds);
         $results = [];
-        foreach ($pages as $page) {
-            $filterString = "include_adult=false&include_null_first_air_dates=true&language=en-US&page=$page&sort_by=first_air_date.desc&with_keywords=$k";
+        foreach ($dataPages as $page) {// first_air_date.desc
+            $filterString = "include_adult=false&include_null_first_air_dates=true&language=en-US&page=$page&sort_by=$orderBy&with_keywords=$k&with_watch_monetization_types=flatrate&watch_region=FR&with_type=4";
             $results = array_merge($results, $this->getSelection('tv', $filterString, new AsciiSlugger(), 'FR', 'Europe/Paris', 'en-US'));
         }
         /*dump($results);*/
-        return $results;
+        return ['name' => $dataName, 'results' => $results];
     }
 }
