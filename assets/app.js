@@ -187,26 +187,19 @@ window.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-    const seasonOrderBadge = document.querySelector(".season-order-badge");
-    seasonOrderBadge?.addEventListener("click", () => {
-        const seasonList = seasonOrderBadge.closest(".content").querySelector(".seasons");
-        seasonList.classList.toggle("reverse");
-        seasonOrderBadge.classList.toggle("reversed");
-        /*if (seasonList.classList.contains("reverse")) {
-            const arrowUp = document.querySelector(".svgs #arrow-up").querySelector("svg").cloneNode(true);
-            seasonOrderBadge.innerHTML = arrowUp.outerHTML;
-        } else {
-            const arrowDown = document.querySelector(".svgs #arrow-down").querySelector("svg").cloneNode(true);
-            seasonOrderBadge.innerHTML = arrowDown.outerHTML;
-        }*/
-    });
-
     if (seasonPage) {
         const preferredName = new PreferredName();
         const season = new Season(menu, preferredName);
         season.init();
     }
     if (seriesPage) {
+        const seasonOrderBadge = seriesPage.querySelector(".season-order-badge");
+        seasonOrderBadge?.addEventListener("click", () => {
+            const seasonList = seasonOrderBadge.closest(".content").querySelector(".seasons");
+            seasonList.classList.toggle("reverse");
+            seasonOrderBadge.classList.toggle("reversed");
+        });
+
         new UserList(flashMessage, toolTips, document.querySelectorAll(".action.toggle-bookmark-series"));
         const preferredName = new PreferredName();
         const show = new Show(preferredName);
