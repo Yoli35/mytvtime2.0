@@ -1012,6 +1012,27 @@ h2 {
                             }
                         }
                     }
+
+                    .vote-average {
+                        align-items: center;
+                        backdrop-filter: blur(1rem);
+                        background-color: hsl(from var(--orange-20) h s l / .25);
+                        border-radius: .5rem;
+                        color: var(--orange-90);
+                        display: flex;
+                        font-size: clamp(1rem, 5vw, 4rem);
+                        font-weight: 300;
+                        gap: .5rem;
+                        line-height: 1.1em;
+                        margin-left: .5rem;
+                        padding: .5rem 1rem;
+
+                        svg {
+                            color: var(--add-this);
+                            height: clamp(1rem, 5vw, 4rem);
+                            width: clamp(1rem, 5vw, 4rem);
+                        }
+                    }
                 }
 
                 .series-overview {

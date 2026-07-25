@@ -58,6 +58,9 @@
                                     ({{ tv.first_air_date|date("Y") }})
                                 {% endif %}
                             </h1>
+                            {% if tv.vote_average %}
+                                <div class="vote-average"><span>{{ ux_icon('mdi:star') }}</span>{{ tv.vote_average|round(1) }}</div>
+                            {% endif %}
                         </div>
                         <div class="series-overview">
                             {{ tv.overview|nl2br }}

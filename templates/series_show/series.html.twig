@@ -82,6 +82,9 @@
                                     <span class="from-schedule" title="{{ sc.firstAirDate|date("d/m/Y") }}">({{ sc.firstAirDate|date("Y") }})</span>
                                 {% endif %}
                             </h1>
+                            {% if tv.vote_average %}
+                                <div class="vote-average"><span>{{ ux_icon('mdi:star') }}</span>{{ tv.vote_average|round(1) }}</div>
+                            {% endif %}
                             {{ include('_blocks/translations/_tools.html.twig', {type: 'series', hidden: 0}) }}
                         </div>
                         {{ include('_blocks/forms/_delete_overview.html.twig') }}
