@@ -512,7 +512,7 @@ class HomeController extends AbstractController
         if (!$list) return ['name' => null, 'results' => []];
         $data = $settings[$list];
         if (!$data) return ['name' => null, 'results' => []];
-        dump($data);
+        /*dump($data);*/
 
         $dataKeywords = $data['keywords'] ?? [];
         $dataKeywordIds = array_column($dataKeywords, 'keyword_id');
