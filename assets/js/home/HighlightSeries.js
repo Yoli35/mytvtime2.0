@@ -1,5 +1,4 @@
 import {AverageColor} from "AverageColor";
-import {NavBar} from "NavBar";
 import {ToolTips} from "ToolTips";
 
 /**
@@ -12,7 +11,7 @@ import {ToolTips} from "ToolTips";
  */
 
 export class HighlightSeries {
-    constructor() {
+    constructor(navBar) {
         this.count = 0;
         this.fetchCount = 0;
         this.highlightDiv = null;
@@ -20,7 +19,7 @@ export class HighlightSeries {
         this.interval = null;
         this.intervalDuration = 20000;
         this.maxDisplayPerPoster = 1;
-        this.navBarColor = new NavBar().navBarColor;
+        this.navBarColor = navBar.navBarColor;
         this.posterListDiv = null;
         this.root = null;
         this.series = [];

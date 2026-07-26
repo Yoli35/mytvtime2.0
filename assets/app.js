@@ -81,7 +81,7 @@ window.addEventListener("DOMContentLoaded", () => {
     if (document.querySelector(".home")) {
         const episodeHistory = new EpisodeHistory();
         const providerSelect = new ProviderSelect();
-        const highlightSeries = new HighlightSeries();
+        const highlightSeries = new HighlightSeries(navBar);
         const seriesStatistics = new SeriesStatistics();
         const globs = JSON.parse(document.querySelector("#global-data").textContent);
         episodeHistory.init(globs);
