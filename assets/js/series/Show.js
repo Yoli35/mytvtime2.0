@@ -110,6 +110,7 @@ export class Show {
         this.flashMessage = new FlashMessage();
         this.fetchEpisodeCards = new FetchEpisodeCards(this.toolTips);
         this.preferredName = preferredName;
+        this.initialDay = new Date().getDate();
 
         this.svgRightArrow = document.querySelector('div#svgs div#arrow-right');
         this.svgRightArrow = this.svgRightArrow.cloneNode(true);
@@ -150,6 +151,12 @@ export class Show {
             // ">" Arrow: Next series
             if (event.key === ">" && nextSeries) {
                 nextSeries.click();
+            }
+        });
+
+        document.addEventListener("visibilitychange", () => {
+            if (document.visibilityState === 'visible') {
+                this.checkDayChange();
             }
         });
 
@@ -705,6 +712,13 @@ export class Show {
          ******************************************************************************/
         const addCast = new AddCast();
         addCast.init(menu, this.toolTips, this.flashMessage);
+    }
+
+    checkDayChange() {
+        const currentDay = new Date().getDate();
+        if (currentDay !== self.initialDay) {
+            window.location.reload();
+        }
     }
 
     fetchSeasonOverviews(seriesId, seasonDivs, index, length) {
