@@ -1893,9 +1893,12 @@ label:has(input[type="text"]) {
             display: flex;
             gap: 1rem;
 
-            > div {
+            .episode-details {
                 display: flex;
                 gap: .5rem;
+                max-width: calc(100% - 8rem);
+                overflow-x: auto;
+                overflow-y: clip;
 
                 svg {
                     flex-shrink: 0;

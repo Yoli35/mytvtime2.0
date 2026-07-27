@@ -58,8 +58,10 @@
                                 </div>
                                 {% set current = current + 1 %}
                             {% endif %}
-                            <div>
-                                {{ eotd.display }}
+                            <div class="episode-details">
+                                <div class="display-name">
+                                    {{ eotd.display }}
+                                </div>
                                 {% if eotd.firstToWatch %}
                                     <span class="first-to-watch">{{ 'S%02dE%02d'|format(eotd.firstToWatchSeasonNumber, eotd.firstToWatchEpisodeNumber) }}</span>
                                 {% endif %}
@@ -77,7 +79,7 @@
                                 {% endif %}
                             </div>
                             {% if eotd.type == 'series' %}
-                                <div class="time">{{ eotd.airAt|slice(0,5) }}</div>
+                                    <div class="time">{% if eotd.airAt %}{{ eotd.airAt|slice(0,5) }}{% endif %}</div>
                             {% else %}
                                 <div class="time movie">{{ 'Movie'|trans }}</div>
                             {% endif %}

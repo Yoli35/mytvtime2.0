@@ -140,7 +140,7 @@ readonly class SeriesSchedule
                 $item['episodeCount'] = count($episodeIdArr);
                 $item['upToDate'] = $item['future_up_to_date'] || $item['past_up_to_date'];
 
-                if ($item['firstToWatchSeasonNumber'] && ($item['firstToWatchSeasonNumber'] < $item['seasonNumber'] || ($item['firstToWatchEpisodeNumber'] < $start && $index <= 0))) {
+                if ($item['seasonNumber'] && $item['firstToWatchSeasonNumber'] && ($item['firstToWatchSeasonNumber'] < $item['seasonNumber'] || ($item['firstToWatchEpisodeNumber'] < $start && $index <= 0))) {
                     $item['firstToWatch'] = true;
                 } else {
                     $item['firstToWatch'] = false;
