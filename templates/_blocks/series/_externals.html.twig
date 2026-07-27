@@ -2,11 +2,6 @@
     <div class="externals">
         <h2>
             {{ 'External sources'|trans }}
-            {#-
-            <label for="external-no-filter">
-                <input type="checkbox" id="external-no-filter" name="external-no-filter" switch>
-                {{ 'Show all'|trans }}
-            </label>#}
         </h2>
         <div class="wrapper">
             {% for e in externals %}
@@ -22,4 +17,27 @@
             {% endfor %}
         </div>
     </div>
+    <script>
+        const seriesShowDiv = document.querySelector('.series-show');
+        const wrapper = document.querySelector('.externals .wrapper');
+        const externalDivs = wrapper.querySelectorAll('.external');
+        const externalDiv = wrapper.querySelector('.external');
+        const externalDivWidth = externalDiv.offsetWidth;
+        const externalCount = externalDivs.length;
+        window.addEventListener('resize', () => {
+            const availableWidth = seriesShowDiv.offsetWidth;
+            if (externalCount * externalDivWidth + (externalCount - 1) * 16 > availableWidth) {
+                for (let i = 2; i <= externalCount; i++) {
+                    const countByLine = Math.ceil(externalCount / i);
+                    const idealWrapperWidth = countByLine * externalDivWidth + (countByLine - 1) * 16; // gap: 16px
+                    if (idealWrapperWidth <= availableWidth) {
+                        wrapper.style.width = idealWrapperWidth + 'px';
+                        break;
+                    }
+                }
+            } else {
+                wrapper.style.width = "unset";
+            }
+        });
+    </script>
 {% endif %}

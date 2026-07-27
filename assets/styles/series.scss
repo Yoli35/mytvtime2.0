@@ -2252,12 +2252,6 @@ h2 {
             display: flex;
             gap: .5rem;
             padding: 0;
-
-            label {
-                align-items: center;
-                display: flex;
-                gap: .5rem;
-            }
         }
 
         .wrapper {
@@ -2294,10 +2288,9 @@ h2 {
                     width: 100%;
 
                     img {
-                        border-radius: .25rem;
                         height: 2.5rem;
                         object-fit: contain;
-                        width: 10rem;
+                        width: 100%;
                     }
                 }
             }
