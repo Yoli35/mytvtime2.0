@@ -381,7 +381,7 @@
                 </div>
             </div>
 
-            {% if app.environment == 'dev' || app.user.id == 1 %}
+            {% if app.environment == 'dev' or app.user.id == 1 %}
                 {{ include('_blocks/series/_externals.html.twig') }}
             {% endif %}
 
