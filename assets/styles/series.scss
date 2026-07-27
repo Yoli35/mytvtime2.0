@@ -4431,6 +4431,7 @@ aside:has(.episode__cards) {
         .season-average-vote {
             background-color: hsl(from var(--green-50) h s l / .75);
             border-radius: .5rem;
+            box-shadow: 0 0 1rem hsl(0 0 0 / .25);
             flex-shrink: 0;
             font-size: 4rem;
             font-weight: 300;
@@ -4574,6 +4575,7 @@ aside:has(.episode__cards) {
 
     .series-name {
         background-color: hsl(from var(--green-50) h s l / .75);
+        box-shadow: 0 0 1rem hsl(0 0 0 / .25);
 
         span {
             /*background-color: hsla(from var(--ardoise-90) h s l / .2);*/
@@ -4600,6 +4602,7 @@ aside:has(.episode__cards) {
 
     .add-cast-button, .add-crew-button {
         background-color: var(--orange-50);
+        box-shadow: 0 0 1rem hsl(0 0 0 / .25);
         color: var(--ardoise-10);
         cursor: pointer;
         transition: background-color 0.3s ease-in-out;
