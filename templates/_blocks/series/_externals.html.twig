@@ -24,7 +24,9 @@
         const externalDiv = wrapper.querySelector('.external');
         const externalDivWidth = externalDiv.offsetWidth;
         const externalCount = externalDivs.length;
-        window.addEventListener('resize', () => {
+        arrangeExternals();
+        window.addEventListener('resize', arrangeExternals);
+        function arrangeExternals() {
             const availableWidth = seriesShowDiv.offsetWidth;
             if (externalCount * externalDivWidth + (externalCount - 1) * 16 > availableWidth) {
                 for (let i = 2; i <= externalCount; i++) {
@@ -38,6 +40,6 @@
             } else {
                 wrapper.style.width = "unset";
             }
-        });
+        }
     </script>
 {% endif %}
