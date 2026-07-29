@@ -129,7 +129,7 @@
                         <div class="what-s-next" data-id="{{ series.tmdbId }}" data-language="{{ language }}" data-title="{{ 'What else to watch?'|trans }}">{{ ux_icon('mdi:chevron-right-last') }}</div>
                     {% endif %}
                 </div>
-                {{ include('_blocks/series/_watch_links.html.twig', {watchLinks: series.seriesWatchLinks, seasonNumber: season.season_number, hidden: (episode.user_episode.watch_at != null)}) }}
+                {{ include('_blocks/series/_watch_links.html.twig', {watchLinks: series.seriesWatchLinks, seasonNumber: season.season_number, hidden: 0 * (episode.user_episode.watch_at != null)}) }}
             </header>
             <aside id="episode-cards">
                 <div class="episode__cards" data-id="{{ series.id }}" data-tmdb-id="{{ series.tmdbId }}" data-season-number="{{ season.season_number }}" data-series-slug="{{ season.series_localized_name.slug ?? series.slug }}">
