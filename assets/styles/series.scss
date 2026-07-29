@@ -1770,6 +1770,12 @@ h2 {
             }
         }
 
+        &:not(:has(.next.user.episode)) {
+            .last.user.episode {
+                border-radius: 0 0 .5rem .5rem;
+            }
+        }
+
         .next.user.episode {
             border-radius: 0 0 .5rem .5rem;
         }
