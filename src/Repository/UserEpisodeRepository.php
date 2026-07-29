@@ -5,6 +5,7 @@ namespace App\Repository;
 use App\Entity\User;
 use App\Entity\UserEpisode;
 use App\Entity\UserSeries;
+use DateTime;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\DBAL\Exception;
 use Doctrine\DBAL\ParameterType;
@@ -473,7 +474,7 @@ class UserEpisodeRepository extends ServiceEntityRepository
 
     public function episodesOfTheDayV2(int $userId, string $locale = 'fr'): array
     {
-        $today = new \DateTime('today');
+        $today = new DateTime('today');
 
         $params = [
             'userId' => $userId,
@@ -807,7 +808,7 @@ class UserEpisodeRepository extends ServiceEntityRepository
                      LEFT JOIN user_series us ON ue.user_series_id = us.id
                      LEFT JOIN series s ON us.series_id = s.id
                      LEFT JOIN series_broadcast_schedule sbs ON sbs.series_id = s.id AND sbs.season_number = ue.season_number AND IF(sbs.multi_part, ue.episode_number BETWEEN sbs.season_part_first_episode AND (sbs.season_part_first_episode + sbs.season_part_episode_count -1), 1)
-                     LEFT JOIN series_broadcast_date sbd ON ue.episode_id = sbd.episode_id
+                     LEFT JOIN series_broadcast_date sbd ON sbd.`series_broadcast_schedule_id`=sbs.`id` AND ue.episode_id = sbd.episode_id
                      LEFT JOIN episode_substitute_name esn ON ue.episode_id = esn.episode_id
                      LEFT JOIN episode_localized_overview elo ON ue.episode_id = elo.episode_id AND elo.locale = :locale
                      LEFT JOIN watch_provider wp ON ue.provider_id = wp.provider_id
@@ -963,7 +964,7 @@ class UserEpisodeRepository extends ServiceEntityRepository
     {
         try {
             return $this->em->getConnection()->fetchAllAssociative($sql, $params, $types);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $this->logger->error('Error: ' . $e->getMessage());
             return [];
         }
@@ -973,7 +974,7 @@ class UserEpisodeRepository extends ServiceEntityRepository
     {
         try {
             return $this->em->getConnection()->fetchAssociative($sql, $params, $types);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $this->logger->error('Error: ' . $e->getMessage());
             return [];
         }
@@ -983,7 +984,7 @@ class UserEpisodeRepository extends ServiceEntityRepository
     {
         try {
             return $this->em->getConnection()->fetchOne($sql, $params, $types);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $this->logger->error('Error: ' . $e->getMessage());
             return [];
         }
@@ -999,8 +1000,9 @@ class UserEpisodeRepository extends ServiceEntityRepository
         $sql = "DELETE FROM user_episode WHERE user_series_id=$userSeriesId AND episode_id IN ($ids)";
         try {
             $this->em->getConnection()->executeStatement($sql);
-        } catch (Exception) {
+        } catch (Exception $e) {
             // Nothing
+            $this->logger->error('Error: ' . $e->getMessage());
             return false;
         }
         return true;
@@ -1020,6 +1022,7 @@ class UserEpisodeRepository extends ServiceEntityRepository
         try {
             $this->em->getConnection()->executeStatement($sql, $params, $types);
         } catch (Exception $e) {
+            $this->logger->error('Error: ' . $e->getMessage());
             return false;
         }
         return true;

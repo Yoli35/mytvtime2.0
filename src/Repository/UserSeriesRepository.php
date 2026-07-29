@@ -9,6 +9,7 @@ use Doctrine\DBAL\Exception;
 use Doctrine\DBAL\ParameterType;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
+use Psr\Log\LoggerInterface as MonologLogger;
 
 /**
  * @extends ServiceEntityRepository<UserSeries>
@@ -20,7 +21,11 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class UserSeriesRepository extends ServiceEntityRepository
 {
-    public function __construct(ManagerRegistry $registry, private readonly EntityManagerInterface $em)
+    public function __construct(
+        ManagerRegistry $registry,
+        private readonly EntityManagerInterface $em,
+        private readonly MonologLogger          $logger,
+    )
     {
         parent::__construct($registry, UserSeries::class);
     }
@@ -832,7 +837,8 @@ class UserSeriesRepository extends ServiceEntityRepository
     {
         try {
             return $this->em->getConnection()->fetchAllAssociative($sql, $params, $types);
-        } catch (Exception) {
+        } catch (Exception $e) {
+            $this->logger->error('Error: ' . $e->getMessage());
             return [];
         }
     }
@@ -841,7 +847,8 @@ class UserSeriesRepository extends ServiceEntityRepository
     {
         try {
             return $this->em->getConnection()->fetchOne($sql, $params, $types);
-        } catch (Exception) {
+        } catch (Exception $e) {
+            $this->logger->error('Error: ' . $e->getMessage());
             return [];
         }
     }
