@@ -223,7 +223,7 @@ class AdminController extends AbstractController
 
     private function getStartDay(): int
     {
-        $settingsArr = $this->settingsRepository->findBy(['name' => 'schedule_menu_settings']);
+        $settingsArr = $this->settingsRepository->findBy(['name' => 'app_schedule_menu_settings']);
         if (empty($settingsArr)) {
             return 2;
         } else {

@@ -60,9 +60,9 @@ readonly class ApiMainMenu
             ]);
         }
 
-        $settings = $this->settingsRepository->findOneBy(['user' => $user, 'name' => 'schedule_menu_settings']);
+        $settings = $this->settingsRepository->findOneBy(['user' => $user, 'name' => 'app_schedule_menu_settings']);
         if (!$settings) {
-            $settings = new Settings($user, 'schedule_menu_settings', ['start' => "-2", 'end' => "2", 'default_start' => "-2", 'default_end' => "2", 'link_to' => 'series', 'default_link_to' => 'series']);
+            $settings = new Settings($user, 'app_schedule_menu_settings', ['start' => "-2", 'end' => "2", 'default_start' => "-2", 'default_end' => "2", 'link_to' => 'series', 'default_link_to' => 'series']);
             $this->settingsRepository->save($settings, true);
         }
         $startDay = (int)$settings->getData()['start'];

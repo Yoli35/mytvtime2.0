@@ -54,9 +54,9 @@ class UpdatePosterOfAiringSeriesCommand extends Command
 //        if ($input->getOption('option1')) {
 //            // ...
 //        }
-        $settingsArr = $this->settingsRepository->findBy(['name' => 'schedule_menu_settings']);
+        $settingsArr = $this->settingsRepository->findBy(['name' => 'app_schedule_menu_settings']);
         if (empty($settingsArr)) {
-            $io->error('Settings not found for schedule_menu_settings, assuming default values');
+            $io->error('Settings not found for app_schedule_menu_settings, assuming default values');
             $startDay = 2;
         } else {
             $startDay = 0;

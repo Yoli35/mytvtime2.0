@@ -38,9 +38,9 @@ readonly class ApiAppSettings
             ]);
         }
 
-        $settings = $this->settingsRepository->findOneBy(['user' => $user, 'name' => 'accent_color']);
+        $settings = $this->settingsRepository->findOneBy(['user' => $user, 'name' => 'app_accent_color']);
         if (!$settings) {
-            $settings = new Settings($user, 'accent_color', ['accent_color' => "#E0861F", 'default_color' => "#E0861F"]);
+            $settings = new Settings($user, 'app_accent_color', ['accent_color' => "#E0861F", 'default_color' => "#E0861F"]);
             $this->settingsRepository->save($settings, true);
         }
         $accentColor = $settings->getData()['accent_color'] ?? "#E0861F";
@@ -66,7 +66,7 @@ readonly class ApiAppSettings
             ]);
         }
 
-        $settings = $this->settingsRepository->findOneBy(['user' => $user, 'name' => 'accent_color']);
+        $settings = $this->settingsRepository->findOneBy(['user' => $user, 'name' => 'app_accent_color']);
         $accentColor = $inputBag->get("accentColor");
 
         $data = $settings->getData();
@@ -93,9 +93,9 @@ readonly class ApiAppSettings
 
         $type = $request->query->getAlpha('t', 'values');
 
-        $settings = $this->settingsRepository->findOneBy(['user' => $user, 'name' => 'schedule_menu_settings']);
+        $settings = $this->settingsRepository->findOneBy(['user' => $user, 'name' => 'app_schedule_menu_settings']);
         if (!$settings) {
-            $settings = new Settings($user, 'schedule_menu_settings', ['start' => "-2", 'end' => "2", 'default_start' => "-2", 'default_end' => "2", 'link_to' => 'series', 'default_link_to' => 'series']);
+            $settings = new Settings($user, 'app_schedule_menu_settings', ['start' => "-2", 'end' => "2", 'default_start' => "-2", 'default_end' => "2", 'link_to' => 'series', 'default_link_to' => 'series']);
             $this->settingsRepository->save($settings, true);
         }
         if ($type === 'default') {
@@ -185,7 +185,7 @@ readonly class ApiAppSettings
             ]);
         }
 
-        $settings = $this->settingsRepository->findOneBy(['user' => $user, 'name' => 'schedule_menu_settings']);
+        $settings = $this->settingsRepository->findOneBy(['user' => $user, 'name' => 'app_schedule_menu_settings']);
         $start = $inputBag->get("start", "-2");
         $end = $inputBag->get("end", "2");
         $linkTo = $inputBag->get("link_to", 'series');
