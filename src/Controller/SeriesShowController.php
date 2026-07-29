@@ -20,9 +20,7 @@ use App\Repository\PeopleUserPreferredNameRepository;
 use App\Repository\SeasonLocalizedOverviewRepository;
 use App\Repository\SeriesCastRepository;
 use App\Repository\SeriesExternalRepository;
-use App\Repository\SeriesImageRepository;
 use App\Repository\SeriesRepository;
-use App\Repository\SeriesVideoRepository;
 use App\Repository\SettingsRepository;
 use App\Repository\SourceRepository;
 use App\Repository\TimezoneBookmarkRepository;
@@ -164,6 +162,13 @@ final class SeriesShowController extends AbstractController
         ];
 
         $userSeries = $this->userSeriesRepository->findOneBy(['user' => $user, 'series' => $series]);
+        dump([
+            'user series' => $userSeries,
+            'user season count' => count($userSeries->getUserSeasons()->toArray()),
+            'user episode count' => count($userSeries->getUserEpisodes()->toArray()),
+            'user seasons' => $userSeries->getUserSeasons(),
+            'user episodes' => $userSeries->getUserEpisodes(),
+        ]);
         $userEpisodes = $this->userEpisodeRepository->findBy(['userSeries' => $userSeries, 'previousOccurrence' => null], ['seasonNumber' => 'ASC', 'episodeNumber' => 'ASC']);
         $this->adjustNextEpisodeToWatch($userSeries, $userEpisodes);
 
@@ -450,6 +455,7 @@ final class SeriesShowController extends AbstractController
                 $status = $tv['status'];
             }
         }
+        dump($userEpisodes);
         $episode = $this->seasonEpisode($episode, $userSeries, $userEpisodes, $seasonNumber, $finaleEpisodeNumber, $language/*, $stills*/);
         $profileUrl = $this->imageConfiguration->getUrl('profile_sizes', 2);
         $peopleUserPreferredNames = $this->getPreferredNames($user);
@@ -489,7 +495,7 @@ final class SeriesShowController extends AbstractController
         $devices = $this->deviceRepository->deviceArray();
 
         $themeSettings = $this->settingsRepository->findOneBy(['user' => $user, 'name' => 'theme_episode_' . $episode['id']]);
-
+        dump($episode);
         return $this->render('series_show/episode.html.twig', [
             'userSeries' => $userSeries,
             'series' => $series,
@@ -639,7 +645,7 @@ final class SeriesShowController extends AbstractController
         $series = $userSeries->getSeries();
         $slugger = new AsciiSlugger();
         $locale = $user->getPreferredLanguage() ?? 'fr';
-        $country = $user->getCountry() ?? 'FR';
+        /*$country = $user->getCountry() ?? 'FR';*/
         $language = $locale . '-' . $country;
         $seasonEpisodes = [];
         $episodeArr = [];

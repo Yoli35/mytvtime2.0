@@ -23,6 +23,10 @@ class UserEpisode
     #[ORM\JoinColumn(nullable: false)]
     private ?UserSeries $userSeries;
 
+    #[ORM\ManyToOne(inversedBy: 'userEpisodes')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?UserSeason $userSeason;
+
     #[ORM\Column]
     private ?int $episodeId;
 
@@ -95,6 +99,18 @@ class UserEpisode
     public function setUserSeries(?UserSeries $userSeries): static
     {
         $this->userSeries = $userSeries;
+
+        return $this;
+    }
+
+    public function getUserSeason(): ?UserSeason
+    {
+        return $this->userSeason;
+    }
+
+    public function setUserSeason(?UserSeason $userSeason): static
+    {
+        $this->userSeason = $userSeason;
 
         return $this;
     }

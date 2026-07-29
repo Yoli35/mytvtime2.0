@@ -64,9 +64,24 @@ class SeriesBroadcastSchedule
     #[ORM\OneToMany(targetEntity: SeriesBroadcastDate::class, mappedBy: 'seriesBroadcastSchedule', orphanRemoval: true)]
     private Collection $customDates;
 
+    /**
+     * @var Collection<int, UserSeason>
+     */
+    #[ORM\ManyToMany(targetEntity: UserSeason::class, mappedBy: 'broadcastSchedules')]
+    private Collection $userSeasons;
+
     public function __construct()
     {
         $this->customDates = new ArrayCollection();
+        $this->userSeasons = new ArrayCollection();
+    }
+
+    public function __toString(): string
+    {
+        // TODO: Implement __toString() method.
+        return ($this->series->getLocalizedName('fr') ?? $this->series->getName())
+            . ' - ' . $this->seasonNumber
+            . (' - ' . $this->providerId ?? 'no provider');
     }
 
     public function getId(): ?int
@@ -260,5 +275,32 @@ class SeriesBroadcastSchedule
     public function setCustomDates(Collection $customDates): void
     {
         $this->customDates = $customDates;
+    }
+
+    /**
+     * @return Collection<int, UserSeason>
+     */
+    public function getUserSeasons(): Collection
+    {
+        return $this->userSeasons;
+    }
+
+    public function addUserSeason(UserSeason $userSeason): static
+    {
+        if (!$this->userSeasons->contains($userSeason)) {
+            $this->userSeasons->add($userSeason);
+            $userSeason->addBroadcastSchedule($this);
+        }
+
+        return $this;
+    }
+
+    public function removeUserSeason(UserSeason $userSeason): static
+    {
+        if ($this->userSeasons->removeElement($userSeason)) {
+            $userSeason->removeBroadcastSchedule($this);
+        }
+
+        return $this;
     }
 }

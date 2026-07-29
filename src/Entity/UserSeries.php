@@ -54,6 +54,10 @@ class UserSeries
     #[ORM\Column(nullable: true, options: ['default' => 0])]
     private ?int $rating;
 
+    #[ORM\OneToMany(targetEntity: UserSeason::class, mappedBy: 'userSeries', orphanRemoval: true)]
+    #[ORM\OrderBy(['seasonNumber' => 'ASC'])]
+    private Collection $userSeasons;
+
     #[ORM\OneToMany(targetEntity: UserEpisode::class, mappedBy: 'userSeries', fetch: 'EXTRA_LAZY', orphanRemoval: true)]
     #[ORM\OrderBy(['seasonNumber' => 'ASC', 'episodeNumber' => 'ASC'])]
     private Collection $userEpisodes;
@@ -78,6 +82,7 @@ class UserSeries
         $this->marathoner = false;
         $this->rating = 0;
         $this->userEpisodes = new ArrayCollection();
+        $this->userSeasons = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -307,6 +312,41 @@ class UserSeries
     public function setNextUserEpisode(?UserEpisode $nextUserEpisode): static
     {
         $this->nextUserEpisode = $nextUserEpisode;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, UserSeason>
+     */
+    public function getUserSeasons(): Collection
+    {
+        return $this->userSeasons;
+    }
+
+    public function getUserSeasonsBySeasonNumber(int $seasonNumber): UserSeason|false
+    {
+        return $this->userSeasons->filter(fn(UserSeason $userSeason) => $userSeason->getSeasonNumber() == $seasonNumber)->first();
+    }
+
+    public function addUserSeason(UserSeason $userSeason): static
+    {
+        if (!$this->userSeasons->contains($userSeason)) {
+            $this->userSeasons->add($userSeason);
+            $userSeason->setUserSeries($this);
+        }
+
+        return $this;
+    }
+
+    public function removeUserSeason(UserSeason $userSeason): static
+    {
+        if ($this->userSeasons->removeElement($userSeason)) {
+            // set the owning side to null (unless already changed)
+            if ($userSeason->getUserSeries() === $this) {
+                $userSeason->setUserSeries(null);
+            }
+        }
 
         return $this;
     }
