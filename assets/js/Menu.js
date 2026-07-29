@@ -1023,7 +1023,7 @@ export class Menu {
                 const sortBySelect = discoverTvSettingsDialog.querySelector("select[id=discover_tv_order_by]");
 
                 selectList.querySelectorAll("option").forEach(option => {
-                    option.remove();
+                    if (option.value !== "new") option.remove();
                 });
                 const newOptions = data['lists'].map(list => {
                     const newOption = document.createElement('option');
