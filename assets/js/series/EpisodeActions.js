@@ -1032,17 +1032,22 @@ export class EpisodeActions {
                     /******************************************************************************
                      * On the episode and season pages, update the average vote                   *
                      ******************************************************************************/
-                    const averageVoteSpan = document.querySelector('.season-average-vote span');
-                    if (averageVoteSpan) {
-                        const vote = parseInt(voteValue);
-                        const index = data['episodeNumber'] - 1;
-                        self.seasonVotes['votes'][index] = vote;
-                        const sum = self.seasonVotes['votes'].reduce((a, b) => a + b, 0);
-                        const count = self.seasonVotes['votes'].reduce((a, b) => a + (b > 0), 0);
-                        const result = count ? (sum / count) : 0;
-                        const resultString = result.toFixed(1);
-                        averageVoteSpan.textContent = result <= 10 ? (result > 0 ? resultString : '—') : '10+';
-                        self.seasonVotes['averageVote'] = result;
+                    const averageVoteDiv = document.querySelector('.season-average-vote');
+                    if (averageVoteDiv) {
+                        const averageVoteSpan = averageVoteDiv.querySelector('span');
+                        if (averageVoteSpan) {
+                            const vote = parseInt(voteValue);
+                            const index = data['episodeNumber'] - 1;
+                            self.seasonVotes['votes'][index] = vote;
+                            const sum = self.seasonVotes['votes'].reduce((a, b) => a + b, 0);
+                            const count = self.seasonVotes['votes'].reduce((a, b) => a + (b > 0), 0);
+                            const result = count ? (sum / count) : 0;
+                            const resultString = result.toFixed(1);
+                            averageVoteSpan.textContent = result <= 10 ? (result > 0 ? resultString : '—') : '10+';
+                            averageVoteDiv.setAttribute('data-title', resultString + ' / 10');
+                            self.toolTips.init(averageVoteDiv);
+                            self.seasonVotes['averageVote'] = result;
+                        }
                     }
                 }
             });
