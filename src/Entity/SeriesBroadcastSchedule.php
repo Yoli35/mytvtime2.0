@@ -78,10 +78,9 @@ class SeriesBroadcastSchedule
 
     public function __toString(): string
     {
-        // TODO: Implement __toString() method.
         return ($this->series->getLocalizedName('fr') ?? $this->series->getName())
-            . ' - ' . $this->seasonNumber
-            . (' - ' . $this->providerId ?? 'no provider');
+            . ' - season ' . $this->seasonNumber
+            . (' - provider ' . $this->providerId ?? 'no provider');
     }
 
     public function getId(): ?int

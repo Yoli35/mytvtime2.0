@@ -10,6 +10,7 @@ use App\Entity\SeriesExternal;
 use App\Entity\Settings;
 use App\Entity\User;
 use App\Entity\UserEpisode;
+use App\Entity\UserSeason;
 use App\Entity\UserSeries;
 use App\Repository\DeviceRepository;
 use App\Repository\EpisodeLocalizedOverviewRepository;
@@ -18,6 +19,7 @@ use App\Repository\FilmingLocationRepository;
 use App\Repository\NetworkRepository;
 use App\Repository\PeopleUserPreferredNameRepository;
 use App\Repository\SeasonLocalizedOverviewRepository;
+use App\Repository\SeriesBroadcastScheduleRepository;
 use App\Repository\SeriesCastRepository;
 use App\Repository\SeriesExternalRepository;
 use App\Repository\SeriesRepository;
@@ -25,6 +27,7 @@ use App\Repository\SettingsRepository;
 use App\Repository\SourceRepository;
 use App\Repository\TimezoneBookmarkRepository;
 use App\Repository\UserEpisodeRepository;
+use App\Repository\UserSeasonRepository;
 use App\Repository\UserSeriesRepository;
 use App\Repository\WatchProviderRepository;
 use App\Service\DateService;
@@ -67,6 +70,7 @@ final class SeriesShowController extends AbstractController
         private readonly PeopleUserPreferredNameRepository  $peopleUserPreferredNameRepository,
         private readonly ProviderService                    $providerService,
         private readonly SeasonLocalizedOverviewRepository  $seasonLocalizedOverviewRepository,
+        private readonly SeriesBroadcastScheduleRepository  $seriesBroadcastScheduleRepository,
         private readonly SeriesCastRepository               $seriesCastRepository,
         private readonly SeriesExternalRepository           $seriesExternalRepository,
         private readonly SeriesRepository                   $seriesRepository,
@@ -77,6 +81,7 @@ final class SeriesShowController extends AbstractController
         private readonly TMDBService                        $tmdbService,
         private readonly TranslatorInterface                $translator,
         private readonly UserEpisodeRepository              $userEpisodeRepository,
+        private readonly UserSeasonRepository               $userSeasonRepository,
         private readonly UserSeriesRepository               $userSeriesRepository,
         private readonly WatchProviderRepository            $watchProviderRepository,
     )
@@ -162,15 +167,40 @@ final class SeriesShowController extends AbstractController
         ];
 
         $userSeries = $this->userSeriesRepository->findOneBy(['user' => $user, 'series' => $series]);
-        dump([
-            'user series' => $userSeries,
-            'user season count' => count($userSeries->getUserSeasons()->toArray()),
-            'user episode count' => count($userSeries->getUserEpisodes()->toArray()),
-            'user seasons' => $userSeries->getUserSeasons(),
-            'user episodes' => $userSeries->getUserEpisodes(),
-        ]);
         $userEpisodes = $this->userEpisodeRepository->findBy(['userSeries' => $userSeries, 'previousOccurrence' => null], ['seasonNumber' => 'ASC', 'episodeNumber' => 'ASC']);
         $this->adjustNextEpisodeToWatch($userSeries, $userEpisodes);
+
+        // Get list of season from episode's season number
+        $seasonNumbers = array_map(fn($episode) => $episode->getSeasonNumber(), $userEpisodes)
+                |> array_unique(...)
+                |> array_values(...);
+//        dump($seasonNumbers);
+        foreach ($seasonNumbers as $seasonNumber) {
+            $userSeason = $this->userSeasonRepository->findOneBy(['userSeries' => $userSeries, 'seasonNumber' => $seasonNumber]);
+            if (!$userSeason) {
+                $userSeason = new UserSeason($userSeries, $seasonNumber);
+                $this->userSeasonRepository->save($userSeason, true);
+                // Get user episodes for this season
+                $userEpisodesForSeason = array_filter($userEpisodes, fn ($episode) => $episode->getSeasonNumber() === $seasonNumber);
+                // Add user episodes to user season
+                foreach ($userEpisodesForSeason as $userEpisode) {
+                    $userSeason->addUserEpisode($userEpisode);
+                }
+                // Look for series broadcast schedules (by series id and season number)
+                $seriesBroadcastSchedules = $this->seriesBroadcastScheduleRepository->findBy(['series' => $series, 'seasonNumber' => $seasonNumber]);
+                foreach ($seriesBroadcastSchedules as $seriesBroadcastSchedule) {
+                    $userSeason->addBroadcastSchedule($seriesBroadcastSchedule);
+                }
+                $this->userSeasonRepository->save($userSeason, true);
+            }
+        }
+//        dump([
+//            'user series' => $userSeries,
+//            'user season count' => count($userSeries->getUserSeasons()->toArray()),
+//            'user episode count' => count($userSeries->getUserEpisodes()->toArray()),
+//            'user seasons' => $userSeries->getUserSeasons(),
+//            'user episodes' => $userSeries->getUserEpisodes(),
+//        ]);
 
         $seriesAround = $this->seriesService->getSeriesAround($user->getId(), $userSeries->getId(), $locale);
 

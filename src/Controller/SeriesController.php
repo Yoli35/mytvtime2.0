@@ -24,6 +24,7 @@ use App\Repository\SeriesImageRepository;
 use App\Repository\SeriesRepository;
 use App\Repository\SettingsRepository;
 use App\Repository\UserEpisodeRepository;
+use App\Repository\UserSeasonRepository;
 use App\Repository\UserSeriesRepository;
 use App\Service\DateService;
 use App\Service\ImageConfiguration;
@@ -80,6 +81,7 @@ class SeriesController extends AbstractController
         private readonly TMDBService                       $tmdbService,
         private readonly TranslatorInterface               $translator,
         private readonly UserEpisodeRepository             $userEpisodeRepository,
+        private readonly UserSeasonRepository              $userSeasonRepository,
         private readonly UserSeriesRepository              $userSeriesRepository,
     )
     {
@@ -865,8 +867,10 @@ class SeriesController extends AbstractController
         if ($id === 0) {
             $seriesBroadcastSchedule = new SeriesBroadcastSchedule();
             $seriesBroadcastSchedule->setSeries($series);
+            $status = 'creation';
         } else {
             $seriesBroadcastSchedule = $this->seriesBroadcastScheduleRepository->findOneBy(['id' => $id]);
+            $status = 'update';
         }
 
         $previousOverrideStatus = $seriesBroadcastSchedule->isOverride();
@@ -884,6 +888,20 @@ class SeriesController extends AbstractController
         $seriesBroadcastSchedule->setDaysOfWeek($dayArr);
         $seriesBroadcastSchedule->setProviderId($provider);
         $this->seriesBroadcastScheduleRepository->save($seriesBroadcastSchedule);
+
+        if ($status == 'creation') {
+            // Link series broadcast schedule to user season
+            $user = $this->getUser();
+            $userSeries = $this->userSeriesRepository->findOneBy(['user' => $user, 'series' => $series]);
+            $userSeason = $this->userSeasonRepository->findOneBy(['userSeries' => $userSeries, 'seasonNumber' => $seasonNumber]);
+            if ($userSeason) {
+                $userSeason->addBroadcastSchedule($seriesBroadcastSchedule);
+                $this->userSeasonRepository->save($userSeason, true);
+                $this->addFlash('success', 'Series broadcast schedule linked to user season successfully');
+            } elseif ($user->getId() == 1) {
+                $this->addFlash('error', 'User season not found');
+            }
+        }
 
         // Override TMDB dates, create SeriesBroadcastDate records with the new dates
         if ($override) {
