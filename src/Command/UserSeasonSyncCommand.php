@@ -4,10 +4,8 @@ namespace App\Command;
 
 use App\Entity\UserSeason;
 use App\Repository\SeriesBroadcastScheduleRepository;
-use App\Repository\UserEpisodeRepository;
 use App\Repository\UserSeasonRepository;
 use App\Repository\UserSeriesRepository;
-use App\Repository\WatchProviderRepository;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -21,7 +19,6 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 class UserSeasonSyncCommand extends Command
 {
     public function __construct(
-        private readonly UserEpisodeRepository             $userEpisodeRepository,
         private readonly UserSeasonRepository              $userSeasonRepository,
         private readonly SeriesBroadcastScheduleRepository $sbsRepository,
         private readonly UserSeriesRepository              $userSeriesRepository
@@ -40,11 +37,15 @@ class UserSeasonSyncCommand extends Command
         $userSeriesArr = $this->userSeriesRepository->findAll();
         $n = 0;
         foreach ($userSeriesArr as $us) {
-            $uss = $us->getUserSeasons();
+            if ($us->getId() < 1410) continue;
+            $series = $us->getSeries();
+            $sln = $series->getLocalizedName('fr');
+            $io->writeln($series->getId() . ' / ' . $us->getId() . ' / ' . ($sln ? $sln->getName() : $series->getName()));
             $ues = $us->getUserEpisodes();
             $ueBySeason = [];
             foreach ($ues as $ue) {
-                $ueBySeason[$ue->getSeasonNumber()][] = $ue/*->getEpisodeId()*/;
+                $ueBySeason[$ue->getSeasonNumber()][] = $ue/*->getEpisodeId()*/
+                ;
             }
             foreach ($ueBySeason as $seasonNumber => $ues) {
                 $userSeason = $us->getUserSeasonsBySeasonNumber($seasonNumber);
@@ -53,23 +54,30 @@ class UserSeasonSyncCommand extends Command
                     foreach ($ues as $ue) {
                         $userSeason->addUserEpisode($ue);
                     }
+                    // Look for series broadcast schedules (by series id and season number)
+                    $seriesBroadcastSchedules = $this->sbsRepository->findBy(['series' => $series, 'seasonNumber' => $seasonNumber]);
+                    foreach ($seriesBroadcastSchedules as $seriesBroadcastSchedule) {
+                        $userSeason->addBroadcastSchedule($seriesBroadcastSchedule);
+                        $io->writeln('    Adding broadcast schedule for ' . (string)$seriesBroadcastSchedule);
+                    }
                     $this->userSeasonRepository->save($userSeason);
                 }
             }
-            $sbsArr = $this->sbsRepository->findBy(['series' => $us->getSeries()]);
-            $io->writeln($us->getSeries()->getName() . ': season count: ' . count($ueBySeason) . ' - sbs count: ' . count($sbsArr));
-            foreach ($sbsArr as $sbs) {
-                $io->writeln('    '.(string) $sbs);
-            }
+            $sbsArr = $this->sbsRepository->findBy(['series' => $series]);
+            $io->writeln('    Season count: ' . count($ueBySeason));
+            $io->writeln('    Sbs count: ' . count($sbsArr));
+
             if ($n % 10 == 9) {
-                $this->userSeriesRepository->flush();
+                $this->userSeasonRepository->flush();
+                $io->writeln('Last flush count: ' . $n + 1);
             }
             $io->writeln('-------------------------------------------------------------------');
-            if (++$n == 2) break;
-            /*++$n;*/
+            ++$n;
+            if ($n == 200) break;
         }
         if ($n % 10 != 0) {
-            $this->userSeriesRepository->flush();
+            $this->userSeasonRepository->flush();
+            $io->writeln('Last flush count: ' . $n);
         }
 
         $io->success('You have a new command! Now make it your own! Pass --help to see your options.');
