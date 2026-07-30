@@ -212,7 +212,17 @@
             <div class="block-infos user-actions">
                 <div class="wrapper">
                     <div class="series-status {{ tv.status_css }}">
-                        {{ tv.status|trans }}
+                        {% if tv.status == 'Returning Series' and tv.last_episode_to_air is null %}
+                            {{ 'Upcoming Series'|trans }}
+                        {% elseif tv.status == 'Returning Series' and tv.next_episode_to_air is not null %}
+                            {% if tv.next_episode_to_air.season_number != tv.last_episode_to_air.season_number %}
+                                {{ 'Next season coming soon'|trans }}
+                            {% else %}
+                                {{ 'Series currently airing'|trans }}
+                            {% endif %}
+                        {% else %}
+                            {{ tv.status|trans }}
+                        {% endif %}
                     </div>
                     {{ include('_blocks/_watch_links.html.twig', {type: 'series', media: series}) }}
                     <div class="rating">
