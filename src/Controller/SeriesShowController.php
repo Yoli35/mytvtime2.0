@@ -485,7 +485,7 @@ final class SeriesShowController extends AbstractController
                 $status = $tv['status'];
             }
         }
-        dump($userEpisodes);
+//        dump($userEpisodes);
         $episode = $this->seasonEpisode($episode, $userSeries, $userEpisodes, $seasonNumber, $finaleEpisodeNumber, $language/*, $stills*/);
         $profileUrl = $this->imageConfiguration->getUrl('profile_sizes', 2);
         $peopleUserPreferredNames = $this->getPreferredNames($user);
@@ -525,7 +525,7 @@ final class SeriesShowController extends AbstractController
         $devices = $this->deviceRepository->deviceArray();
 
         $themeSettings = $this->settingsRepository->findOneBy(['user' => $user, 'name' => 'theme_episode_' . $episode['id']]);
-        dump($episode);
+//        dump($episode);
         return $this->render('series_show/episode.html.twig', [
             'userSeries' => $userSeries,
             'series' => $series,
