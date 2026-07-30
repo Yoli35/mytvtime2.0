@@ -65,7 +65,7 @@ export class PeopleCard {
                             }
                         }, 300);
                     }, 300);
-                }, 0);
+                }, 300);
             })
             .catch(error => {
                 console.error('Error fetching data:', error);

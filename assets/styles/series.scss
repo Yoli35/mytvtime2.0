@@ -6486,7 +6486,7 @@ aside:has(.episode__cards) {
         justify-content: flex-start;
         padding: 1rem;
         position: relative;
-        transition: opacity .3s ease-in-out;
+        transition: opacity .6s ease-in-out;
         width: 100%;
 
         &.fade-out {
@@ -6546,10 +6546,14 @@ aside:has(.episode__cards) {
 
     img.growing-image {
         border-radius: 1rem;
-        object-fit: cover;
+        object-fit: contain;
         margin: -1rem;
         width: calc(100% + 2rem);
         height: calc(100% + 2rem);
+
+        @media (max-aspect-ratio: 2/3) {
+            object-fit: cover;
+        }
     }
 }
 
