@@ -35,17 +35,18 @@ class UserSeasonSyncCommand extends Command
     {
         $io = new SymfonyStyle($input, $output);
         $userSeriesArr = $this->userSeriesRepository->findAll();
+        $sbsArr = $this->sbsRepository->findAll();
         $n = 0;
         foreach ($userSeriesArr as $us) {
             if ($us->getId() < 1410) continue;
             $series = $us->getSeries();
+            $sId = $series->getId();
             $sln = $series->getLocalizedName('fr');
             $io->writeln($series->getId() . ' / ' . $us->getId() . ' / ' . ($sln ? $sln->getName() : $series->getName()));
             $ues = $us->getUserEpisodes();
             $ueBySeason = [];
             foreach ($ues as $ue) {
-                $ueBySeason[$ue->getSeasonNumber()][] = $ue/*->getEpisodeId()*/
-                ;
+                $ueBySeason[$ue->getSeasonNumber()][] = $ue;
             }
             foreach ($ueBySeason as $seasonNumber => $ues) {
                 $userSeason = $us->getUserSeasonsBySeasonNumber($seasonNumber);
@@ -55,7 +56,9 @@ class UserSeasonSyncCommand extends Command
                         $userSeason->addUserEpisode($ue);
                     }
                     // Look for series broadcast schedules (by series id and season number)
-                    $seriesBroadcastSchedules = $this->sbsRepository->findBy(['series' => $series, 'seasonNumber' => $seasonNumber]);
+                    $seriesBroadcastSchedules = array_filter($sbsArr, function ($sbs) use ($sId, $seasonNumber) {
+                        return $sbs->getSeries()->getId() === $sId && $sbs->getSeasonNumber() === $seasonNumber;
+                    });
                     foreach ($seriesBroadcastSchedules as $seriesBroadcastSchedule) {
                         $userSeason->addBroadcastSchedule($seriesBroadcastSchedule);
                         $io->writeln('    Adding broadcast schedule for ' . (string)$seriesBroadcastSchedule);
@@ -63,7 +66,9 @@ class UserSeasonSyncCommand extends Command
                     $this->userSeasonRepository->save($userSeason);
                 }
             }
-            $sbsArr = $this->sbsRepository->findBy(['series' => $series]);
+            $sbsArr = array_filter($sbsArr, function ($sbs) use ($sId) {
+                return $sbs->getSeries()->getId() === $sId;
+            });
             $io->writeln('    Season count: ' . count($ueBySeason));
             $io->writeln('    Sbs count: ' . count($sbsArr));
 
