@@ -13,6 +13,7 @@ use App\Entity\SeriesVideo;
 use App\Entity\Settings;
 use App\Entity\User;
 use App\Entity\UserEpisode;
+use App\Entity\UserSeason;
 use App\Entity\UserSeries;
 use App\Form\AddBackdropType;
 use App\Form\SeriesVideoType;
@@ -25,6 +26,7 @@ use App\Repository\SeriesVideoRepository;
 use App\Repository\SettingsRepository;
 use App\Repository\SourceRepository;
 use App\Repository\UserEpisodeRepository;
+use App\Repository\UserSeasonRepository;
 use App\Repository\UserSeriesRepository;
 use Closure;
 use DateMalformedStringException;
@@ -71,6 +73,7 @@ readonly class SeriesService
         private TMDBService                   $tmdbService,
         private TranslatorInterface           $translator,
         private UserEpisodeRepository         $userEpisodeRepository,
+        private UserSeasonRepository          $userSeasonRepository,
         private UserSeriesRepository          $userSeriesRepository,
     )
     {
@@ -381,6 +384,12 @@ readonly class SeriesService
             return [0, false];
         }
 
+        $userSeason = $this->userSeasonRepository->findOneBy(['userSeries' => $userSeries, 'seasonNumber' => $seasonNumber]);
+        if (!$userSeason) {
+            $userSeason = new UserSeason($userSeries, $seasonNumber);
+            $this->userSeasonRepository->save($userSeason, true);
+        }
+
         $seasonNumber = $tvSeason['season_number'];
         $finaleEpisodeNumber = $this->getFinaleEpisodeNumber($tvSeason);
 
@@ -394,7 +403,7 @@ readonly class SeriesService
                 ($this->addFlash)('warning', "// Skip episode " . sprintf("S%02dE%02d", $tvSeason['season_number'], $episode['episode_number']) . " after a finale");
                 continue;
             }
-            $newEpisodeCount += $this->addEpisodeToUser($userSeries, $episode, $seasonNumber);
+            $newEpisodeCount += $this->addEpisodeToUser($userSeries, $userSeason,  $episode, $seasonNumber);
         }
 
         if ($newEpisodeCount) {
@@ -487,9 +496,10 @@ readonly class SeriesService
         };
     }
 
-    public function addEpisodeToUser(UserSeries $userSeries, array $episode, int $seasonNumber): int
+    public function addEpisodeToUser(UserSeries $userSeries, UserSeason $userSeason, array $episode, int $seasonNumber): int
     {
         $userEpisode = new UserEpisode($userSeries, $episode['id'], $seasonNumber, $episode['episode_number'], null);
+        $userEpisode->setUserSeason($userSeason);
         $airDate = $episode['air_date'] ? $this->date($episode['air_date'], true) : null;
         $userEpisode->setAirDate($airDate);
         $this->userEpisodeRepository->save($userEpisode);
