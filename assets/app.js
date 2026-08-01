@@ -20,6 +20,7 @@ import {Movie} from 'Movie';
 import {MovieIndex} from 'MovieIndex';
 import {NavBar} from 'NavBar';
 import {NetworkAndProvider} from "NetworkAndProvider";
+import {PeopleCard} from "PeopleCard";
 import {PeopleShow} from "PeopleShow";
 import {PeopleStar} from "PeopleStar";
 import {Photos} from 'Photos';
@@ -114,6 +115,7 @@ window.addEventListener("DOMContentLoaded", () => {
         const globs = JSON.parse(document.querySelector("#global-data").textContent);
         index.init(globs, menu);
     }
+    const tmdbSeriesPage = document.querySelector(".series-show.tmdb-series");
     const seriesPage = document.querySelector(".series-show.user-series-show");
     const seasonPage = document.querySelector(".series-show#series-season");
     const episodePage = document.querySelector(".episode-show");
@@ -204,6 +206,12 @@ window.addEventListener("DOMContentLoaded", () => {
         const preferredName = new PreferredName();
         const show = new Show(preferredName);
         show.init(menu);
+    }
+    if (tmdbSeriesPage) {
+        /******************************************************************************
+         * Initialize people cards                                                    *
+         ******************************************************************************/
+        new PeopleCard();
     }
 
     const userListPage = document.querySelector(".user-lists");

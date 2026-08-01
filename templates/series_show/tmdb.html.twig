@@ -3,6 +3,7 @@
 {% block title %}my Tv Time → {{ 'Series'|trans }} → {{ localizedName.name ?? translatedName ?: tv.name }}{% endblock %}
 {% block stylesheets %}
     {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('styles/people.scss') }}">
     <link rel="stylesheet" href="{{ asset('styles/series.scss') }}">
 {% endblock %}
 {% block body %}
@@ -19,7 +20,7 @@
     {% endif %}
     {% include '_blocks/_menu.html.twig' %}
     <div class="container-fluid backgroundImageOverlay">
-        <div class="series-show">
+        <div class="series-show tmdb-series">
             <div class="header">
                 {% if tv.backdrop_path and tv.poster_path %}
                     <div class="backdrop">
@@ -232,5 +233,8 @@
             <div class="add-this">{{ 'Add this series to your watchlist'|trans }}</div>
         </a>
     {% endif %}
+    <div id="svgs" style="display: none">
+        {{ ux_icon('mdi:close', {id: 'cancel' }) }}
+    </div>
     {% include '_blocks/_footer.html.twig' %}
 {% endblock %}
