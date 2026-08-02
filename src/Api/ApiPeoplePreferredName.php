@@ -35,12 +35,14 @@ readonly class ApiPeoplePreferredName
         $id = $data['id'];
         $name = $data['name'] ? trim($data['name']) : false;
         $newName = $data['new'] ? trim($data['new']) : false;
-        $name = $newName ?: $name;
 
         $peopleUserPreferredName = $this->peopleUserPreferredNameRepository->findOneBy(['user' => $user, 'tmdbId' => $id]);
         if (!$peopleUserPreferredName) {
+            $name = $newName ?: $name;
             $peopleUserPreferredName = new PeopleUserPreferredName($user, $id, $name);
         } else {
+            $oldName = $peopleUserPreferredName->getName();
+            $name = $newName === $oldName ? $name : $newName;
             $peopleUserPreferredName->setName($name);
         }
         $this->peopleUserPreferredNameRepository->save($peopleUserPreferredName, true);
