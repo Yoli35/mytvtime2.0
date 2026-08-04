@@ -1,0 +1,21 @@
+<div class="actions">
+    <div class="action toggle-pinned-series{% if userSeries.userPinnedSeries %} pinned{% endif %}" data-title="{{ (userSeries.userPinnedSeries ? "Remove from pinned series" : "Add to pinned series")|trans }}">
+        {{ ux_icon('mdi:paperclip') }}
+    </div>
+    <div class="action toggle-favorite-series{% if userSeries.favorite %} favorite{% endif %}" data-title="{{ (userSeries.favorite ? "Remove from favorites" : "Add to favorites")|trans }}">
+        {{ ux_icon('mdi:heart') }}
+    </div>
+    <div class="action toggle-bookmark-series{% if series.userLists|length %} bookmark{% endif %}"
+         data-title="{{ (series.userLists|length ? "Remove from a list" : "Add to a list")|trans }}"
+         data-id="{{ tv.id }}"
+         data-name="{{ tv.display_name }}">
+        <div class="series-tools">{{ ux_icon('mdi:bookmark') }}</div>
+        {{ include('_blocks/list/_tools_menu.html.twig', {seriesId: tv.id, seriesName: tv.display_name}) }}
+    </div>
+    <div class="action remove-this-series"
+         data-tmdb-id="{{ series.tmdbId }}"
+         data-slug="{{ tv.localized_name.slug ?? series.slug }}"
+         data-title="{{ 'Remove this series from your watchlist'|trans }}">
+        {{ ux_icon('mdi:trash') }}
+    </div>
+</div>

@@ -1,0 +1,14 @@
+{% if userSeries.marathoner or userSeries.binge %}
+    <div class="badges">
+        {% if userSeries.binge %}
+            <div class="badge" data-title="{{ 'A real binger!'|trans }}">
+                {{ ux_icon('mdi:coffee') }}
+            </div>
+        {% endif %}
+        {% if userSeries.marathoner %}
+            <div class="badge" data-title="{{ 'A real marathoner!'|trans }}">
+                {{ ux_icon('mdi:lightning-bolt') }}
+            </div>
+        {% endif %}
+    </div>
+{% endif %}
