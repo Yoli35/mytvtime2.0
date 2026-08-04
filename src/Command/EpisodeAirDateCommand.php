@@ -7,12 +7,14 @@ use App\Entity\SeriesLocalizedName;
 use App\Entity\User;
 use App\Entity\UserEpisode;
 use App\Entity\UserEpisodeNotification;
+use App\Entity\UserSeason;
 use App\Entity\UserSeries;
 use App\Repository\EpisodeNotificationRepository;
 
 use App\Repository\SeriesRepository;
 use App\Repository\UserEpisodeNotificationRepository;
 use App\Repository\UserEpisodeRepository;
+use App\Repository\UserSeasonRepository;
 use App\Repository\UserSeriesRepository;
 use App\Service\DateService;
 use App\Service\KeywordService;
@@ -45,6 +47,7 @@ class EpisodeAirDateCommand
         private readonly SeriesRepository                  $seriesRepository,
         private readonly UserEpisodeNotificationRepository $userEpisodeNotificationRepository,
         private readonly UserEpisodeRepository             $userEpisodeRepository,
+        private readonly UserSeasonRepository              $userSeasonRepository,
         private readonly UserSeriesRepository              $userSeriesRepository,
         private readonly TMDBService                       $tmdbService,
     )
@@ -153,6 +156,11 @@ class EpisodeAirDateCommand
             $startingSeason = $firstUnseenEpisode ? $firstUnseenEpisode->getSeasonNumber() : 1;
             $writeln = false;
             foreach ($tv['seasons'] as $season) {
+                $userSeason = $this->userSeasonRepository->findOneBy(['userSeries' => $userSeries, 'seasonNumber' => $season['season_number']]);
+                if (!$userSeason) {
+                    $userSeason = new UserSeason($userSeries, $season['season_number']);
+                    $this->userSeasonRepository->save($userSeason, true);
+                }
                 if (!$force && $season['season_number'] > 0 && $season['season_number'] < $startingSeason) {
                     continue;
                 }
@@ -180,6 +188,7 @@ class EpisodeAirDateCommand
 
                     if (!$userEpisode) {
                         $userEpisode = new UserEpisode($userSeries, $episodeId, $seasonNumber, $episodeNumber, null);
+                        $userEpisode->setUserSeason($userSeason);
                         $this->userEpisodeRepository->save($userEpisode);
                         $seriesNewEpisodeCount++;
 
