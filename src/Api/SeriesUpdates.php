@@ -210,6 +210,9 @@ class SeriesUpdates extends AbstractController
                                 $seriesNewEpisodeCount++;
                             }
                         }
+                        if ($seriesNewEpisodeCount) {
+                            $this->userEpisodeRepository->flush();
+                        }
                     }
                     if ($seriesNewEpisodeCount > 0) {
                         $updates[] = [

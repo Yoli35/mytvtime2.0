@@ -429,6 +429,7 @@ readonly class SeriesService
             $this->userEpisodeRepository->removeByEpisodeIds($userSeries, $removedEpisodeIds);
             $this->userEpisodeRepository->flush();
             $reloadUserEpisodes = true;
+            $saveCount = 0;
 
             // Get TMDB info for remaining episodes
             foreach ($updatedEpisodeIds as $episodeId) {
@@ -441,9 +442,14 @@ readonly class SeriesService
                         $dbUserEpisode->setAirDate($airDate);
                         $dbUserEpisode->setEpisodeNumber($episode['episode_number']);
                         $this->userEpisodeRepository->save($dbUserEpisode);
+                        $saveCount++;
                         ($this->addFlash)('info', $this->translator->trans('Episode %number% has been updated', ['%number%' => sprintf('S%02dE%02d', $seasonNumber, $episode['episode_number'])]));
                     }
                 }
+            }
+
+            if ($saveCount) {
+                $this->userEpisodeRepository->flush();
             }
         }
 
@@ -504,6 +510,7 @@ readonly class SeriesService
         $userEpisode->setAirDate($airDate);
         $this->userEpisodeRepository->save($userEpisode);
         if ($seasonNumber == 0) {
+            $this->userEpisodeRepository->flush();
             return 1;
         }
         if ($userSeries->getNextUserEpisode() === null && $airDate && $airDate > $this->now()) {
@@ -613,6 +620,7 @@ readonly class SeriesService
     public function getSeriesShowTranslations(): array
     {
         return [
+            "and" => $this->translator->trans('and'),
             'Add to favorites' => $this->translator->trans('Add to favorites'),
             'Add' => $this->translator->trans('Add'),
             'Additional overviews' => $this->translator->trans('Additional overviews'),
@@ -622,41 +630,44 @@ readonly class SeriesService
             'Edit' => $this->translator->trans('Edit'),
             'Ended' => $this->translator->trans('Ended'),
             'Localized overviews' => $this->translator->trans('Localized overviews'),
+            'No backdrop' => $this->translator->trans('No backdrop'),
+            'No logo' => $this->translator->trans('No logo'),
+            'No poster' => $this->translator->trans('No poster'),
+            'Not a valid file type. Update your selection' => $this->translator->trans('Not a valid file type. Update your selection'),
             'Now' => $this->translator->trans('Now'),
+            'One backdrop' => $this->translator->trans('One backdrop'),
+            'One logo' => $this->translator->trans('One logo'),
+            'One poster' => $this->translator->trans('One poster'),
             'Remove from favorites' => $this->translator->trans('Remove from favorites'),
+            'Season completed' => $this->translator->trans('Season completed'),
             'Since' => $this->translator->trans('Since'),
             'That\'s all!' => $this->translator->trans('That\'s all!'),
             'This field is required' => $this->translator->trans('This field is required'),
             'To be continued' => $this->translator->trans('To be continued'),
             'Today' => $this->translator->trans('Today'),
             'Tomorrow' => $this->translator->trans('Tomorrow'),
+            'Up to date' => $this->translator->trans('Up to date'),
             'Update' => $this->translator->trans('Update'),
             'Watch on' => $this->translator->trans('Watch on'),
             'Watch season' => $this->translator->trans('Watch season'),
             'Watch specials' => $this->translator->trans('Watch specials'),
             'Watch' => $this->translator->trans('Watch'),
-            'on' => $this->translator->trans('on'),
-            'season' => $this->translator->trans('season.number'),
-            'special episode' => $this->translator->trans('special.episode'),
-            'special episodes' => $this->translator->trans('special.episodes'),
             'available' => $this->translator->trans('available'),
+            'backdrops' => $this->translator->trans('backdrops'),
             'day' => $this->translator->trans('day'),
             'days' => $this->translator->trans('days'),
-            "and" => $this->translator->trans('and'),
-            'since' => $this->translator->trans('since'),
-            'Season completed' => $this->translator->trans('Season completed'),
-            'Up to date' => $this->translator->trans('Up to date'),
-            'Not a valid file type. Update your selection' => $this->translator->trans('Not a valid file type. Update your selection'),
-            'special.episodes' => $this->translator->trans('special.episodes'),
-            'No backdrop' => $this->translator->trans('No backdrop'),
-            'No logo' => $this->translator->trans('No logo'),
-            'No poster' => $this->translator->trans('No poster'),
-            'One backdrop' => $this->translator->trans('One backdrop'),
-            'One logo' => $this->translator->trans('One logo'),
-            'One poster' => $this->translator->trans('One poster'),
-            'backdrops' => $this->translator->trans('backdrops'),
             'logos' => $this->translator->trans('logos'),
+            'months' => $this->translator->trans('months'),
+            'month' => $this->translator->trans('month'),
+            'on' => $this->translator->trans('on'),
             'posters' => $this->translator->trans('posters'),
+            'season' => $this->translator->trans('season.number'),
+            'since' => $this->translator->trans('since'),
+            'special episode' => $this->translator->trans('special.episode'),
+            'special episodes' => $this->translator->trans('special.episodes'),
+            'special.episodes' => $this->translator->trans('special.episodes'),
+            'years' => $this->translator->trans('years'),
+            'year' => $this->translator->trans('year'),
         ];
     }
 

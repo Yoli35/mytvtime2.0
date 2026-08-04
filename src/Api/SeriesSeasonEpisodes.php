@@ -339,6 +339,18 @@ class SeriesSeasonEpisodes extends AbstractController
         $userEpisode = array_find($this->userEpisodes, function ($ue) use ($episodeId) {
             return $ue->getEpisodeId() === $episodeId;
         });
+        if (!$userEpisode) {
+            return [
+                'userEpisodeId' => null,
+                'watchedAt' => null,
+                'providerPath' => null,
+                'providerName' => null,
+                'voteColorBackground' => null,
+                'voteColor' => null,
+                'vote' => null,
+            ];
+        }
+
         $watchedAt = $userEpisode->getWatchAt();
         if ($watchedAt && $wpId = $userEpisode->getProviderId()) {
             if (key_exists($wpId, $this->providersInfos)) {
