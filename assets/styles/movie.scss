@@ -490,6 +490,10 @@
         margin-block-start: -4rem;
         padding-block: 1rem;
 
+        &:has(.coming-soon-banner) {
+            margin-block-start: -7rem;
+        }
+
         .coming-soon-banner {
             background-color: var(--orange-50);
             border-radius: 5rem;
@@ -499,7 +503,6 @@
             font-weight: 300;
             line-height: 1.1em;
             justify-content: center;
-            margin-block: -10rem 4rem;
             margin-inline: auto;
             padding: 1rem 5rem;
             width: fit-content;
