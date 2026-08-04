@@ -319,23 +319,33 @@ export class Show {
                 const now = (new Date().getTime());
                 const distance = targetTimestamp - now;
                 const distanceAbs = Math.abs(distance);
-                const d = Math.floor(distanceAbs / (1000 * 60 * 60 * 24));
-                const h = /*(d === 1 ? 24 : 0) +*/ Math.floor((distanceAbs % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-                const m = Math.floor((distanceAbs % (1000 * 60 * 60)) / (1000 * 60));
-                const s = Math.floor((distanceAbs % (1000 * 60)) / 1000);
-                const days = d ? (" " + d + " " + translations[d > 1 ? 'days' : 'day'] + " " + translations['and'] + " ") : "";
-                const hours = (h < 10 ? "0" : "") + h + ":";
-                const minutes = (m < 10 ? "0" : "") + m + ":";
-                const secondes = (s < 10 ? "0" : "") + s;
-                const elapsedTime = '<code>' + hours + minutes + secondes + '</code>';
+                const yearCount = 1000 * 60 * 60 * 24 * 365;
+                const dayCount = 1000 * 60 * 60 * 24;
+                const y = Math.floor(distanceAbs / yearCount);
+                const d = Math.floor((distanceAbs / dayCount) % (365 / 12));
+                let elapsedTime, days = '';
+                if (y) {
+                    const monthCount = (yearCount / 12);
+                    const m = Math.floor(distanceAbs / monthCount) % 12;
+                    elapsedTime = '<code>' + y + ' ' + translations[y > 1 ? 'years' : 'year'] + (m ? ' ' + m + ' ' + translations[m > 1 ? 'months' : 'month'] : '') + (d ? ' ' + d + ' ' + translations[d > 1 ? 'days' : 'day'] : '') + '</code>';
+                } else {
+                    const h = /*(d === 1 ? 24 : 0) +*/ Math.floor((distanceAbs % dayCount) / (1000 * 60 * 60));
+                    const i = Math.floor((distanceAbs % (1000 * 60 * 60)) / (1000 * 60));
+                    const s = Math.floor((distanceAbs % (1000 * 60)) / 1000);
+                    days = d ? (" " + d + " " + translations[d > 1 ? 'days' : 'day'] + " " + translations['and'] + " ") : "";
+                    const hours = (h < 10 ? "0" : "") + h + ":";
+                    const minutes = (i < 10 ? "0" : "") + i + ":";
+                    const secondes = (s < 10 ? "0" : "") + s;
+                    elapsedTime = '<code>' + hours + minutes + secondes + '</code>';
+                }
 
-                const airDate = new Date(targetTimestamp);
-                const currentDate = new Date();
+                /*const airDate = new Date(targetTimestamp);
+                const currentDate = new Date();*/
 
-                const airDay = airDate.getTime();
+                /*const airDay = airDate.getTime();
                 const currentDay = currentDate.getTime();
                 const airDayOfMonth = airDate.getDate();
-                const currentDayOfMonth = currentDate.getDate();
+                const currentDayOfMonth = currentDate.getDate();*/
 
                 // Si la date est dépassée de moins d'une heure, on arrête le compte à rebours
                 if (distance < 0) {
@@ -354,29 +364,29 @@ export class Show {
                     }
                     span2.innerHTML = /*self.svgRightArrow.outerHTML + " " +*/ (d ? (days + " ") : "") + elapsedTime;
                 } else {
-                    let dayPart; // today, tomorrow, after tomorrow, x days
-                    let day = Math.floor((airDay - currentDay) / (1000 * 3600 * 24));
-                    if (day === 0) {
-                        if (airDayOfMonth === currentDayOfMonth) {
-                            dayPart = translations["Today"] + " ";
-                        } else {
-                            dayPart = translations["Tomorrow"] + "  ";
-                        }
-                    } else if (day === 1) {
-                        if (currentDayOfMonth - airDayOfMonth === 1) {
-                            dayPart = translations["Tomorrow"];
-                        } else {
-                            dayPart = translations["After tomorrow"] + " ";
-                        }
-                    } else if (day === 2) {
-                        if (currentDayOfMonth - airDayOfMonth === 2) {
-                            dayPart = translations["After tomorrow"] + " ";
-                        } else {
-                            dayPart = "";/*d + " " + translations['days'];*/
-                        }
-                    } else {
-                        dayPart = "";/*d + " " + translations['days'];*/
-                    }
+                   /* let dayPart; // today, tomorrow, after tomorrow, x days
+                      let day = Math.floor((airDay - currentDay) / (1000 * 3600 * 24));
+                     if (day === 0) {
+                          if (airDayOfMonth === currentDayOfMonth) {
+                              dayPart = translations["Today"] + " ";
+                          } else {
+                              dayPart = translations["Tomorrow"] + "  ";
+                          }
+                      } else if (day === 1) {
+                          if (currentDayOfMonth - airDayOfMonth === 1) {
+                              dayPart = translations["Tomorrow"];
+                          } else {
+                              dayPart = translations["After tomorrow"] + " ";
+                          }
+                      } else if (day === 2) {
+                          if (currentDayOfMonth - airDayOfMonth === 2) {
+                              dayPart = translations["After tomorrow"] + " ";
+                          } else {
+                              dayPart = "";
+                          }
+                      } else {
+                          dayPart = "";
+                      }*/
                     span2.innerHTML = /*dayPart +*/ (d ? (days + " ") : "") + elapsedTime;
                 }
             }, 1000);
