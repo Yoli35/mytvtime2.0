@@ -257,6 +257,9 @@ final class SeriesShowController extends AbstractController
 
         $userSeries = $this->updateUserSeries($userSeries, $tv);
         $userEpisodes = $this->checkSeasons($userSeries, $userEpisodes, $tv);
+        array_filter($userEpisodes, fn($userEpisode) => $userEpisode->getSeasonNumber() == 1)
+            |> array_first(...)
+            |> (fn($x) => $this->checkForMissingFirstAirDate($series, $x));
         if ($this->reloadUserEpisodes) {
             $userEpisodes = $this->userEpisodeRepository->findBy(['userSeries' => $userSeries, 'previousOccurrence' => null], ['seasonNumber' => 'ASC', 'episodeNumber' => 'ASC']);
             $this->addFlash('info', $this->translator->trans('Your episodes have been updated according to the series information.'));
@@ -553,6 +556,17 @@ final class SeriesShowController extends AbstractController
             'devices' => $devices,
             'stillUrl' => $this->imageConfiguration->getUrl('still_sizes', 2),
         ]);
+    }
+
+    private function checkForMissingFirstAirDate(Series $series, ?UserEpisode $userEpisode): void
+    {
+        if ($series->getFirstAirDate()) return;
+
+        if (!$userEpisode) return;
+
+        if ($userEpisode->getAirDate()) {
+            $series->setFirstAirDate($userEpisode->getAirDate());
+        }
     }
 
     private function getNetworks(Series $series, User $user): array
