@@ -174,7 +174,6 @@ final class SeriesShowController extends AbstractController
         $seasonNumbers = array_map(fn($episode) => $episode->getSeasonNumber(), $userEpisodes)
                 |> array_unique(...)
                 |> array_values(...);
-//        dump($seasonNumbers);
         foreach ($seasonNumbers as $seasonNumber) {
             $userSeason = $this->userSeasonRepository->findOneBy(['userSeries' => $userSeries, 'seasonNumber' => $seasonNumber]);
             if (!$userSeason) {
@@ -194,13 +193,6 @@ final class SeriesShowController extends AbstractController
                 $this->userSeasonRepository->save($userSeason, true);
             }
         }
-//        dump([
-//            'user series' => $userSeries,
-//            'user season count' => count($userSeries->getUserSeasons()->toArray()),
-//            'user episode count' => count($userSeries->getUserEpisodes()->toArray()),
-//            'user seasons' => $userSeries->getUserSeasons(),
-//            'user episodes' => $userSeries->getUserEpisodes(),
-//        ]);
 
         $seriesAround = $this->seriesService->getSeriesAround($user->getId(), $userSeries->getId(), $locale);
 
@@ -488,7 +480,6 @@ final class SeriesShowController extends AbstractController
                 $status = $tv['status'];
             }
         }
-//        dump($userEpisodes);
         $episode = $this->seasonEpisode($episode, $userSeries, $userEpisodes, $seasonNumber, $finaleEpisodeNumber, $language/*, $stills*/);
         $profileUrl = $this->imageConfiguration->getUrl('profile_sizes', 2);
         $peopleUserPreferredNames = $this->getPreferredNames($user);
@@ -528,7 +519,7 @@ final class SeriesShowController extends AbstractController
         $devices = $this->deviceRepository->deviceArray();
 
         $themeSettings = $this->settingsRepository->findOneBy(['user' => $user, 'name' => 'theme_episode_' . $episode['id']]);
-//        dump($episode);
+
         return $this->render('series_show/episode.html.twig', [
             'userSeries' => $userSeries,
             'series' => $series,

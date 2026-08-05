@@ -512,7 +512,6 @@ class HomeController extends AbstractController
         if (!$list) return ['name' => null, 'results' => []];
         $data = $settings[$list];
         if (!$data) return ['name' => null, 'results' => []];
-        /*dump($data);*/
 
         $dataKeywords = $data['keywords'] ?? [];
         $dataKeywordIds = array_column($dataKeywords, 'keyword_id');
@@ -525,7 +524,6 @@ class HomeController extends AbstractController
             $filterString = "include_adult=false&include_null_first_air_dates=true&language=en-US&page=$page&sort_by=$orderBy&with_keywords=$k&with_watch_monetization_types=flatrate&watch_region=FR&with_type=4";
             $results = array_merge($results, $this->getSelection('tv', $filterString, new AsciiSlugger(), 'FR', 'Europe/Paris', 'en-US'));
         }
-        /*dump($results);*/
         return ['name' => $dataName, 'results' => $results];
     }
 }
