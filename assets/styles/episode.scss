@@ -13,6 +13,16 @@
         position: relative;
         width: 100%;
 
+        &:hover {
+            .infos {
+                transition: opacity .25s ease-in-out;
+                opacity: 1;
+            }
+            .user-episode {
+                opacity: 1;
+            }
+        }
+
         .still {
             aspect-ratio: 16 / 9;
             inset: -5rem -10rem -10rem -10rem;
@@ -40,8 +50,13 @@
             flex-direction: column;
             gap: .5rem;
             margin: -2rem;
+            opacity: 0;
             padding: 2rem;
-            transition: background 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+            transition: background 0.3s ease-in-out, box-shadow 0.3s ease-in-out, opacity 25s ease-in-out;
+
+            @starting-style {
+                opacity: 1;
+            }
 
             h1 {
                 font-size: max(3vw, 3vh);
@@ -240,8 +255,10 @@
             flex-direction: row;
             height: 3.75rem;
             left: 50%;
+            opacity: 0;
             position: sticky;
             top: 5rem;
+            transition: opacity .25s ease-in-out;
             translate: -50%;
             width: 12rem;
             z-index: 1;
