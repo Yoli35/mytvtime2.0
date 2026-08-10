@@ -66,9 +66,9 @@
                         <div class="series-overview">
                             {{ tv.overview|nl2br }}
                         </div>
-                        {% if localizedOverview %}
+                        {% if tv.overview|length == 0 and localizedOverview %}
                             <div class="series-overview">
-                                {{ localizedOverview.overview|nl2br }}
+                                {{ localizedOverview }}
                             </div>
                         {% endif %}
                     </div>
