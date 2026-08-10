@@ -44,6 +44,7 @@
             display: flex;
             flex-direction: row;
             gap: 1rem;
+            max-width: 100%;
 
             &:has(.form-field.full-width) {
                 flex-direction: column;
@@ -52,6 +53,7 @@
             .form-field {
                 flex-shrink: 0;
                 flex-grow: 1;
+                max-width: 100%;
 
                 &:has(select) {
                     max-width: calc(50% - 0.5rem);
@@ -79,6 +81,7 @@
 
                 textarea {
                     border-radius: 1rem;
+                    min-height: 5lh;
                     padding: 1rem;
                 }
 
@@ -97,11 +100,6 @@
                     padding-block: .5rem;
                     padding-inline: .5rem;
                     width: 100%;
-                }
-
-                textarea {
-                    min-height: 10rem;
-                    resize: vertical;
                 }
 
                 label:has(input[type="date"]),

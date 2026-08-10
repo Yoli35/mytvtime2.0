@@ -109,6 +109,11 @@ body {
         margin: 0;
     }
 
+    textarea {
+        field-sizing: content;
+        resize: none;
+    }
+
     select {
         option {
             font-family: inherit;
@@ -1801,6 +1806,8 @@ label:has(input[type="text"]) {
             z-index: -1;
 
             .orange-ball {
+                --i: calc(calc(sibling-count() - sibling-index()) / sibling-count());
+                --ball-size: calc(var(--i) * 16px);
                 --amplitude: 12px;
                 --r: calc(var(--ball-size) / 2);
                 --x: 65%;
@@ -1811,13 +1818,14 @@ label:has(input[type="text"]) {
                 --offset: 0deg;
 
                 animation: current 2s infinite linear;
-                animation-delay: var(--ball-delay);
+                animation-delay: calc(calc(sibling-index() - 1) * 28ms);
                 background-color: var(--orange);
                 border-radius: 50%;
                 bottom: calc(var(--y) + calc(sin(var(--angle1)) * var(--amplitude)));
                 counter-increment: ball;
                 height: var(--ball-size);
                 left: calc(var(--x) + sin(var(--angle2)) * var(--radius));
+                box-shadow: 0 0 8px var(--orange);
                 position: absolute;
                 width: var(--ball-size);
             }

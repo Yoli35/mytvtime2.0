@@ -69,8 +69,9 @@
 
                 .overview {
                     font-size: max(1.2vw, 1.2vh);
-                    line-height: 1.5;
-                    text-wrap: balance;
+                    line-height: 1.1;
+                    max-width: 60ch;
+                    /*text-wrap: balance;*/
                 }
 
                 .name-edit, .overview-edit {
