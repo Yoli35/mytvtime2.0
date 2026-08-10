@@ -112,7 +112,7 @@ final class SeriesShowController extends AbstractController
             $this->seriesRepository->save($series, true);
             $localizedName = $series->getLocalizedName($locale);
             $localizedOverview = $series->getLocalizedOverview($locale);
-            $overview = $localizedOverview?->getOverview() ?? null;
+            $localizedOverview = $localizedOverview?->getOverview() ?? null;
         } else {
             $localization = $this->localizeSeries($tv);
             $localizedName = $localization['localizedName'];
@@ -214,6 +214,16 @@ final class SeriesShowController extends AbstractController
             //]
             if ($tv['code'] >= 500) {
                 $this->addFlash('warning', 'Error on TMDB: ' . $tv['message']);
+                return $this->redirectToRoute('app_error_tmdb', [
+                    'series' => ['id' => $series->getId(), 'name' => $series->getName()],
+                    'tv' => $tv,
+                ]);
+            }
+            if ($tv['code'] == 404) {
+                $this->addFlash('warning', 'Error on TMDB: ' . $tv['message']);
+                $response = json_decode($tv['response'], true);
+                /*dump($response);*/
+                $this->addFlash('warning', 'Error on TMDB: ' . $response['status_message'] . ' (' . $response['status_code'] . ')');
                 return $this->redirectToRoute('app_error_tmdb', [
                     'series' => ['id' => $series->getId(), 'name' => $series->getName()],
                     'tv' => $tv,
