@@ -67,6 +67,9 @@
                             </form>
                         </dialog>
                     </div>
+                    {% if airDateString %}
+                        <div class="air-date-string">{{ airDateString }}</div>
+                    {% endif %}
                     {{ include('_blocks/series/_episode_air_date.html.twig', {episode: episode, ue: episode.user_episode, ues: episode.user_episodes}) }}
                     {{ include('_blocks/series/_episode_stats.html.twig', {episode: episode}) }}
                     <div class="overview-block">

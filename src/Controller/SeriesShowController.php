@@ -518,6 +518,9 @@ final class SeriesShowController extends AbstractController
         $providers = $this->watchLinkApi->getWatchProviders($country);
         $devices = $this->deviceRepository->deviceArray();
 
+        $schedule = $this->seriesBroadcastScheduleRepository->findOneBy(['series' => $series, 'seasonNumber' => $seasonNumber]);
+        $airDateString = $this->seriesService->getEpisodeByDayString($episodeNumber, $schedule, $season['air_date'], $locale);
+
         $themeSettings = $this->settingsRepository->findOneBy(['user' => $user, 'name' => 'theme_episode_' . $episode['id']]);
 
         return $this->render('series_show/episode.html.twig', [
@@ -525,6 +528,7 @@ final class SeriesShowController extends AbstractController
             'series' => $series,
             'season' => $season,
             'episode' => $episode,
+            'airDateString' => $airDateString,
             'themeType' => 'episode',
             'themeId' => $episode['id'],
             'themeSetting' => $themeSettings?->getData()['theme'] ?? '',

@@ -298,6 +298,19 @@ Share: 공유
 'Show/hide lists': '목록 표시/숨기기'
 Years: 년
 
+# Episode schedule
+'at %airAt%': %airAt%
+'%N% episode%s% this %day%': '%N% episode%s% this %day%'
+'%N% episode%s% every %day%': '%N% episode%s% every %day%'
+'%N% first episode%s% on %day%, then one episode every week': '%N% first episode%s% on %day%, then one episode every week'
+day_of_week_0: 일요일
+day_of_week_1: 월요일
+day_of_week_2: 화요일
+day_of_week_3: 수요일
+day_of_week_4: 목요일
+day_of_week_5: 금요일
+day_of_week_6: 토요일
+
 # Series Show
 "'%cast% has been added to the season cast'": '시즌 출연진에 %캐스트%가 추가되었습니다.'
 "'%cast% has been added to the series cast'": '캐스트%가 시리즈 출연진에 추가되었습니다.'

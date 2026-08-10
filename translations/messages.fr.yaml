@@ -300,6 +300,19 @@ My lists: Mes listes
 Show/hide lists: Afficher / masquer les listes
 Years: Années
 
+# Episode schedule
+'at %airAt%': 'à %airAt%'
+'%N% episode%s% this %day%': '%N% épisode%s% ce %day%'
+'%N% episode%s% every %day%': '%N% épisode%s%, chaque %day%'
+'%N% first episode%s% on %day%, then one episode every week': '%N% premier épisode%s% le %day%, puis un épisode par semaine'
+day_of_week_0: dimanche
+day_of_week_1: lundi
+day_of_week_2: mardi
+day_of_week_3: mercredi
+day_of_week_4: jeudi
+day_of_week_5: vendredi
+day_of_week_6: samedi
+
 # Series Show
 '%cast% has been added to the season cast': '%cast% a été ajoutés à la distribution de la saison'
 '%cast% has been added to the series cast': '%cast% a été ajoutés à la distribution de la série'
@@ -1115,6 +1128,7 @@ Key Makeup Artist: Maquilleur principal
 Key Production Assistant: Assistant de production principal
 Key Rigging Grip: Grip de gréement principal
 Key Scenic Artist: Artiste de décor principal
+Key Set Costumer: Costumier de plateau principal
 Key Set Production Assistant: Assistant de production de plateau principal
 Layout Supervisor: Superviseur de mise en page
 Lead Animator: Animateur principal

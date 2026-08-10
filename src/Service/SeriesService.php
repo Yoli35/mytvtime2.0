@@ -403,7 +403,7 @@ readonly class SeriesService
                 ($this->addFlash)('warning', "// Skip episode " . sprintf("S%02dE%02d", $tvSeason['season_number'], $episode['episode_number']) . " after a finale");
                 continue;
             }
-            $newEpisodeCount += $this->addEpisodeToUser($userSeries, $userSeason,  $episode, $seasonNumber);
+            $newEpisodeCount += $this->addEpisodeToUser($userSeries, $userSeason, $episode, $seasonNumber);
         }
 
         if ($newEpisodeCount) {
@@ -1282,6 +1282,127 @@ readonly class SeriesService
             return $da <=> $db;
         });
         return $unique;
+    }
+
+    public function getEpisodeByDayString(int $episodeNumber, ?SeriesBroadcastSchedule $schedule, ?string $seasonAirDate, string $locale): ?string
+    {
+        $str = null;
+        if (!$schedule && !$seasonAirDate) {
+            return null;
+        }
+        if (!$schedule && $seasonAirDate) {
+            $firstAirDate = $this->dateService->newDateImmutable($seasonAirDate, null, true);
+            $dayName = strtolower($this->translator->trans($firstAirDate->format('l')));
+            $str = $this->translator->trans("%N% episode%s% every %day%", ['%N%' => 1, '%s%' => '', '%day%' => $dayName]);
+            return $str;
+        }
+        $frequency = $schedule->getFrequency();
+        $firstAirDate = $schedule->getFirstAirDate();
+        $airAt = $schedule->getAirAt();
+        $dayName = strtolower($this->translator->trans($firstAirDate->format('l')));
+
+        switch ($frequency) {
+            case 1: // All at once
+                $str = $this->translator->trans("All at once");
+                break;
+            case 2: // Daily
+                $str = $this->translator->trans("%N% episode%s% every %day%", ['%N%' => 1, '%s%' => '', '%day%' => 'day']);
+                break;
+            case 3: // Weekly, one at a time
+                $str = $this->translator->trans("%N% episode%s% every %day%", ['%N%' => 1, '%s%' => '', '%day%' => $dayName]);
+                break;
+            case 4: // Weekly, two at a time
+                $str = $this->translator->trans("%N% episode%s% every %day%", ['%N%' => 2, '%s%' => 's', '%day%' => $dayName]);
+                break;
+            case 5: // Weekly, three at a time
+                $str = $this->translator->trans("%N% episode%s% every %day%", ['%N%' => 3, '%s%' => 's', '%day%' => $dayName]);
+                break;
+            case 11: // Weekly, four at a time
+                $str = $this->translator->trans("%N% episode%s% every %day%", ['%N%' => 4, '%s%' => 's', '%day%' => $dayName]);
+                break;
+            case 6: // Weekly, two, then one
+                if ($episodeNumber <= 2) { // 2 episodes this day
+                    $str = $this->translator->trans("%N% episode%s% this %day%", ['%N%' => 2, '%s%' => 's', '%day%' => $dayName]);
+                } else { // 1 episode this day
+                    $str = $this->translator->trans("%N% episode%s% every %day%", ['%N%' => 1, '%s%' => '', '%day%' => $dayName]);
+                }
+                break;
+            case 7: // Weekly, three, then one
+                    if ($episodeNumber <= 3) { // 3 episodes this day
+                        $str = $this->translator->trans("%N% episode%s% this %day%", ['%N%' => 3, '%s%' => 's', '%day%' => $dayName]);
+                    } else { // 1 episode this day
+                        $str = $this->translator->trans("%N% episode%s% every %day%", ['%N%' => 1, '%s%' => '', '%day%' => $dayName]);
+                    }
+                break;
+            case 13: // Weekly, three, then two
+                if ($episodeNumber <= 3) { // 3 episodes this day
+                    $str = $this->translator->trans("%N% episode%s% this %day%", ['%N%' => 3, '%s%' => 's', '%day%' => $dayName]);
+                } else { // 2 episodes this day
+                    $str = $this->translator->trans("%N% episode%s% every %day%", ['%N%' => 2, '%s%' => 's', '%day%' => $dayName]);
+                }
+                break;
+            case 8: // Weekly, four, then one
+                if ($episodeNumber <= 4) { // 4 episodes this day
+                    $str = $this->translator->trans("%N% episode%s% this %day%", ['%N%' => 4, '%s%' => 's', '%day%' => $dayName]);
+                } else { // 1 episode this day
+                    $str = $this->translator->trans("%N% episode%s% every %day%", ['%N%' => 1, '%s%' => '', '%day%' => $dayName]);
+                }
+                break;
+            case 9: // Weekly, four, then two
+                if ($episodeNumber <= 4) { // 4 episodes this day
+                    $str = $this->translator->trans("%N% episode%s% this %day%", ['%N%' => 4, '%s%' => 's', '%day%' => $dayName]);
+                } else { // 2 episodes this day
+                    $str = $this->translator->trans("%N% episode%s% every %day%", ['%N%' => 2, '%s%' => 's', '%day%' => $dayName]);
+                }
+                break;
+            case 10: // Weekly, selected days
+                $arr = $this->getDaysString($schedule, $firstAirDate, $locale);
+                $episodeCount = $arr['episodeCount'];
+                $finalDayString = $arr['finalDayString'];
+                $str = $this->translator->trans("%N% episode%s% every %day%", ['%N%' => $episodeCount, '%s%' => 's', '%day%' => $finalDayString]);
+                break;
+            case 12: // Selected days, then weekly, one at a time
+                $arr = $this->getDaysString($schedule, $firstAirDate, $locale);
+                $count = $arr['count'];
+                $finalDayString = $arr['finalDayString'];
+                $str = $this->translator->trans("%N% first episode%s% on %day%, then one episode every week", ['%N%' => $count, '%day%' => $finalDayString]);
+                break;
+        }
+        if ($airAt && $airAt != "00:00") {
+            $str .= " " . $this->translator->trans("at %airAt%", ['%airAt%' => $airAt->format('H:i')]);
+        }
+
+        return $str;
+    }
+
+    private function getDaysString(SeriesBroadcastSchedule $schedule, DateTimeImmutable $firstAirDate, string $locale): array
+    {
+        $and = ['fr' => ' et ', 'en' => ' and ', 'ko' => ' '];
+        $daysOfWeek = $schedule->getDaysOfWeek();
+        $firstOfSelectedDays = $firstAirDate->format('N');
+        $dayStrings = [];
+        $episodeCount = 0;
+        foreach ($daysOfWeek as $key => $value) {
+            if ($value) {
+                $dayName = $this->translator->trans('day_of_week_' . $key);
+                // on ajoute le nom du jour au tableau dayStrings à la fin sauf si c'est le premier jour
+                if ($key != $firstOfSelectedDays) {
+                    $dayStrings[] = $dayName;
+                } else { // on ajoute le nomdu jour au début
+                    array_unshift($dayStrings, $dayName);
+                }
+                $episodeCount += $value;
+            }
+        }
+        $finalDayString = implode(', ', $dayStrings);
+        // on remplace la dernière virgule par "et"
+        $finalDayString = preg_replace('/, ([^,]*)$/', $and[$locale] . ' $1', $finalDayString);
+
+        return [
+            'dayCount' => count($dayStrings),
+            'episodeCount' => $episodeCount,
+            'finalDayString' => $finalDayString,
+        ];
     }
 
     public function isEpisodeWatched(array $episodes, int $seasonNumber, int $episodeNumber): bool
