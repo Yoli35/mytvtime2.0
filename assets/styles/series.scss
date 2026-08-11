@@ -1038,13 +1038,13 @@ h2 {
                 .series-overview {
                     align-items: center;
                     display: flex;
-                    font-size: clamp(1rem, 1.5vw, 2rem);
+                    font-size: clamp(1.25rem, 1.5vw, 2.5rem);
                     font-weight: 300;
                     gap: .5rem;
                     height: 0;
                     justify-content: flex-start;
                     line-height: 1.1;
-                    max-width: 60ch;
+                    max-width: 75ch;
                     opacity: 0;
                     transition: opacity 0.3s ease-in-out, height 0.3s ease-in-out;
                     transition-behavior: allow-discrete;
@@ -1086,7 +1086,7 @@ h2 {
                         gap: .5rem;
                         line-height: 1.1em;
                         justify-content: flex-start;
-                        max-width: 60ch;
+                        max-width: 75ch;
                         width: 100%;
 
                         &.localized, &.additional {
