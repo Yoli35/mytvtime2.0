@@ -1043,6 +1043,13 @@ final class SeriesShowController extends AbstractController
 
         foreach ($series->getSeriesBroadcastSchedules() as $schedule) {
             $seasonNumber = $schedule->getSeasonNumber();
+            $userSeason = $this->userSeasonRepository->findOneBy(['userSeries' => $userSeries, 'seasonNumber' => $seasonNumber]);
+            $isScheduleActive = $this->userSeasonRepository->isScheduleActive($userSeason, $schedule);
+//            dump([
+//                'user season id' => $userSeason->getId(),
+//                'schedule id' => $schedule->getId(),
+//                'is schedule active' => $isScheduleActive,
+//            ]);
             if ($schedule->isMultiPart()) {
                 $multiPart = true;
                 $firstEpisode = $schedule->getSeasonPartFirstEpisode();
@@ -1144,6 +1151,7 @@ final class SeriesShowController extends AbstractController
 
             $schedules[] = [
                 'id' => $schedule->getId(),
+                'isScheduleActive' => $isScheduleActive,
                 'seasonNumber' => $schedule->getSeasonNumber(),
                 'multiPart' => $schedule->isMultiPart(),
                 'seasonPart' => $schedule->getSeasonPart(),

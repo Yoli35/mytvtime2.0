@@ -1809,6 +1809,12 @@ h2 {
                     flex-shrink: 0;
                     justify-content: center;
                     margin-inline: auto;
+                    opacity: .5;
+
+                    &.active {
+                        border-color: hsla(from var(--orange) h s l / .75);
+                        opacity: 1;
+                    }
                 }
 
                 &:has(.alternate-schedule) {
@@ -1835,7 +1841,7 @@ h2 {
             }
 
             .alternate-schedule {
-                display: flex;
+                display: none;
                 gap: .25rem;
                 max-width: 100%;
                 overflow-x: auto;
@@ -1843,6 +1849,10 @@ h2 {
                 padding-block: 1rem;
                 padding-inline: 1rem;
                 scroll-snap-type: x mandatory;
+
+                &.active {
+                    display: flex;
+                }
 
                 a {
                     flex-shrink: 0;

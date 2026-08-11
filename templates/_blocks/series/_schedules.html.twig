@@ -17,7 +17,7 @@ Mandatory variables:
         <div class="wrapper">
             {% for schedule in series.schedules %}
                 <div class="schedule-block">
-                    <div class="schedule">
+                    <div class="schedule{% if schedule.isScheduleActive %} active{% endif %}">
                         {# {% set country = user.country ?? 'FR' %} #}
                         <div class="next-episode" data-title="{{ 'Edit Schedule'|trans }}" onclick="ToggleScheduleForm({{ schedule.id }})">
                             <div class="season">
@@ -97,7 +97,7 @@ Mandatory variables:
                                 <img src="{{ as.provider.logoPath }}" alt="{{ as.provider.providerName }} Logo" class="provider-logo">
                             {% endif %}
                         </h3>
-                        <div class="alternate-schedule">
+                        <div class="alternate-schedule{% if as.isScheduleActive %} active{% endif %}">
                             {% for airDay in as.airDays %}
                                 <a href="{{ airDay.url }}" id="{{ airDay.episode }}">
                                     <div class="air-day{% if airDay.watched %} watched{% endif %}{% if airDay.future %} future{% endif %}">
