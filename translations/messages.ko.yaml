@@ -299,7 +299,7 @@ Share: 공유
 Years: 년
 
 # Episode schedule
-'at %airAt%': %airAt%
+'starting at %airAt%': '%airAt%부터'
 '%N% episode%s% this %day%': '%N% episode%s% this %day%'
 '%N% episode%s% every %day%': '%N% episode%s% every %day%'
 '%N% first episode%s% on %day%, then one episode every week': '%N% first episode%s% on %day%, then one episode every week'

@@ -67,8 +67,15 @@
                             </form>
                         </dialog>
                     </div>
-                    {% if airDateString %}
-                        <div class="air-date-string">{{ airDateString }}</div>
+                    {% if airDateStrings|length %}
+                        {% for airDateString in airDateStrings %}
+                            <div class="air-date-string">
+                                {{ airDateString.string|raw }}
+                                {% if airDateString.providerLogo %}
+                                    <img src="{{ airDateString.providerLogo }}" alt="{{ airDateString.providerName }}" class="provider-logo">
+                                {% endif %}
+                            </div>
+                        {% endfor %}
                     {% endif %}
                     {{ include('_blocks/series/_episode_air_date.html.twig', {episode: episode, ue: episode.user_episode, ues: episode.user_episodes}) }}
                     {{ include('_blocks/series/_episode_stats.html.twig', {episode: episode}) }}

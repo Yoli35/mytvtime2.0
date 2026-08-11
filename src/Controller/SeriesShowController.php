@@ -528,8 +528,11 @@ final class SeriesShowController extends AbstractController
         $providers = $this->watchLinkApi->getWatchProviders($country);
         $devices = $this->deviceRepository->deviceArray();
 
-        $schedule = $this->seriesBroadcastScheduleRepository->findOneBy(['series' => $series, 'seasonNumber' => $seasonNumber]);
-        $airDateString = $this->seriesService->getEpisodeByDayString($episodeNumber, $schedule, $season['air_date'], $locale);
+        $schedules = $this->seriesBroadcastScheduleRepository->findBy(['series' => $series, 'seasonNumber' => $seasonNumber]);
+        $airDateStrings = [];
+        foreach ($schedules as $schedule) {
+            $airDateStrings[] = $this->seriesService->getEpisodeByDayString($episodeNumber, $schedule, $season['air_date'], $locale);
+        }
 
         $themeSettings = $this->settingsRepository->findOneBy(['user' => $user, 'name' => 'theme_episode_' . $episode['id']]);
 
@@ -538,7 +541,7 @@ final class SeriesShowController extends AbstractController
             'series' => $series,
             'season' => $season,
             'episode' => $episode,
-            'airDateString' => $airDateString,
+            'airDateStrings' => $airDateStrings,
             'themeType' => 'episode',
             'themeId' => $episode['id'],
             'themeSetting' => $themeSettings?->getData()['theme'] ?? '',

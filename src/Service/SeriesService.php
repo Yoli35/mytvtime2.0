@@ -1284,7 +1284,7 @@ readonly class SeriesService
         return $unique;
     }
 
-    public function getEpisodeByDayString(int $episodeNumber, ?SeriesBroadcastSchedule $schedule, ?string $seasonAirDate, string $locale): ?string
+    public function getEpisodeByDayString(int $episodeNumber, ?SeriesBroadcastSchedule $schedule, ?string $seasonAirDate, string $locale): ?array
     {
         $str = null;
         if (!$schedule && !$seasonAirDate) {
@@ -1294,7 +1294,7 @@ readonly class SeriesService
             $firstAirDate = $this->dateService->newDateImmutable($seasonAirDate, null, true);
             $dayName = strtolower($this->translator->trans($firstAirDate->format('l')));
             $str = $this->translator->trans("%N% episode%s% every %day%", ['%N%' => 1, '%s%' => '', '%day%' => $dayName]);
-            return $str;
+            return ['string' => $str, 'providerLogo' => null, 'providerName' => null];
         }
         $frequency = $schedule->getFrequency();
         $firstAirDate = $schedule->getFirstAirDate();
@@ -1328,11 +1328,11 @@ readonly class SeriesService
                 }
                 break;
             case 7: // Weekly, three, then one
-                    if ($episodeNumber <= 3) { // 3 episodes this day
-                        $str = $this->translator->trans("%N% episode%s% this %day%", ['%N%' => 3, '%s%' => 's', '%day%' => $dayName]);
-                    } else { // 1 episode this day
-                        $str = $this->translator->trans("%N% episode%s% every %day%", ['%N%' => 1, '%s%' => '', '%day%' => $dayName]);
-                    }
+                if ($episodeNumber <= 3) { // 3 episodes this day
+                    $str = $this->translator->trans("%N% episode%s% this %day%", ['%N%' => 3, '%s%' => 's', '%day%' => $dayName]);
+                } else { // 1 episode this day
+                    $str = $this->translator->trans("%N% episode%s% every %day%", ['%N%' => 1, '%s%' => '', '%day%' => $dayName]);
+                }
                 break;
             case 13: // Weekly, three, then two
                 if ($episodeNumber <= 3) { // 3 episodes this day
@@ -1369,10 +1369,16 @@ readonly class SeriesService
                 break;
         }
         if ($airAt && $airAt != "00:00") {
-            $str .= " " . $this->translator->trans("at %airAt%", ['%airAt%' => $airAt->format('H:i')]);
+            $str .= " " . $this->translator->trans("starting at") . " <span>" . $airAt->format('H:i') . "</span>";
         }
-
-        return $str;
+        if ($pId = $schedule->getProviderId()) {
+            $provider = $this->providerService->getOneWithLogo($pId);
+            $str .= " " . $this->translator->trans("on") . " <span>" . $provider['providerName'] . "</span>.";
+            $providerLogo = $provider['logoPath'];
+        } else {
+            $provider = null;
+        }
+        return ['string' => $str, 'providerLogo' => $provider['logoPath'], 'providerName' => $provider['providerName']];
     }
 
     private function getDaysString(SeriesBroadcastSchedule $schedule, DateTimeImmutable $firstAirDate, string $locale): array

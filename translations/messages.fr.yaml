@@ -301,7 +301,7 @@ Show/hide lists: Afficher / masquer les listes
 Years: Années
 
 # Episode schedule
-'at %airAt%': 'à %airAt%'
+'starting at': 'à partir de'
 '%N% episode%s% this %day%': '%N% épisode%s% ce %day%'
 '%N% episode%s% every %day%': '%N% épisode%s%, chaque %day%'
 '%N% first episode%s% on %day%, then one episode every week': '%N% premier épisode%s% le %day%, puis un épisode par semaine'
