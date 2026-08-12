@@ -7,7 +7,7 @@
         {% endif %}
         {% if episode.airing %}
             <a href="{{ episode.link }}">
-                <div class="go-to-episode-page" data-title="{{ 'Go to episode'|trans }}">{{ ux_icon('mdi:login-variant') }}</div>
+                <div class="go-to-episode-page" data-title="{{ 'Go to episode'|trans }}">{{ ux_icon('mdi:arrow-right') }}</div>
             </a>
         {% endif %}
         {% if episode.airing and episode.watchedAt is null %}

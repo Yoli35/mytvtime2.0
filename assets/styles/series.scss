@@ -1424,14 +1424,22 @@ h2 {
         }
 
         .add-backdrop, .add-all-backdrops {
+            align-items: center;
             background-color: var(--orange-50);
             border-radius: 50%;
             color: var(--ardoise-10);
             cursor: pointer;
+            display: flex;
             height: 2rem;
+            justify-content: center;
             position: absolute;
             top: 0;
             width: 2rem;
+
+            svg {
+                height: 1.5rem;
+                width: 1.5rem;
+            }
         }
 
         .backdrops, .logos, .posters, .series {
@@ -2282,12 +2290,12 @@ h2 {
 
             .external {
                 background-color: hsla(from var(--orange-40) h s l / .5);
-                border: 2px solid var(--orange-50);
-                border-radius: .375rem;
+                border-radius: .5rem;
+                border: 4px solid hsl(from var(--ardoise-20) h s l / .25);
                 color: var(--orange-90);
-                height: 3rem;
                 font-size: 1.75rem;
                 font-weight: 300;
+                height: 3rem;
                 overflow: hidden;
                 padding-inline: 1rem;
                 text-align: center;
@@ -2295,7 +2303,7 @@ h2 {
                 width: 10rem;
 
                 &:hover {
-                    background-color: var(--orange-50);
+                    border-color: var(--orange-50);
                 }
 
                 a {
@@ -2441,35 +2449,47 @@ h2 {
 
             .providers {
                 display: flex;
+                flex-direction: column;
                 gap: .5rem;
-                overflow-x: auto;
+                width: 100%;
 
-                h2 {
+                /*h2 {
                     width: 8rem;
                     flex-shrink: 0;
-                }
+                }*/
 
                 .wrapper {
                     display: flex;
                     flex-wrap: nowrap;
                     gap: 1rem;
-                    /*margin-inline: auto;*/
-                    width: fit-content;
+                    margin-inline: auto;
+                    overflow-x: auto;
+                    max-width: 100%;
 
                     .provider {
                         align-items: center;
+                        background-color: hsl(from var(--ardoise-20) h s l / .25);
+                        border-radius: .5rem;
+                        border: 4px solid hsl(from var(--ardoise-20) h s l / .25);
                         display: flex;
                         flex-shrink: 0;
                         gap: .5rem;
-                        justify-content: center;
                         height: 3rem;
+                        justify-content: center;
+                        padding-inline-end: .5rem;
+                        transition: background-color .25s ease-in-out, border-color .25s ease-in-out, color .25s ease-in-out;
+
+                        &:hover {
+                            background-color: hsl(from var(--ardoise-20) h s l / .75);
+                            border-color: var(--orange);
+                            color: var(--ardoise-80);
+                        }
 
                         img {
                             border-radius: .25rem;
                             height: 100%;
                             width: 3rem;
                         }
-
                     }
                 }
             }
@@ -3867,9 +3887,20 @@ aside:has(.episode__cards) {
             }
 
             .go-to-episode-page {
+                align-items: center;
+                background-color: var(--orange-40);
+                border-radius: 50%;
+                display: flex;
+                height: 2.5rem;
+                justify-content: center;
                 position: absolute;
                 right: 1rem;
                 top: 1rem;
+                width: 2.5rem;
+
+                &:hover {
+                    background-color: var(--orange-50);
+                }
 
                 svg {
                     height: 2rem;
