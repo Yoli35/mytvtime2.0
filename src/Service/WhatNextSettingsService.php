@@ -16,9 +16,9 @@ readonly class WhatNextSettingsService
 
     public function getSettings(User $user): array
     {
-        $settings = $this->settingsRepository->findOneBy(['user' => $user, 'name' => 'seriesWhatNext']);
+        $settings = $this->settingsRepository->findOneBy(['user' => $user, 'name' => 'app_series_what_next']);
         if (!$settings) {
-            $settings = new Settings($user, 'seriesWhatNext', [
+            $settings = new Settings($user, 'app_series_what_next', [
                 'default_limit' => 20,
                 'default_order' => 'DESC',
                 'default_sort' => 'lastWatched',

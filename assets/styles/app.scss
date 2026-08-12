@@ -124,6 +124,51 @@ body {
         border: none;
     }
 
+    input[type="date"],
+    input[type="email"],
+    input[type="number"],
+    input[type="search"],
+    input[type="text"],
+    input[type="url"] {
+        border-radius: 5rem;
+    }
+
+    textarea {
+        border-radius: 1rem;
+        min-height: 5lh;
+        padding: 1rem;
+    }
+
+    input[type="date"],
+    input[type="email"],
+    input[type="number"],
+    input[type="search"],
+    input[type="text"],
+    input[type="url"],
+    textarea {
+        appearance: none;
+        background: var(--ardoise-80) padding-box;
+        border: 4px solid hsl(from var(--ardoise-20) h s l / .25);
+        color: var(--ardoise-10);
+        line-height: 1.25;
+        padding-block: .5rem;
+        padding-inline: .5rem;
+        width: 100%;
+    }
+
+    fieldset {
+        border-radius: 1rem;
+        border: 4px solid hsl(from var(--ardoise-20) h s l / .25);
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+        padding: 1rem;
+
+        legend {
+            padding-inline: 1rem;
+        }
+    }
+
     input[type="checkbox"][switch] {
         accent-color: hsl(166, 50%, 50%);
     }
@@ -3437,7 +3482,8 @@ dialog.accent-color-dialog,
 dialog.schedule-menu-settings-dialog,
 dialog.discover-tv-settings-dialog,
 dialog.what-next-dialog,
-dialog.user-list-dialog {
+dialog.user-list-dialog,
+dialog.settings {
     background-color: hsl(from var(--orange-50) h s 20%/0.8);
     border-radius: 2rem;
     border: 4px solid hsl(from var(--ardoise-10) h s h /0.25);
@@ -3478,7 +3524,9 @@ dialog.user-list-dialog {
     }
 }
 
-dialog.accent-color-dialog {
+dialog.accent-color-dialog,
+dialog.settings .accent-color-settings {
+
     label:has(input[type="color"]) {
         align-items: center;
         display: flex;
@@ -3699,6 +3747,190 @@ dialog.edit-keyword-dialog {
     textarea {
         min-height: 10rem;
         resize: vertical;
+    }
+}
+
+dialog.settings {
+    flex-direction: row;
+    min-height: 50rem;
+    padding: 1rem;
+    width: min(80rem, 95vw);
+
+    form {
+        display: flex;
+        flex-direction: row;
+        gap: 1rem;
+        width: 100%;
+    }
+
+    .active {
+        background-color: var(--orange);
+    }
+
+    .sidebar {
+        border-radius: 1rem;
+        border: 4px solid var(--orange-30);
+        display: flex;
+        flex-direction: column;
+        gap: .25rem;
+        height: 100%;
+        overflow-y: auto;
+        padding: 1rem;
+        width: 24rem;
+
+        .sidebar-section {
+            margin-block-end: 1rem;
+
+            .sidebar-section-name {
+                font-weight: bold;
+            }
+
+            .sidebar-item {
+                border-radius: 5rem;
+                cursor: pointer;
+                margin-inline-start: 1rem;
+                padding: .25rem 1rem;
+
+                &:odd {
+                    background-color: hsl(from var(--ardoise-20) h s l / .25);
+                }
+
+                &:even {
+                    background-color: hsl(from var(--ardoise-20) h s l / .5);
+                }
+
+                &:hover {
+                    background-color: var(--orange-40);
+                }
+            }
+        }
+    }
+
+    .body {
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+        gap: .5rem;
+
+        .content {
+            border-radius: 1rem;
+            border: 4px solid var(--orange-30);
+            flex: 1;
+            padding: 1rem;
+
+            .accent-color-settings {
+                display: flex;
+                flex-direction: column;
+                gap: 2rem;
+            }
+
+            .language-settings {
+                flex-direction: column;
+                gap: 2rem;
+
+                .language {
+                    border-radius: 1rem;
+                    border: 4px solid hsl(from var(--ardoise-20) h s l / .25);
+                    cursor: pointer;
+                    font-size: 1.25rem;
+                    font-weight: 300;
+                    padding: 1rem 2rem;
+
+                    &:hover {
+                        background-color: var(--orange-40);
+                    }
+                }
+            }
+
+            .theme-settings {
+                flex-direction: column;
+                gap: 2rem;
+
+                .theme {
+                    border-radius: 1rem;
+                    border: 4px solid hsl(from var(--ardoise-20) h s l / .25);
+                    cursor: pointer;
+                    display: flex;
+                    font-size: 1.25rem;
+                    font-weight: 300;
+                    gap: 1rem;
+                    padding: 1rem 2rem;
+
+                    svg {
+                        height: 2rem;
+                        width: 2rem;
+                    }
+
+                    &:hover {
+                        background-color: var(--orange-40);
+                    }
+                }
+            }
+
+            .schedule-menu-settings {
+                flex-direction: column;
+                gap: 2rem;
+            }
+
+            .discover-tv-settings {
+                flex-direction: column;
+                gap: 2rem;
+            }
+        }
+
+        .footer {
+            display: flex;
+            gap: .5rem;
+            justify-content: flex-end;
+
+            .row {
+                border-radius: 1rem;
+                border: 4px solid var(--orange-30);
+                padding: 1rem;
+            }
+        }
+    }
+
+    .body {
+        .content {
+            .language-settings,
+            .accent-color-settings,
+            .theme-settings,
+            .schedule-menu-settings,
+            .discover-tv-settings {
+                display: none;
+            }
+        }
+    }
+
+    &:has(.sidebar-item.active[data-setting="language"]) {
+        .body .content .language-settings {
+            display: flex;
+        }
+    }
+
+    &:has(.sidebar-item.active[data-setting="accentColor"]) {
+        .body .content .accent-color-settings {
+            display: flex;
+        }
+    }
+
+    &:has(.sidebar-item.active[data-setting="theme"]) {
+        .body .content .theme-settings {
+            display: flex;
+        }
+    }
+
+    &:has(.sidebar-item.active[data-setting="seriesScheduleMenuRange"]) {
+        .body .content .schedule-menu-settings {
+            display: flex;
+        }
+    }
+
+    &:has(.sidebar-item.active[data-setting="discoverTV"]) {
+        .body .content .discover-tv-settings {
+            display: flex;
+        }
     }
 }
 

@@ -313,6 +313,10 @@ day_of_week_4: jeudi
 day_of_week_5: vendredi
 day_of_week_6: samedi
 
+# Settings
+Appearance: Apparence
+General: Général
+
 # Series Show
 '%cast% has been added to the season cast': '%cast% a été ajoutés à la distribution de la saison'
 '%cast% has been added to the series cast': '%cast% a été ajoutés à la distribution de la série'

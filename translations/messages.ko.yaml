@@ -311,6 +311,10 @@ day_of_week_4: 목요일
 day_of_week_5: 금요일
 day_of_week_6: 토요일
 
+# Settings
+Appearance: 외관
+General: 일반
+
 # Series Show
 "'%cast% has been added to the season cast'": '시즌 출연진에 %캐스트%가 추가되었습니다.'
 "'%cast% has been added to the series cast'": '캐스트%가 시리즈 출연진에 추가되었습니다.'

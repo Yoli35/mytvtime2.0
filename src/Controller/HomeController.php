@@ -504,8 +504,8 @@ class HomeController extends AbstractController
     private function getKeywordSeries(?User $user, string $locale): array
     {
         if (!$user) return ['name' => null, 'results' => []];
-//        $settings = $this->settingsRepository->findOneBy(['user' => $user, 'name' => 'user_home_keyword_list_2']);
-        $settings = array_map(fn($setting) => json_decode($setting['data'], true), $this->settingsRepository->getSettingsByName($user->getId(), 'user_home_keyword_list_'));
+//        $settings = $this->settingsRepository->findOneBy(['user' => $user, 'name' => 'app_home_keyword_list_2']);
+        $settings = array_map(fn($setting) => json_decode($setting['data'], true), $this->settingsRepository->getSettingsByName($user->getId(), 'app_home_keyword_list_'));
         if (!$settings) return ['name' => null, 'results' => []];
         $list = $settings[0]['list'];
         $orderBy = $settings[0]['order_by'] ?? 'popularity.desc';

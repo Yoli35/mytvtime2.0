@@ -1,0 +1,200 @@
+<dialog id="settings" class="settings">
+    <form>
+        <div class="sidebar">
+            <div class="sidebar-section">
+                <div class="sidebar-section-name">{{ 'General'|trans }}</div>
+                <div class="sidebar-item active" data-setting="language">{{ 'Language'|trans }}</div>
+            </div>
+            <div class="sidebar-section">
+                <div class="sidebar-section-name">{{ 'Appearance'|trans }}</div>
+                <div class="sidebar-item" data-setting="accentColor">{{ 'Accent color'|trans }}</div>
+                <div class="sidebar-item" data-setting="theme">{{ 'Theme'|trans }}</div>
+            </div>
+            <div class="sidebar-section">
+                <div class="sidebar-section-name">{{ 'Series'|trans }}</div>
+                <div class="sidebar-item" data-setting="seriesScheduleMenuRange">{{ 'Series schedule menu range'|trans }}</div>
+                <div class="sidebar-item" data-setting="discoverTV">{{ 'Discover TV'|trans }}</div>
+                <div class="sidebar-item" data-setting="whatNextToWatch">{{ 'What next to watch'|trans }}</div>
+            </div>
+        </div>
+        <div class="body">
+            <div class="content">
+                {# Language ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #}
+                <div class="language-settings">
+                    <div class="language{% if app.locale == 'fr' %} active{% endif %}">{{ getEmojiFlag('FR') }} Français - French - 프랑스어</div>
+                    <div class="language{% if app.locale == 'en' %} active{% endif %}">{{ getEmojiFlag('GB') }} Anglais - English - 영어</div>
+                    <div class="language{% if app.locale == 'ko' %} active{% endif %}">{{ getEmojiFlag('KR') }} Coréen - Korean - 한국어</div>
+                </div>
+                {# Accent color ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #}
+                <div class="accent-color-settings">
+                    <label>
+                        {{ 'Choose a color'|trans }}
+                        <input type="color" list="theme-sunny"/>
+                    </label>
+                    <datalist id="theme-sunny">
+                        <option value="#9EF6FF"></option>
+                        <option value="#FFED63"></option>
+                        <option value="#FFCC31"></option>
+                        <option value="#FFA32F"></option>
+                        <option value="#FF8462"></option>
+                    </datalist>
+                    <div class="row">
+                        <div class="sample-gradient level-0"></div>
+                        <div class="sample-gradient level-1"></div>
+                        <div class="sample-gradient level-2"></div>
+                        <div class="sample-gradient level-3"></div>
+                        <div class="sample-gradient level-4"></div>
+                        <div class="sample-gradient level-5"></div>
+                        <div class="sample-gradient level-6"></div>
+                        <div class="sample-gradient level-7"></div>
+                        <div class="sample-gradient level-8"></div>
+                        <div class="sample-gradient level-9"></div>
+                        <div class="sample-gradient level-10"></div>
+                    </div>
+                    <div class="row">
+                        <button type="reset">{{ 'Reset'|trans }}</button>
+                    </div>
+                </div>
+                {# Theme ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #}
+                <div class="theme-settings">
+                    <div class="theme active" data-theme="auto">{{ ux_icon('mdi:theme-light-dark') }}{{ 'Automatic'|trans }}</div>
+                    <div class="theme" data-theme="light">{{ ux_icon('mdi:weather-sunny') }}{{ 'Light'|trans }}</div>
+                    <div class="theme" data-theme="dark">{{ ux_icon('mdi:moon-and-stars') }}{{ 'Dark'|trans }}</div>
+                </div>
+                {# Schedule menu ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #}
+                <div class="schedule-menu-settings">
+                    <label for="schedule-menu-settings-start">
+                        {{ 'Number of days before'|trans }}
+                        <input type="number" id="schedule-menu-settings-start" min="-7" max="0" step="1" value=""/>
+                    </label>
+                    <label for="schedule-menu-settings-end">
+                        {{ 'Number of days after'|trans }}
+                        <input type="number" id="schedule-menu-settings-end" min="0" max="7" step="1" value=""/>
+                    </label>
+                    <fieldset>
+                        <legend>{{ 'Links to'|trans }}</legend>
+
+                        <label for="schedule_menu_settings_series">
+                            <input type="radio" id="schedule_menu_settings_series" name="schedule_menu_settings_link_to" value="series"/> {{ 'Series page'|trans }}
+                        </label>
+                        <label for="schedule_menu_settings_season">
+                            <input type="radio" id="schedule_menu_settings_season" name="schedule_menu_settings_link_to" value="season"/> {{ 'Season page'|trans }}
+                        </label>
+                        <label for="schedule_menu_settings_episode">
+                            <input type="radio" id="schedule_menu_settings_episode" name="schedule_menu_settings_link_to" value="episode"/> {{ 'Episode page'|trans }}
+                        </label>
+                    </fieldset>
+                </div>
+                {# Discover TV ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #}
+                <div class="discover-tv-settings">
+                    <label for="discover_tv_list">{{ 'Lists'|trans }}:
+                        <select class="" id="discover_tv_list">
+                            <option value="new">{{ 'New list'|trans }}…</option>
+                        </select>
+                    </label>
+                    <label for="discover_tv_order_by">{{ 'Sort by'|trans }}:
+                        <select class="" id="discover_tv_order_by">
+                            <option value=""></option>
+                            <option value="first_air_date.asc">first_air_date.asc</option>
+                            <option value="first_air_date.desc">first_air_date.desc</option>
+                            <option value="name.asc">name.asc</option>
+                            <option value="name.desc">name.desc</option>
+                            <option value="original_name.asc">original_name.asc</option>
+                            <option value="original_name.desc">original_name.desc</option>
+                            <option value="popularity.asc">popularity.asc</option>
+                            <option value="popularity.desc">popularity.desc</option>
+                            <option value="vote_average.asc">vote_average.asc</option>
+                            <option value="vote_average.desc">vote_average.desc</option>
+                            <option value="vote_count.asc">vote_count.asc</option>
+                            <option value="vote_count.desc">vote_count.desc</option>
+                        </select>
+                    </label>
+                </div>
+            </div>
+            <div class="footer">
+                <div class="row">
+                    <button type="reset">{{ 'Reset'|trans }}</button>
+                    <button type="button">{{ 'Cancel'|trans }}</button>
+                    <button type="submit">{{ 'Close'|trans }}</button>
+                </div>
+            </div>
+        </div>
+    </form>
+</dialog>
+<script>
+    fetch('/api/settings/all')
+        .then(response => response.json())
+        .then(data => {
+            console.log(data);
+            /*
+            settings: Array(6) [
+                0: Object { name: "app_series_what_next", value: {…} }
+                    name: "app_series_what_next"
+                    value: Object { sort: "episodeAirDate", limit: 50, order: "DESC", … }
+                    default_limit: 20
+                    default_link_to: "series"
+                    default_order: "DESC"
+                    default_sort: "lastWatched"
+                    limit: 50
+                    link_to: "season"
+                    order: "DESC"
+                    sort: "episodeAirDate"
+                1: Object { name: "app_home_keyword_list_0", value: {…} }
+                    name: "app_home_keyword_list_0"
+                    value: Object { list: 2, order_by: "popularity.desc" }
+                    list: 2
+                    order_by: "popularity.desc"
+                2: Object { name: "app_home_keyword_list_1", value: {…} }
+                    name: "app_home_keyword_list_1"
+                    value: Object { id: 1, name_en: "Latest LGBT & bl Series", name_fr: "Dernières séries LGBT et boys love", … }
+                3: Object { name: "app_home_keyword_list_2", value: {…} }
+                    name: "app_home_keyword_list_2"
+                    value: Object { id: 2, name_en: "Popular Sci-Fi Series", name_fr: "Séries SF populaires", … }
+                    id: 2
+                    keywords: Array(3) [ {…}, {…}, {…} ]
+                    name_en: "Popular Sci-Fi Series"
+                    name_fr: "Séries SF populaires"
+                    name_ko: "인기 SF 드라마"
+                    pages: Array(3) [ 1, 2, 3 ]
+                4: Object { name: "app_accent_color", value: {…} }
+                    name: "app_accent_color"
+                    value: Object { accent_color: "#e0861f", default_color: "#E0861F" }
+                    accent_color: "#e0861f"
+                    default_color: "#E0861F"
+                5: Object { name: "app_schedule_menu_settings", value: {…} }
+                    name: "app_schedule_menu_settings"
+                    value: Object { end: "4", start: "-4", link_to: "episode", … }
+                    default_end: "2"
+                    default_link_to: "series"
+                    default_start: "-2"
+                    end: "4"
+                    link_to: "episode"
+                    start: "-4"
+            */
+        })
+        .catch(error => console.error(error));
+
+    const sideBarItems = document.querySelector("dialog#settings").querySelectorAll(".sidebar-item");
+    sideBarItems.forEach(item => {
+        item.addEventListener("click", () => {
+            sideBarItems.forEach(item => item.classList.remove("active"));
+            item.classList.add("active");
+        });
+    });
+
+    const languageItems = document.querySelector("dialog#settings").querySelectorAll(".language");
+    languageItems.forEach(item => {
+        item.addEventListener("click", () => {
+            languageItems.forEach(item => item.classList.remove("active"));
+            item.classList.add("active");
+        });
+    });
+
+    const themeItems = document.querySelector("dialog#settings").querySelectorAll(".theme");
+    themeItems.forEach(item => {
+        item.addEventListener("click", () => {
+            themeItems.forEach(item => item.classList.remove("active"));
+            item.classList.add("active");
+        });
+    });
+</script>

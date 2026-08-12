@@ -27,6 +27,34 @@ readonly class ApiAppSettings
     {
     }
 
+    #[Route('/all', name: 'all', methods: ['GET'])]
+    public function all(): Response
+    {
+        $user = ($this->getUser)();
+        if (!$user) {
+            return ($this->json)([
+                'ok' => true,
+                'read' => false,
+            ]);
+        }
+
+        // All settings for user with name starting with 'app_'
+        $settings = array_filter($this->settingsRepository->findBy(['user' => $user]), fn ($setting) => str_starts_with($setting->getName(), 'app_'));
+        $results = [];
+        foreach ($settings as $setting) {
+            $results[] = [
+                'name' => $setting->getName(),
+                'value' => $setting->getData(),
+            ];
+        }
+
+        return ($this->json)([
+            'ok' => true,
+            'read' => true,
+            'settings' => $results,
+        ]);
+    }
+
     #[Route('/accent-color/read', name: 'accent_color_read', methods: ['GET'])]
     public function ACRead(): Response
     {
@@ -137,14 +165,14 @@ readonly class ApiAppSettings
 
         $locale = $request->getLocale();
 
-        $settings = array_map(fn($setting) => json_decode($setting['data'], true), $this->settingsRepository->getSettingsByName($user->getId(), 'user_home_keyword_list_'));
+        $settings = array_map(fn($setting) => json_decode($setting['data'], true), $this->settingsRepository->getSettingsByName($user->getId(), 'app_home_keyword_list_'));
         if (!$settings) {
-            $settings[0] = new Settings($user, 'user_home_keyword_list_0', [
+            $settings[0] = new Settings($user, 'app_home_keyword_list_0', [
                 "list" => 1,
                 "order_by" => "popularity.desc"
             ]);
             $this->settingsRepository->save($settings[0]);
-            $settings[1] = new Settings($user, 'user_home_keyword_list_1', [
+            $settings[1] = new Settings($user, 'app_home_keyword_list_1', [
                 "id" => 1,
                 "pages" => [1, 2, 3],
                 "name_en" => "Popular Sci-Fi Series",
@@ -259,7 +287,7 @@ readonly class ApiAppSettings
 
         $type = $request->query->getAlpha('t', 'values');
 
-        $settingsEntity = $this->settingsRepository->findOneBy(['user' => $user, 'name' => 'seriesWhatNext']);
+        $settingsEntity = $this->settingsRepository->findOneBy(['user' => $user, 'name' => 'app_series_what_next']);
         $settings = $settingsEntity->getData();
 
         if ($type === 'default') {
@@ -304,7 +332,7 @@ readonly class ApiAppSettings
             ]);
         }
 
-        $settingsEntity = $this->settingsRepository->findOneBy(['user' => $user, 'name' => 'seriesWhatNext']);
+        $settingsEntity = $this->settingsRepository->findOneBy(['user' => $user, 'name' => 'app_series_what_next']);
         $settings = $settingsEntity->getData();
 
         $limit = intval($inputBag->get("limit", $settings['default_limit']));
