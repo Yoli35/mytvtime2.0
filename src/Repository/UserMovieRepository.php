@@ -5,6 +5,7 @@ namespace App\Repository;
 use App\Entity\User;
 use App\Entity\UserMovie;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\DBAL\ArrayParameterType;
 use Doctrine\DBAL\Exception;
 use Doctrine\DBAL\ParameterType;
 use Doctrine\ORM\EntityManagerInterface;
@@ -36,6 +37,20 @@ class UserMovieRepository extends ServiceEntityRepository
         if ($flush) {
             $this->getEntityManager()->flush();
         }
+    }
+
+    public function userMoviesByTMDBIds(User $user, array $ids): array
+    {
+        $userId = $user->getId();
+        $sql = <<<SQL
+                SELECT m.tmdb_id AS id
+                FROM movie m
+                         INNER JOIN user_movie um ON m.id = um.movie_id
+                WHERE um.user_id=:userId
+                  AND m.tmdb_id IN (:ids)
+            SQL;
+
+        return $this->getAll($sql, ["userId" => $userId, "ids" => $ids], ['userId' => ParameterType::INTEGER, "ids" => ArrayParameterType::INTEGER]);
     }
 
     public function lastViewedMovies(int $userId, int $limit = 20): array

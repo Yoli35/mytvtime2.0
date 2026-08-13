@@ -1225,6 +1225,10 @@ label:has(input[type="text"]) {
             }
         }
 
+        .icons, .translations {
+            display: none;
+        }
+
         .multi-search-options-menu {
             border-radius: .25rem;
             display: none;
@@ -1799,6 +1803,25 @@ label:has(input[type="text"]) {
                     overflow: hidden;
                     text-overflow: ellipsis;
                     white-space: nowrap;
+                }
+
+                .add-this-item {
+                    align-items: center;
+                    border-radius: 50%;
+                    border: 2px solid;
+                    color: var(--orange-90);
+                    cursor: pointer;
+                    display: flex;
+                    height: 2.5rem;
+                    justify-content: center;
+                    margin-inline-start: .5rem;
+                    padding: 0;
+                    width: 2.5rem;
+
+                    svg {
+                        height: 1.5rem;
+                        width: 1.5rem;
+                    }
                 }
             }
         }

@@ -5,6 +5,7 @@ namespace App\Repository;
 use App\Entity\User;
 use App\Entity\UserSeries;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\DBAL\ArrayParameterType;
 use Doctrine\DBAL\Exception;
 use Doctrine\DBAL\ParameterType;
 use Doctrine\ORM\EntityManagerInterface;
@@ -55,6 +56,20 @@ class UserSeriesRepository extends ServiceEntityRepository
             SQL;
 
         return $this->getAll($sql, ["userId" => $userId], ['userId' => ParameterType::INTEGER]);
+    }
+
+    public function userSeriesByTMDBIds(User $user, array $ids): array
+    {
+        $userId = $user->getId();
+        $sql = <<<SQL
+                SELECT s.tmdb_id AS id
+                FROM series s
+                         INNER JOIN user_series us ON s.id = us.series_id
+                WHERE us.user_id=:userId
+                  AND s.tmdb_id IN (:ids)
+            SQL;
+
+        return $this->getAll($sql, ["userId" => $userId, "ids" => $ids], ['userId' => ParameterType::INTEGER, "ids" => ArrayParameterType::INTEGER]);
     }
 
     public function getUserSeries(User $user, string $locale, int $page = 1, int $limit = 20): array

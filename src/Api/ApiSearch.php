@@ -21,6 +21,8 @@ readonly class ApiSearch
         #[AutowireMethodOf(ControllerHelper::class)]
         private Closure              $json,
         #[AutowireMethodOf(ControllerHelper::class)]
+        private Closure              $generateUrl,
+        #[AutowireMethodOf(ControllerHelper::class)]
         private Closure              $getUser,
         private ImageConfiguration   $imageConfiguration,
         private TMDBService          $tmdbService,
@@ -34,6 +36,7 @@ readonly class ApiSearch
     #[Route('/multi', name: 'multi', methods: ['POST'])]
     public function multi(Request $request): Response
     {
+        $user = ($this->getUser)();
         $locale = 'en-US';
         $data = json_decode($request->getContent(), true);
         $query = $data['query'];
@@ -43,10 +46,35 @@ readonly class ApiSearch
         } else {
             $multi = json_decode($this->tmdbService->searchMulti(1, $query, $locale), true);
         }
+        $tvIds = array_map(function ($result) {
+            return $result['id'];
+        }, array_filter($multi['results'], function ($result) {
+            return $result['media_type'] == 'tv';
+        }));
+        $movieIds = array_map(function ($result) {
+            return $result['id'];
+        }, array_filter($multi['results'], function ($result) {
+            return $result['media_type'] == 'movie';
+        }));
+
+        $usIds = array_column($this->userSeriesRepository->userSeriesByTMDBIds($user, $tvIds), 'id');
+        $umIds = array_column($this->userMovieRepository->userMoviesByTMDBIds($user, $movieIds), 'id');
 
         return ($this->json)([
             'ok' => true,
-            'results' => $multi['results'],
+            'results' => array_map(function ($result) use ($usIds, $umIds) {
+                if (key_exists('media_type', $result)) {
+                    if ($result['media_type'] == 'tv') {
+                        $result['add_this'] = !in_array($result['id'], $usIds);
+                        $result['add_this_link'] = ($this->generateUrl)('app_series_add', ['id' => $result['id']]);
+                    }
+                    if ($result['media_type'] == 'movie') {
+                        $result['add_this'] = !in_array($result['id'], $umIds);
+                        $result['add_this_link'] = ($this->generateUrl)('app_movie_add', ['id' => $result['id']]);
+                    }
+                }
+                return $result;
+            }, $multi['results']),
             'posterUrl' => $this->imageConfiguration->getUrl('poster_sizes', 3),
             'profileUrl' => $this->imageConfiguration->getUrl('profile_sizes', 3),
         ]);
@@ -72,15 +100,25 @@ readonly class ApiSearch
     #[Route('/tmdb/movie', name: 'tmdb_movie', methods: ['POST'])]
     public function movie(Request $request): Response
     {
+        $user = ($this->getUser)();
         $data = json_decode($request->getContent(), true);
         $query = $data['query'];
 
         $searchString = "query=$query&include_adult=false&page=1";
         $movies = json_decode($this->tmdbService->searchMovie($searchString), true);
 
+        $ids = array_column($movies['results'], 'id');
+        $umIds = array_column($this->userMovieRepository->userMoviesByTMDBIds($user, $ids), 'id');
+
+        $movies = array_map(function ($movie) use ($umIds) {
+            $movie['add_this'] = !in_array($movie['id'], $umIds);
+            $movie['add_this_link'] = ($this->generateUrl)('app_movie_add', ['id' => $movie['id']]);
+            return $movie;
+        }, $movies['results']);
+
         return ($this->json)([
             'ok' => true,
-            'results' => $movies['results'],
+            'results' => $movies,
         ]);
     }
 
@@ -113,15 +151,25 @@ readonly class ApiSearch
     #[Route('/tmdb/tv', name: 'tmdb_tv', methods: ['POST'])]
     public function tv(Request $request): Response
     {
+        $user = ($this->getUser)();
         $data = json_decode($request->getContent(), true);
         $query = $data['query'];
 
         $searchString = "query=$query&include_adult=false&page=1";
         $series = json_decode($this->tmdbService->searchTv($searchString), true);
 
+        $ids = array_column($series['results'], 'id');
+        $usIds = array_column($this->userSeriesRepository->userSeriesByTMDBIds($user, $ids), 'id');
+
+        $series = array_map(function ($serie) use ($usIds) {
+            $serie['add_this'] = !in_array($serie['id'], $usIds);
+            $serie['add_this_link'] = ($this->generateUrl)('app_series_add', ['id' => $serie['id']]);
+            return $serie;
+        }, $series['results']);
+
         return ($this->json)([
             'ok' => true,
-            'results' => $series['results'],
+            'results' => $series,
         ]);
     }
 

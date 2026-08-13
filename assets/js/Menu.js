@@ -133,6 +133,8 @@ export class Menu {
         this.initialPreviewSetting = null;
         this.posterUrl = null;
         this.profileUrl = null;
+        this.multiSearchAddIcon = null;
+        this.multiSearchAddText = {'tv': '', 'movie': ''};
         this.svgs = {
             "mdi:tv": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"1em\" height=\"1em\" viewBox=\"0 0 24 24\"><path fill=\"currentColor\" d=\"M21 17H3V5h18m0-2H3a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h5v2h8v-2h5a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2\"/></svg>",
             "mdi:mobile-phone": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"1em\" height=\"1em\" viewBox=\"0 0 24 24\"><path fill=\"currentColor\" d=\"M17 19H7V5h10m0-4H7c-1.11 0-2 .89-2 2v18a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3a2 2 0 0 0-2-2\"/></svg>",
@@ -295,6 +297,10 @@ export class Menu {
         const displayPosterToggler = multiSearchOptionsMenu.querySelector("#display-poster-toggler");
         const openInNewTabToggler = multiSearchOptionsMenu.querySelector("#new-tab-toggler");
 
+        this.multiSearchAddIcon = multiSearchDiv.querySelector(".icons svg#multi-search-add");
+        this.multiSearchAddText.tv = multiSearchDiv.querySelector("span#multi-search-add-tv").innerText;
+        this.multiSearchAddText.movie = multiSearchDiv.querySelector("span#multi-search-add-movie").innerText;
+
         document.addEventListener("keydown", e => {
             const active = document.activeElement;
             const isTyping =
@@ -304,7 +310,7 @@ export class Menu {
                     active.tagName === 'TEXTAREA' ||
                     active.isContentEditable
                 );
-            if (e.key==='s' && this.isMultiSearchOpen === false && !isTyping) {
+            if (e.key === 's' && this.isMultiSearchOpen === false && !isTyping) {
                 e.preventDefault();
                 magnifyingGlassSpan.click();
             }
@@ -612,7 +618,7 @@ export class Menu {
             headers: {
                 accept: 'application/json'
             },
-            body: JSON.stringify({lastCommentId : lastCommentId}),
+            body: JSON.stringify({lastCommentId: lastCommentId}),
         };
 
         fetch(apiUrl, options)
@@ -641,7 +647,7 @@ export class Menu {
             headers: {
                 accept: 'application/json'
             },
-            body: JSON.stringify({lastCommentId : lastItemId}),
+            body: JSON.stringify({lastCommentId: lastItemId}),
         };
 
         fetch(apiUrl, options)
@@ -723,6 +729,7 @@ export class Menu {
 
                 json.results.forEach((result, index) => {
                     const type = result['media_type'] || searchSubType || searchType; // Pour les résultats de recherche multi
+                    const addThisItem = result['add_this'];
                     if (type === 'collection') {
                         console.log({index});
                         console.log({result});
@@ -785,6 +792,20 @@ export class Menu {
                         titleDiv.innerHTML += ` (${date})`;
                     }
                     aDiv.appendChild(titleDiv);
+                    if (addThisItem) {
+                        const addThisDiv = document.createElement("div");
+                        addThisDiv.classList.add("add-this-item");
+                        addThisDiv.setAttribute('data-link', result['add_this_link'.toString()]);
+                        addThisDiv.setAttribute('data-title', self.multiSearchAddText[type]);
+                        addThisDiv.addEventListener('click', function(e) {
+                            e.preventDefault();
+                            window.location.href = this.getAttribute('data-link');
+                        });
+                        const addSvg = self.multiSearchAddIcon.cloneNode(true);
+                        addSvg.removeAttribute('id');
+                        addThisDiv.appendChild(addSvg);
+                        aDiv.appendChild(addThisDiv);
+                    }
                     li.appendChild(aDiv);
                     ul.appendChild(li);
                 });
@@ -1028,7 +1049,7 @@ export class Menu {
                 const newOptions = data['lists'].map(list => {
                     const newOption = document.createElement('option');
                     newOption.value = list['id'];
-                    newOption.text = list['name_'+self.lang];
+                    newOption.text = list['name_' + self.lang];
                     return newOption;
                 });
                 selectList.append(...newOptions);
