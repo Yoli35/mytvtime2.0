@@ -5396,9 +5396,9 @@ aside:has(.episode__cards) {
     gap: .25rem;
 
     .episode-group {
-        background-color: hsl(from var(--ardoise-80) h s l / .25);
+        background-color: hsl(0 0% 0% / .1);
         border-radius: 1rem;
-        box-shadow: 0 0 1rem hsla(from var(--ardoise-90) h s l / .25) inset;
+        box-shadow: 0 0 1rem hsla(0 0% 0% / .25) inset;
         padding: .5rem;
 
         .episode-group-header {
@@ -5463,7 +5463,7 @@ aside:has(.episode__cards) {
         }
 
         .message {
-            background-color: hsla(from var(--ardoise-90) h s l / .05);
+            background-color: hsla(0 0% 0% / .05);
             border-radius: .5rem;
             display: flex;
             flex-direction: column;
@@ -5575,7 +5575,7 @@ aside:has(.episode__cards) {
 
     textarea /*input[type=text]*/
     {
-        background-color: hsl(from var(--orange-20) h s l /.2);
+        background-color: hsl(0 0% 0% / .1);
         border-radius: 1rem;
         border: none;
         flex-grow: 1;
@@ -5586,6 +5586,7 @@ aside:has(.episode__cards) {
     &.to-episode {
         textarea /*input[type=text]*/
         {
+            min-height: 1lh;
             width: min(64rem, 80%);
         }
     }
