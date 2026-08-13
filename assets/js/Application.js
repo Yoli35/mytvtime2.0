@@ -130,7 +130,7 @@ export class Application {
         })
             .then(response => response.json())
             .then(data => {
-                console.log('Episodes of the day:', data);
+                /*console.log('Episodes of the day:', data);*/
                 const body = document.querySelector("body");
                 const tempDiv = document.createElement('div');
                 tempDiv.innerHTML = data['view'];
