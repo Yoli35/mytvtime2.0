@@ -53,7 +53,7 @@ Autre remarque:
             {% if page_max > 5 %}
                 <div class="pages">
                     <form id="pagination_form_{{ index }}" action="" method="get">
-                        <label for="page_{{ index }}">{{ 'Go to page'|trans }}
+                        <label for="page_{{ index }}">{{ 'Page'|trans }}
                             <input type="number" name="page_{{ index }}" value="{{ current_page }}" min="1" max="{{ page_max }}" autofocus>
                         </label>
                         <button type="submit" class="page">{{ 'Go'|trans }}</button>
