@@ -353,7 +353,7 @@ readonly class SeriesService
                 $userEpisodes = $this->userEpisodeRepository->findBy(['userSeries' => $userSeries, 'seasonNumber' => $seasonNumber, 'previousOccurrence' => null]);
                 if ($userSeries) {
                     // Sync via votre méthode
-                    $this->addSeasonToUser($user, $userSeries, $seasonNumber, $userEpisodes);
+                    $this->addSeasonToUser($user, $userSeries, $seasonNumber, $userEpisodes, []);
                     $syncResults[] = "Saison $seasonNumber synchronisée pour série $seriesId";
                 }
             }
@@ -369,7 +369,7 @@ readonly class SeriesService
         return $syncResults;  // Retourne pour usage interne (ex. : tests)
     }
 
-    public function addSeasonToUser(User $user, UserSeries $userSeries, int $seasonNumber, array $userEpisodes): array
+    public function addSeasonToUser(User $user, UserSeries $userSeries, int $seasonNumber, array $userEpisodes, array $season): array
     {
         $reloadUserEpisodes = false;
         $series = $userSeries->getSeries();
@@ -391,7 +391,10 @@ readonly class SeriesService
         }
 
         $seasonNumber = $tvSeason['season_number'];
-        $finaleEpisodeNumber = $this->getFinaleEpisodeNumber($tvSeason);
+        if (key_exists('skip_trim', $season) && $season['season_number'] == $seasonNumber)
+            $finaleEpisodeNumber = $season['episode_count'];
+        else
+            $finaleEpisodeNumber = $this->getFinaleEpisodeNumber($tvSeason);
 
         foreach ($tvSeason['episodes'] as $episode) {
             $dbUserEpisode = array_find($userEpisodes, fn($e) => $e->getEpisodeId() == $episode['id']);
@@ -476,6 +479,32 @@ readonly class SeriesService
             }
         }
         return $finaleEpisodeNumber;
+    }
+
+    public function seriesInfos(int $tvId, array $seasons): array
+    {
+        $seriesInfos = $this->settingsRepository->findOneBy(['name' => 'series_infos_' . $tvId]);
+        if (!$seriesInfos) {
+            return $seasons;
+        }
+        $data = $seriesInfos->getData();
+        $items = $data['items'];
+        foreach ($items as $item) {
+            $type = $item['type'];
+            $value = $item['value'];
+            switch ($type) {
+                case 'episode_type':
+                    dump($value);
+                    break;
+                case 'season_episode_count':
+                    $seasonNumber = $value['season_number'];
+                    $seasons[$seasonNumber - 1]['skip_trim'] = true;
+                    $seasons[$seasonNumber - 1]['episode_count'] = $value['value'];
+                    break;
+            }
+        }
+        ($this->addFlash)('success', 'Series infos updated');
+        return $seasons;
     }
 
     public function cacheSeasonPoster(array $season, Series $series): ?string

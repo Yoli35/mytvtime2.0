@@ -14,6 +14,7 @@ use App\Repository\WatchProviderRepository;
 use App\Service\DateService;
 use App\Service\ImageConfiguration;
 use App\Service\ImageService;
+use App\Service\SeriesService;
 use App\Service\TMDBService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -48,6 +49,7 @@ class SeriesSeasonEpisodes extends AbstractController
         private readonly ImageConfiguration                 $imageConfiguration,
         private readonly ImageService                       $imageService,
         private readonly SeriesBroadcastDateRepository      $seriesBroadcastDateRepository,
+        private readonly SeriesService                      $seriesService,
         private readonly SettingsRepository                 $settingsRepository,
         private readonly TMDBService                        $tmdbService,
         private readonly TranslatorInterface                $translator,
@@ -79,6 +81,7 @@ class SeriesSeasonEpisodes extends AbstractController
         $this->nowTime = $now->format('Y-m-d H:i');
 
         $season = json_decode($this->tmdbService->getTvSeason($tmdbId, $seasonNumber, $locale), true);
+        $season = array_first($this->seriesService->seriesInfos($tmdbId, [$season]));
         $this->seasonUS = json_decode($this->tmdbService->getTvSeason($tmdbId, $seasonNumber, 'en-US'), true);
         $this->episodeIds = array_column($season['episodes'] ?? [], 'id');
         $this->dbBroadcastDateArray = $this->getCustomBroadcastDates();
@@ -94,10 +97,14 @@ class SeriesSeasonEpisodes extends AbstractController
 
         // TODO: Utiliser cette logique pour toutes les saisons
         // Trouver l'épisode final avec 'episode_type' = 'finale' pour supprimer les suivants
-        $finaleEpisode = array_find($season['episodes'] ?? [], function ($e) {
-            return ($e['episode_type'] ?? 'standard') === 'finale';
-        });
-        $finalEpisodeNumber = $finaleEpisode ? $finaleEpisode['episode_number'] : null;
+        if (key_exists('skip_trim', $season)) {
+            $finalEpisodeNumber = $season['episode_count'];
+        } else {
+            $finaleEpisode = array_find($season['episodes'] ?? [], function ($e) {
+                return ($e['episode_type'] ?? 'standard') === 'finale';
+            });
+            $finalEpisodeNumber = $finaleEpisode ? $finaleEpisode['episode_number'] : null;
+        }
         // Filtrer les épisodes pour ne garder que ceux jusqu'à l'épisode final
         if ($finalEpisodeNumber !== null) {
             $season['episodes'] = array_filter($season['episodes'] ?? [], function ($e) use ($finalEpisodeNumber) {
@@ -179,7 +186,7 @@ class SeriesSeasonEpisodes extends AbstractController
                 $this->imageService->saveImage("backdrops", $backdrop_path, $backdropUrl);
                 $episodes = array_map(function ($episode) use ($backdrop_path) {
                     if (!$episode['still']) {
-                        $episode['still'] = '/series/backdrops'.$backdrop_path;
+                        $episode['still'] = '/series/backdrops' . $backdrop_path;
                     }
                     return $episode;
                 }, $episodes);
@@ -198,7 +205,8 @@ class SeriesSeasonEpisodes extends AbstractController
         ]);
     }
 
-    private function getCustomBroadcastDates(): array
+    private
+    function getCustomBroadcastDates(): array
     {
         $dbBroadcastDates = $this->seriesBroadcastDateRepository->findBy(['episodeId' => $this->episodeIds]);
         $dbBroadcastDateArray = [];
@@ -208,7 +216,8 @@ class SeriesSeasonEpisodes extends AbstractController
         return $dbBroadcastDateArray;
     }
 
-    private function getProvidersInfos(): array
+    private
+    function getProvidersInfos(): array
     {
         $providersInfos = [];
         $providerIds = array_filter($this->userEpisodes, function ($ue) {
@@ -255,7 +264,8 @@ class SeriesSeasonEpisodes extends AbstractController
         return $providersInfos;
     }
 
-    private function getOverview(string $overview, int $episodeId, int $episodeNumber): string
+    private
+    function getOverview(string $overview, int $episodeId, int $episodeNumber): string
     {
         if ($overview === '') {
             // Si overview est vide, on vérifie si on a une version 'fr' (ou 'en', 'ko') dans la base de données.
@@ -285,7 +295,8 @@ class SeriesSeasonEpisodes extends AbstractController
         return $overview;
     }
 
-    private function getStillPath(?string $path, int $episodeId, bool $airing, int $tmdbId, int $seasonNumber, int $episodeNumber): ?string
+    private
+    function getStillPath(?string $path, int $episodeId, bool $airing, int $tmdbId, int $seasonNumber, int $episodeNumber): ?string
     {
         if ($path !== null) {
             return $this->stillUrl . $path;
@@ -316,7 +327,8 @@ class SeriesSeasonEpisodes extends AbstractController
         return $path;
     }
 
-    private function getUserInfos(int $episodeId): array
+    private
+    function getUserInfos(int $episodeId): array
     {
         if (count($this->userEpisodes) === 0) {
             return [
@@ -388,7 +400,8 @@ class SeriesSeasonEpisodes extends AbstractController
      *
      * @return array|bool - Array of hex bgcolor / color codes, or true on error
      */
-    private function detectColors(string $image): array|bool
+    private
+    function detectColors(string $image): array|bool
     {
         // Sampling rate (higher = faster but less accurate)
         // 1 = check every pixel (slow but accurate)
@@ -502,7 +515,8 @@ class SeriesSeasonEpisodes extends AbstractController
         ]);
     }
 
-    private function hexToLightness($hex): float
+    private
+    function hexToLightness($hex): float
     {
         $red = hexdec(substr($hex, 0, 2)) / 255;
         $green = hexdec(substr($hex, 2, 2)) / 255;

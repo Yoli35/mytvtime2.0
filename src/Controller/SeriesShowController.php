@@ -180,7 +180,7 @@ final class SeriesShowController extends AbstractController
                 $userSeason = new UserSeason($userSeries, $seasonNumber);
                 $this->userSeasonRepository->save($userSeason, true);
                 // Get user episodes for this season
-                $userEpisodesForSeason = array_filter($userEpisodes, fn ($episode) => $episode->getSeasonNumber() === $seasonNumber);
+                $userEpisodesForSeason = array_filter($userEpisodes, fn($episode) => $episode->getSeasonNumber() === $seasonNumber);
                 // Add user episodes to user season
                 foreach ($userEpisodesForSeason as $userEpisode) {
                     $userSeason->addUserEpisode($userEpisode);
@@ -248,6 +248,8 @@ final class SeriesShowController extends AbstractController
                 'providers' => $this->watchLinkApi->getWatchProviders($country),
             ]);
         }
+
+        $tv['seasons'] = $this->seriesService->seriesInfos($tv['id'], $tv['seasons']);
 
         $tv['credits'] = $this->castAndCrew($tv, $series);
         $tv['watch/providers'] = $this->watchProviders($tv, $country);
@@ -661,7 +663,7 @@ final class SeriesShowController extends AbstractController
             $seasonNumber = $season['season_number'];
             list($n, $r) = $this->seriesService->addSeasonToUser($user, $userSeries, $seasonNumber, array_filter($userEpisodes, function ($ue) use ($seasonNumber) {
                 return $ue->getSeasonNumber() == $seasonNumber;
-            }));
+            }), $season);
             $newEpisodeCount += $n;
             $this->reloadUserEpisodes = $r;
         }
@@ -865,7 +867,7 @@ final class SeriesShowController extends AbstractController
         $episode['user_episode'] = $userEpisode;
         $episode['user_episodes'] = $userEpisodeList;
 
-        if (strlen($episode['overview'])) {
+        if ($episode['overview'] && strlen($episode['overview'])) {
             return $episode;
         }
         $language = $episode['language_query'];
@@ -1555,28 +1557,34 @@ final class SeriesShowController extends AbstractController
     {
         $seasonEpisodeCount = 0;
         foreach ($tv['seasons'] as $season) {
-            if ($season['season_number'] > 0) {
-                // Si la série n'a plus d'épisode à venir, on compte les épisodes
-                // (nombre d'épisodes égal à un, signifie que la saison est à venir, juste annoncée)
-                // de la saison qui ont une date de diffusion.
-                // Sinon, on se fie au nombre d'épisodes de la saison fourni par l'API
-                if (!$tv['next_episode_to_air']) {
-                    $s = json_decode($this->tmdbService->getTvSeason($tv['id'], $season['season_number'], 'fr-FR'), true);
-                    $episodeCount = 0;
-                    foreach ($s['episodes'] as $episode) {
-                        if ($episode['air_date']) $episodeCount++;
-                        if ($episode['episode_type'] == 'finale') {
-                            $count = count($s['episodes']);
-                            if ($count > $episode['episode_number']) {
-                                $this->addFlash('warning', 'Finale episode number: ' . sprintf("S%02dE%02d", $s['season_number'], $episode['episode_number']) . ' - episode count: ' . $count);
-                            }
-                            break;
+            if ($season['season_number'] == 0) {
+                continue;
+            }
+            if (key_exists('skip_trim', $season)) {
+                $seasonEpisodeCount += $season['episode_count'];
+                continue;
+            }
+            // Si la série n'a plus d'épisode à venir, on compte les épisodes
+            // (nombre d'épisodes égal à un, signifie que la saison est à venir, juste annoncée)
+            // de la saison qui ont une date de diffusion.
+            // Sinon, on se fie au nombre d'épisodes de la saison fourni par l'API
+            if (!$tv['next_episode_to_air']) {
+                dump($season);
+                $s = json_decode($this->tmdbService->getTvSeason($tv['id'], $season['season_number'], 'fr-FR'), true);
+                $episodeCount = 0;
+                foreach ($s['episodes'] as $episode) {
+                    if ($episode['air_date']) $episodeCount++;
+                    if ($episode['episode_type'] == 'finale') {
+                        $count = count($s['episodes']);
+                        if ($count > $episode['episode_number']) {
+                            $this->addFlash('warning', 'Finale episode number: ' . sprintf("S%02dE%02d", $s['season_number'], $episode['episode_number']) . ' - episode count: ' . $count);
                         }
+                        break;
                     }
-                    $seasonEpisodeCount += $episodeCount;
-                } else {
-                    $seasonEpisodeCount += $season['episode_count'];
                 }
+                $seasonEpisodeCount += $episodeCount;
+            } else {
+                $seasonEpisodeCount += $season['episode_count'];
             }
         }
         return $seasonEpisodeCount;
@@ -1608,7 +1616,11 @@ final class SeriesShowController extends AbstractController
 
     private function trimSeasons(int $tvId, string $locale, array $seasons): array
     {
+        dump($seasons);
         return array_map(function ($season) use ($tvId, $locale) {
+            if (key_exists('skip_trim', $season)) {
+                return $season;
+            }
             $tmdbSeason = json_decode($this->tmdbService->getTvSeason($tvId, $season['season_number'], $locale), true);
             $finaleEpisode = array_find($tmdbSeason['episodes'] ?? [], function ($e) {
                 return ($e['episode_type'] ?? 'standard') === 'finale';

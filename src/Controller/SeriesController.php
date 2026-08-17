@@ -1294,7 +1294,7 @@ class SeriesController extends AbstractController
         }
 
         foreach ($tv['seasons'] as $season) {
-            $this->seriesService->addSeasonToUser($user, $userSeries, $season['season_number'], []);
+            $this->seriesService->addSeasonToUser($user, $userSeries, $season['season_number'], [], $season);
         }
         return $userSeries;
     }
