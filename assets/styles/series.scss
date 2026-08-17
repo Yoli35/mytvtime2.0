@@ -1476,8 +1476,10 @@ h2 {
             }
 
             img {
+                background-color: hsl(0 0% 0% / .25);
                 border-radius: .5rem;
                 height: 100%;
+                object-fit: contain;
                 width: auto;
 
                 &.pointer {
