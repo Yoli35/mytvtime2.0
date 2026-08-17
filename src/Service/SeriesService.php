@@ -493,9 +493,9 @@ readonly class SeriesService
             $type = $item['type'];
             $value = $item['value'];
             switch ($type) {
-                case 'episode_type':
+                /*case 'episode_type':
                     dump($value);
-                    break;
+                    break;*/
                 case 'season_episode_count':
                     $seasonNumber = $value['season_number'];
                     $seasons[$seasonNumber - 1]['skip_trim'] = true;

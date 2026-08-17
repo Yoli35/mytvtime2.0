@@ -1569,7 +1569,7 @@ final class SeriesShowController extends AbstractController
             // de la saison qui ont une date de diffusion.
             // Sinon, on se fie au nombre d'épisodes de la saison fourni par l'API
             if (!$tv['next_episode_to_air']) {
-                dump($season);
+                /*dump($season);*/
                 $s = json_decode($this->tmdbService->getTvSeason($tv['id'], $season['season_number'], 'fr-FR'), true);
                 $episodeCount = 0;
                 foreach ($s['episodes'] as $episode) {
@@ -1616,7 +1616,7 @@ final class SeriesShowController extends AbstractController
 
     private function trimSeasons(int $tvId, string $locale, array $seasons): array
     {
-        dump($seasons);
+        /*dump($seasons);*/
         return array_map(function ($season) use ($tvId, $locale) {
             if (key_exists('skip_trim', $season)) {
                 return $season;
