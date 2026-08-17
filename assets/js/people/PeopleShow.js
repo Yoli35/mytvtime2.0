@@ -34,16 +34,24 @@ export class PeopleShow {
         document.addEventListener("click", this.hideInfos);
         this.initInfos();
 
-        const images = document.querySelector(".person").querySelector(".images")?.querySelectorAll("img");
-        this.diaporama.start(images);
+        const personDiv = document.querySelector(".person");
 
-        const media = document.querySelector(".person").querySelector(".known-for").querySelectorAll(".poster");
-        media.forEach(m => {
-            m.addEventListener("mouseenter", this.showPoster);
-            m.addEventListener("mousemove", this.showPoster)
-            m.addEventListener("mouseleave", this.hidePoster);
-        });
-        document.addEventListener("click", this.hidePoster);
+        const imageList = personDiv.querySelector(".images");
+        if (imageList) {
+            const images = imageList.querySelectorAll("img");
+            this.diaporama.start(images);
+        }
+
+        const knownForDiv = personDiv.querySelector(".known-for");
+        if (knownForDiv) {
+            const media = knownForDiv.querySelectorAll(".poster");
+            media.forEach(m => {
+                m.addEventListener("mouseenter", this.showPoster);
+                m.addEventListener("mousemove", this.showPoster)
+                m.addEventListener("mouseleave", this.hidePoster);
+            });
+            document.addEventListener("click", this.hidePoster);
+        }
 
         const stars = document.querySelector(".rating.user").querySelectorAll(".star");
         stars.forEach(star => {
