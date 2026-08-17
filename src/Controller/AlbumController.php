@@ -382,7 +382,7 @@ final class AlbumController extends AbstractController
     private function handleNewAlbum(Request $request, User $user): false|int
     {
         $newAlbumName = $request->query->get('new-album', '');
-        if (strlen($newAlbumName) > 0) {
+        if ($newAlbumName && strlen($newAlbumName) > 0) {
             $now = $this->dateService->getNowImmutable('UTC');
             $album = new Album($user, true, $newAlbumName, $now);
             $this->albumRepository->save($album, true);

@@ -277,7 +277,7 @@ class SeriesSeasonEpisodes extends AbstractController
                 return $e['episode_number'] === $episodeNumber;
             });
             $overview = $episodeUS['overview'] ?? '';
-            if (strlen($overview) > 0) {
+            if ($overview && strlen($overview) > 0) {
                 $localizedOverview = new EpisodeLocalizedOverview($episodeId, $overview, 'en');
                 $this->episodeLocalizedOverviewRepository->save($localizedOverview, true);
             }

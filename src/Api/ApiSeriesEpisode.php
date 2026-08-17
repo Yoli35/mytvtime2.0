@@ -447,7 +447,7 @@ readonly class ApiSeriesEpisode
         if ($type === 'name') {
             $esn = $this->episodeSubstituteNameRepository->findOneBy(['episodeId' => $id]);
             if ($esn) {
-                if (strlen($content) === 0) {
+                if ($content && strlen($content) === 0) {
                     $this->episodeSubstituteNameRepository->remove($esn, true);
                     return ($this->json)([
                         'ok' => true,
@@ -462,7 +462,7 @@ readonly class ApiSeriesEpisode
         if ($type === 'overview') {
             $elo = $this->episodeLocalizedOverviewRepository->findOneBy(['episodeId' => $id, 'locale' => $locale]);
             if ($elo) {
-                if (strlen($content) === 0) {
+                if ($content && strlen($content) === 0) {
                     $this->episodeLocalizedOverviewRepository->remove($elo, true);
                     return ($this->json)([
                         'ok' => true,

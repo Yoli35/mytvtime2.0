@@ -58,7 +58,7 @@ class MovieRepository extends ServiceEntityRepository
         $order = $filters['order'];
         $page = $filters['page'];
         $limit = 1 * $filters['limit'];
-        $title = $filters['title'];
+        $title = $filters['title'] ?: '';
 
         $offset = ($page - 1) * $limit;
         // Sort: name, release date
@@ -120,7 +120,7 @@ class MovieRepository extends ServiceEntityRepository
 
     public function countMovieCards(User $user, array $filters): int
     {
-        $title = $filters['title'];
+        $title = $filters['title'] ?: '';
         $params = [
             'userId' => $user->getId(),
         ];

@@ -135,7 +135,7 @@ readonly class SeriesService
 
         if ($tv['localized_name']) {
             $tv['display_name'] = $tv['localized_name']->getName();
-        } elseif (strlen($tv['translations'] && $tv['translations']['data'] && $tv['translations']['data']['name'])) {
+        } elseif ($tv['translations'] && $tv['translations']['data'] && strlen($tv['translations']['data']['name'])) {
             $tv['display_name'] = $tv['translations']['data']['name'];
         } else {
             $tv['display_name'] = $tv['name'];
@@ -225,7 +225,7 @@ readonly class SeriesService
             $series->addUpdate($this->translator->trans('First air date updated'));
         }
 
-        if (strlen($tv['overview']) && strcmp($tv['overview'], $series->getOverview())) {
+        if ($tv['overview'] &&strlen($tv['overview']) && strcmp($tv['overview'], $series->getOverview())) {
             $series->setOverview($tv['overview']);
             $series->addUpdate($this->translator->trans('Overview updated'));
         }
@@ -1384,7 +1384,7 @@ readonly class SeriesService
         } else {
             $provider = null;
         }
-        return ['string' => $str, 'providerLogo' => $provider['logoPath'], 'providerName' => $provider['providerName']];
+        return ['string' => $str, 'providerLogo' => $provider?$provider['logoPath']:null, 'providerName' => $provider?$provider['providerName']:null];
     }
 
     private function getDaysString(SeriesBroadcastSchedule $schedule, DateTimeImmutable $firstAirDate, string $locale): array
@@ -1593,11 +1593,11 @@ readonly class SeriesService
     private function buildOverview(array $tv): string
     {
         $overview = '';
-        if (key_exists('overview', $tv) && strlen($tv['overview'])) {
+        if (key_exists('overview', $tv) && $tv['overview'] && strlen($tv['overview'])) {
             $overview = $tv['overview'];
         } elseif (key_exists('translations', $tv)) {
             $arr = $tv['translations']['translations'];
-            $translations = array_find($arr, fn($t) => $t['iso_639_1'] === 'en' && key_exists('data', $t) && key_exists('overview', $t['data']) && strlen($t['data']['overview']));
+            $translations = array_find($arr, fn($t) => $t['iso_639_1'] === 'en' && key_exists('data', $t) && key_exists('overview', $t['data']) && $t['data']['overview'] && strlen($t['data']['overview']));
             $overview = $translations ? $translations['data']['overview'] : '';
         }
         return $overview;
