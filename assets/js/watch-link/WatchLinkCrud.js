@@ -48,6 +48,7 @@ export class WatchLinkCrud {
             {needle: 'wetv.vip', providerId: 623},
             {needle: 'youtube.com', providerId: 192},
             {needle: 'www.arte.tv', providerId: 234},
+            {needle: 'www.hbo.com', providerId: 1899}
         ];
 
         this.init();
