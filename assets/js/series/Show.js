@@ -2,6 +2,7 @@ import {AddCast} from 'AddCast';
 import {CopyName} from "CopyName";
 import {Diaporama} from 'Diaporama';
 import {EpisodeActions} from "EpisodeActions";
+import {EpisodeList} from "EpisodeList";
 import {FetchEpisodeCards} from "FetchEpisodeCards";
 import {FlashMessage} from "FlashMessage";
 import {Keyword} from 'Keyword';
@@ -230,6 +231,11 @@ export class Show {
          * Fetch episode stills for each season.                                      *
          ******************************************************************************/
         this.fetchEpisodeCards.init(-1, false, new EpisodeActions(jsonGlobsObject, this.flashMessage, this.toolTips, menu, false));
+
+        /******************************************************************************
+         * View episode list                                                          *
+         ******************************************************************************/
+        new EpisodeList(this.fetchEpisodeCards, jsonGlobsObject, this.flashMessage, this.toolTips, menu);
 
         /******************************************************************************
          * Old series added?                                                          *

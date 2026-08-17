@@ -1,0 +1,29 @@
+<dialog class="episode-list-dialog">
+    <div class="content">
+        <h2> {{ 'Season'|trans }} {{ seasonNumber }}</h2>
+        <label for="watch-link-select">{{ 'Provider'|trans }}
+            <select id="watch-link-select">
+                <option value="0">{{ 'Select a provider'|trans }}</option>
+                {% for watchLink in watchLinks %}
+                    <option value="{{ watchLink.providerId }}">{{ watchLink.name }}</option>
+                {% endfor %}
+            </select>
+        </label>
+        <ul class="episode-list">
+            {% for episode in episodes %}
+                <li class="episode-item">
+                    <div class="poster">
+                        <img src="{{ episode.posterPath }}" alt="{{ episode.name }}">
+                    </div>
+                    <div class="name">{{ episode.name }}</div>
+                    {% if episode.airDate %}
+                        <div class="ue{% if episode.ue.watchAt %} watched{% endif %}" data-ue-id="{{ episode.ue.id }}" data-episode-number="{{ episode.episodeNumber }}">
+                            {{ ux_icon(episode.ue.watchAt ? 'mdi:check' : 'mdi:eye-outline') }}
+                        </div>
+                    {% endif %}
+                </li>
+            {% endfor %}
+        </ul>
+        <div class="close">{{ ux_icon('mdi:close') }}</div>
+    </div>
+</dialog>

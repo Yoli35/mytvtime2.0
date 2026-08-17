@@ -3803,8 +3803,152 @@ h2 {
                     }
                 }
             }
+
+            .view-episode-list {
+                align-items: center;
+                background-color: var(--orange-40);
+                border-radius: 50%;
+                color: var(--ardoise-10);
+                cursor: pointer;
+                display: flex;
+                height: 2rem;
+                justify-content: center;
+                position: absolute;
+                right: 1rem;
+                top: 1rem;
+                width: 2rem;
+                z-index: 1;
+
+                &:hover {
+                    background-color: var(--orange-50);
+                }
+            }
         }
     }
+}
+
+dialog.episode-list-dialog {
+    align-items: center;
+    flex-direction: column;
+    gap: 1rem;
+    max-height: calc(100vh - 10rem);
+    padding: 2rem;
+    width: calc(100vw - 10rem);
+
+    &[open] {
+        display: flex;
+    }
+
+    .content {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+        max-height: calc(100vh - 14rem);
+        position: relative;
+        width: 100%;
+
+        h2 {
+            background-color: unset;
+            line-height: 1.25;
+            padding-inline: 0;
+        }
+
+        label {
+            select {
+                appearance: none;
+                border-radius: 5rem;
+                padding-inline: .5rem 2rem;
+            }
+
+        }
+
+        .close {
+            border-radius: 50%;
+            position: absolute;
+            right: 1rem;
+            top: 1rem;
+            width: 2rem;
+            z-index: 1;
+
+            &:hover {
+                background-color: var(--orange-50);
+            }
+
+            svg {
+                height: 100%;
+                width: 100%;
+            }
+        }
+
+        ul.episode-list {
+            display: flex;
+            flex-direction: column;
+            gap: .25rem;
+            list-style: none;
+            margin: 0;
+            max-height: calc(100vh - 18.25rem);
+            overflow-y: auto;
+            padding: 0;
+            width: 100%;
+
+            li.episode-item {
+                align-items: center;
+                border-radius: 0 5rem 5rem 0;
+                display: flex;
+                gap: 1rem;
+                padding-inline-end: .5rem;
+                width: 100%;
+
+                &:nth-child(odd) {
+                    background-color: hsl(from var(--orange-10) h s l / .5);
+                }
+
+                &:hover {
+                    background-color: hsl(from var(--orange-50) h s l / .5);
+                }
+
+                .poster {
+                    height: 5rem;
+
+                    img {
+                        aspect-ratio: 16/9;
+                        border-radius: 1rem 0 0 1rem;
+                        height: 100%;
+                        object-fit: cover;
+                    }
+                }
+
+                .ue {
+                    align-items: center;
+                    border-radius: 50%;
+                    border: 2px solid;
+                    color: var(--orange-90);
+                    cursor: pointer;
+                    display: flex;
+                    height: 3rem;
+                    justify-content: center;
+                    margin-inline-end: 1rem;
+                    margin-inline-start: auto;
+                    width: 3rem;
+
+                    &.watched {
+                        background-color: var(--green);
+                        /*color: var(--green-90);*/
+                    }
+
+                    svg {
+                        height: 1.5rem;
+                        width: 1.5rem;
+                    }
+                }
+            }
+        }
+    }
+}
+
+dialog.episode-list-dialog::backdrop {
+    backdrop-filter: blur(1rem);
+    background-color: hsl(from var(--orange-10) h s l / .25);
 }
 
 aside:has(.episode__cards) {

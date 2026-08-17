@@ -324,6 +324,9 @@
                                         {#                                            newEditionMenu.classList.toggle('visible'); #}
                                         {#                                        }); #}
                                         {#                                    </script> #}
+                                        <div class="view-episode-list" data-season-id="{{ userSeries.userSeasons|filter(userSeason => userSeason.seasonNumber == season.season_number)|first.id }}">
+                                            {{ ux_icon('mdi:view-list') }}
+                                        </div>
                                     </div>
                                 </div>
                             {% endfor %}

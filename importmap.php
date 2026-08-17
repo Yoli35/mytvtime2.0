@@ -45,6 +45,7 @@ return [
     'Episode' => ['path' => './assets/js/series/Episode.js'],
     'EpisodeActions' => ['path' => './assets/js/series/EpisodeActions.js'],
     'EpisodeHistory' => ['path' => './assets/js/home/EpisodeHistory.js'],
+    'EpisodeList' => ['path' => './assets/js/series/EpisodeList.js'],
     'FetchEpisodeCards' => ['path' => './assets/js/series/FetchEpisodeCards.js'],
     'FlashMessage' => ['path' => './assets/js/FlashMessage.js'],
     'HighlightSeries' => ['path' => './assets/js/home/HighlightSeries.js'],
