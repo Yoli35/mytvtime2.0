@@ -69,7 +69,6 @@ readonly class ApiEpisodeList
 
         $watchLinks = $series->getSeriesWatchLinks()->toArray();
         $providers = $this->getProviders($user->getCountry() ?? "FR", $series->getFirstAirDate()->format('Y'));
-        dump($providers);
 
         $block = ($this->renderView)('_blocks/episode/_list.html.twig', [
             'seasonNumber' => $seasonNumber,
@@ -105,7 +104,6 @@ readonly class ApiEpisodeList
                 return ['episodeId' => $episode->getId(), 'episodeNumber' => $episode->getEpisodeNumber(), 'watched' => false];
             }, $previousSeasonEpisodes);
             $episodeData = array_merge($previousSeasonEpisodes, $episodeData);
-            dump($episodeData);
         }
 
         $now = $lastDate = $this->now($user);
@@ -167,7 +165,7 @@ readonly class ApiEpisodeList
                 return $this->providerRepository->findBy(['id' => $providerIds]);
             }
         }
-        return $this->providerRepository->findBy(['country' => $country]);
+        return $this->providerRepository->getLocalProviderList($country);
     }
 
     private function now(User $user): DateTimeImmutable
