@@ -49,7 +49,7 @@ export class WatchLinkCrud {
             {needle: 'youtube.com', providerId: 192},
             {needle: 'www.arte.tv', providerId: 234},
             {needle: 'www.hbo.com', providerId: 1899},
-            {needle: 'www.m6.fr', providerId: 1899}
+            {needle: 'www.m6.fr', providerId: 10006}
         ];
 
         this.init();
