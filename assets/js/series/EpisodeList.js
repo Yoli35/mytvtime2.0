@@ -45,11 +45,16 @@ export class EpisodeList {
                 close.addEventListener('click', (event) => {
                     event.currentTarget.closest('dialog').close();
                 });
-                const providerSelect = newDialog.querySelector('select#watch-link-select');
                 const episodeTogglers = newDialog.querySelectorAll('.ue');
+                const seasonNumber = newDialog.querySelector('h2').dataset.seasonNumber;
                 episodeTogglers.forEach(toggler => {
                     toggler.addEventListener('click', () => {
-                        self.toggleWatched(toggler, episodeTogglers, parseInt(providerSelect.value));
+                        const watchedAsTheyGo = newDialog.querySelector('input#watched-as-they-go');
+                        const isWatchedAsTheyGo = watchedAsTheyGo ? watchedAsTheyGo.checked : false;
+                        const providerSelect = newDialog.querySelector('select#watch-link-select') || newDialog.querySelector('select#provider-select');
+                        const providerId = providerSelect ? parseInt(providerSelect.value) : 0;
+                        console.log(toggler, episodeTogglers, providerId, isWatchedAsTheyGo);
+                        self.toggleWatched(toggler, episodeTogglers, seasonNumber, providerId, isWatchedAsTheyGo);
                     });
                 });
                 body.appendChild(newDialog);
@@ -60,7 +65,7 @@ export class EpisodeList {
             });
     }
 
-    toggleWatched(toggler, episodeTogglers, providerId) {
+    toggleWatched(toggler, episodeTogglers, seasonNumber, providerId, isWatchedAsTheyGo) {
         const episodeId = parseInt(toggler.dataset.ueId);
         const episodeNumber = parseInt(toggler.dataset.episodeNumber);
         const watched = toggler.classList.contains('watched');
@@ -95,7 +100,12 @@ export class EpisodeList {
             headers: {
                 "Content-Type": "application/json",
             },
-            body: JSON.stringify({episodeData: episodeData, providerId: providerId})
+            body: JSON.stringify({
+                episodeData: episodeData,
+                seasonNumber: seasonNumber,
+                providerId: providerId,
+                isWatchedAsTheyGo: isWatchedAsTheyGo
+            })
         })
             .then(response => response.json())
             .then(data => {

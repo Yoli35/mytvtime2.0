@@ -3,8 +3,10 @@
 namespace App\Api;
 
 use App\Entity\User;
+use App\Repository\SettingsRepository;
 use App\Repository\UserEpisodeRepository;
 use App\Repository\UserSeasonRepository;
+use App\Repository\WatchProviderRepository;
 use App\Service\DateService;
 use App\Service\ImageConfiguration;
 use App\Service\TMDBService;
@@ -23,18 +25,20 @@ readonly class ApiEpisodeList
 {
     public function __construct(
         #[AutowireMethodOf(ControllerHelper::class)]
-        private Closure               $renderView,
-        private DateService           $dateService,
-        private ImageConfiguration    $imageConfiguration,
-        private TMDBService           $tmdbService,
-        private UserEpisodeRepository $userEpisodeRepository,
-        private UserSeasonRepository  $userSeasonRepository,
+        private Closure                 $renderView,
+        private DateService             $dateService,
+        private ImageConfiguration      $imageConfiguration,
+        private SettingsRepository      $settingsRepository,
+        private TMDBService             $tmdbService,
+        private UserEpisodeRepository   $userEpisodeRepository,
+        private UserSeasonRepository    $userSeasonRepository,
+        private WatchProviderRepository $providerRepository,
     )
     {
     }
 
     #[Route('/get', name: 'get', methods: ['POST'])]
-    public function get(Request $request): JsonResponse
+    public function get(#[CurrentUser] User $user, Request $request): JsonResponse
     {
         $inputBag = $request->getPayload();
         $userSeasonId = $inputBag->getInt('seasonId');
@@ -64,8 +68,15 @@ readonly class ApiEpisodeList
         }, $userEpisodes);
 
         $watchLinks = $series->getSeriesWatchLinks()->toArray();
+        $providers = $this->getProviders($user->getCountry() ?? "FR", $series->getFirstAirDate()->format('Y'));
+        dump($providers);
 
-        $block = ($this->renderView)('_blocks/episode/_list.html.twig', ['seasonNumber' => $seasonNumber, 'episodes' => $episodes, 'watchLinks' => $watchLinks]);
+        $block = ($this->renderView)('_blocks/episode/_list.html.twig', [
+            'seasonNumber' => $seasonNumber,
+            'episodes' => $episodes,
+            'watchLinks' => $watchLinks,
+            'providers' => $providers,
+        ]);
 
         return new JsonResponse(['view' => $block]);
     }
@@ -75,9 +86,29 @@ readonly class ApiEpisodeList
     {
         $content = json_decode($request->getContent(), true);
         $episodeData = $content['episodeData'];
+        $seasonNumber = $content['seasonNumber'];
         $providerId = $content['providerId'];
+        $isWatchedAsTheyGo = $content['isWatchedAsTheyGo'];
 
-        $now = $this->now($user);
+        $firstEpisode = array_first($episodeData);
+        $episodeId = $firstEpisode['episodeId'];
+        $watched = $firstEpisode['watched'];
+        if (!$watched && $seasonNumber > 1) {
+            $userEpisode = $this->userEpisodeRepository->find($episodeId);
+            $firstEpisodeNumber = $userEpisode->getEpisodeNumber();
+            $userSeries = $userEpisode->getUserSeries();
+            // on récupère les user épisodes des saisons précédentes
+            $previousSeasonEpisodes = array_filter($this->userEpisodeRepository->findBy(['userSeries' => $userSeries, 'previousOccurrence' => null]), function ($episode) use ($firstEpisodeNumber, $seasonNumber) {
+                return $episode->getWatchAt() === null && (($episode->getSeasonNumber() < $seasonNumber) || ($episode->getSeasonNumber() == $seasonNumber && $episode->getEpisodeNumber() < $firstEpisodeNumber));
+            });
+            $previousSeasonEpisodes = array_map(function ($episode) {
+                return ['episodeId' => $episode->getId(), 'episodeNumber' => $episode->getEpisodeNumber(), 'watched' => false];
+            }, $previousSeasonEpisodes);
+            $episodeData = array_merge($previousSeasonEpisodes, $episodeData);
+            dump($episodeData);
+        }
+
+        $now = $lastDate = $this->now($user);
         $n = 0;
         $markedAsWatched = 0;
         $markedAsNotWatched = 0;
@@ -90,7 +121,12 @@ readonly class ApiEpisodeList
                     $ue->setWatchAt(null);
                     $markedAsNotWatched++;
                 } else {
-                    $ue->setWatchAt($now);
+                    if ($isWatchedAsTheyGo) {
+                        $lastDate = $ue->getAirDate() ?: $lastDate;
+                        $ue->setWatchAt($lastDate->setTime(18, 0));
+                    } else {
+                        $ue->setWatchAt($now);
+                    }
                     if ($providerId > 0) {
                         $ue->setProviderId($providerId);
                     } else {
@@ -116,6 +152,22 @@ readonly class ApiEpisodeList
             $success = false;
         }
         return new JsonResponse(['success' => $success, 'message' => $message]);
+    }
+
+    private function getProviders(string $country, int $year): array
+    {
+        $settingsArr = $this->settingsRepository->findBy(['name' => 'local providers']);
+        if (empty($settingsArr)) {
+            return [];
+        }
+        foreach ($settingsArr as $settings) {
+            $data = $settings->getData();
+            if ($data['origin_country'] == $country && $year >= $data['year_gte'] && $year <= $data['year_lte']) {
+                $providerIds = $data['provider_ids'];
+                return $this->providerRepository->findBy(['id' => $providerIds]);
+            }
+        }
+        return $this->providerRepository->findBy(['country' => $country]);
     }
 
     private function now(User $user): DateTimeImmutable
