@@ -51,8 +51,14 @@ export class EpisodeList {
                     toggler.addEventListener('click', () => {
                         const watchedAsTheyGo = newDialog.querySelector('input#watched-as-they-go');
                         const isWatchedAsTheyGo = watchedAsTheyGo ? watchedAsTheyGo.checked : false;
-                        const providerSelect = newDialog.querySelector('select#watch-link-select') || newDialog.querySelector('select#provider-select');
-                        const providerId = providerSelect ? parseInt(providerSelect.value) : 0;
+                        const providerByLinkSelect = newDialog.querySelector('select#watch-link-select');
+                        const providerByCountrySelect = newDialog.querySelector('select#provider-select');
+                        let providerId = 0;
+                        if (providerByLinkSelect && providerByLinkSelect.value) {
+                            providerId = parseInt(providerByLinkSelect.value);
+                        } else if (providerByCountrySelect && providerByCountrySelect.value) {
+                            providerId = parseInt(providerByCountrySelect.value);
+                        }
                         console.log(toggler, episodeTogglers, providerId, isWatchedAsTheyGo);
                         self.toggleWatched(toggler, episodeTogglers, seasonNumber, providerId, isWatchedAsTheyGo);
                     });
