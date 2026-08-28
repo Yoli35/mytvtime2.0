@@ -3,12 +3,10 @@
 namespace App\Service;
 
 use App\Repository\VideoCategoryRepository;
-use Symfony\Contracts\Translation\TranslatorInterface;
 
 readonly class VideoService
 {
     public function __construct(
-        private TranslatorInterface $translator,
         private VideoCategoryRepository  $categoryRepository,
     )
     {
@@ -20,7 +18,6 @@ readonly class VideoService
             return [
                 'id' => $cat->getId(),
                 'name' => $cat->getName(),
-//                'name' => $this->translator->trans($cat->getName()),
                 'color' => $cat->getColor(),
             ];
         }, $this->categoryRepository->findAll());
