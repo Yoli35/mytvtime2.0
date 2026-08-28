@@ -96,6 +96,7 @@
     "symfony/polyfill-php84": "*"
   },
   "scripts": {
+    "pre-autoload-dump": "Google\\Task\\Composer::cleanup",
     "auto-scripts": {
       "cache:clear": "symfony-cmd",
       "assets:install %PUBLIC_DIR%": "symfony-cmd",
@@ -116,7 +117,10 @@
     "symfony": {
       "allow-contrib": false,
       "require": "8.*"
-    }
+    },
+    "google/apiclient-services": [
+      "YouTube"
+    ]
   },
   "require-dev": {
     "symfony/browser-kit": "*",
