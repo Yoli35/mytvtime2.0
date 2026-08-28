@@ -51,8 +51,10 @@
     --red-40: hsl(0, 50%, 40%);
     --red-20: light-dark(hsl(0, 50%, 20%), hsl(0, 50%, 80%));
 
-    --yellow: hsl(45, 50%, 50%);
-    --yellow-50: hsl(45, 50%, 50%);
+    --yellow: rgb(237, 198, 72);
+    /*--yellow: hsl(45, 50%, 50%);*/
+    /*--yellow-50: hsl(45, 50%, 50%);*/
+    --yellow-50: hsl(from var(--yellow) h s 50%);
 
     --purple: hsl(306, 50%, 50%);
     --purple-50: hsl(306, 50%, 50%);
