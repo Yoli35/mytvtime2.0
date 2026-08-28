@@ -16,8 +16,9 @@ import {HighlightSeries} from 'HighlightSeries';
 import {Index} from 'Index';
 import {Menu} from 'Menu';
 import {Map} from 'Map';
-import {Movie} from 'Movie';
+import {MovieDiscover} from "MovieDiscover";
 import {MovieIndex} from 'MovieIndex';
+import {Movie} from 'Movie';
 import {NavBar} from 'NavBar';
 import {NetworkAndProvider} from "NetworkAndProvider";
 import {PeopleCard} from "PeopleCard";
@@ -256,6 +257,11 @@ window.addEventListener("DOMContentLoaded", () => {
             }
             navBar.navBarColor(hsl);
         }
+    }
+
+    const movieDiscover = document.querySelector(".movie-discover");
+    if (movieDiscover) {
+        new MovieDiscover(menu);
     }
 
     const person = document.querySelector(".person");

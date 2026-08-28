@@ -114,4 +114,22 @@ class ApiKeywords extends AbstractController
             'firstArray' => $firstLetterArray,
         ]);
     }
+
+    #[Route('/search', name: 'search', methods: ['POST'])]
+    public function search(Request $request): Response
+    {
+        $data = json_decode($request->getContent(), true);
+        $query = $data['query'];
+
+        $keywords = json_decode($this->tmdbService->searchKeyword($query), true);
+        $keywords = $keywords['results'];
+        /*if (count($keywords)) {
+            $keywords = array_column($keywords, 'name', 'id');
+        }*/
+
+        return $this->json([
+            'success' => true,
+            'keywords' => $keywords,
+        ]);
+    }
 }

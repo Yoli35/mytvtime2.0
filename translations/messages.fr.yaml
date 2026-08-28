@@ -668,27 +668,28 @@ More episodes to come: Plus d'épisodes à venir
 count new episodes are now available in season number: count nouveaux épisodes dans la saison number
 
 #Schedule form
-Override the Movie Database schedule: Remplacer l'horaire de The Movie Database
-Override TMDB: Remplacer TMDB
-Frequency: Fréquence
-Multi part: Multi-partie
-This season will be broadcast in several parts: Cette saison sera diffusée en plusieurs parties
-Part: Partie
-First episode: Premier épisode
-Episode count: Nombre d'épisodes
 All at once: Tous à la fois
 Daily: Quotidien
+Ep.: Ep.
+Episode count: Nombre d'épisodes
+First episode: Premier épisode
+Frequency: Fréquence
+Multi part: Multi-partie
+Override TMDB: Remplacer TMDB
+Override the Movie Database schedule: Remplacer l'horaire de The Movie Database
+Part: Partie
 Selected days, then weekly, one at a time: Jours sélectionnés, puis hebdomadaire, un à la fois
-Weekly, one at a time: Hebdomadaire, un à la fois
-Weekly, two at a time: Hebdomadaire, deux à la fois
-Weekly, three at a time: Hebdomadaire, trois à la fois
+This season will be broadcast in several parts: Cette saison sera diffusée en plusieurs parties
 Weekly, four at a time: Hebdomadaire, quatre à la fois
-Weekly, two, then one: Hebdomadaire, deux, puis un
-Weekly, three, then one: Hebdomadaire, trois, puis un
-Weekly, three, then two: Hebdomadaire, trois, puis deux
 Weekly, four, then one: Hebdomadaire, quatre, puis un
 Weekly, four, then two: Hebdomadaire, quatre, puis deux
+Weekly, one at a time: Hebdomadaire, un à la fois
 Weekly, selected days: Hebdomadaire, jours sélectionnés
+Weekly, three at a time: Hebdomadaire, trois à la fois
+Weekly, three, then one: Hebdomadaire, trois, puis un
+Weekly, three, then two: Hebdomadaire, trois, puis deux
+Weekly, two at a time: Hebdomadaire, deux à la fois
+Weekly, two, then one: Hebdomadaire, deux, puis un
 
 January: Janvier
 February: Février
@@ -927,6 +928,7 @@ Animation Director: Directeur d'animation
 Animation Manager: Responsable de l'animation
 Animation Supervisor: Superviseur d'animation
 Animation: Animation
+Animator: Animateur
 Apprentice Sound Editor: Apprenti monteur son
 Armorer: Armurier
 Art Department Assistant: Assistant du département artistique
@@ -1479,6 +1481,7 @@ You can change the translations of the application here.: Vous pouvez modifier l
 '%minutes% minutes': '%minutes% minutes'
 1 minute: 1 minute
 2015: 2015
+Add a genre: Ajouter un genre
 Add this movie to your watchlist: Ajouter ce film à votre liste de suivi
 Average: Moyenne
 Backdrops: Arrière-plans
@@ -1487,6 +1490,7 @@ Collection: Collection
 Count: Nombre
 Delete this movie from your watchlist: Supprimer ce film de votre liste de suivi
 Digital: Numérique
+Discover: Découvrir
 Genres: Genres
 Logos: Logos
 Logo: Logo
@@ -1515,6 +1519,8 @@ Runtime: Durée
 Search a movie: Rechercher un film
 Search for a movie…: Rechercher un film…
 Search on TMDB: Rechercher sur The Movie Database
+Select a cast member: Sélectionner une actrice ou un acteur
+Select a crew member: Sélectionner un membre de l'équipe
 Select a language: Sélectionner une langue
 TV: Télévision
 Theatrical (limited): Cinéma (limité)

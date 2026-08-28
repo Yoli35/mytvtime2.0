@@ -192,6 +192,8 @@ export class Menu {
         this.posterUrl = null;
         this.profileUrl = null;
         this.imagePaths = {};
+
+        this.tooltips = new ToolTips();
     }
 
     init() {
@@ -210,8 +212,6 @@ export class Menu {
         this.initOptions();
 
         this.getAccentColor();
-
-        this.tooltips = new ToolTips();
 
         const navbarItems = navbar.querySelectorAll(".navbar-item");
         const historyNavbarItem = navbar.querySelector("#history-menu");
@@ -717,7 +717,11 @@ export class Menu {
                 const openInNewTab = document.querySelector(".navbar .multi-search .multi-search-options-menu #new-tab-toggler").checked;
                 console.log(openInNewTab);
                 const addCastBlock = searchInput.closest('.cast-search-block');
+                const inputId = searchInput.getAttribute("id");
+                const discoverSearchBlock = inputId === 'discover-with-cast' || inputId === 'discover-with-crew';
                 const isAddCastInput = searchType === 'people' && addCastBlock !== null;
+                const isDiscoverCastInput = searchType === 'people' && discoverSearchBlock !== null;
+                const isCast = (inputId === 'discover-with-cast');
                 const lis = ul.querySelectorAll('li');
                 lis.forEach(item => {
                     item.remove();
@@ -736,7 +740,7 @@ export class Menu {
                         //return; // On ne veut pas de collection
                     }
                     let url;
-                    if (isAddCastInput) {
+                    if (isAddCastInput || isDiscoverCastInput) {
                         url = null;
                     } else {
                         url = baseHref + self.hRefs[type] + result['id'];
@@ -746,7 +750,8 @@ export class Menu {
                     if (url) {
                         aDiv.href = url;
                         aDiv.target = openInNewTab ? "_blank" : "_self";
-                    } else {
+                    }
+                    if (isAddCastInput) {
                         const hiddenInputPersonId = addCastBlock.querySelector('#cast-search-person-id');
                         const castNameInput = addCastBlock.querySelector('#cast-search');
                         aDiv.setAttribute("person-id", result['id'].toString());
@@ -758,6 +763,40 @@ export class Menu {
                             });
                             hiddenInputPersonId.value = aDiv.getAttribute("person-id");
                             castNameInput.value = aDiv.getAttribute("name");
+                            const thisUl = e.target.closest("ul");
+                            const lis = thisUl.querySelectorAll('li');
+                            lis.forEach(item => {
+                                item.remove();
+                            });
+                        })
+                    }
+                    if (isDiscoverCastInput) {
+                        aDiv.setAttribute("person-id", result['id'].toString());
+                        aDiv.setAttribute("name", result['name'].toString());
+                        aDiv.addEventListener("click", e => {
+                            self.tooltips.hide();
+                            // <div class="discover-item" data-code="1190668">Timothée Chalamet</div>
+                            const discoverItemDiv = document.createElement("div");
+                            discoverItemDiv.classList.add("discover-item");
+                            discoverItemDiv.setAttribute("data-code", result['id'].toString());
+                            discoverItemDiv.textContent = result['name'].toString();
+                            const discoverWithPeopleListFilters = document.querySelector(isCast ? ".discover-with-cast-list" : ".discover-with-crew-list");
+                            discoverWithPeopleListFilters.appendChild(discoverItemDiv);
+                            // <div class="discover-item" data-code="1190668">Timothée Chalamet<div class="close">{{ ux_icon('mdi:close') }}</div></div>
+                            const discoverWithPeopleList = searchInput.parentElement.parentElement.querySelector(isCast ? ".discover-with-cast-list" : ".discover-with-crew-list");
+                            const discoverItemWithCloseDiv = discoverItemDiv.cloneNode(true);
+                            const closeDiv = document.createElement("div");
+                            closeDiv.classList.add("close");
+                            const closeSVG = document.querySelector("#svgs .svg-close svg").cloneNode(true);
+                            closeDiv.appendChild(closeSVG);
+                            closeDiv.addEventListener("click", e => {
+                                discoverWithPeopleListFilters.removeChild(discoverItemDiv);
+                                discoverWithPeopleList.removeChild(discoverItemWithCloseDiv);
+                            });
+                            discoverItemWithCloseDiv.appendChild(closeDiv);
+                            discoverWithPeopleList.appendChild(discoverItemWithCloseDiv);
+
+                            searchInput.value = "";
                             const thisUl = e.target.closest("ul");
                             const lis = thisUl.querySelectorAll('li');
                             lis.forEach(item => {
@@ -866,7 +905,8 @@ export class Menu {
                 }
 
                 const searchResults = li.closest(".search-results");
-                const a = li.querySelector("a");
+                const firstChild = li.firstChild;
+                firstChild.click();
                 /* >> Fermeture du menu au cas où le lien serait ouvert dans un autre onglet ou une autre fenêtre */
                 const lis = ul.querySelectorAll("li");
                 lis.forEach(item => {
@@ -875,10 +915,11 @@ export class Menu {
                 e.target.value = '';
                 searchResults.classList.remove("showing-something");
                 const menuDiv = searchResults.closest(".menu");
-                const navbarItem = menuDiv.closest(".navbar-item");
-                self.closeMenu(navbarItem, menuDiv);
+                if (menuDiv) {
+                    const navbarItem = menuDiv.closest(".navbar-item");
+                    self.closeMenu(navbarItem, menuDiv);
+                }
                 /* << */
-                a.click();
             }
             if (e.key === 'ArrowDown') {
                 e.preventDefault();
@@ -941,7 +982,8 @@ export class Menu {
                     'tv': self.posterUrl,
                     'tv_id': self.posterUrl,
                     'dbtv': '/series/posters',
-                    'people': self.profileUrl
+                    'people': self.profileUrl,
+                    'person': self.profileUrl
                 };
             })
             .catch((error) => {

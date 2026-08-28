@@ -202,6 +202,13 @@ readonly class TMDBService
         return $this->getResults($request);
     }
 
+    public function getMovieGenres(?string $language = null): ?string
+    {
+        $request = "https://api.themoviedb.org/3/genre/movie/list";
+        if ($language) $request .= "?language=$language";
+        return $this->getResults($request);
+    }
+
     public function getMovieExtras(int $movieID, string $extra, string $params): ?string
     {
         $request = "https://api.themoviedb.org/3/movie/$movieID/$extra?$params";
@@ -211,6 +218,13 @@ readonly class TMDBService
     public function getSeriesExtras(int $seriesID, string $extra, string $params): ?string
     {
         $request = "https://api.themoviedb.org/3/tv/$seriesID/$extra?$params";
+        return $this->getResults($request);
+    }
+
+    public function searchKeyword(string $query): ?string
+    {
+        // $query="based on no" → "based%20on%20no"
+        $request = "https://api.themoviedb.org/3/search/keyword?query=" . urlencode($query);
         return $this->getResults($request);
     }
 

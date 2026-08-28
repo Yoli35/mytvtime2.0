@@ -1,0 +1,123 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}my Tv Time → {{ 'Movies'|trans }} → {{ 'Discover'|trans }}{% endblock %}
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('styles/contact.scss') }}">
+    <link rel="stylesheet" href="{{ asset('styles/home.scss') }}">
+    <link rel="stylesheet" href="{{ asset('styles/movie.scss') }}">
+    <link rel="stylesheet" href="{{ asset('styles/movie_discover.scss') }}">
+{% endblock %}
+{% block body %}
+    <div class="container-fluid">
+        {% include '_blocks/_menu.html.twig' %}
+        <div class="movie-discover">
+            <h1>{{ title|trans }}</h1>
+            <div class="filters">
+                <div class="discover-with-cast-list">
+                    <div class="discover-filter">{{ 'Cast'|trans }}</div>
+                </div>
+                <div class="discover-with-crew-list">
+                    <div class="discover-filter">{{ 'Crew'|trans }}</div>
+                </div>
+                <div class="discover-with-genre-list">
+                    <div class="discover-filter">{{ 'Genres'|trans }}</div>
+                </div>
+                <div class="discover-with-keyword-list">
+                    <div class="discover-filter">{{ 'Keywords'|trans }}</div>
+                </div>
+                <div class="discover-origin-country">
+                    <div class="discover-filter">{{ 'Country'|trans }}</div>
+                </div>
+                <div class="discover-origin-language">
+                    <div class="discover-filter">{{ 'Language'|trans }}</div>
+                </div>
+            </div>
+            <form id="discover">
+                <div class="form-row">
+                    <div class="form-field">
+                        <label for="discover-with-cast">{{ 'Cast'|trans }}
+                            <input type="search" name="discover-with-cast" id="discover-with-cast" placeholder="{{ 'Select a cast member'|trans }}…">
+                            <div class="switch-and-or"><div class="and active">{{ 'And'|trans }}</div><div class="or">{{ 'Or'|trans }}</div></div>
+                        </label>
+                        <div class="search-results"><ul data-type="people"></ul></div>
+                        <div class="discover-with-cast-list">
+                        </div>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-field">
+                        <label for="discover-with-crew">{{ 'Crew'|trans }}
+                            <input type="search" name="discover-with-crew" id="discover-with-crew" placeholder="{{ 'Select a crew member'|trans }}…">
+                            <div class="switch-and-or"><div class="and active">{{ 'And'|trans }}</div><div class="or">{{ 'Or'|trans }}</div></div>
+                        </label>
+                        <div class="search-results"><ul data-type="people"></ul></div>
+                        <div class="discover-with-crew-list">
+                        </div>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-field">
+                        <label for="discover-with-genres">{{ 'Genres'|trans }}
+                            <select name="discover-with-genres" id="discover-with-genres">
+                                <option value="all">{{ 'Add a genre'|trans }}</option>
+                                {% for code, genre in genres %}
+                                    <option value="{{ code }}">{{ genre }}</option>
+                                {% endfor %}
+                            </select>
+                            <div class="switch-and-or"><div class="and active">{{ 'And'|trans }}</div><div class="or">{{ 'Or'|trans }}</div></div>
+                        </label>
+                        <div class="discover-with-genre-list" data-switch="and">
+                        </div>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-field">
+                        <label for="discover-with-keywords">{{ 'Keywords'|trans }}
+                            <input type="search" name="discover-with-keywords" id="discover-with-keywords">
+                            <div class="switch-and-or"><div class="and active">{{ 'And'|trans }}</div><div class="or">{{ 'Or'|trans }}</div></div>
+                        </label>
+                        <div class="search-results"><ul data-type="keyword"></ul></div>
+                        <div class="discover-with-keyword-list">
+                        </div>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-field">
+                        <label for="discover-origin-country">{{ 'Select a country'|trans }}
+                            <select name="discover-origin-country" id="discover-origin-country">
+                                <option value="all">{{ 'Select a country'|trans }}…</option>
+                                {% for code, country in countries %}
+                                    <option value="{{ code }}">{{ country }}</option>
+                                {% endfor %}
+                            </select>
+                        </label>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-field">
+                        <label for="discover-origin-language">{{ 'Select a language'|trans }}
+                            <select name="discover-origin-language" id="discover-origin-language">
+                                <option value="all">{{ 'Select a language'|trans }}…</option>
+                                {% for code, language in languages %}
+                                    <option value="{{ code }}">{{ language }}</option>
+                                {% endfor %}
+                            </select>
+                        </label>
+                    </div>
+                </div>
+                <button type="submit">{{ ux_icon('mdi:search') }}</button>
+                <div class="result-infos">{{ 'No results'|trans }}</div>
+            </form>
+            <div class="series-search-result">
+                <div class="wrapper">
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="svgs" style="display: none;">
+        <div class="svg-close">{{ ux_icon('mdi:close') }}</div>
+    </div>
+    {% include '_blocks/_footer.html.twig' %}
+{% endblock %}

@@ -55,6 +55,7 @@ return [
     'Map' => ['path' => './assets/js/Map.js'],
     'Menu' => ['path' => './assets/js/Menu.js'],
     'Movie' => ['path' => './assets/js/movies/Movie.js'],
+    'MovieDiscover' => ['path' => './assets/js/movies/MovieDiscover.js'],
     'MovieIndex' => ['path' => './assets/js/movies/MovieIndex.js'],
     'NavBar' => ['path' => './assets/js/NavBar.js'],
     'NetworkAndProvider' => ['path' => './assets/js/user/NetworkAndProvider.js'],

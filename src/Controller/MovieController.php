@@ -46,11 +46,11 @@ use Twig\Extra\Intl\IntlExtension;
 class MovieController extends AbstractController
 {
     public function __construct(
-        private readonly DateService                       $dateService,
-        private readonly HomeController                    $homeController,
-        private readonly ImageConfiguration                $imageConfiguration,
-        private readonly ImageService                      $imageService,
-        private readonly KeywordService                    $keywordService,
+        private readonly DateService                  $dateService,
+        private readonly HomeController               $homeController,
+        private readonly ImageConfiguration           $imageConfiguration,
+        private readonly ImageService                 $imageService,
+        private readonly KeywordService               $keywordService,
         private readonly MovieCollectionRepository    $movieCollectionRepository,
         private readonly MovieDirectLinkRepository    $movieDirectLinkRepository,
         private readonly MovieLocalizedNameRepository $movieLocalizedNameRepository,
@@ -62,7 +62,6 @@ class MovieController extends AbstractController
         private readonly TranslatorInterface          $translator,
         private readonly UserMovieRepository          $userMovieRepository,
         private readonly ApiWatchLink                 $watchLinkApi,
-//        private readonly WatchProviderRepository           $watchProviderRepository,
     )
     {
     }
@@ -178,6 +177,26 @@ class MovieController extends AbstractController
                 'total_pages' => $searchResult['total_pages'] ?? 0,
                 'page' => $searchResult['page'] ?? 0,
             ],
+        ]);
+    }
+
+    #[Route('/discover', name: 'discover')]
+    public function discover(Request $request): Response
+    {
+        // Country names: with_origin_country
+        $countries = (new IntlExtension)->getCountryNames($request->getLocale());
+        // Language names: with_original_language
+        $languages = (new IntlExtension)->getLanguageNames($request->getLocale());
+        // Movie genre list: with_genres
+        $genres = json_decode($this->tmdbService->getMovieGenres($request->getLocale()), true);
+        $genres = array_column($genres['genres'], 'name', 'id');
+
+        return $this->render('movie/discover.html.twig', [
+            'form' => null,
+            'title' => 'Advanced search',
+            'countries' => $countries,
+            'languages' => $languages,
+            'genres' => $genres,
         ]);
     }
 
