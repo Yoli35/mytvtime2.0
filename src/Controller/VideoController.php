@@ -55,7 +55,6 @@ final class VideoController extends AbstractController
     {
         $client = new Google_Client();
         $client->setApplicationName('mytvtime');
-//        $client->setScopes(['https://www.googleapis.com/auth/youtube.readonly',]);
         $client->setScopes(['https://www.googleapis.com/auth/youtube.force-ssl',]);
         $client->setAuthConfig('../config/google/mytvtime-349019-001b2f815d02.json');
         $client->setAccessType('offline');
