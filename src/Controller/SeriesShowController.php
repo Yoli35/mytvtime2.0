@@ -35,6 +35,7 @@ use App\Service\ImageConfiguration;
 use App\Service\ImageService;
 use App\Service\ProviderService;
 use App\Service\SeriesService;
+use App\Service\ThetvdbService;
 use App\Service\TMDBService;
 use DateMalformedStringException;
 use DateTimeImmutable;
@@ -77,6 +78,7 @@ final class SeriesShowController extends AbstractController
         private readonly SeriesService                      $seriesService,
         private readonly SettingsRepository                 $settingsRepository,
         private readonly SourceRepository                   $sourceRepository,
+        private readonly ThetvdbService                     $thetvdbService,
         private readonly TimezoneBookmarkRepository         $timezoneBookmarkRepository,
         private readonly TMDBService                        $tmdbService,
         private readonly TranslatorInterface                $translator,
@@ -308,6 +310,13 @@ final class SeriesShowController extends AbstractController
         }
 
         $themeSettings = $this->settingsRepository->findOneBy(['user' => $user, 'name' => 'theme_series_' . $series->getTmdbId()]);
+
+        // test the tv db api
+//        $thetvdbService = $this->thetvdbService;
+//        $result = json_decode($this->thetvdbService->series(419879), true);
+//        dump($result);
+//        $result = json_decode($this->thetvdbService->seriesExtended(419879), true);
+//        dump($result);
 
         return $this->render("series_show/series.html.twig", [
             'series' => $seriesArr,
