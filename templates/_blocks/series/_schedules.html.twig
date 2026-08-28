@@ -23,7 +23,7 @@ Mandatory variables:
                             <div class="season">
                                 {{ "S%02d"|format(schedule.seasonNumber) }}
                                 {% if schedule.multiPart %}
-                                    {{ 'Part'|trans }} {{ schedule.seasonPart }} ({{ 'Ep.s'|trans }} {{ schedule.seasonPartFirstEpisode }}-{{ schedule.seasonPartFirstEpisode+schedule.seasonPartEpisodeCount-1 }})
+                                    {{ 'Part'|trans }} {{ schedule.seasonPart }} ({{ 'Ep.'|trans }}{{ schedule.seasonPartFirstEpisode }}-{{ schedule.seasonPartFirstEpisode+schedule.seasonPartEpisodeCount-1 }})
                                 {% endif %}
                             </div>
                             <div class="provider">
