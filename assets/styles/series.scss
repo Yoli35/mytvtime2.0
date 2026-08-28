@@ -1660,7 +1660,7 @@ h2 {
             height: 3rem;
             justify-content: flex-start;
             position: relative;
-            width: 32rem;
+            width: 40rem;
             z-index: 1;
         }
 
@@ -1680,6 +1680,7 @@ h2 {
                 height: 100%;
                 justify-content: center;
                 min-width: 3rem;
+                white-space: nowrap;
             }
 
             .provider {
@@ -6601,9 +6602,10 @@ aside:has(.episode__cards) {
                     width: fit-content;
 
                     &.updated, &.update {
-                        background-color: hsl(from var(--orange-50) h s l /.5);
-                        box-shadow: 0 0 2rem var(--orange-50);
+                        /*background-color: hsl(from var(--orange-50) h s l /.5);*/
+                        /*box-shadow: 0 0 2rem var(--orange-50);*/
                         padding-block: .25rem;
+                        text-shadow: 0 0 2rem var(--orange-50);
                     }
                 }
 
