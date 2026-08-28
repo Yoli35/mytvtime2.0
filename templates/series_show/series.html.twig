@@ -91,7 +91,7 @@
                         {{ include('_blocks/forms/_localized_name.html.twig', {localized_name: tv.localized_name}) }}
                         {{ include('_blocks/forms/_overview.html.twig', {sources: tv.sources}) }}
                         <h5>
-                            {% set n = series.visitNumber %}
+                            {% set n = series.visitNumber+1 %}
                             {% if n > 1000 %}
                                 {% set n = (n / 1000)|round(1, 'floor') ~ 'k' %}
                             {% endif %}
