@@ -36,6 +36,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Routing\Requirement\Requirement;
+use Symfony\Component\Security\Http\Attribute\CurrentUser;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\String\Slugger\AsciiSlugger;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -181,15 +182,18 @@ class MovieController extends AbstractController
     }
 
     #[Route('/discover', name: 'discover')]
-    public function discover(Request $request): Response
+    public function discover(#[CurrentUser] User $user, Request $request): Response
     {
+        $intl = new IntlExtension();
         // Country names: with_origin_country
-        $countries = (new IntlExtension)->getCountryNames($request->getLocale());
+        $countries = $intl->getCountryNames($request->getLocale());
         // Language names: with_original_language
-        $languages = (new IntlExtension)->getLanguageNames($request->getLocale());
+        $languages = $intl->getLanguageNames($request->getLocale());
         // Movie genre list: with_genres
         $genres = json_decode($this->tmdbService->getMovieGenres($request->getLocale()), true);
         $genres = array_column($genres['genres'], 'name', 'id');
+        // Region
+        $countryCode = $user->getCountry();
 
         return $this->render('movie/discover.html.twig', [
             'form' => null,
@@ -197,6 +201,8 @@ class MovieController extends AbstractController
             'countries' => $countries,
             'languages' => $languages,
             'genres' => $genres,
+            'userCountryCode' => $countryCode,
+            'userCountryName' => $countryCode ? $intl->getCountryName($countryCode, $request->getLocale()) : null
         ]);
     }
 

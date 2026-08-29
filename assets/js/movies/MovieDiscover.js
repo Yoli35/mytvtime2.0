@@ -3,30 +3,165 @@ let self;
 export class MovieDiscover {
     constructor(menu) {
         self = this;
+        this.lang = document.querySelector("html").lang;
         this.addGenre = this.addGenre.bind(this);
         this.setCountry = this.setCountry.bind(this);
         this.setLanguage = this.setLanguage.bind(this);
         this.fetchKeywords = this.fetchKeywords.bind(this);
+        this.switchSeparator = this.switchSeparator.bind(this);
 
         this.init(menu);
     }
 
     init(menu) {
+        const form = document.querySelector("#discover-form");
         const discoverWithCastInput = document.querySelector("#discover-with-cast");
         discoverWithCastInput.addEventListener("input", menu.searchFetch);
         discoverWithCastInput.addEventListener("keydown", menu.searchMenuNavigate);
         const discoverWithCrewInput = document.querySelector("#discover-with-crew");
         discoverWithCrewInput.addEventListener("input", menu.searchFetch);
         discoverWithCrewInput.addEventListener("keydown", menu.searchMenuNavigate);
-        const discoverWithGenresSelect = document.querySelector("#discover-with-genres");
+        const discoverWithGenresSelect = document.querySelector("#discover-with-genre");
         discoverWithGenresSelect.addEventListener("change", this.addGenre);
+        const discoverRegionSelect = document.querySelector("#discover-region");
+        discoverRegionSelect.addEventListener("change", this.setRegion);
         const discoverOriginCountrySelect = document.querySelector("#discover-origin-country");
         discoverOriginCountrySelect.addEventListener("change", this.setCountry);
         const discoverOriginLanguageSelect = document.querySelector("#discover-origin-language");
         discoverOriginLanguageSelect.addEventListener("change", this.setLanguage);
-        const discoverWithKeywordsInput = document.querySelector("#discover-with-keywords");
+        const discoverWithKeywordsInput = document.querySelector("#discover-with-keyword");
         discoverWithKeywordsInput.addEventListener("input", this.fetchKeywords);
+        const discoverAndOrSwitches = document.querySelectorAll(".discover-switch-and-or");
+        discoverAndOrSwitches.forEach(discoverAndOrSwitch => {
+            discoverAndOrSwitch.addEventListener("click", this.switchSeparator);
+        });
+        const releaseYearInput = document.querySelector("#discover-release-year");
+        releaseYearInput.addEventListener("input", this.validateReleaseYear);
+        const releaseYearBeforeInput = document.querySelector("#discover-release-year-lte");
+        releaseYearBeforeInput.addEventListener("input", this.validateReleaseYear);
+        const releaseYearAfterInput = document.querySelector("#discover-release-year-gte");
+        releaseYearAfterInput.addEventListener("input", this.validateReleaseYear);
+        const discoverSort = document.querySelector("#discover-sort");
+        discoverSort.addEventListener("change", this.setSort);
 
+        const discoverFoldButton = form.querySelector("#discover-fold");
+        discoverFoldButton.addEventListener("click", () => {
+            form.classList.toggle("folded");
+        });
+
+        const discoverSubmitButton = form.querySelector("#discover-submit");
+        discoverSubmitButton.addEventListener("click", this.submit);
+    }
+
+    submit(event) {
+        event.preventDefault();
+        console.log("Search form submitting…");
+
+        const form = document.querySelector("#discover-form");
+        form.classList.toggle("folded");
+
+        const regionItem = document.querySelector(".filters .discover-region .discover-item");
+        const region = regionItem ? regionItem.dataset.code : null;
+        const releaseYearBefore = document.querySelector("#discover-release-year-lte").value;
+        const releaseYearAfter = document.querySelector("#discover-release-year-gte").value;
+        const releaseYear = document.querySelector("#discover-release-year").value;
+        const originCountryItem = document.querySelector(".filters .discover-origin-country .discover-item");
+        const originCountry = originCountryItem ? originCountryItem.dataset.code : null;
+        const originLanguageItem = document.querySelector(".filters .discover-origin-language .discover-item");
+        const originLanguage = originLanguageItem ? originLanguageItem.dataset.code : null;
+        const castItems = document.querySelectorAll(".filters .discover-with-cast-list .discover-item");
+        const castSeparator = document.querySelector(".filters .discover-with-cast-list .discover-filter-switch").dataset.separator;
+        const cast = [];
+        for (const castItem of castItems) {
+            cast.push(castItem.dataset.code);
+        }
+        const crewItems = document.querySelectorAll(".filters .discover-with-crew-list .discover-item");
+        const crewSeparator = document.querySelector(".filters .discover-with-crew-list .discover-filter-switch").dataset.separator;
+        const crew = [];
+        for (const crewItem of crewItems) {
+            crew.push(crewItem.dataset.code);
+        }
+        const keywordItems = document.querySelectorAll(".filters .discover-with-keyword-list .discover-item");
+        const keywordSeparator = document.querySelector(".filters .discover-with-keyword-list .discover-filter-switch").dataset.separator;
+        const keywords = [];
+        for (const keywordItem of keywordItems) {
+            keywords.push(keywordItem.dataset.code);
+        }
+        const genreItems = document.querySelectorAll(".filters .discover-with-genre-list .discover-item");
+        const genreSeparator = document.querySelector(".filters .discover-with-genre-list .discover-filter-switch").dataset.separator;
+        const genres = [];
+        for (const genreItem of genreItems) {
+            genres.push(genreItem.dataset.code);
+        }
+        const discoverSort = document.querySelector(".filters .discover-sort .discover-item").dataset.sort;
+
+        const data = {
+            "cast": cast,
+            "castSeparator": castSeparator,
+            "crew": crew,
+            "crewSeparator": crewSeparator,
+            "genreSeparator": genreSeparator,
+            "genres": genres,
+            "keywordSeparator": keywordSeparator,
+            "keywords": keywords,
+            "originCountry": originCountry,
+            "originLanguage": originLanguage,
+            "region": region,
+            "releaseYear": releaseYear,
+            "releaseYearAfter": releaseYearAfter,
+            "releaseYearBefore": releaseYearBefore,
+            "sort": discoverSort,
+        };
+        console.log(data);
+
+        fetch('/api/movie/search/advanced', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(data),
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log(data)
+            const posterUrl = data.posterUrl;
+            const results = data.results;
+            const page = results.page;
+            const totalPages = results.total_pages;
+            const totalResults = results.total_results;
+            const movies = results.results;
+            console.log(page, totalPages, totalResults);
+            const wrapper = document.querySelector(".movie-search-result .wrapper");
+            wrapper.innerHTML = "";
+            movies.forEach(movie => {
+                console.log(posterUrl + movie.poster_path);
+
+                const movieCard = document.createElement("div");
+                movieCard.classList.add("movie-card");
+                const a = document.createElement("a");
+                a.href = `/${self.lang}/movie/tmdb/${movie.id}`;
+                movieCard.appendChild(a);
+                const posterDiv = document.createElement("div");
+                posterDiv.classList.add("poster");
+                if (!movie.poster_path) {
+                    posterDiv.textContent = "No poster";
+                } else {
+                    const posterImg = document.createElement("img");
+                    posterImg.src = posterUrl + movie.poster_path;
+                    posterDiv.appendChild(posterImg);
+                }
+                a.appendChild(posterDiv);
+                const infosDiv = document.createElement("div");
+                infosDiv.classList.add("infos");
+                const titleDiv = document.createElement("div");
+                titleDiv.classList.add("title");
+                titleDiv.textContent = movie.title;
+                infosDiv.appendChild(titleDiv);
+                a.appendChild(infosDiv);
+                wrapper.appendChild(movieCard);
+            });
+        })
+        .catch(error => console.error(error));
     }
 
     addGenre(event) {
@@ -58,27 +193,23 @@ export class MovieDiscover {
         select.value = "all";
     }
 
-    setCountry(event) {
-        const select = event.target;
-        // <div class="discover-item" data-code="FR">France<div class="close">{{ ux_icon('mdi:close') }}</div></div>
-        const discoverWithCountryFilters = document.querySelector(".discover-origin-country");
-        const existingItem = discoverWithCountryFilters.querySelector(".discover-item");
-        if (existingItem) existingItem.remove();
-        if (select.value === "all") return;
+    setRegion(event) {
+        self.setFilter(event, ".discover-region");
+    }
 
-        const discoverItemDiv = document.createElement("div");
-        discoverItemDiv.classList.add("discover-item");
-        discoverItemDiv.setAttribute("data-code", select.value);
-        const option = select.querySelector('option[value="' + select.value + '"]');
-        discoverItemDiv.textContent = option.textContent;
-        discoverWithCountryFilters.appendChild(discoverItemDiv);
+    setCountry(event) {
+        self.setFilter(event, ".discover-origin-country");
     }
 
     setLanguage(event) {
+        self.setFilter(event, ".discover-origin-language");
+    }
+
+    setFilter(event, filter) {
         const select = event.target;
         // <div class="discover-item" data-code="fr">Français<div class="close">{{ ux_icon('mdi:close') }}</div></div>
-        const discoverWithCountryFilters = document.querySelector(".discover-origin-language");
-        const existingItem = discoverWithCountryFilters.querySelector(".discover-item");
+        const discoverFilter = document.querySelector(filter);
+        const existingItem = discoverFilter.querySelector(".discover-item");
         if (existingItem) existingItem.remove();
         if (select.value === "all") return;
 
@@ -87,7 +218,7 @@ export class MovieDiscover {
         discoverItemDiv.setAttribute("data-code", select.value);
         const option = select.querySelector('option[value="' + select.value + '"]');
         discoverItemDiv.textContent = option.textContent;
-        discoverWithCountryFilters.appendChild(discoverItemDiv);
+        discoverFilter.appendChild(discoverItemDiv);
     }
 
     fetchKeywords(event) {
@@ -143,11 +274,63 @@ export class MovieDiscover {
         closeDiv.classList.add("close");
         const closeSVG = document.querySelector("#svgs .svg-close svg").cloneNode(true);
         closeDiv.appendChild(closeSVG);
-        closeDiv.addEventListener("click", e => {
+        closeDiv.addEventListener("click", () => {
             discoverWithKeywordListFilters.removeChild(discoverItemDiv);
             discoverWithKeywordList.removeChild(discoverItemWithCloseDiv);
         });
         discoverItemWithCloseDiv.appendChild(closeDiv);
         discoverWithKeywordList.appendChild(discoverItemWithCloseDiv);
+    }
+
+    switchSeparator(event) {
+        const switchDiv = event.target.parentElement;
+        const blockClass = event.target.parentElement.parentElement.getAttribute("for");
+        const text = event.target.textContent;
+        const filter = document.querySelector('.filters .' + blockClass + '-list .discover-filter-switch');
+        let separator = ",";
+        console.log(blockClass);
+        console.log(text);
+        if (event.target.classList.contains("and")) {
+            switchDiv.classList.add("and");
+            switchDiv.classList.remove("or");
+        } else {
+            switchDiv.classList.add("or");
+            switchDiv.classList.remove("and");
+            separator = "|";
+        }
+        filter.textContent = text;
+        filter.dataset.separator = separator;
+    }
+
+    validateReleaseYear(event) {
+        const releaseYearInput = event.target;
+        const releaseYearValue = releaseYearInput.value;
+        const filterId = event.target.id;
+        const filter = document.querySelector(`.filters .${filterId}`);
+        if (releaseYearValue >= 1895) {
+            let releaseYearItem = filter.querySelector('.discover-item');
+            if (!releaseYearItem) {
+                releaseYearItem = document.createElement('div');
+                releaseYearItem.classList.add('discover-item');
+                filter.appendChild(releaseYearItem);
+            }
+            releaseYearItem.textContent = releaseYearValue;
+            filter.dataset.year = releaseYearValue;
+        } else {
+            let releaseYearItem = filter.querySelector('.discover-item');
+            if (releaseYearItem) {
+                releaseYearItem.remove();
+                filter.dataset.year = "";
+            }
+        }
+    }
+
+    setSort(event) {
+        const discoverSort = event.target;
+        const discoverSortValue = discoverSort.value;
+        const discoverSortOption = discoverSort.querySelector('option:checked');
+        const discoverSortFilter = document.querySelector(".filters .discover-sort .discover-item");
+        discoverSortFilter.textContent = discoverSortOption.textContent;
+        discoverSortFilter.dataset.sort = discoverSortValue;
     }
 }

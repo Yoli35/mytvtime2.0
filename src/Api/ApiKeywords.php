@@ -123,9 +123,6 @@ class ApiKeywords extends AbstractController
 
         $keywords = json_decode($this->tmdbService->searchKeyword($query), true);
         $keywords = $keywords['results'];
-        /*if (count($keywords)) {
-            $keywords = array_column($keywords, 'name', 'id');
-        }*/
 
         return $this->json([
             'success' => true,

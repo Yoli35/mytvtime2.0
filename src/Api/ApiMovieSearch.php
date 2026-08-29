@@ -2,49 +2,81 @@
 
 namespace App\Api;
 
-use App\Entity\Movie;
-use App\Entity\MovieLocalizedName;
-use App\Entity\User;
-use App\Entity\UserMovie;
-use App\Repository\MovieLocalizedNameRepository;
-use App\Repository\MovieRepository;
+use App\Service\ImageConfiguration;
+use App\Service\TMDBService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
-use Symfony\Component\Routing\Requirement\Requirement;
-use Symfony\Component\String\Slugger\AsciiSlugger;
 
-/** @method User|null getUser() */
 #[Route('/api/movie/search', name: 'api_movie_search_')]
 class ApiMovieSearch extends AbstractController
 {
     public function __construct(
-        private readonly MovieLocalizedNameRepository $movieLocalizedNameRepository,
-        private readonly MovieRepository $movieRepository,
+        private readonly ImageConfiguration $imageConfiguration,
+        private readonly TMDBService $tmdbService,
     )
-    {}
+    {
+    }
 
     #[Route('/advanced', name: 'advanced', methods: ['POST'])]
-    public function get(Request $request, UserMovie $userMovie): Response
+    public function get(Request $request): Response
     {
         $data = json_decode($request->getContent(), true);
-        $name = $data['name'];
-        $movie = $this->movieRepository->findOneBy(['id' => $userMovie->getMovie()->getId()]);
-        $slugger = new AsciiSlugger();
+        dump($data);
+        // * "cast" => [▶]
+        // * "castSeparator" => ","
+        // * "crew" => [▶]
+        // * "crewSeparator" => ","
+        // * "genreSeparator" => ","
+        // * "genres" => [▶]
+        // * "keywordSeparator" => ","
+        // * "keywords" => [▶]
+        // * "originCountry" => "US"
+        // * "originLanguage" => "en"
+        // * "region" => "FR"
+        // * "releaseYear" => "2025"
+        // * "releaseYearAfter" => "2024"
+        // * "releaseYearBefore" => "2026"
+        // * "sort": "primary_release_date.desc"
+        $page = 1;
+        $cast = count($data['cast']) ? implode($data['castSeparator'], $data['cast']) : null;
+        $crew = count($data['crew']) ? implode($data['crewSeparator'], $data['crew']) : null;
+        $genres = count($data['genres']) ? implode($data['genreSeparator'], $data['genres']) : null;
+        $keywords = count($data['keywords']) ? implode($data['keywordSeparator'], $data['keywords']) : null;
+        $originCountry = $data['originCountry'];
+        $originLanguage = $data['originLanguage'];
+        $language = $request->getLocale();
+        $country = $data['region'];
+        $date = strlen($data['releaseYear']) ? $data['releaseYear'] : null;
+        $startDate = strlen($data['releaseYearAfter']) ? $data['releaseYearAfter'] : null;
+        $endDate = strlen($data['releaseYearBefore']) ? $data['releaseYearBefore'] : null;
+        $sort = $data['sort'];
 
-        $localizedName = $this->movieLocalizedNameRepository->findOneBy(['movie' => $movie, 'locale' => $request->getLocale()]);
-        if ($localizedName) {
-            $localizedName->setName($name);
-            $localizedName->setSlug($slugger->slug($name));
-        } else {
-            $slug = $slugger->slug($name)->lower()->toString();
-            $localizedName = new MovieLocalizedName($movie, $name, $slug, $request->getLocale());
-        }
-        $this->movieLocalizedNameRepository->save($localizedName, true);
+        $filterString = "include_adult=false&include_video=false&language=$language&page=$page&sort_by=$sort";
+        if ($cast) $filterString .= "&with_cast=$cast";
+        if ($crew) $filterString .= "&with_crew=$crew";
+        if ($genres) $filterString .= "&with_genres=$genres";
+        if ($keywords) $filterString .= "&with_keywords=$keywords";
+        if ($originCountry) $filterString .= "&with_origin_country=$originCountry";
+        if ($originLanguage) $filterString .= "&with_original_language=$originLanguage";
+        if ($country) $filterString .= "&watch_region=$country";
+        if ($date) $filterString .= "&primary_release_year=$date";
+        if ($startDate) $filterString .= "&primary_release_date.gte=$startDate";
+        if ($endDate) $filterString .= "&primary_release_date.lte=$endDate";
+        dump($filterString);
+        // ?include_adult=false&include_video=false&language=en-US&page=1&sort_by=primary_release_date.desc&with_cast=933238%2C117642%2C1190668'
+
+        $results = json_decode($this->tmdbService->getFilterMovie($filterString), true);
+        dump($results);
+
+        $posterUrl = $this->imageConfiguration->getUrl('poster_sizes', 5);
+        dump($posterUrl);
 
         return $this->json([
             'ok' => true,
+            'results' => $results,
+            'posterUrl' => $posterUrl,
         ]);
     }
 }
@@ -57,10 +89,10 @@ class ApiMovieSearch extends AbstractController
 // include_video                     boolean     Defaults to false
 // language                          string      Defaults to en-US
 // page                              int32       Defaults to 1
-// primary_release_year              int32
-// primary_release_date.gte          date
-// primary_release_date.lte          date
-// region                            string
+// primary_release_year           *  int32
+// primary_release_date.gte       *  date
+// primary_release_date.lte       *  date
+// region                         *  string
 // release_date.gte                  date
 // release_date.lte                  date
 // sort_by                           string      enum (original_title.asc,original_title.desc,popularity.asc,popularity.desc,revenue.asc,revenue.desc,
@@ -73,9 +105,9 @@ class ApiMovieSearch extends AbstractController
 // vote_count.lte                    float
 // watch_region                      string
 //                                   use in conjunction with with_watch_monetization_types or with_watch_providers
-// with_cast                         string can be a comma (AND) or pipe (OR) separated query
+// with_cast                      *  string can be a comma (AND) or pipe (OR) separated query
 // with_companies                    string can be a comma (AND) or pipe (OR) separated query
-// with_crew                         string can be a comma (AND) or pipe (OR) separated query
+// with_crew                      *  string can be a comma (AND) or pipe (OR) separated query
 // with_genres                    *  string can be a comma (AND) or pipe (OR) separated query
 // with_keywords                  *  string can be a comma (AND) or pipe (OR) separated query
 // with_origin_country            *  string

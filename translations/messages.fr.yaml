@@ -1504,16 +1504,21 @@ Name of the movie: Nom du film
 Next video: Vidéo suivante
 Not found: Non trouvé
 Note: Note
+Origin language: Langue d'origine
 Physical: Physique
 Posters: Affiches
 Poster: Affiche
 Premiere: Première
 Previous video: Vidéo précédente
+Primary release year: Année de sortie principale
 Production companies: Sociétés de production
 Production countries: Pays de production
 Recommendations: Recommandations
+Region: Région
 Release date year: Année de sortie
 Release date: Date de sortie
+Released before: Sorti avant
+Released after: Sorti après
 Released: Sorti
 Runtime: Durée
 Search a movie: Rechercher un film
@@ -1530,10 +1535,22 @@ Where to buy or rent: Où acheter ou louer
 Where to buy: Où acheter
 Where to flatrate: Où regarder en streaming
 Where to rent: Où louer
+Your country: Votre pays
 Your list does not contain any movies: Votre liste ne contient aucun film
 backdrop: arrière-plan
 movies: films
 poster: affiche
+Title (ascending): Titre (ascendant)
+Title (descending): Titre (descendant)
+Original title (ascending): Titre original (ascendant)
+Original title (descending): Titre original (descendant)
+Popularity: Popularité
+Popularity (reverse): Popularité (descendant)
+Release date (reverse): Date de sortie (descendant)
+Vote average: Note moyenne
+Vote average (reverse): Note moyenne (descendant)
+Vote count: Nombre de votes
+Vote count (reverse): Nombre de votes (descendant)
 
 # Map
 Add a shooting location: Ajouter un lieu de tournage
