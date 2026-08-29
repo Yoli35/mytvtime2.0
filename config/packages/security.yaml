@@ -20,7 +20,6 @@ security:
             form_login:
                 login_path: app_login
                 check_path: app_login
-                enable_csrf: true
             logout:
                 path: app_logout
                 # where to redirect after logout
@@ -29,6 +28,9 @@ security:
                 secret: '%kernel.secret%'
                 lifetime: 604800 # 1 week in seconds
                 always_remember_me: true
+        secured_area:
+            form_login:
+                enable_csrf: true
 
             # activate different ways to authenticate
             # https://symfony.com/doc/current/security.html#the-firewall
