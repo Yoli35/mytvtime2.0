@@ -55,6 +55,7 @@
                     <div class="discover-filter">{{ 'Sort'|trans }}</div>
                     <div class="discover-item" data-sort="primary_release_date.desc">{{ 'Release date (reverse)'|trans }}</div>
                 </div>
+                <div class="result-infos"></div>
             </div>
             <form id="discover-form">
                 <div class="form-row">
@@ -82,14 +83,14 @@
                 <div class="form-row">
                     <div class="form-field">
                         <label for="discover-release-year-lte">{{ 'Released before'|trans }}
-                            <input type="number" name="discover-release-year-lte" id="discover-release-year-lte">
+                            <input type="date" name="discover-release-year-lte" id="discover-release-year-lte">
                         </label>
                     </div>
                 </div>
                 <div class="form-row">
                     <div class="form-field">
                         <label for="discover-release-year-gte">{{ 'Released after'|trans }}
-                            <input type="number" name="discover-release-year-gte" id="discover-release-year-gte">
+                            <input type="date" name="discover-release-year-gte" id="discover-release-year-gte">
                         </label>
                     </div>
                 </div>
@@ -213,8 +214,8 @@
                     <div class="discover-tools">{{ ux_icon('mdi:view-grid') }}</div>
                     <div id="discover-fold" class="discover-tools">{{ ux_icon('mdi:chevron-double-right') }}</div>
                 </div>
-                <button id="discover-submit">{{ ux_icon('mdi:search') }}</button>
-                <div class="result-infos">{{ 'No results'|trans }}</div>
+                <button id="discover-submit" data-page="1">{{ ux_icon('mdi:search') }}</button>
+                <div class="result-infos"></div>
             </form>
             <div class="movie-search-result">
                 <div class="wrapper">
@@ -225,6 +226,8 @@
     </div>
     <div id="svgs" style="display: none;">
         <div class="svg-close">{{ ux_icon('mdi:close') }}</div>
+        <div class="svg-chevron-left">{{ ux_icon('mdi:chevron-left') }}</div>
+        <div class="svg-chevron-right">{{ ux_icon('mdi:chevron-right') }}</div>
     </div>
     {% include '_blocks/_footer.html.twig' %}
 {% endblock %}

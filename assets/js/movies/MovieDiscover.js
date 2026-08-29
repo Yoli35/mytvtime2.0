@@ -10,6 +10,11 @@ export class MovieDiscover {
         this.fetchKeywords = this.fetchKeywords.bind(this);
         this.switchSeparator = this.switchSeparator.bind(this);
 
+        this.svgChevronLeft = document.querySelector("#svgs .svg-chevron-left svg");
+        this.svgChevronRight = document.querySelector("#svgs .svg-chevron-right svg");
+
+        this.submitButton = document.querySelector("#discover-submit");
+
         this.init(menu);
     }
 
@@ -105,6 +110,7 @@ export class MovieDiscover {
             "keywords": keywords,
             "originCountry": originCountry,
             "originLanguage": originLanguage,
+            "page": self.submitButton.dataset.page,
             "region": region,
             "releaseYear": releaseYear,
             "releaseYearAfter": releaseYearAfter,
@@ -121,6 +127,7 @@ export class MovieDiscover {
         })
         .then(response => response.json())
         .then(data => {
+            console.log(data)
             const posterUrl = data.posterUrl;
             const results = data.results;
             const page = results.page;
@@ -129,6 +136,8 @@ export class MovieDiscover {
             const movies = results.results;
             const wrapper = document.querySelector(".movie-search-result .wrapper");
             wrapper.innerHTML = "";
+            self.submitButton.dataset.page = "1";
+            self.displayResultInfos(page, totalPages, totalResults);
             movies.forEach(movie => {
                 const movieCard = document.createElement("div");
                 movieCard.classList.add("movie-card");
@@ -151,11 +160,65 @@ export class MovieDiscover {
                 titleDiv.classList.add("title");
                 titleDiv.textContent = movie.title;
                 infosDiv.appendChild(titleDiv);
+                // release_date: 2026-08-24 -> 24 août 2026
+                const releaseDateDiv = document.createElement("div");
+                releaseDateDiv.classList.add("release-date");
+                const releaseDate = new Date(movie.release_date);
+                const day = releaseDate.getDate();
+                const month = releaseDate.toLocaleString('default', { month: 'long' });
+                const year = releaseDate.getFullYear();
+                releaseDateDiv.textContent = `${day} ${month} ${year}`;
+                infosDiv.appendChild(releaseDateDiv);
                 a.appendChild(infosDiv);
                 wrapper.appendChild(movieCard);
             });
         })
         .catch(error => console.error(error));
+    }
+
+    displayResultInfos(page, totalPages, totalResults) {
+        const resultInfosDivs = document.querySelectorAll(".result-infos");
+        const firstResultInfosDiv = resultInfosDivs[0];
+        const secondResultInfosDiv = resultInfosDivs[1];
+        firstResultInfosDiv.innerHTML = "";
+        if (page > 1) {
+            const div = document.createElement("div");
+            div.classList.add('page', 'link');
+            const svg = self.svgChevronLeft.cloneNode(true);
+            svg.removeAttribute("id");
+            div.appendChild(svg);
+            div.dataset.page = (page - 1).toString();
+            div.addEventListener("click", this.submitPage);
+            firstResultInfosDiv.appendChild(div);
+        }
+        const div = document.createElement("div");
+        div.classList.add('page', 'current');
+        div.textContent = page.toString();
+        firstResultInfosDiv.appendChild(div);
+        if (page < totalPages) {
+            const div = document.createElement("div");
+            div.classList.add('page', 'link');
+            const svg = self.svgChevronRight.cloneNode(true);
+            svg.removeAttribute("id");
+            div.appendChild(svg);
+            div.dataset.page = (page + 1).toString();
+            div.addEventListener("click", this.submitPage);
+            firstResultInfosDiv.appendChild(div);
+        }
+        const totalText = document.createTextNode(totalPages.toString() + " page" + (totalPages > 1 ? "s" : "") + " - " + totalResults + " movie" + (totalResults > 1 ? "s" : ""));
+        firstResultInfosDiv.appendChild(totalText);
+        secondResultInfosDiv.replaceWith(firstResultInfosDiv.cloneNode(true));
+        const form = document.querySelector('#discover-form');
+        form.querySelectorAll('.page.link').forEach((element) => {
+            element.addEventListener("click", this.submitPage);
+        });
+    }
+
+    submitPage(event) {
+        const form = document.querySelector("#discover-form");
+        form.classList.toggle("folded");
+        self.submitButton.dataset.page = event.currentTarget.dataset.page;
+        self.submitButton.click();
     }
 
     addGenre(event) {

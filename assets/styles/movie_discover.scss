@@ -5,7 +5,8 @@
     margin-block: 5rem;
 
     form#discover-form {
-        background-color: hsl(from var(--green-70) h s l / .25);
+        backdrop-filter: blur(2rem);
+        background-color: hsl(from var(--green-70) h s l / .75);
         border-radius: 1rem;
         border: 4px solid hsl(from var(--green-20) h s l / .25);
         display: flex;
@@ -154,11 +155,43 @@
         }
 
         .result-infos {
-            background-color: hsl(from var(--green-70) h s l / .25);
-            color: var(--green-10);
-            border-radius: 1rem;
-            padding: .5rem;
-            text-align: center;
+            margin-inline: auto;
+        }
+    }
+
+    .result-infos {
+        align-items: center;
+        background-color: hsl(from var(--green-70) h s l / .25);
+        border-radius: 1rem;
+        color: var(--green-10);
+        display: flex;
+        gap: 1rem;
+        padding: .5rem;
+        text-align: center;
+        width: fit-content;
+
+        &:not(:has(div)) {
+            display: none;
+        }
+
+        .page {
+            align-items: center;
+            background-color: var(--ardoise-70);
+            border-radius: .25rem;
+            border: 1px solid;
+            color: var(--ardoise-40);
+            cursor: pointer;
+            display: flex;
+            height: 2rem;
+            justify-content: center;
+            min-width: 2rem;
+            padding-inline:.5rem;
+
+            &.current {
+                background-color: var(--ardoise-40);
+                color: var(--ardoise-70);
+                cursor: default;
+            }
         }
     }
 
@@ -235,7 +268,6 @@
         border-radius: 1rem;
         display: none;
         gap: .25rem;
-        margin-block-start: .5rem;
         padding: .5rem;
 
         &:has(.discover-item) {
@@ -272,10 +304,13 @@
             flex-wrap: wrap;
             gap: 1rem;
             justify-content: center;
+            max-height: calc(100dvh - 18rem);
+            overflow-y: auto;
 
             .movie-card {
                 background-color: var(--green-70);
                 border-radius: 1rem;
+                height: 35rem;
 
                 .poster {
                     height: 30rem;
@@ -302,6 +337,7 @@
                     align-items: center;
                     display: flex;
                     flex-direction: column;
+                    height: 5rem;
                     justify-content: center;
                     padding: 1rem;
                     width: 20rem;

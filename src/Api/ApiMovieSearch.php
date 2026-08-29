@@ -38,7 +38,7 @@ class ApiMovieSearch extends AbstractController
         // * "releaseYearAfter" => "2024"
         // * "releaseYearBefore" => "2026"
         // * "sort": "primary_release_date.desc"
-        $page = 1;
+        $page = $data['page'];
         $cast = count($data['cast']) ? implode($data['castSeparator'], $data['cast']) : null;
         $crew = count($data['crew']) ? implode($data['crewSeparator'], $data['crew']) : null;
         $genres = count($data['genres']) ? implode($data['genreSeparator'], $data['genres']) : null;
