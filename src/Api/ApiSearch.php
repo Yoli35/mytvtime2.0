@@ -42,27 +42,24 @@ readonly class ApiSearch
         $query = $data['query'];
 
         if ($query === 'init') {
-            $multi = ["results" => []];
+            $results = [];
         } else {
             $multi = json_decode($this->tmdbService->searchMulti(1, $query, $locale), true);
-        }
-        $tvIds = array_map(function ($result) {
-            return $result['id'];
-        }, array_filter($multi['results'], function ($result) {
-            return $result['media_type'] == 'tv';
-        }));
-        $movieIds = array_map(function ($result) {
-            return $result['id'];
-        }, array_filter($multi['results'], function ($result) {
-            return $result['media_type'] == 'movie';
-        }));
+            $tvIds = array_map(function ($result) {
+                return $result['id'];
+            }, array_filter($multi['results'], function ($result) {
+                return $result['media_type'] == 'tv';
+            }));
+            $movieIds = array_map(function ($result) {
+                return $result['id'];
+            }, array_filter($multi['results'], function ($result) {
+                return $result['media_type'] == 'movie';
+            }));
 
-        $usIds = array_column($this->userSeriesRepository->userSeriesByTMDBIds($user, $tvIds), 'id');
-        $umIds = array_column($this->userMovieRepository->userMoviesByTMDBIds($user, $movieIds), 'id');
+            $usIds = array_column($this->userSeriesRepository->userSeriesByTMDBIds($user, $tvIds), 'id');
+            $umIds = array_column($this->userMovieRepository->userMoviesByTMDBIds($user, $movieIds), 'id');
 
-        return ($this->json)([
-            'ok' => true,
-            'results' => array_map(function ($result) use ($usIds, $umIds) {
+            $results = array_map(function ($result) use ($usIds, $umIds) {
                 if (key_exists('media_type', $result)) {
                     if ($result['media_type'] == 'tv') {
                         $result['add_this'] = !in_array($result['id'], $usIds);
@@ -74,7 +71,12 @@ readonly class ApiSearch
                     }
                 }
                 return $result;
-            }, $multi['results']),
+            }, $multi['results']);
+        }
+
+        return ($this->json)([
+            'ok' => true,
+            'results' => $results,
             'posterUrl' => $this->imageConfiguration->getUrl('poster_sizes', 3),
             'profileUrl' => $this->imageConfiguration->getUrl('profile_sizes', 3),
         ]);
