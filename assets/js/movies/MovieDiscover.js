@@ -55,7 +55,6 @@ export class MovieDiscover {
 
     submit(event) {
         event.preventDefault();
-        console.log("Search form submitting…");
 
         const form = document.querySelector("#discover-form");
         form.classList.toggle("folded");
@@ -112,7 +111,6 @@ export class MovieDiscover {
             "releaseYearBefore": releaseYearBefore,
             "sort": discoverSort,
         };
-        console.log(data);
 
         fetch('/api/movie/search/advanced', {
             method: 'POST',
@@ -123,19 +121,15 @@ export class MovieDiscover {
         })
         .then(response => response.json())
         .then(data => {
-            console.log(data)
             const posterUrl = data.posterUrl;
             const results = data.results;
             const page = results.page;
             const totalPages = results.total_pages;
             const totalResults = results.total_results;
             const movies = results.results;
-            console.log(page, totalPages, totalResults);
             const wrapper = document.querySelector(".movie-search-result .wrapper");
             wrapper.innerHTML = "";
             movies.forEach(movie => {
-                console.log(posterUrl + movie.poster_path);
-
                 const movieCard = document.createElement("div");
                 movieCard.classList.add("movie-card");
                 const a = document.createElement("a");

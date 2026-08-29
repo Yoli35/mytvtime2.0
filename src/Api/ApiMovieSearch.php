@@ -23,7 +23,6 @@ class ApiMovieSearch extends AbstractController
     public function get(Request $request): Response
     {
         $data = json_decode($request->getContent(), true);
-        dump($data);
         // * "cast" => [▶]
         // * "castSeparator" => ","
         // * "crew" => [▶]
@@ -64,14 +63,10 @@ class ApiMovieSearch extends AbstractController
         if ($date) $filterString .= "&primary_release_year=$date";
         if ($startDate) $filterString .= "&primary_release_date.gte=$startDate";
         if ($endDate) $filterString .= "&primary_release_date.lte=$endDate";
-        dump($filterString);
-        // ?include_adult=false&include_video=false&language=en-US&page=1&sort_by=primary_release_date.desc&with_cast=933238%2C117642%2C1190668'
 
         $results = json_decode($this->tmdbService->getFilterMovie($filterString), true);
-        dump($results);
 
         $posterUrl = $this->imageConfiguration->getUrl('poster_sizes', 5);
-        dump($posterUrl);
 
         return $this->json([
             'ok' => true,
