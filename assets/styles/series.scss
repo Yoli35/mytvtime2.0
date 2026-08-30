@@ -5011,12 +5011,13 @@ aside:has(.episode__cards) {
                 background-color: hsla(from var(--ardoise-90) h s l / 0.1);
                 border: 2px solid transparent;
                 border-radius: .5rem;
-                flex-grow: 0;
+                flex-grow: 1;
                 font-weight: 300;
                 height: 100%;
                 position: relative;
                 transition: width .3s ease-in-out;
-                width: calc(100% - calc(calc(var(--episode-height) * var(--episode-aspect-ratio)) + 4.75rem));
+                /*width: calc(100% - calc(calc(var(--episode-height) * var(--episode-aspect-ratio)) + 4.75rem));*/
+                width: 100%;
 
                 .infos-content {
                     display: flex;
