@@ -109,9 +109,10 @@ window.addEventListener("DOMContentLoaded", () => {
 // Series & season page
     const seriesIndex = document.querySelector(".series-index");
     const seriesToStart = document.querySelector(".series-to-start");
+    const seriesTvTime   = document.querySelector(".series-tv-time");
     const seriesByCountry = document.querySelector(".series-by-country");
     const allMySeries = document.querySelector(".all-my-series");
-    if (seriesIndex || seriesToStart || seriesByCountry || allMySeries) {
+    if (seriesIndex || seriesToStart || seriesTvTime || seriesByCountry || allMySeries) {
         const index = new Index();
         const globs = JSON.parse(document.querySelector("#global-data").textContent);
         index.init(globs, menu);

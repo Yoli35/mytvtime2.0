@@ -883,6 +883,7 @@ class UserSeriesRepository extends ServiceEntityRepository
                 -- Derniers épisodes disponibles comme sur TV Time
                 SELECT 
                     s.`id`,
+                    s.`tmdb_id`,
                     IF(sln.`id`, sln.`name` , s.name) AS name,
                     CONCAT('S', LPAD(ue.`season_number`, 2, '0'), 'E', LPAD(ue.`episode_number`, 2, '0')) as `number`,
                     s.`poster_path`,
@@ -910,6 +911,7 @@ class UserSeriesRepository extends ServiceEntityRepository
                 -- Derniers épisodes à jours comme sur TV Time
                 SELECT DISTINCT
                     s.`id`,
+                    s.`tmdb_id`,
                     IF(sln.`id`, sln.`name` , s.name) AS name,
                     CONCAT('S', LPAD(ue.`season_number`, 2, '0'), 'E', LPAD(ue.`episode_number`, 2, '0')) as `number`,
                     us.`last_watch_at`,

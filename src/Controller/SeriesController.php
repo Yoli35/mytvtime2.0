@@ -149,10 +149,12 @@ class SeriesController extends AbstractController
         $userId = $user->getId();
         $seriesAvailable = $this->userSeriesRepository->findAvailableSeries($userId, $locale);
         $seriesUpToDate = $this->userSeriesRepository->findUpToDateSeries($userId, $locale);
+        $tmdbIds = array_unique(array_merge(array_column($seriesAvailable, 'tmdb_id'), array_column($seriesUpToDate, 'tmdb_id')));
 
         return $this->render('series/series_like_tv_time.html.twig', [
             'seriesAvailable' => $seriesAvailable,
             'seriesUpToDate' => $seriesUpToDate,
+            'tmdbIds' => $tmdbIds,
         ]);
     }
 
