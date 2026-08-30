@@ -147,6 +147,7 @@ export class MovieDiscover {
             const movies = results.results;
             const wrapper = document.querySelector(".movie-search-result .wrapper");
             wrapper.innerHTML = "";
+            wrapper.scrollTop = 0;
             self.submitButton.dataset.page = "1";
             self.displayResultInfos(page, totalPages, totalResults);
             movies.forEach(movie => {
