@@ -28,7 +28,7 @@ class SeriesAdvancedSearchDTO
     private ?string $withOriginCountry = null;
     #[Assert\Language]
     private ?string $withOriginalLanguage = null;
-    #[Assert\Choice(['flatrate', 'free', 'ads', 'rent', 'buy'])]
+//    #[Assert\Choice(['flatrate', 'free', 'ads', 'rent', 'buy'])]
     private ?string $withWatchMonetizationTypes = '';
     private ?string $withWatchProviders = '';
     private array $watchProviders = [];
@@ -36,7 +36,7 @@ class SeriesAdvancedSearchDTO
     // Keywords
     private ?string $withKeywords = null;
     private array $keywords = [];
-    #[Assert\Choice([',', '|'])]
+//    #[Assert\Choice([',', '|'])]
     private string $keywordSeparator = ',';
 
     // Runtime, status and type
@@ -50,7 +50,7 @@ class SeriesAdvancedSearchDTO
     private ?string $withType = null;
 
     // Sort and pagination
-    #[Assert\Choice(['popularity.desc', 'popularity.asc', 'vote_average.desc', 'vote_average.asc', 'first_air_date.desc', 'first_air_date.asc', 'original_name.desc', 'original_name.asc', 'name.desc', 'name.asc', 'vote_average.desc', 'vote_average.asc', 'vote_count.desc', 'vote_count.asc'])]
+//    #[Assert\Choice(['popularity.desc', 'popularity.asc', 'vote_average.desc', 'vote_average.asc', 'first_air_date.desc', 'first_air_date.asc', 'original_name.desc', 'original_name.asc', 'name.desc', 'name.asc', 'vote_average.desc', 'vote_average.asc', 'vote_count.desc', 'vote_count.asc'])]
     private string $sortBy = 'popularity.desc';
     #[Assert\GreaterThanOrEqual(1)]
     #[Assert\LessThanOrEqual(500)]
