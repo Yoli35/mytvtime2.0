@@ -5,7 +5,7 @@ namespace App\Service;
 readonly class ThetvdbSeriesService
 {
     public function __construct(
-        private TheTvdbService $thetvdbService,
+        private ThetvdbService $thetvdbService,
     )
     {
     }
