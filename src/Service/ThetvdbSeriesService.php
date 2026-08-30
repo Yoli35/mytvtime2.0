@@ -16,8 +16,15 @@ readonly class ThetvdbSeriesService
         $tvdbEpisodeArr = [];
         if ($tvdbId) {
             $result = json_decode($this->thetvdbService->seriesExtended($tvdbId), true);
+            if (!$result) {
+                return [];
+            }
             /*dump($result);*/
-            $backdrop = array_find($result['data']['artworks'], fn($artwork) => $artwork['type'] == 3);
+            if (isset($result['data']['artworks'])) {
+                $backdrop = array_find($result['data'], fn($artwork) => $artwork['type'] == 3);
+            } else {
+                $backdrop = null;
+            }
             foreach ($result['data']['seasons'] as $tvdbSeason) {
                 if ($tvdbSeason['number'] != $seasonNumber || $tvdbSeason['type']['type'] !== 'official') continue;
                 $seasonExtendedResult = json_decode($this->thetvdbService->seasonExtended($tvdbSeason['id']), true);
