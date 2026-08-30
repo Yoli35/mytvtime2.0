@@ -142,6 +142,20 @@ class SeriesController extends AbstractController
         ]);
     }
 
+    #[Route('/tv/time', name: 'tv_time')]
+    public function tvTime(#[CurrentUser] User $user, Request $request): Response
+    {
+        $locale = $user->getPreferredLanguage() ?? $request->getLocale();
+        $userId = $user->getId();
+        $seriesAvailable = $this->userSeriesRepository->findAvailableSeries($userId, $locale);
+        $seriesUpToDate = $this->userSeriesRepository->findUpToDateSeries($userId, $locale);
+
+        return $this->render('series/series_like_tv_time.html.twig', [
+            'seriesAvailable' => $seriesAvailable,
+            'seriesUpToDate' => $seriesUpToDate,
+        ]);
+    }
+
     #[Route('/to/start', name: 'to_start')]
     public function start(#[CurrentUser] User $user, Request $request): Response
     {

@@ -8,6 +8,7 @@ use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\DBAL\ArrayParameterType;
 use Doctrine\DBAL\Exception;
 use Doctrine\DBAL\ParameterType;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use Psr\Log\LoggerInterface as MonologLogger;
@@ -874,5 +875,60 @@ class UserSeriesRepository extends ServiceEntityRepository
             $this->em->remove($userSeries);
             $this->em->flush();
         }
+    }
+
+    public function findAvailableSeries(int $userId, string  $locale): array
+    {
+        $sql = <<<SQL
+                -- Derniers épisodes disponibles comme sur TV Time
+                SELECT 
+                    s.`id`,
+                    IF(sln.`id`, sln.`name` , s.name) AS name,
+                    CONCAT('S', LPAD(ue.`season_number`, 2, '0'), 'E', LPAD(ue.`episode_number`, 2, '0')) as `number`,
+                    s.`poster_path`,
+                    ue.season_number,
+                    ue.episode_number
+                FROM `user_episode` ue
+                    INNER JOIN `user_series` us ON us.`next_user_episode_id`=ue.`id`
+                    LEFT JOIN `series` s ON s.`id`=us.`series_id`
+                    LEFT JOIN `series_localized_name` sln ON sln.`series_id`=s.`id` AND sln.`locale`=:locale
+                WHERE ue.`user_id`=:id
+                    AND ue.`season_number`>0
+                    AND us.`progress`>0
+                    AND ue.`watch_at` IS NULL
+                    AND ue.`air_date` <= CURDATE()
+                    AND us.`last_watch_at` >= SUBDATE(CURDATE(), INTERVAL 3 WEEK)
+                ORDER BY us.`last_watch_at` DESC;
+            SQL;
+
+        return $this->getAll($sql, ['id' => $userId, 'locale' => $locale], ['id' => Types::INTEGER, 'locale' => Types::STRING]);
+    }
+
+    public function findUpToDateSeries(int $userId, string  $locale): array
+    {
+        $sql = <<<SQL
+                -- Derniers épisodes à jours comme sur TV Time
+                SELECT DISTINCT
+                    s.`id`,
+                    IF(sln.`id`, sln.`name` , s.name) AS name,
+                    CONCAT('S', LPAD(ue.`season_number`, 2, '0'), 'E', LPAD(ue.`episode_number`, 2, '0')) as `number`,
+                    us.`last_watch_at`,
+                    s.`poster_path`,
+                    ue.season_number,
+                    ue.episode_number
+                FROM `user_episode` ue
+                    INNER JOIN `user_series` us ON us.`next_user_episode_id`=ue.`id`
+                    LEFT JOIN `series` s ON s.`id`=us.`series_id`
+                    LEFT JOIN `series_localized_name` sln ON sln.`series_id`=s.`id` AND sln.`locale`=:locale
+                WHERE ue.`user_id`=:id
+                    AND ue.`season_number`>0
+                    AND us.`progress`>0
+                    AND us.`next_user_episode_id` IS NOT NULL
+                    AND ue.`air_date` > CURDATE()
+                    AND us.`last_watch_at` >= SUBDATE(CURDATE(), INTERVAL 3 WEEK)
+                ORDER BY us.`last_watch_at` DESC;
+            SQL;
+
+        return $this->getAll($sql, ['id' => $userId, 'locale' => $locale], ['id' => Types::INTEGER, 'locale' => Types::STRING]);
     }
 }

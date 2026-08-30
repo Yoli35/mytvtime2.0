@@ -24,6 +24,7 @@
                     {% set country=getUserCountrySettings(app.user) %}
                     {% set provider=getUserProviderSettings(app.user) %}
                     <div class="menu-item"><a href="{{ path('app_series_index') }}" class="desktop">{{ ux_icon('mdi:calendar') }}{{ 'Series.week'|trans }}</a></div>
+                    <div class="menu-item"><a href="{{ path('app_series_tv_time') }}">{{ ux_icon('mdi:tv') }}{{ 'Series.tv time'|trans }}</a></div>
                     <div class="menu-item"><a href="{{ path('app_series_all') }}" class="desktop">{{ ux_icon('mdi:play') }}{{ 'Series.in progress'|trans }}</a></div>
                     <div class="menu-item"><a href="{{ path('app_series_not_seen_in_a_while') }}">{{ ux_icon('mdi:sleep') }}{{ 'Series.not seen in a while'|trans }}</a></div>
                     <div class="menu-item"><a href="{{ path('app_series_to_start') }}">{{ ux_icon('mdi:eye') }}{{ 'Series.to start'|trans }}</a></div>

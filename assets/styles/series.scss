@@ -182,7 +182,7 @@ h2 {
     }
 }
 
-.series-to-start, .series-by-country, .series-by-provider, .all-my-series {
+.series-to-start, .series-tv-time, .series-by-country, .series-by-provider, .all-my-series {
     margin-block-start: 10rem;
 
     h1 {
@@ -197,7 +197,7 @@ h2 {
     }
 }
 
-.series-to-start, .series-by-country, .series-by-provider {
+.series-to-start, .series-tv-time, .series-by-country, .series-by-provider {
     header {
         align-items: center;
         background-color: var(--orange-50);
@@ -216,6 +216,9 @@ h2 {
 
         .infos {
             flex: 0 0 fit-content;
+            font-size: 1.25rem;
+            font-weight: 300;
+            padding-inline: 1rem;
         }
 
         label {
@@ -689,6 +692,7 @@ h2 {
 .all-my-series,
 .series-index,
 .series-to-start,
+.series-tv-time,
 .series-by-country {
     .series-search-block {
         display: flex;

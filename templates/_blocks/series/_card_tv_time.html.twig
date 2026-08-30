@@ -1,0 +1,31 @@
+<div class="card">
+    <a href="{{ path('app_tv_episode', { 'id': series.id, slug: series.name|slug, seasonNumber: series.season_number, episodeNumber: series.episode_number }) }}">
+        <div class="poster">
+            {% if series.poster_path is defined and series.poster_path %}
+                <img src="/series/posters{{ series.poster_path }}" alt="{{ series.name }}">
+            {% else %}
+                <div>{{ 'No poster'|trans }}</div>
+            {% endif %}
+            {#            {% if series.watch_links|length %} #}
+            {#                <div class="watch-links"> #}
+            {#                    {% for wl in series.watch_links %} #}
+            {#                        <div class="provider"> #}
+            {#                            <img src="{{ wl.logo_path }}" data-title="{{ wl.link_name }}" alt="{{ wl.provider_name }}"> #}
+            {#                        </div> #}
+            {#                    {% endfor %} #}
+            {#                </div> #}
+            {#            {% endif %} #}
+            {#            <div class="series-infos"> #}
+            {#                <div class="dates"> #}
+            {#                    <div class="air-date" data-title="{{ 'First air date'|trans }}">{{ ux_icon('mdi:date-range') }}{{ series.final_air_date|format_date('relative_short')|capitalize }}</div> #}
+            {#                    <div class="add-date" data-title="{{ 'Added on'|trans }}">{{ ux_icon('mdi:plus') }}{{ series.added_at|format_date('relative_short')|capitalize }}</div> #}
+            {#                </div> #}
+            {#            </div> #}
+        </div>
+        <div class="infos tv-time">
+            <div class="name">
+                {{ series.name }} <em>{% if next %}{{ series.number }}{% else %}{{ 'Up to date'|trans }}{% endif %}</em>
+            </div>
+        </div>
+    </a>
+</div>
