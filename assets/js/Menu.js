@@ -789,7 +789,7 @@ export class Menu {
                             closeDiv.classList.add("close");
                             const closeSVG = document.querySelector("#svgs .svg-close svg").cloneNode(true);
                             closeDiv.appendChild(closeSVG);
-                            closeDiv.addEventListener("click", e => {
+                            closeDiv.addEventListener("click", () => {
                                 discoverWithPeopleListFilters.removeChild(discoverItemDiv);
                                 discoverWithPeopleList.removeChild(discoverItemWithCloseDiv);
                             });
