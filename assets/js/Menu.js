@@ -797,6 +797,7 @@ export class Menu {
                             discoverWithPeopleList.appendChild(discoverItemWithCloseDiv);
 
                             searchInput.value = "";
+                            searchInput.focus();
                             const thisUl = e.target.closest("ul");
                             const lis = thisUl.querySelectorAll('li');
                             lis.forEach(item => {
