@@ -49,6 +49,17 @@ export class MovieDiscover {
         const discoverSort = document.querySelector("#discover-sort");
         discoverSort.addEventListener("change", this.setSort);
 
+        const movieSearchResultWrapper = document.querySelector(".movie-search-result .wrapper");
+        const discoverListButton = form.querySelector("#discover-list");
+        discoverListButton.addEventListener("click", () => {
+            movieSearchResultWrapper.classList.add("list");
+        });
+
+        const discoverGridButton = form.querySelector("#discover-grid");
+        discoverGridButton.addEventListener("click", () => {
+            movieSearchResultWrapper.classList.remove("list");
+        });
+
         const discoverFoldButton = form.querySelector("#discover-fold");
         discoverFoldButton.addEventListener("click", () => {
             form.classList.toggle("folded");
@@ -131,8 +142,8 @@ export class MovieDiscover {
             const posterUrl = data.posterUrl;
             const results = data.results;
             const page = results.page;
-            const totalPages = results.total_pages;
-            const totalResults = results.total_results;
+            const totalPages = results['total_pages'];
+            const totalResults = results['total_results'];
             const movies = results.results;
             const wrapper = document.querySelector(".movie-search-result .wrapper");
             wrapper.innerHTML = "";
@@ -160,6 +171,10 @@ export class MovieDiscover {
                 titleDiv.classList.add("title");
                 titleDiv.textContent = movie.title;
                 infosDiv.appendChild(titleDiv);
+                const overviewDiv = document.createElement("div");
+                overviewDiv.classList.add("overview");
+                overviewDiv.textContent = movie.overview;
+                infosDiv.appendChild(overviewDiv);
                 // release_date: 2026-08-24 -> 24 août 2026
                 const releaseDateDiv = document.createElement("div");
                 releaseDateDiv.classList.add("release-date");
