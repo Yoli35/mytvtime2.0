@@ -19,6 +19,7 @@ use App\Form\AddBackdropType;
 use App\Form\SeriesVideoType;
 use App\Repository\FilmingLocationRepository;
 use App\Repository\NetworkRepository;
+use App\Repository\SeriesBroadcastScheduleRepository;
 use App\Repository\SeriesImageRepository;
 use App\Repository\SeriesLocalizedNameRepository;
 use App\Repository\SeriesRepository;
@@ -46,35 +47,36 @@ readonly class SeriesService
 {
     public function __construct(
         #[AutowireMethodOf(ControllerHelper::class)]
-        private Closure                       $addFlash,
+        private Closure                           $addFlash,
         #[AutowireMethodOf(ControllerHelper::class)]
-        private Closure                       $createForm,
+        private Closure                           $createForm,
         #[AutowireMethodOf(ControllerHelper::class)]
-        private Closure                       $generateUrl,
+        private Closure                           $generateUrl,
         #[AutowireMethodOf(ControllerHelper::class)]
-        private Closure                       $getParameter,
+        private Closure                           $getParameter,
         #[AutowireMethodOf(ControllerHelper::class)]
-        private Closure                       $getUser,
-        private DateService                   $dateService,
-        private FilmingLocationRepository     $filmingLocationRepository,
-        private ImageConfiguration            $imageConfiguration,
-        private ImageService                  $imageService,
-        private KeywordService                $keywordService,
-        private MonologLogger                 $logger,
-        private NetworkRepository             $networkRepository,
-        private ProviderService               $providerService,
-        private SeasonService                 $seasonService,
-        private SeriesImageRepository         $seriesImageRepository,
-        private SeriesLocalizedNameRepository $seriesLocalizedNameRepository,
-        private SeriesRepository              $seriesRepository,
-        private SeriesVideoRepository         $seriesVideoRepository,
-        private SettingsRepository            $settingsRepository,
-        private SourceRepository              $sourceRepository,
-        private TMDBService                   $tmdbService,
-        private TranslatorInterface           $translator,
-        private UserEpisodeRepository         $userEpisodeRepository,
-        private UserSeasonRepository          $userSeasonRepository,
-        private UserSeriesRepository          $userSeriesRepository,
+        private Closure                           $getUser,
+        private DateService                       $dateService,
+        private FilmingLocationRepository         $filmingLocationRepository,
+        private ImageConfiguration                $imageConfiguration,
+        private ImageService                      $imageService,
+        private KeywordService                    $keywordService,
+        private MonologLogger                     $logger,
+        private NetworkRepository                 $networkRepository,
+        private ProviderService                   $providerService,
+        private SeasonService                     $seasonService,
+        private SeriesBroadcastScheduleRepository $seriesBroadcastScheduleRepository,
+        private SeriesImageRepository             $seriesImageRepository,
+        private SeriesLocalizedNameRepository     $seriesLocalizedNameRepository,
+        private SeriesRepository                  $seriesRepository,
+        private SeriesVideoRepository             $seriesVideoRepository,
+        private SettingsRepository                $settingsRepository,
+        private SourceRepository                  $sourceRepository,
+        private TMDBService                       $tmdbService,
+        private TranslatorInterface               $translator,
+        private UserEpisodeRepository             $userEpisodeRepository,
+        private UserSeasonRepository              $userSeasonRepository,
+        private UserSeriesRepository              $userSeriesRepository,
     )
     {
     }
@@ -225,7 +227,7 @@ readonly class SeriesService
             $series->addUpdate($this->translator->trans('First air date updated'));
         }
 
-        if ($tv['overview'] &&strlen($tv['overview']) && strcmp($tv['overview'], $series->getOverview())) {
+        if ($tv['overview'] && strlen($tv['overview']) && strcmp($tv['overview'], $series->getOverview())) {
             $series->setOverview($tv['overview']);
             $series->addUpdate($this->translator->trans('Overview updated'));
         }
@@ -459,6 +461,35 @@ readonly class SeriesService
         return [$newEpisodeCount, $reloadUserEpisodes];
     }
 
+    public function checkUserSeasons(array $userEpisodes): void
+    {
+        $userSeries = array_first($userEpisodes)->getUserSeries();
+        $series = $userSeries->getSeries();
+        // Get list of season from episode's season number
+        $seasonNumbers = array_map(fn($episode) => $episode->getSeasonNumber(), $userEpisodes)
+                |> array_unique(...)
+                |> array_values(...);
+        foreach ($seasonNumbers as $seasonNumber) {
+            $userSeason = $this->userSeasonRepository->findOneBy(['userSeries' => $userSeries, 'seasonNumber' => $seasonNumber]);
+            if (!$userSeason) {
+                $userSeason = new UserSeason($userSeries, $seasonNumber);
+                $this->userSeasonRepository->save($userSeason, true);
+                // Get user episodes for this season
+                $userEpisodesForSeason = array_filter($userEpisodes, fn($episode) => $episode->getSeasonNumber() === $seasonNumber);
+                // Add user episodes to user season
+                foreach ($userEpisodesForSeason as $userEpisode) {
+                    $userSeason->addUserEpisode($userEpisode);
+                }
+                // Look for series broadcast schedules (by series id and season number)
+                $seriesBroadcastSchedules = $this->seriesBroadcastScheduleRepository->findBy(['series' => $series, 'seasonNumber' => $seasonNumber]);
+                foreach ($seriesBroadcastSchedules as $seriesBroadcastSchedule) {
+                    $userSeason->addBroadcastSchedule($seriesBroadcastSchedule);
+                }
+                $this->userSeasonRepository->save($userSeason, true);
+            }
+        }
+    }
+
     public function removeUserEpisodes(UserSeries $userSeries, int $seasonNumber): void
     {
         if (!$this->userEpisodeRepository->removeSeason($userSeries, $seasonNumber)) {
@@ -481,7 +512,7 @@ readonly class SeriesService
         return $finaleEpisodeNumber;
     }
 
-    public function seriesInfos(int $tvId, array $seasons): array
+    /*public function seriesInfos(int $tvId, array $seasons): array
     {
         $seriesInfos = $this->settingsRepository->findOneBy(['name' => 'series_infos_' . $tvId]);
         if (!$seriesInfos) {
@@ -493,9 +524,6 @@ readonly class SeriesService
             $type = $item['type'];
             $value = $item['value'];
             switch ($type) {
-                /*case 'episode_type':
-                    dump($value);
-                    break;*/
                 case 'season_episode_count':
                     $seasonNumber = $value['season_number'];
                     $seasons[$seasonNumber - 1]['skip_trim'] = true;
@@ -505,7 +533,7 @@ readonly class SeriesService
         }
         ($this->addFlash)('success', 'Series infos updated');
         return $seasons;
-    }
+    }*/
 
     public function cacheSeasonPoster(array $season, Series $series): ?string
     {
@@ -1412,8 +1440,9 @@ readonly class SeriesService
             $providerLogo = $provider['logoPath'];
         } else {
             $provider = null;
+            $providerLogo = null;
         }
-        return ['string' => $str, 'providerLogo' => $provider?$provider['logoPath']:null, 'providerName' => $provider?$provider['providerName']:null];
+        return ['string' => $str, 'providerLogo' => $providerLogo, 'providerName' => $provider ? $provider['providerName'] : null];
     }
 
     private function getDaysString(SeriesBroadcastSchedule $schedule, DateTimeImmutable $firstAirDate, string $locale): array
@@ -1436,7 +1465,7 @@ readonly class SeriesService
             }
         }
         $finalDayString = implode(', ', $dayStrings);
-        // on remplace la dernière virgule par "et"
+        // On remplace la dernière virgule par "et".
         $finalDayString = preg_replace('/, ([^,]*)$/', $and[$locale] . ' $1', $finalDayString);
 
         return [

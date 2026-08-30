@@ -81,7 +81,7 @@ class SeriesSeasonEpisodes extends AbstractController
         $this->nowTime = $now->format('Y-m-d H:i');
 
         $season = json_decode($this->tmdbService->getTvSeason($tmdbId, $seasonNumber, $locale), true);
-        $season = array_first($this->seriesService->seriesInfos($tmdbId, [$season]));
+//        $season = array_first($this->seriesService->seriesInfos($tmdbId, [$season]));
         $this->seasonUS = json_decode($this->tmdbService->getTvSeason($tmdbId, $seasonNumber, 'en-US'), true);
         $this->episodeIds = array_column($season['episodes'] ?? [], 'id');
         $this->dbBroadcastDateArray = $this->getCustomBroadcastDates();
