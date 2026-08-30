@@ -35,7 +35,7 @@ use App\Service\ImageConfiguration;
 use App\Service\ImageService;
 use App\Service\ProviderService;
 use App\Service\SeriesService;
-use App\Service\ThetvdbService;
+use App\Service\ThetvdbSeriesService;
 use App\Service\TMDBService;
 use DateMalformedStringException;
 use DateTimeImmutable;
@@ -78,7 +78,7 @@ final class SeriesShowController extends AbstractController
         private readonly SeriesService                      $seriesService,
         private readonly SettingsRepository                 $settingsRepository,
         private readonly SourceRepository                   $sourceRepository,
-        private readonly ThetvdbService                     $thetvdbService,
+        private readonly ThetvdbSeriesService               $thetvdbSeriesService,
         private readonly TimezoneBookmarkRepository         $timezoneBookmarkRepository,
         private readonly TMDBService                        $tmdbService,
         private readonly TranslatorInterface                $translator,
@@ -172,29 +172,7 @@ final class SeriesShowController extends AbstractController
         $userEpisodes = $this->userEpisodeRepository->findBy(['userSeries' => $userSeries, 'previousOccurrence' => null], ['seasonNumber' => 'ASC', 'episodeNumber' => 'ASC']);
         $this->adjustNextEpisodeToWatch($userSeries, $userEpisodes);
 
-        // Get list of season from episode's season number
-        $seasonNumbers = array_map(fn($episode) => $episode->getSeasonNumber(), $userEpisodes)
-                |> array_unique(...)
-                |> array_values(...);
-        foreach ($seasonNumbers as $seasonNumber) {
-            $userSeason = $this->userSeasonRepository->findOneBy(['userSeries' => $userSeries, 'seasonNumber' => $seasonNumber]);
-            if (!$userSeason) {
-                $userSeason = new UserSeason($userSeries, $seasonNumber);
-                $this->userSeasonRepository->save($userSeason, true);
-                // Get user episodes for this season
-                $userEpisodesForSeason = array_filter($userEpisodes, fn($episode) => $episode->getSeasonNumber() === $seasonNumber);
-                // Add user episodes to user season
-                foreach ($userEpisodesForSeason as $userEpisode) {
-                    $userSeason->addUserEpisode($userEpisode);
-                }
-                // Look for series broadcast schedules (by series id and season number)
-                $seriesBroadcastSchedules = $this->seriesBroadcastScheduleRepository->findBy(['series' => $series, 'seasonNumber' => $seasonNumber]);
-                foreach ($seriesBroadcastSchedules as $seriesBroadcastSchedule) {
-                    $userSeason->addBroadcastSchedule($seriesBroadcastSchedule);
-                }
-                $this->userSeasonRepository->save($userSeason, true);
-            }
-        }
+        $this->seriesService->checkUserSeasons($userEpisodes);
 
         $seriesAround = $this->seriesService->getSeriesAround($user->getId(), $userSeries->getId(), $locale);
 
@@ -208,8 +186,8 @@ final class SeriesShowController extends AbstractController
 
         if (key_exists('error', $tv)) {
             // [▼
-            //  "error" => "Response error: HTTP/2 502  returned for "https://api.themoviedb.org/3/tv/278168?language=fr&append_to_response=changes,credits,external_ids,images,keywords,lis ▶"
-            //  "message" => "HTTP/2 502  returned for "https://api.themoviedb.org/3/tv/278168?language=fr&append_to_response=changes,credits,external_ids,images,keywords,lists,similar,trans ▶"
+            //  "error" => "Response error: HTTP/2 502 returned for "https://api.themoviedb.org/3/tv/278168?language=fr&append_to_response=changes,credits,external_ids,images,keywords,lis ▶"
+            //  "message" => "HTTP/2 502 returned for "https://api.themoviedb.org/3/tv/278168?language=fr&append_to_response=changes,credits,external_ids,images,keywords,lists,similar,trans ▶"
             //  "code" => 502
             //  "response" => "{"status_code":43,"status_message":"Couldn't connect to the backend server.","success":false}\n"
             //  "request" => "https://api.themoviedb.org/3/tv/278168?language=fr&append_to_response=changes,credits,external_ids,images,keywords,lists,similar,translations,videos,watch/provi ▶"
@@ -251,7 +229,7 @@ final class SeriesShowController extends AbstractController
             ]);
         }
 
-        $tv['seasons'] = $this->seriesService->seriesInfos($tv['id'], $tv['seasons']);
+//        $tv['seasons'] = $this->seriesService->seriesInfos($tv['id'], $tv['seasons']);
 
         $tv['credits'] = $this->castAndCrew($tv, $series);
         $tv['watch/providers'] = $this->watchProviders($tv, $country);
@@ -310,13 +288,6 @@ final class SeriesShowController extends AbstractController
         }
 
         $themeSettings = $this->settingsRepository->findOneBy(['user' => $user, 'name' => 'theme_series_' . $series->getTmdbId()]);
-
-        // test the tv db api
-//        $thetvdbService = $this->thetvdbService;
-//        $result = json_decode($this->thetvdbService->series(419879), true);
-//        dump($result);
-//        $result = json_decode($this->thetvdbService->seriesExtended(419879), true);
-//        dump($result);
 
         return $this->render("series_show/series.html.twig", [
             'series' => $seriesArr,
@@ -415,7 +386,7 @@ final class SeriesShowController extends AbstractController
 //        $tvKeywords = json_decode($this->tmdbService->getTvKeywords($series->getTmdbId()), true);
 //        $tvExternalIds = json_decode($this->tmdbService->getTvExternalIds($series->getTmdbId()), true);
 
-        $tv = json_decode($this->tmdbService->getTv($series->getTmdbId(), 'en-US'), true);
+        $tv = json_decode($this->tmdbService->getTv($series->getTmdbId(), 'en-US', ['external_ids']), true);
         if ($series->getNumberOfEpisode() != $tv['number_of_episodes'] || $series->getNumberOfSeason() != $tv['number_of_seasons']) {
             $this->addFlash('info', 'The number of episodes has changed, the series has been updated.');
             if ($series->getNumberOfEpisode() != $tv['number_of_episodes'])
@@ -443,6 +414,7 @@ final class SeriesShowController extends AbstractController
             'translations' => $this->seriesService->getSeasonShowTranslations(),
             'quickLinks' => $this->getQuickLinks($user, $season['episodes']),
             'season' => $season,
+            'tvdbEpisodeArr' => $this->thetvdbSeriesService->getTvdbEpisodes($tv['external_ids']['tvdb_id'] ?? 0, $seasonNumber),
             'today' => $this->now($user)->format('Y-m-d H:I:s'),
             'filmingLocation' => $filmingLocation,
             'language' => $locale . '-' . $country,

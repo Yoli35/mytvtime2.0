@@ -30,6 +30,32 @@ class ThetvdbService
         return $this->getResults("https://api4.thetvdb.com/v4/series/$id/extended?meta=episodes&short=false");
     }
 
+    public function season(int $id): ?string
+    {
+        return $this->getResults("https://api4.thetvdb.com/v4/seasons/" . $id);
+    }
+
+    public function seasonExtended(int $id): ?string
+    {
+        return $this->getResults("https://api4.thetvdb.com/v4/seasons/$id/extended");
+    }
+
+    public function seasonTranslations(int $id, string $language): ?string
+    {
+        return $this->getResults("https://api4.thetvdb.com/v4/seasons/$id/translations/$language");
+    }
+
+    public function episode(int $id): ?string
+    {
+        return $this->getResults("https://api4.thetvdb.com/v4/episodes/" . $id);
+    }
+
+    public function episodeExtended(int $id): ?string
+    {
+        return $this->getResults("https://api4.thetvdb.com/v4/episodes/$id/extended");
+    }
+
+
     private function getResults(string $url): ?string
     {
         try {

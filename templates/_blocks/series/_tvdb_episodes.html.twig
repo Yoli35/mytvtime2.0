@@ -1,0 +1,17 @@
+{% if tvdbEpisodeArr %}
+    <h2 class="tvdb-season-title">TVDB</h2>
+    <div class="tvdb-season">
+        {% for episode in tvdbEpisodeArr %}
+            <div class="tvdb-episode">
+                <div class="episode-image">
+                    {% if episode.image %}
+                        <img src="{{ episode.image }}" alt="{{ episode.episode }}">
+                    {% else %}
+                        {{ 'No image'|trans }}
+                    {% endif %}
+                </div>
+                <div class="episode-title">{{ episode.episode }}</div>
+            </div>
+        {% endfor %}
+    </div>
+{% endif %}

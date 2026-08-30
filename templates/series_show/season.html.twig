@@ -10,6 +10,7 @@
     <link rel="stylesheet" href="{{ asset('styles/card.scss') }}">
     <link rel="stylesheet" href="{{ asset('styles/people.scss') }}">
     <link rel="stylesheet" href="{{ asset('styles/translations.scss') }}">
+    <link rel="stylesheet" href="{{ asset('styles/tvdb.scss') }}">
     <link rel="stylesheet" href="https://api.mapbox.com/mapbox-gl-js/v3.14.0/mapbox-gl.css">
 {% endblock %}
 {% block body %}
@@ -225,6 +226,8 @@
                     {% endif %}
                 {% endif %}
             </div>
+
+            {{ include('_blocks/series/_tvdb_episodes.html.twig', { tvdbEpisodeArr: tvdbEpisodeArr }) }}
 
             {# <h3>{{ 'Episodes'|trans }}</h3> #}
             <div class="content column">
