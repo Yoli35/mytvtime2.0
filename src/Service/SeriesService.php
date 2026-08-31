@@ -86,6 +86,7 @@ readonly class SeriesService
         $seriesTmdbId = $series->getTmdbId();
         $tv = json_decode($this->tmdbService->getTv($seriesTmdbId, $locale, [
             "changes",
+            "aggregate_credits",
             "credits",
             "external_ids",
             "images",

@@ -1,0 +1,21 @@
+{#<a href="{{ path('app_people_show', {id: people.id, slug: people.slug}) }}">#}
+<div class="people-card" data-id="{{ people.id }}">
+    <div class="people" id="crew-{{ people.id }}">
+        <div class="photo" data-title="{{ people.name }}">
+            {% if people.profile_path %}
+                <img src="{{ profileUrl ~ people.profile_path }}" alt="{{ people.name }}">
+            {% else %}
+                {{ 'No picture'|trans }}
+            {% endif %}
+        </div>
+        <div class="infos">
+            <div class="name">{{ people.name }}</div>
+            <div class="jobs">
+                {% for job in people.jobs %}
+                    <div class="job">{{ job.job }}{% if not loop.last %}, {% endif %}</div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{#</a>#}

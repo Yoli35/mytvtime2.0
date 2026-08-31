@@ -107,7 +107,7 @@ final class SeriesShowController extends AbstractController
         $country = $user->getCountry() ?: 'FR';
         $locale = $user->getPreferredLanguage() ?: $request->getLocale();
 
-        $tv = json_decode($this->tmdbService->getTv($id, $locale, ["images", "videos", "credits", "watch/providers", "content/ratings", "keywords", "similar", "translations"]), true);
+        $tv = json_decode($this->tmdbService->getTv($id, $locale, ["images", "videos", "credits", "aggregate_credits", "watch/providers", "content/ratings", "keywords", "similar", "translations"]), true);
         $overview = null;
         if ($series) {
             $series->setVisitNumber($series->getVisitNumber() + 1);
@@ -153,6 +153,7 @@ final class SeriesShowController extends AbstractController
             'translatedName' => $translatedName,
             'localizedOverview' => $localizedOverview,
             'externals' => $externals,
+            'profileUrl' => $this->imageConfiguration->getUrl('profile_sizes', 2)
         ]);
     }
 
@@ -309,6 +310,7 @@ final class SeriesShowController extends AbstractController
             'forms' => $forms,
             'oldSeriesAdded' => $request->query->get('oldSeriesAdded') === 'true',
             'devices' => $this->deviceRepository->deviceArray(),
+            'profileUrl' => $this->imageConfiguration->getUrl('profile_sizes', 2)
         ]);
     }
 
@@ -787,6 +789,11 @@ final class SeriesShowController extends AbstractController
         if (!$userEpisode) {
             $nue = new UserEpisode($userSeries, $episode['id'], $seasonNumber, $episode['episode_number'], null);
             $nue->setAirDate($episode['air_date'] ? $this->date($user, $episode['air_date']) : null);
+            $userSeason = array_find($userSeries->getUserSeasons()->toArray(), fn($season) => $season->getSeasonNumber() === $seasonNumber);
+            if ($userSeason) {
+                if ($user->getId() == 1) $this->addFlash("success", "Season manually added");
+                $nue->setUserSeason($userSeason);
+            }
             if ($episode['episode_number'] > 1) {
                 $previousEpisode = $this->getUserEpisode($userEpisodes, $episode['episode_number'] - 1);
                 if ($previousEpisode) {

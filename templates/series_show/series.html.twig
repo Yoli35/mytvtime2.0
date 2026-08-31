@@ -338,6 +338,28 @@
             <div id="series-credit" class="content column">
                 <div class="content-seasons">
                     {{ include('_blocks/series/_credits.html.twig', {credits: tv.credits, seriesLocalizedName: tv.localized_name?tv.localized_name.name:null, seriesName: series.name, seriesId: series.id, seasonNumber: -1}) }}
+
+                    {% if tv.aggregate_credits.cast|length %}
+                        <h3>{{ 'Complete cast'|trans }} ({{ tv.aggregate_credits.cast|length }})</h3>
+                        <div class="cast">
+                            <div class="wrapper">
+                                {% for people in tv.aggregate_credits.cast %}
+                                    {{ include('_blocks/series/_aggregate_cast.html.twig', { people: people }) }}
+                                {% endfor %}
+                            </div>
+                        </div>
+                    {% endif %}
+
+                    {% if tv.aggregate_credits.crew|length %}
+                        <h3>{{ 'Complete crew'|trans }} ({{ tv.aggregate_credits.crew|length }})</h3>
+                        <div class="crew">
+                            <div class="wrapper">
+                                {% for people in tv.aggregate_credits.crew %}
+                                    {{ include('_blocks/series/_aggregate_crew.html.twig', { people: people }) }}
+                                {% endfor %}
+                            </div>
+                        </div>
+                    {% endif %}
                 </div>
             </div>
 
