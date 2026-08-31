@@ -3,9 +3,12 @@
 namespace App\Api;
 
 use App\Entity\User;
+use App\Entity\UserEpisode;
+use App\Entity\UserSeries;
 use App\Repository\SettingsRepository;
 use App\Repository\UserEpisodeRepository;
 use App\Repository\UserSeasonRepository;
+use App\Repository\UserSeriesRepository;
 use App\Repository\WatchProviderRepository;
 use App\Service\DateService;
 use App\Service\ImageConfiguration;
@@ -32,6 +35,7 @@ readonly class ApiEpisodeList
         private TMDBService             $tmdbService,
         private UserEpisodeRepository   $userEpisodeRepository,
         private UserSeasonRepository    $userSeasonRepository,
+        private UserSeriesRepository    $userSeriesRepository,
         private WatchProviderRepository $providerRepository,
     )
     {
@@ -92,12 +96,15 @@ readonly class ApiEpisodeList
         $firstEpisode = array_first($episodeData);
         $episodeId = $firstEpisode['episodeId'];
         $watched = $firstEpisode['watched'];
+
+        $userEpisode = $this->userEpisodeRepository->find($episodeId);
+        $firstEpisodeNumber = $userEpisode->getEpisodeNumber();
+        $userSeries = $userEpisode->getUserSeries();
+        $userEpisodes = $this->userEpisodeRepository->findBy(['userSeries' => $userSeries, 'previousOccurrence' => null], ['seasonNumber' => 'ASC', 'episodeNumber' => 'ASC']);
+
         if (!$watched && $seasonNumber > 1) {
-            $userEpisode = $this->userEpisodeRepository->find($episodeId);
-            $firstEpisodeNumber = $userEpisode->getEpisodeNumber();
-            $userSeries = $userEpisode->getUserSeries();
             // on récupère les user épisodes des saisons précédentes
-            $previousSeasonEpisodes = array_filter($this->userEpisodeRepository->findBy(['userSeries' => $userSeries, 'previousOccurrence' => null]), function ($episode) use ($firstEpisodeNumber, $seasonNumber) {
+            $previousSeasonEpisodes = array_filter($userEpisodes, function ($episode) use ($firstEpisodeNumber, $seasonNumber) {
                 return $episode->getWatchAt() === null && (($episode->getSeasonNumber() < $seasonNumber) || ($episode->getSeasonNumber() == $seasonNumber && $episode->getEpisodeNumber() < $firstEpisodeNumber));
             });
             $previousSeasonEpisodes = array_map(function ($episode) {
@@ -113,7 +120,10 @@ readonly class ApiEpisodeList
         $message = 'No episode updated';
 
         foreach ($episodeData as $episode) {
-            $ue = $this->userEpisodeRepository->find($episode['episodeId']);
+            //$ue = $this->userEpisodeRepository->find($episode['episodeId']);
+            $ue = array_find($userEpisodes, function ($userEpisode) use ($episode) {
+                return $userEpisode->getId() === $episode['episodeId'];
+            });
             if ($ue) {
                 if ($episode['watched']) {
                     $ue->setWatchAt(null);
@@ -142,7 +152,8 @@ readonly class ApiEpisodeList
         if ($markedAsWatched > 0) {
             $message = 'Episode marked as watched: ' . $markedAsWatched;
         }
-        if ($n > 0) {
+            if ($n > 0) {
+            $this->updateUserSeries($userEpisodes, array_last($episodeData));
             $this->userEpisodeRepository->flush();
             $success = true;
         } else {
@@ -150,6 +161,41 @@ readonly class ApiEpisodeList
             $success = false;
         }
         return new JsonResponse(['success' => $success, 'message' => $message]);
+    }
+
+    private function updateUserSeries(array $userEpisodes, array $episodeClicked): void
+    {
+        /** @var UserSeries $userSeries */
+        $userSeries = array_first($userEpisodes)->getUserSeries();
+        $episodeId = $episodeClicked['episodeId'];
+        $watchStateWhenClicked = $episodeClicked['watched'];
+
+        /** @var UserEpisode $userEpisode */
+        $userEpisode = array_find($userEpisodes, fn(UserEpisode $userEpisode) => $userEpisode->getEpisodeId() === $episodeId);
+        $episodeCount = count($userEpisodes);
+        $viewedEpisodeCount = count(array_filter($userEpisodes, fn(UserEpisode $ue) => $ue->getWatched()));
+
+        if ($watchStateWhenClicked) {
+            // L'épisode vient d'être marqué comme non lu.
+            $previousUserEpisode = $userSeries->getLastUserEpisode();
+            $seasonNumber = $previousUserEpisode->getSeasonNumber();
+            $userSeries->setLastWatchAt($previousUserEpisode->getWatchAt());
+            $userSeries->setLastSeason($seasonNumber);
+            $userSeries->setLastEpisode($previousUserEpisode->getEpisodeNumber());
+            $userSeries->setLastUserEpisode($previousUserEpisode);
+            $userSeries->setNextUserEpisode(array_find($userEpisodes, fn(UserEpisode $ue) => $ue->getSeasonNumber() >= $seasonNumber && !$ue->getWatchAt()));
+        } else {
+            // L'épisode vient d'être marqué comme lu.
+            $seasonNumber = $userEpisode->getSeasonNumber();
+            $userSeries->setLastWatchAt($userEpisode->getWatchAt());
+            $userSeries->setLastSeason($seasonNumber);
+            $userSeries->setLastEpisode($userEpisode->getEpisodeNumber());
+            $userSeries->setLastUserEpisode($userEpisode);
+            $userSeries->setNextUserEpisode(array_find($userEpisodes, fn(UserEpisode $ue) => $ue->getSeasonNumber() >= $seasonNumber && !$ue->getWatchAt()));
+        }
+        $userSeries->setViewedEpisodes($viewedEpisodeCount);
+        $userSeries->setProgress($viewedEpisodeCount / max($episodeCount, 1));
+        $this->userSeriesRepository->save($userSeries, true);
     }
 
     private function getProviders(string $country, int $year): array
