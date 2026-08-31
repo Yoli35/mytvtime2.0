@@ -28,7 +28,7 @@ class SeriesAdvancedDbSearchDTO
     // Keywords
     private ?string $withKeywords = null;
     private array $keywords = [];
-    #[Assert\Choice([',', '|'])]
+//    #[Assert\Choice([',', '|'])]
     private string $keywordSeparator = ',';
     private ?string $withStatus = null;
 //    #[Assert\Regex('/^[0-6\|,]*$/')]
