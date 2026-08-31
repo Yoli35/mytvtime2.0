@@ -21,7 +21,7 @@ readonly class ThetvdbSeriesService
             }
             /*dump($result);*/
             if (isset($result['data']['artworks'])) {
-                $backdrop = array_find($result['data'], fn($artwork) => $artwork['type'] == 3);
+                $backdrop = array_find($result['data']['artworks'], fn($artwork) => $artwork['type'] == 3);
             } else {
                 $backdrop = null;
             }
