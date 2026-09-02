@@ -1,0 +1,21 @@
+<div class="ranking-content">
+    <div class="ranking-total">
+        <div class="name">{{ 'Total'|trans }}</div>
+        <div class="count">{{ total }}</div>
+        <div class="percent">100%</div>
+    </div>
+    <div class="ranking-wrapper">
+        <div class="ranking-items">
+            {% for p in providerArray %}
+                {% set percent = (100 * p.count / total)|round(1) %}
+                <div class="ranking-item" data-title="{{ p.provider_name }} - {{ p.count }}" style="height: {{ 4+percent }}rem">
+                    <div class="logo">
+                        <img src="{{ p.logo_path }}" alt="{{ p.provider_name }}">
+                    </div>
+                    <div class="index">{{ loop.index }}</div>
+                    <div class="percent">{{ percent }}%</div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>

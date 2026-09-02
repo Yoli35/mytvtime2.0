@@ -27,6 +27,7 @@ import {PeopleStar} from "PeopleStar";
 import {Photos} from 'Photos';
 import {PreferredName} from "PreferredName";
 import {Profile} from 'Profile';
+import {ProviderRanking} from "ProviderRanking";
 import {ProviderSelect} from 'ProviderSelect';
 import {Season} from 'Season';
 import {SeriesStatistics} from "SeriesStatistics";
@@ -85,11 +86,13 @@ window.addEventListener("DOMContentLoaded", () => {
         const providerSelect = new ProviderSelect();
         const highlightSeries = new HighlightSeries(navBar);
         const seriesStatistics = new SeriesStatistics();
+        const providerRanking = new ProviderRanking();
         const globs = JSON.parse(document.querySelector("#global-data").textContent);
         episodeHistory.init(globs);
         providerSelect.init(globs, toolTips);
         highlightSeries.init(globs);
         seriesStatistics.init();
+        providerRanking.init();
 
         new UserList(flashMessage, toolTips, null);
     }

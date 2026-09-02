@@ -65,6 +65,7 @@ return [
     'Photos' => ['path' => './assets/js/album/Photos.js'],
     'PreferredName' => ['path' => './assets/js/people/PreferredName.js'],
     'Profile' => ['path' => './assets/js/user/Profile.js'],
+    'ProviderRanking' => ['path' => './assets/js/home/ProviderRanking.js'],
     'ProviderSelect' => ['path' => './assets/js/home/ProviderSelect.js'],
     'RgbToHsl' => ['path' => './assets/js/images/RgbToHsl.js'],
     'RgbToLch' => ['path' => './assets/js/images/RgbToLch.js'],

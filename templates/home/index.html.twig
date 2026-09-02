@@ -157,46 +157,86 @@
                 <div class="provider-ranking">
                     {% set total = providerMonthArray|reduce((carry, s) => carry + s.count) %}
                     <div class="ranking-title">{{ 'Providers this month (episode count)'|trans }}</div>
-                    <div class="ranking-items">
-                        <div class="ranking-item">
-                            <div class="name">{{ 'Total'|trans }}</div>
-                            <div class="count">{{ total }}</div>
-                            <div class="percent">100%</div>
-                        </div>
-                        {% for p in providerMonthArray %}
-                            <div class="ranking-item">
-                                <div class="logo">
-                                    <img src="{{ p.logo_path }}" alt="{{ p.provider_name }}">
+                    <div class="ranking-content">
+                        <div class="ranking-wrapper">
+                            <div class="ranking-items">
+                                <div class="ranking-item">
+                                    <div class="name">{{ 'Total'|trans }}</div>
+                                    <div class="count">{{ total }}</div>
+                                    <div class="percent">100%</div>
                                 </div>
-                                <div class="index">{{ loop.index }}</div>
-                                <div class="name">{{ p.provider_name }}</div>
-                                <div class="count">{{ p.count }}</div>
-                                <div class="percent">{{ (100 * p.count / total)|round(1) }}%</div>
+                                {% for p in providerMonthArray %}
+                                    <div class="ranking-item">
+                                        <div class="logo">
+                                            <img src="{{ p.logo_path }}" alt="{{ p.provider_name }}">
+                                        </div>
+                                        <div class="index">{{ loop.index }}</div>
+                                        <div class="name">{{ p.provider_name }}</div>
+                                        <div class="count">{{ p.count }}</div>
+                                        <div class="percent">{{ (100 * p.count / total)|round(1) }}%</div>
+                                    </div>
+                                {% endfor %}
                             </div>
-                        {% endfor %}
+                        </div>
+                    </div>
+                </div>
+                <div class="provider-ranking bar-chart">
+                    {% set total = providerMonthArray|reduce((carry, s) => carry + s.count) %}
+                    <div class="ranking-title">{{ ux_icon('mdi:bar-chart') }}{{ 'Providers this month (episode count)'|trans }}</div>
+                    <div class="ranking-time-machine">
+                        <label for="time-machine-slider-month">{{ 'Time machine'|trans }}</label>
+                        <input type="range" min="0" max="100" value="100" step="1" class="time-machine-slider-month" id="time-machine-slider-month">
+                    </div>
+                    {{ include('_blocks/home/_provider_ranking_content.html.twig', {'providerArray': providerMonthArray, 'total': total}) }}
+                </div>
+                <div class="provider-ranking bar-chart">
+                    <div class="ranking-title">{{ ux_icon('mdi:bar-chart') }}{{ 'Providers this month (episode count)'|trans }}</div>
+                    <div class="ranking-gauge">
+                        <div class="js-double-range"
+                             data-type="double-range"
+                             data-min="0"
+                             data-max="100"
+                             data-min-value="10"
+                             data-max-value="90"
+                             data-step="1"
+                             data-id="time-machine-slider-month"
+                        ></div>
                     </div>
                 </div>
                 <div class="provider-ranking">
                     {% set total = providerAllArray|reduce((carry, s) => carry + s.count) %}
                     <div class="ranking-title">{{ 'Providers (episode count)'|trans }}</div>
-                    <div class="ranking-items">
-                        <div class="ranking-item">
-                            <div class="name">{{ 'Total'|trans }}</div>
-                            <div class="count">{{ total }}</div>
-                            <div class="percent">100%</div>
-                        </div>
-                        {% for p in providerAllArray %}
-                            <div class="ranking-item">
-                                <div class="logo">
-                                    <img src="{{ p.logo_path }}" alt="{{ p.provider_name }}">
+                    <div class="ranking-content">
+                        <div class="ranking-wrapper">
+                            <div class="ranking-items">
+                                <div class="ranking-item">
+                                    <div class="name">{{ 'Total'|trans }}</div>
+                                    <div class="count">{{ total }}</div>
+                                    <div class="percent">100%</div>
                                 </div>
-                                <div class="index">{{ loop.index }}</div>
-                                <div class="name">{{ p.provider_name }}</div>
-                                <div class="count">{{ p.count }}</div>
-                                <div class="percent">{{ (100 * p.count / total)|round(1) }}%</div>
+                                {% for p in providerAllArray %}
+                                    <div class="ranking-item">
+                                        <div class="logo">
+                                            <img src="{{ p.logo_path }}" alt="{{ p.provider_name }}">
+                                        </div>
+                                        <div class="index">{{ loop.index }}</div>
+                                        <div class="name">{{ p.provider_name }}</div>
+                                        <div class="count">{{ p.count }}</div>
+                                        <div class="percent">{{ (100 * p.count / total)|round(1) }}%</div>
+                                    </div>
+                                {% endfor %}
                             </div>
-                        {% endfor %}
+                        </div>
                     </div>
+                </div>
+                <div class="provider-ranking bar-chart">
+                    {% set total = providerAllArray|reduce((carry, s) => carry + s.count) %}
+                    <div class="ranking-title">{{ 'Providers (episode count)'|trans }}</div>
+                    <div class="ranking-time-machine">
+                        <label for="time-machine-slider-evo">{{ 'Time machine'|trans }}</label>
+                        <input type="range" min="0" max="100" value="100" step="1" class="time-machine-slider-evo" id="time-machine-slider-evo">
+                    </div>
+                    {{ include('_blocks/home/_provider_ranking_content.html.twig', {'providerArray': providerAllArray, 'total': total}) }}
                 </div>
                 {% if episodesOfTheDay|length %}
                     <div class="series-group">
@@ -212,7 +252,7 @@
                 {% endif %}
                 {% if episodesToWatch|length %}
                     <div class="series-group">
-                        <h2>{{ 'Episodes to watch'|trans }} {#@ ({{ episodesToWatch|length }}) #}</h2>
+                        <h2>{{ 'Episodes to watch'|trans }} {# @ ({{ episodesToWatch|length }}) #}</h2>
                         <div class="wrapper">
                             <div class="content">
                                 {% for s in episodesToWatch %}
