@@ -334,7 +334,7 @@
                     {{ include('_blocks/series/_votes.html.twig', {scale: 1, type: 'array', season_number: season.season_number, ues: season.episodes|map(ep => ep.user_episode), vas: season.episodes|map(ep => ep.vote_average)}) }}
                 {% else %}
                     <div class="season-air-date">
-                        {{ season.air_date_string }}
+                        {{ season.air_date_string|capitalize }}
                     </div>
                 {% endif %}
 
