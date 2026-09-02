@@ -130,8 +130,26 @@ class UserSeriesRepository extends ServiceEntityRepository
         return $this->getAll($sql, ["userId" => $user->getId()], ['userId' => ParameterType::INTEGER]);
     }
 
-    public function getUserEpisodeByProvider(User $user): array
+    public function getUserEpisodeByProvider(User $user, ?string $startDate = null, ?string $endDate = null): array
     {
+        if (!$startDate && !$endDate) {
+            $sql = <<<SQL
+                -- Plateformes par ordre d'épisodes vus (1 mois)
+                SELECT ue.`provider_id`,
+                    wp.`provider_name`,
+                    wp.`logo_path`,
+                    COUNT(ue.`provider_id`) AS count
+                FROM `user_episode` ue
+                    LEFT JOIN `watch_provider` wp ON wp.`provider_id`=ue.`provider_id`
+                WHERE ue.`user_id`=:userId AND ue.`provider_id` IS NOT NULL AND DATE(ue.`watch_at`) > SUBDATE(CURDATE(), INTERVAL 1 MONTH)
+                GROUP BY ue.`provider_id`,
+                    wp.`provider_name`,
+                    wp.`logo_path`
+                ORDER BY count DESC;
+            SQL;
+
+            return $this->getAll($sql, ["userId" => $user->getId()], ['userId' => ParameterType::INTEGER]);
+        }
         $sql = <<<SQL
                 -- Plateformes par ordre d'épisodes vus (1 mois)
                 SELECT ue.`provider_id`,
@@ -140,19 +158,20 @@ class UserSeriesRepository extends ServiceEntityRepository
                     COUNT(ue.`provider_id`) AS count
                 FROM `user_episode` ue
                     LEFT JOIN `watch_provider` wp ON wp.`provider_id`=ue.`provider_id`
-                WHERE ue.`user_id`=1 AND ue.`provider_id` IS NOT NULL AND DATE(ue.`watch_at`) > SUBDATE(CURDATE(), INTERVAL 1 MONTH)
+                WHERE ue.`user_id`=:userId AND ue.`provider_id` IS NOT NULL AND DATE(ue.`watch_at`) > :startDate AND DATE(ue.`watch_at`) <= :endDate
                 GROUP BY ue.`provider_id`,
                     wp.`provider_name`,
                     wp.`logo_path`
                 ORDER BY count DESC;
             SQL;
 
-        return $this->getAll($sql, ["userId" => $user->getId()], ['userId' => ParameterType::INTEGER]);
+        return $this->getAll($sql, ["userId" => $user->getId(), "startDate" => $startDate, "endDate" => $endDate], ['userId' => ParameterType::INTEGER, 'startDate' => ParameterType::STRING, 'endDate' => ParameterType::STRING]);
     }
 
-    public function getUserAllEpisodeByProvider(User $user): array
+    public function getUserAllEpisodeByProvider(User $user, ?string $rankingEndString = null): array
     {
-        $sql = <<<SQL
+        if ($rankingEndString === null) {
+            $sql = <<<SQL
                 -- Plateformes par ordre d'épisodes vus (tout)
                 SELECT ue.`provider_id`,
                     wp.`provider_name`,
@@ -160,12 +179,39 @@ class UserSeriesRepository extends ServiceEntityRepository
                     COUNT(ue.`provider_id`) AS count
                 FROM `user_episode` ue
                     LEFT JOIN `watch_provider` wp ON wp.`provider_id`=ue.`provider_id`
-                WHERE ue.`user_id`=1 AND ue.`provider_id` IS NOT NULL
+                WHERE ue.`user_id`=:userId AND ue.`provider_id` IS NOT NULL
                 GROUP BY ue.`provider_id`, wp.`provider_name`, wp.`logo_path`
                 ORDER BY count DESC;
             SQL;
+            return $this->getAll($sql, ["userId" => $user->getId()], ['userId' => ParameterType::INTEGER]);
 
-        return $this->getAll($sql, ["userId" => $user->getId()], ['userId' => ParameterType::INTEGER]);
+        }
+        else {
+            $sql = <<<SQL
+                -- Plateformes par ordre d'épisodes vus depuis firstDate
+                SELECT ue.`provider_id`,
+                    wp.`provider_name`,
+                    wp.`logo_path`,
+                    COUNT(ue.`provider_id`) AS count
+                FROM `user_episode` ue
+                    LEFT JOIN `watch_provider` wp ON wp.`provider_id`=ue.`provider_id`
+                WHERE ue.`user_id`=:userId AND ue.`air_date` <= :rankingEndString AND ue.`provider_id` IS NOT NULL
+                GROUP BY ue.`provider_id`, wp.`provider_name`, wp.`logo_path`
+                ORDER BY count DESC;
+            SQL;
+            return $this->getAll($sql, ["userId" => $user->getId(), "rankingEndString" => $rankingEndString], ['userId' => ParameterType::INTEGER, 'firstDate' => ParameterType::STRING]);
+        }
+    }
+
+    public function getFirstDate(User $user): ?string
+    {
+        $sql = <<<SQL
+                SELECT MIN(ue.`air_date`) AS first_date
+                FROM `user_episode` ue
+                WHERE ue.`user_id` = :userId AND ue.`provider_id` IS NOT NULL AND ue.`air_date` IS NOT NULL;
+            SQL;
+
+        return $this->getOne($sql, ['userId' => $user->getId()], ['userId' => ParameterType::INTEGER]);
     }
 
     public function seriesToStart(User $user, string $locale, string $sort, string $order): array
@@ -849,6 +895,67 @@ class UserSeriesRepository extends ServiceEntityRepository
         return $this->getAll($sql, $params, $types);
     }
 
+    public function findAvailableSeries(int $userId, string  $locale): array
+    {
+        $sql = <<<SQL
+                -- Derniers épisodes disponibles comme sur TV Time
+                SELECT DISTINCT
+                    us.`id`,
+                    us.`last_watch_at`,
+                    IF(sln.`id`, sln.`name` , s.name) AS name,
+                    CONCAT('S', LPAD(ue.`season_number`, 2, '0'), 'E', LPAD(ue.`episode_number`, 2, '0')) as `number`,
+                    s.`poster_path`,
+                    ue.season_number,
+                    ue.episode_number
+                FROM `user_episode` ue
+                    INNER JOIN `user_series` us ON us.`next_user_episode_id`=ue.`id`
+                    LEFT JOIN `series` s ON s.`id`=us.`series_id`
+                    LEFT JOIN `series_broadcast_schedule` sbs ON sbs.`series_id`=s.`id`
+                    LEFT JOIN `series_broadcast_date` sbd ON sbd.`series_broadcast_schedule_id`=sbs.`id` AND sbd.`episode_id`=ue.`episode_id`
+                    LEFT JOIN `series_localized_name` sln ON sln.`series_id`=s.`id` AND sln.`locale`=:locale
+                WHERE ue.`user_id`=:id
+                    AND ue.`season_number`>0
+                    AND us.`progress`>0
+                    AND ue.`watch_at` IS NULL
+                    AND IF(sbd.id, DATE(sbd.`date`), ue.`air_date`) <= CURDATE()
+                    AND us.`last_watch_at` >= SUBDATE(CURDATE(), INTERVAL 3 WEEK)
+                ORDER BY us.`last_watch_at` DESC;
+            SQL;
+
+        return $this->getAll($sql, ['id' => $userId, 'locale' => $locale], ['id' => Types::INTEGER, 'locale' => Types::STRING]);
+    }
+
+    public function findUpToDateSeries(int $userId, string  $locale): array
+    {
+        $sql = <<<SQL
+                -- Derniers épisodes à jours comme sur TV Time
+                SELECT DISTINCT
+                    s.`id`,
+                    s.`tmdb_id`,
+                    IF(sln.`id`, sln.`name` , s.name) AS name,
+                    CONCAT('S', LPAD(ue.`season_number`, 2, '0'), 'E', LPAD(ue.`episode_number`, 2, '0')) as `number`,
+                    us.`last_watch_at`,
+                    s.`poster_path`,
+                    ue.season_number,
+                    ue.episode_number
+                FROM `user_episode` ue
+                    INNER JOIN `user_series` us ON us.`next_user_episode_id`=ue.`id`
+                    LEFT JOIN `series` s ON s.`id`=us.`series_id`
+                    LEFT JOIN `series_broadcast_schedule` sbs ON sbs.`series_id`=s.`id`
+                    LEFT JOIN `series_broadcast_date` sbd ON sbd.`series_broadcast_schedule_id`=sbs.`id` AND sbd.`episode_id`=ue.`episode_id`
+                    LEFT JOIN `series_localized_name` sln ON sln.`series_id`=s.`id` AND sln.`locale`=:locale
+                WHERE ue.`user_id`=:id
+                    AND ue.`season_number`>0
+                    AND us.`progress`>0
+                    AND us.`next_user_episode_id` IS NOT NULL
+                    AND IF(sbd.id, DATE(sbd.`date`), ue.`air_date`) > CURDATE()
+                    AND us.`last_watch_at` >= SUBDATE(CURDATE(), INTERVAL 3 WEEK)
+                ORDER BY us.`last_watch_at` DESC;
+            SQL;
+
+        return $this->getAll($sql, ['id' => $userId, 'locale' => $locale], ['id' => Types::INTEGER, 'locale' => Types::STRING]);
+    }
+
     public function getAll(string $sql, array $params = [], array $types = []): array
     {
         try {
@@ -875,62 +982,5 @@ class UserSeriesRepository extends ServiceEntityRepository
             $this->em->remove($userSeries);
             $this->em->flush();
         }
-    }
-
-    public function findAvailableSeries(int $userId, string  $locale): array
-    {
-        $sql = <<<SQL
-                -- Derniers épisodes disponibles comme sur TV Time
-                SELECT 
-                    s.`id`,
-                    s.`tmdb_id`,
-                    IF(sln.`id`, sln.`name` , s.name) AS name,
-                    CONCAT('S', LPAD(ue.`season_number`, 2, '0'), 'E', LPAD(ue.`episode_number`, 2, '0')) as `number`,
-                    s.`poster_path`,
-                    ue.season_number,
-                    ue.episode_number
-                FROM `user_episode` ue
-                    INNER JOIN `user_series` us ON us.`next_user_episode_id`=ue.`id`
-                    LEFT JOIN `series` s ON s.`id`=us.`series_id`
-                    LEFT JOIN `series_localized_name` sln ON sln.`series_id`=s.`id` AND sln.`locale`=:locale
-                WHERE ue.`user_id`=:id
-                    AND ue.`season_number`>0
-                    AND us.`progress`>0
-                    AND ue.`watch_at` IS NULL
-                    AND ue.`air_date` <= CURDATE()
-                    AND us.`last_watch_at` >= SUBDATE(CURDATE(), INTERVAL 3 WEEK)
-                ORDER BY us.`last_watch_at` DESC;
-            SQL;
-
-        return $this->getAll($sql, ['id' => $userId, 'locale' => $locale], ['id' => Types::INTEGER, 'locale' => Types::STRING]);
-    }
-
-    public function findUpToDateSeries(int $userId, string  $locale): array
-    {
-        $sql = <<<SQL
-                -- Derniers épisodes à jours comme sur TV Time
-                SELECT DISTINCT
-                    s.`id`,
-                    s.`tmdb_id`,
-                    IF(sln.`id`, sln.`name` , s.name) AS name,
-                    CONCAT('S', LPAD(ue.`season_number`, 2, '0'), 'E', LPAD(ue.`episode_number`, 2, '0')) as `number`,
-                    us.`last_watch_at`,
-                    s.`poster_path`,
-                    ue.season_number,
-                    ue.episode_number
-                FROM `user_episode` ue
-                    INNER JOIN `user_series` us ON us.`next_user_episode_id`=ue.`id`
-                    LEFT JOIN `series` s ON s.`id`=us.`series_id`
-                    LEFT JOIN `series_localized_name` sln ON sln.`series_id`=s.`id` AND sln.`locale`=:locale
-                WHERE ue.`user_id`=:id
-                    AND ue.`season_number`>0
-                    AND us.`progress`>0
-                    AND us.`next_user_episode_id` IS NOT NULL
-                    AND ue.`air_date` > CURDATE()
-                    AND us.`last_watch_at` >= SUBDATE(CURDATE(), INTERVAL 3 WEEK)
-                ORDER BY us.`last_watch_at` DESC;
-            SQL;
-
-        return $this->getAll($sql, ['id' => $userId, 'locale' => $locale], ['id' => Types::INTEGER, 'locale' => Types::STRING]);
     }
 }
