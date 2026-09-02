@@ -1,4 +1,4 @@
-<div class="card">
+<div class="card{% if markPremiere and series.episode_number==1 %} premiere{% endif %}">
     <a href="{{ path('app_tv_episode', { 'id': series.id, slug: series.name|slug, seasonNumber: series.season_number, episodeNumber: series.episode_number }) }}">
         <div class="poster">
             {% if series.poster_path is defined and series.poster_path %}

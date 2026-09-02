@@ -21,10 +21,10 @@
                 <div class="wrapper">
                     <div class="content center">
                         {% for series in seriesAvailable %}
-                            {{ include('_blocks/series/_card_tv_time.html.twig', {next: true}) }}
+                            {{ include('_blocks/series/_card_tv_time.html.twig', {next: true, markPremiere: 1}) }}
                         {% endfor %}
                         {% for series in seriesUpToDate %}
-                            {{ include('_blocks/series/_card_tv_time.html.twig', {next: false}) }}
+                            {{ include('_blocks/series/_card_tv_time.html.twig', {next: false, markPremiere: 0}) }}
                         {% endfor %}
                     </div>
                 </div>

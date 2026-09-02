@@ -915,10 +915,10 @@ class UserSeriesRepository extends ServiceEntityRepository
                     LEFT JOIN `series_localized_name` sln ON sln.`series_id`=s.`id` AND sln.`locale`=:locale
                 WHERE ue.`user_id`=:id
                     AND ue.`season_number`>0
-                    AND us.`progress`>0
+                --  AND us.`progress`>0
                     AND ue.`watch_at` IS NULL
                     AND IF(sbd.id, DATE(sbd.`date`), ue.`air_date`) <= CURDATE()
-                    AND us.`last_watch_at` >= SUBDATE(CURDATE(), INTERVAL 3 WEEK)
+                	AND (us.`last_watch_at` >= SUBDATE(CURDATE(), INTERVAL 3 WEEK) or (IF(sbd.id, DATE(sbd.`date`), ue.`air_date`) >= SUBDATE(CURDATE(), INTERVAL 3 WEEK) AND ue.`episode_number`=1))
                 ORDER BY us.`last_watch_at` DESC;
             SQL;
 
