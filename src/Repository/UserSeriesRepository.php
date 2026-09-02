@@ -732,6 +732,19 @@ class UserSeriesRepository extends ServiceEntityRepository
         return $this->getAll($sql, $params, $types);
     }
 
+    public function getLastWatchedSeries(User $user): int
+    {
+        $userId = $user->getId();
+        $sql = <<<SQL
+            SELECT us.id
+            FROM `user_series` us
+            WHERE us.`user_id` = :userId
+            ORDER BY us.`last_watch_at` DESC LIMIT 1
+        SQL;
+
+        return $this->getOne($sql, ['userId' => $userId], ['userId' => ParameterType::INTEGER]);
+    }
+
     public function userSeriesWithoutProvider(User $user, string $locale, int $page, int $limit): array
     {
         $params = [

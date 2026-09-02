@@ -33,6 +33,7 @@ import {Season} from 'Season';
 import {SeriesStatistics} from "SeriesStatistics";
 import {Show} from 'Show';
 import {ToolTips} from 'ToolTips';
+import {TvTime} from 'TvTime';
 import {UserList} from "UserList";
 import {VideoList} from "VideoList";
 import {Video} from 'Video';
@@ -119,6 +120,9 @@ window.addEventListener("DOMContentLoaded", () => {
         const index = new Index();
         const globs = JSON.parse(document.querySelector("#global-data").textContent);
         index.init(globs, menu);
+    }
+    if (seriesTvTime) {
+        new TvTime();
     }
     const tmdbSeriesPage = document.querySelector(".series-show.tmdb-series");
     const seriesPage = document.querySelector(".series-show.user-series-show");

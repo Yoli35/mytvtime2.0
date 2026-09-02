@@ -312,6 +312,30 @@ class UserEpisodeRepository extends ServiceEntityRepository
         return $this->getOne($sql, $params, $types);
     }
 
+    public function getLastWatchedSeriesEpisode(User $user, UserSeries $us): int
+    {
+        $params = [
+            'userId' => $user->getId(),
+            'userSeriesId' => $us->getId(),
+        ];
+        $types = [
+            'userId' => ParameterType::INTEGER,
+            'userSeriesId' => ParameterType::INTEGER,
+        ];
+        $sql = <<<SQL
+        SELECT ue.id
+            FROM user_episode ue
+            WHERE ue.user_id = :userId
+                AND ue.user_series_id = :userSeriesId
+                AND ue.previous_occurrence_id IS NULL
+                AND ue.season_number > 0
+            ORDER BY ue.watch_at DESC
+            LIMIT 1
+        SQL;
+
+        return $this->getOne($sql, $params, $types);
+    }
+
     public function getScheduleNextEpisode(int $id, int $userSeriesId): array
     {
         $params = [

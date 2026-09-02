@@ -10,7 +10,7 @@
 
 {% block body %}
     {% include('_blocks/_menu.html.twig') %}
-    <div class="container-fluid series-tv-time">
+    <div class="container-fluid series-tv-time" data-last="{{ lastWatchedSeriesId }}">
         <h1>{{ 'Current series'|trans }}</h1>
             {{ include('_blocks/series/_search.html.twig') }}
         {% if seriesAvailable|length or seriesUpToDate|length %}
@@ -18,16 +18,7 @@
                 <div class="infos">{{ 'My list'|trans }}</div>
             </header>
             <div class="series-group user">
-                <div class="wrapper">
-                    <div class="content center">
-                        {% for series in seriesAvailable %}
-                            {{ include('_blocks/series/_card_tv_time.html.twig', {next: true, markPremiere: 1}) }}
-                        {% endfor %}
-                        {% for series in seriesUpToDate %}
-                            {{ include('_blocks/series/_card_tv_time.html.twig', {next: false, markPremiere: 0}) }}
-                        {% endfor %}
-                    </div>
-                </div>
+                {{ include('_blocks/series/_card_tv_time_wrapper.html.twig', {seriesAvailable: seriesAvailable, seriesUpToDate: seriesUpToDate}) }}
             </div>
         {% endif %}
         <div id="global-data" class="hidden">

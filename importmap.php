@@ -75,6 +75,7 @@ return [
     'Show' => ['path' => './assets/js/series/Show.js'],
     'ToolTips' => ['path' => './assets/js/ToolTips.js'],
     'TranslationsForms' => ['path' => './assets/js/translations/TranslationsForms.js'],
+    'TvTime' => ['path' => './assets/js/series/TvTime.js'],
     'UserList' => ['path' => './assets/js/list/UserList.js'],
     'Video' => ['path' => './assets/js/videos/Video.js'],
     'VideoList' => ['path' => './assets/js/videos/VideoList.js'],

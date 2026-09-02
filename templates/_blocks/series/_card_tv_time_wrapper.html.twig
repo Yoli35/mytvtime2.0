@@ -1,0 +1,10 @@
+<div class="wrapper">
+    <div class="content center">
+        {% for series in seriesAvailable %}
+            {{ include('_blocks/series/_card_tv_time.html.twig', {next: true}) }}
+        {% endfor %}
+        {% for series in seriesUpToDate %}
+            {{ include('_blocks/series/_card_tv_time.html.twig', {next: false}) }}
+        {% endfor %}
+    </div>
+</div>

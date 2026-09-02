@@ -317,7 +317,8 @@ readonly class ApiSeriesEpisode
         if ($userEpisode) {
             if ($userEpisode->getPreviousOccurrence()) {
                 // on met à jour la "user" séries avec l'épisode précédemment vu
-                $lastWatchedEpisode = $this->userEpisodeRepository->findOneBy(['userSeries' => $userSeries, 'previousOccurrence' => null], ['watchAt' => 'DESC']);
+                $userSeries->setNextUserEpisode($userSeries->getLastUserEpisode());
+                $lastWatchedEpisode = $this->userEpisodeRepository->findOneBy(['userSeries' => $userSeries], ['watchAt' => 'DESC']);
                 $userSeries->setLastUserEpisode($lastWatchedEpisode);
                 $userSeries->setLastWatchAt($lastWatchedEpisode->getWatchAt());
                 $userSeries->setLastEpisode($lastWatchedEpisode->getEpisodeNumber());
@@ -339,30 +340,19 @@ readonly class ApiSeriesEpisode
             $this->userEpisodeRepository->save($userEpisode, true);
         }
 
-        if ($episodeNumber > 1 && $seasonNumber > 0) {
-            for ($j = $seasonNumber; $j > 0; $j--) {
-                for ($i = $episodeNumber - 1; $i > 0; $i--) {
-                    $episode = $this->userEpisodeRepository->findOneBy(['userSeries' => $userSeries, 'seasonNumber' => $j, 'episodeNumber' => $i]);
-                    if ($episode && $episode->getWatchAt()) {
-                        $userSeries->setLastEpisode($episode->getEpisodeNumber());
-                        $userSeries->setLastSeason($episode->getSeasonNumber());
-                        $userSeries->setLastWatchAt($episode->getWatchAt());
-                        $viewedEpisodes = $userSeries->getViewedEpisodes();
-                        $tv = json_decode($this->tmdbService->getTv($showId, $locale), true);
-                        $numberOfEpisode = $tv['number_of_episodes'];
-                        $userSeries->setViewedEpisodes($viewedEpisodes - 1);
-                        $userSeries->setProgress(($viewedEpisodes - 1) / $numberOfEpisode * 100);
-                        $userSeries->setBinge(false);
-                        $this->userSeriesRepository->save($userSeries, true);
-                        /*return ($this->json)([
-                            'ok' => true,
-                            'progress' => $this->userEpisodeRepository->seasonProgress($userSeries, $seasonNumber),
-                        ]);*/
-                        break 2;
-                    }
-                }
-            }
-        }
+        $userSeries->setNextUserEpisode($userSeries->getLastUserEpisode());
+        $ueId = $this->userEpisodeRepository->getLastWatchedSeriesEpisode($user, $userSeries);
+        $ue = $this->userEpisodeRepository->findOneBy(['id' => $ueId]);
+        $userSeries->setLastUserEpisode($ue);
+        $userSeries->setLastEpisode($ue->getEpisodeNumber());
+        $userSeries->setLastSeason($ue->getSeasonNumber());
+        $userSeries->setLastWatchAt($ue->getWatchAt());
+        $viewedEpisodes = $userSeries->getViewedEpisodes() - 1;
+        $numberOfEpisode = $series->getNumberOfEpisode();
+        $userSeries->setViewedEpisodes($viewedEpisodes);
+        $userSeries->setProgress($viewedEpisodes / $numberOfEpisode * 100);
+        //TODO: refaire le test de binge - $userSeries->setBinge(false);
+
         // on a supprimé le premier épisode de la première saison ou on n'a pas trouvé d'épisode précédemment vu
         if ($seasonNumber == 1 && $episodeNumber == 1) {
             $userSeries->setLastEpisode(null);
