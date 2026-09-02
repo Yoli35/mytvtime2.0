@@ -93,6 +93,9 @@ readonly class ApiSeriesEpisode
         $series = $this->seriesRepository->findOneBy(['id' => $seriesId]);
         $seriesLocalizedName = $series->getLocalizedName($locale);
         $userSeries = $this->userSeriesRepository->findOneBy(['user' => $user, 'series' => $series]);
+        $userSeason = array_find($userSeries->getUserSeasons()->toArray(), function ($season) use ($seasonNumber) {
+            return $season->getSeasonNumber() == $seasonNumber;
+        });
         $userSeriesEpisodes = $this->userEpisodeRepository->findBy(['userSeries' => $userSeries], ['seasonNumber' => 'ASC', 'episodeNumber' => 'ASC']);
         $userEpisode = $this->userEpisodeRepository->findOneBy(['id' => $userEpisodeId]);
         $userEpisodes = $this->userEpisodeRepository->findBy(['userSeries' => $userSeries, 'episodeId' => $id], ['id' => 'ASC']);
@@ -100,6 +103,7 @@ readonly class ApiSeriesEpisode
         $now = $this->now($user);
         if ($userEpisode->getWatchAt()) { // Si l'épisode a déjà été vu
             $userEpisode = new UserEpisode($userSeries, $id, $seasonNumber, $episodeNumber, $now);
+            $userEpisode->setUserSeason($userSeason);
             $userEpisode->setPreviousOccurrence($userEpisodes[count($userEpisodes) - 1]);
             $new = true;
         } else {
@@ -182,7 +186,10 @@ readonly class ApiSeriesEpisode
                 }
             }
         }
-
+        if ($userEpisode->getUserSeason() == null) {
+            dump($userEpisode);
+            $userEpisode->setUserSeason($userSeason);
+        }
         $this->userEpisodeRepository->save($userEpisode, true);
 
         if ($seasonNumber) {
