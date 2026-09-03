@@ -1,0 +1,30 @@
+<div class="last-episode-votes">
+    {% for series in seriesArr %}
+        <div class="last-episode-vote" data-id="{{ series.prev_episode_id }}">
+            <div class="content">
+                <div class="poster">
+                    {% if series.poster_path %}
+                        <img src="/series/posters{{ series.poster_path }}" alt="{{ series.name }}"/>
+                    {% else %}
+                        {{ 'No poster'|trans }}
+                    {% endif %}
+                    <div class="your-vote">--</div>
+                </div>
+                <div class="infos">
+                    <div class="name">{{ series.name }} <span>{{ 'S%02dE%02d'|format(series.prev_episode_season, series.prev_episode_number) }}</span></div>
+                    <div class="vote">
+                        {% for vote in 1..12 %}
+                            <div class="vote-star" data-vote="{{ vote }}" data-title="{{ vote }}">
+                                {{ ux_icon('mdi:star-outline', {'data-status': 'off'}) }}
+                                {{ ux_icon('mdi:star', {'data-status': 'on'}) }}
+                            </div>
+                        {% endfor %}
+                    </div>
+                    <div class="submit-vote">
+                        <button type="button" class="btn" data-id="{{ series.prev_episode_id }}">{{ 'Vote'|trans }}</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+</div>

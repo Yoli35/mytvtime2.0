@@ -1,4 +1,4 @@
-<div class="card{% if next and series.episode_number==1 %} premiere{% endif %}">
+<div class="card{% if next and series.episode_number==1 %} premiere{% endif %}"{% if next==0%} data-prev-id="{{ series.prev_episode_id }}"{% endif %}>
     <a href="{{ path('app_tv_episode', { 'id': series.id, slug: series.name|slug, seasonNumber: series.season_number, episodeNumber: series.episode_number }) }}">
         <div class="poster">
             {% if series.poster_path is defined and series.poster_path %}
@@ -24,6 +24,7 @@
                      data-user-episode-id="{{ series.userEpisodeId }}"
                 >{{ ux_icon('mdi:eye') }}</div>
             {% else %}
+                <div class="vote" data-id="{{ series.userEpisodeId }}">{% if series.prev_episode_vote %}{{ series.prev_episode_vote }}{% else %}{{ ux_icon('mdi:star') }}{% endif %}</div>
                 <div class="done">{{ ux_icon('mdi:check') }}</div>
             {% endif %}
         </div>

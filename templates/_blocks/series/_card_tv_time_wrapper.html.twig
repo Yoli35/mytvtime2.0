@@ -1,4 +1,4 @@
-<div class="wrapper">
+<div class="wrapper{% if list %} list{% endif %}">
     <div class="content center">
         {% for series in seriesAvailable %}
             {{ include('_blocks/series/_card_tv_time.html.twig', {next: true}) }}

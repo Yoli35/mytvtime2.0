@@ -35,6 +35,7 @@
             <div id="svg-bookmark">{{ ux_icon('mdi:bookmark') }}</div>
             <div id="svg-bookmark-outline">{{ ux_icon('mdi:bookmark-outline') }}</div>
         </div>
+        {{ include('_blocks/series/_card_tv_time_vote.html.twig', {seriesArr: seriesArr}) }}
         {% include('_blocks/_footer.html.twig') %}
     </div>
 {% endblock %}
