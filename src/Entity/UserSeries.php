@@ -9,6 +9,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: UserSeriesRepository::class)]
+#[ORM\Index(name: 'idx_us_user_last_watch_at', columns: ['user_id', 'last_watch_at'])]
 class UserSeries
 {
     #[ORM\Id]

@@ -8,6 +8,7 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: UserEpisodeRepository::class)]
+#[ORM\Index(name: 'idx_ue_series_id_season', columns: ['user_series_id', 'id', 'season_number'])]
 class UserEpisode
 {
     #[ORM\Id]

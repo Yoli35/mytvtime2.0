@@ -7,6 +7,7 @@ use DateTimeImmutable;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: SeriesBroadcastDateRepository::class)]
+#[ORM\Index(name: 'idx_sbd_episode', columns: ['episode_id'])]
 class SeriesBroadcastDate
 {
     #[ORM\Id]
