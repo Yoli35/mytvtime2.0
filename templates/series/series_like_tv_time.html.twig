@@ -6,6 +6,7 @@
     <link rel="stylesheet" href="{{ asset('styles/home.scss') }}">
     <link rel="stylesheet" href="{{ asset('styles/series.scss') }}">
     <link rel="stylesheet" href="{{ asset('styles/card.scss') }}">
+    <link rel="stylesheet" href="{{ asset('styles/tv_time.scss') }}">
 {% endblock %}
 
 {% block body %}
@@ -16,6 +17,8 @@
         {% if seriesAvailable|length or seriesUpToDate|length %}
             <header>
                 <div class="infos">{{ 'My list'|trans }}</div>
+                <div class="display-list">{{ ux_icon('mdi:format-list-bulleted') }}</div>
+                <div class="display-grid">{{ ux_icon('mdi:grid') }}</div>
             </header>
             <div class="series-group user">
                 {{ include('_blocks/series/_card_tv_time_wrapper.html.twig', {seriesAvailable: seriesAvailable, seriesUpToDate: seriesUpToDate}) }}

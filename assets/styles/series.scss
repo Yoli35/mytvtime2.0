@@ -732,31 +732,6 @@ h2 {
     }
 }
 
-.series-tv-time {
-    .series-group {
-        .wrapper {
-            .content {
-                gap: .25rem;
-
-                &.center {
-                    width: round(down, 100%, 15.75rem);
-                }
-
-                .card {
-                    border-radius: .75rem;
-                    border: 4px solid hsl(from var(--orange-90) h s l / 0.25);
-                    height: 27.5rem;
-                    width: 15.5rem;
-
-                    &.premiere {
-                        border-color: var(--orange-50);
-                    }
-                }
-            }
-        }
-    }
-}
-
 .container-fluid:has(.series-show) {
     background-color: var(--container-background);
 }

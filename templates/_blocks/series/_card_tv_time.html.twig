@@ -6,26 +6,26 @@
             {% else %}
                 <div>{{ 'No poster'|trans }}</div>
             {% endif %}
-            {#            {% if series.watch_links|length %} #}
-            {#                <div class="watch-links"> #}
-            {#                    {% for wl in series.watch_links %} #}
-            {#                        <div class="provider"> #}
-            {#                            <img src="{{ wl.logo_path }}" data-title="{{ wl.link_name }}" alt="{{ wl.provider_name }}"> #}
-            {#                        </div> #}
-            {#                    {% endfor %} #}
-            {#                </div> #}
-            {#            {% endif %} #}
-            {#            <div class="series-infos"> #}
-            {#                <div class="dates"> #}
-            {#                    <div class="air-date" data-title="{{ 'First air date'|trans }}">{{ ux_icon('mdi:date-range') }}{{ series.final_air_date|format_date('relative_short')|capitalize }}</div> #}
-            {#                    <div class="add-date" data-title="{{ 'Added on'|trans }}">{{ ux_icon('mdi:plus') }}{{ series.added_at|format_date('relative_short')|capitalize }}</div> #}
-            {#                </div> #}
-            {#            </div> #}
         </div>
         <div class="infos tv-time">
             <div class="name">
-                {{ series.name }} <em>{% if next %}{{ series.number }}{% else %}{{ 'Up to date'|trans }}{% endif %}</em>
+                {{ series.name }}
+                {% if next and series.last %}{{ 'End of season'|trans }}{% endif %}
+                <em>{% if next %}{{ series.number }}{% else %}{{ 'Up to date'|trans }}{% endif %}</em>
             </div>
+            {% if next %}
+                <div class="add-badge"
+                     data-episode-id="{{ series.episode_id }}"
+                     data-episode-number="{{ series.episode_number }}"
+                     data-last-episode="{{ series.last }}"
+                     data-season-number="{{ series.season_number }}"
+                     data-series-id="{{ series.id }}"
+                     data-tmdb-id="{{ series.tmdb_id }}"
+                     data-user-episode-id="{{ series.userEpisodeId }}"
+                >{{ ux_icon('mdi:eye') }}</div>
+            {% else %}
+                <div class="done">{{ ux_icon('mdi:check') }}</div>
+            {% endif %}
         </div>
     </a>
 </div>

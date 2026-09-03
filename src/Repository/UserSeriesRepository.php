@@ -913,18 +913,23 @@ class UserSeriesRepository extends ServiceEntityRepository
         $sql = <<<SQL
                 -- Derniers épisodes disponibles comme sur TV Time
                 SELECT DISTINCT
-                    us.`id`,
+                    s.`id`,
+                    s.`tmdb_id`,
                     us.`last_watch_at`,
                     IF(sln.`id`, sln.`name` , s.name) AS name,
                     CONCAT('S', LPAD(ue.`season_number`, 2, '0'), 'E', LPAD(ue.`episode_number`, 2, '0')) as `number`,
                     s.`poster_path`,
-                    ue.season_number,
-                    ue.episode_number
+                    ue.`id` AS userEpisodeId,
+                    ue.`episode_id`,
+                    ue.`season_number`,
+                    ue.`episode_number`,
+                    (SELECT ue2.`id`
+                     FROM `user_episode` ue2
+                     WHERE ue2.`user_series_id`=ue.`user_series_id` AND ue2.`season_number`=ue.`season_number` AND ue2.`episode_number`=ue.`episode_number`+1) IS NULL AS last
                 FROM `user_episode` ue
                     INNER JOIN `user_series` us ON us.`next_user_episode_id`=ue.`id`
                     LEFT JOIN `series` s ON s.`id`=us.`series_id`
-                    LEFT JOIN `series_broadcast_schedule` sbs ON sbs.`series_id`=s.`id`
-                    LEFT JOIN `series_broadcast_date` sbd ON sbd.`series_broadcast_schedule_id`=sbs.`id` AND sbd.`episode_id`=ue.`episode_id`
+                    LEFT JOIN `series_broadcast_date` sbd ON sbd.`episode_id`=ue.`episode_id`
                     LEFT JOIN `series_localized_name` sln ON sln.`series_id`=s.`id` AND sln.`locale`=:locale
                 WHERE ue.`user_id`=:id
                     AND ue.`season_number`>0
@@ -954,8 +959,7 @@ class UserSeriesRepository extends ServiceEntityRepository
                 FROM `user_episode` ue
                     INNER JOIN `user_series` us ON us.`next_user_episode_id`=ue.`id`
                     LEFT JOIN `series` s ON s.`id`=us.`series_id`
-                    LEFT JOIN `series_broadcast_schedule` sbs ON sbs.`series_id`=s.`id`
-                    LEFT JOIN `series_broadcast_date` sbd ON sbd.`series_broadcast_schedule_id`=sbs.`id` AND sbd.`episode_id`=ue.`episode_id`
+                    LEFT JOIN `series_broadcast_date` sbd ON sbd.`episode_id`=ue.`episode_id`
                     LEFT JOIN `series_localized_name` sln ON sln.`series_id`=s.`id` AND sln.`locale`=:locale
                 WHERE ue.`user_id`=:id
                     AND ue.`season_number`>0

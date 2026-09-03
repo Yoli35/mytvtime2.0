@@ -85,6 +85,7 @@ readonly class ApiSeriesEpisode
         $userEpisodeId = $inputBag->get('userEpisodeId');
         $episodePage = $inputBag->get('episodePage');
         $isNextEpisodeCard = $inputBag->get('isNextEpisodeCard');
+        $isTvTimePage = $inputBag->get('isTvTimePage');
         $new = false;
         $bestProviderIds = [];
 
@@ -112,6 +113,10 @@ readonly class ApiSeriesEpisode
 
         $firstViewedUserEpisode = $userEpisodes[0];
         $airDate = $firstViewedUserEpisode->getAirDate();
+        $scheduleDate = $this->seriesBroadcastDateRepository->findOneBy(['episodeId' => $firstViewedUserEpisode->getEpisodeId()]);
+        if ($scheduleDate) {
+            $airDate = $scheduleDate->getDate();
+        }
         if (!$airDate) {
             $tmdbEpisode = json_decode($this->tmdbService->getTvEpisode($showId, $seasonNumber, $episodeNumber, 'en-US'), true);
             $airDate = $tmdbEpisode['air_date'] ? $this->dateService->newDateImmutable($tmdbEpisode['air_date'], 'Europe/Paris', true) : null;
@@ -207,6 +212,12 @@ readonly class ApiSeriesEpisode
                 $userSeries->setProgress(round(100 * $userSeries->getViewedEpisodes() / $series->getNumberOfEpisode(), 2));
             }
             $this->userSeriesRepository->save($userSeries, true);
+        }
+
+        if ($isTvTimePage) {
+            return ($this->json)([
+                'ok' => true,
+            ]);
         }
 
         if ($isNextEpisodeCard) {
