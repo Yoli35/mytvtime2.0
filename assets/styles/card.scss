@@ -298,20 +298,6 @@
             /*padding-inline: .5rem;*/
             position: relative;
             width: 100%;
-
-            &.tv-time {
-                background-color: var(--orange-10);
-
-                .name {
-                    background-color: transparent !important;
-                }
-
-                em {
-                    color: var(--yellow);
-                    font-style: normal;
-                    margin-inline-start: .5rem;
-                }
-            }
         }
 
         .name {

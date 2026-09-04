@@ -106,6 +106,40 @@
                         }
 
                         .infos {
+                            background-color: var(--orange-10);
+
+                            .name {
+                                align-items: flex-start;
+                                background-color: transparent !important;
+                                flex-direction: column;
+                                font-size: 1rem;
+                                gap:.25rem;
+                                text-align: left;
+                            }
+
+                            .progress-wrapper {
+                                border: 1px solid hsl(from var(--green) h 0 l);
+                                border-radius: 5rem;
+                                display: none;
+                                width: 10rem;
+
+                                .progress-bar {
+                                    background-color: var(--green);
+                                    height: .5rem;
+                                    border-radius: 5rem;
+                                }
+                            }
+
+                            .status {
+                                color: hsl(from var(--green) h 0 l);
+                                display: none;
+                            }
+
+                            em {
+                                color: var(--yellow);
+                                font-style: normal;
+                            }
+
                             .add-badge, .done {
                                 display: none;
                             }
@@ -166,6 +200,14 @@
 
                                 .name {
                                     width: unset;
+                                }
+
+                                .progress-wrapper {
+                                    display: block;
+                                }
+
+                                .status {
+                                    display: block;
                                 }
 
                                 .vote {

@@ -923,7 +923,15 @@ class UserSeriesRepository extends ServiceEntityRepository
                     ue.`episode_id`,
                     ue.`season_number`,
                     ue.`episode_number`,
-                    next.id IS NULL AS last
+                    (SELECT COUNT(remain.`id`)
+                     FROM user_episode remain
+                     WHERE remain.`user_series_id`=us.`id`  AND remain.`season_number`=ue.`season_number`  AND remain.`episode_number`>ue.`episode_number`) AS remainingEpisodeCount,
+                    (SELECT COUNT(*)
+                    FROM `user_episode` ue3
+                    WHERE ue3.`user_season_id`=usa.`id` AND ue3.`watch_at` IS NOT NULL) AS viewedCount,
+                    (SELECT COUNT(*)
+                    FROM `user_episode` ue3
+                    WHERE ue3.`user_season_id`=usa.`id`) AS episodeCount
                 FROM `user_episode` ue
                     INNER JOIN `user_series` us ON us.`next_user_episode_id`=ue.`id`
                     LEFT JOIN `user_season` usa ON usa.`user_series_id`=us.`id` AND usa.`season_number`=ue.`season_number`
@@ -971,7 +979,10 @@ class UserSeriesRepository extends ServiceEntityRepository
                     prev.`id`             AS prev_episode_id,
                     prev.`vote`           AS prev_episode_vote,
                     prev.`season_number`  AS prev_episode_season,
-                    prev.`episode_number` AS prev_episode_number
+                    prev.`episode_number` AS prev_episode_number,
+                    (SELECT COUNT(remain.`id`)
+                     FROM user_episode remain
+                     WHERE remain.`user_series_id`=us.`id`  AND remain.`season_number`=ue.`season_number`  AND remain.`episode_number`>ue.`episode_number`) AS remainingEpisodeCount
                 FROM `user_series` us
                     INNER JOIN `user_episode` ue ON ue.`id`=us.`next_user_episode_id`
                     LEFT JOIN `user_season` usa ON usa.`user_series_id`=us.`id` AND usa.`season_number`=ue.`season_number`

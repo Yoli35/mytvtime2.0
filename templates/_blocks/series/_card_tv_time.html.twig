@@ -1,4 +1,4 @@
-<div class="card{% if next and series.episode_number==1 %} premiere{% endif %}"{% if next==0%} data-prev-id="{{ series.prev_episode_id }}"{% endif %}>
+<div class="card{% if next and series.episode_number==1 %} premiere{% endif %}"{% if next==0 %} data-prev-id="{{ series.prev_episode_id }}"{% endif %}>
     <a href="{{ path('app_tv_episode', { 'id': series.id, slug: series.name|slug, seasonNumber: series.season_number, episodeNumber: series.episode_number }) }}">
         <div class="poster">
             {% if series.poster_path is defined and series.poster_path %}
@@ -10,14 +10,21 @@
         <div class="infos tv-time">
             <div class="name">
                 {{ series.name }}
-                {% if next and series.last %}{{ 'End of season'|trans }}{% endif %}
+                {% if next and  series.viewedCount>0 %}
+                    <div class="progress-wrapper">
+                        <div class="progress-bar" style="width: {{ series.viewedCount/series.episodeCount*100 }}%"></div>
+                    </div>
+                {% endif %}
+                {% if series.remainingEpisodeCount==0 %}
+                    <div class="status">{{ 'End of season'|trans }}</div>{% endif %}
+                {% if series.remainingEpisodeCount>0 %}
+                    <div class="status">{{ series.remainingEpisodeCount }} {{ (series.remainingEpisodeCount>1 ?'remaining episodes':'remaining episode')|trans }}</div>{% endif %}
                 <em>{% if next %}{{ series.number }}{% else %}{{ 'Up to date'|trans }}{% endif %}</em>
             </div>
             {% if next %}
                 <div class="add-badge"
                      data-episode-id="{{ series.episode_id }}"
                      data-episode-number="{{ series.episode_number }}"
-                     data-last-episode="{{ series.last }}"
                      data-season-number="{{ series.season_number }}"
                      data-series-id="{{ series.id }}"
                      data-tmdb-id="{{ series.tmdb_id }}"

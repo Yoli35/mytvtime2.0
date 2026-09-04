@@ -21,7 +21,7 @@
                 <div class="display-grid">{{ ux_icon('mdi:grid') }}</div>
             </header>
             <div class="series-group user">
-                {{ include('_blocks/series/_card_tv_time_wrapper.html.twig', {seriesAvailable: seriesAvailable, seriesUpToDate: seriesUpToDate}) }}
+                {{ include('_blocks/series/_card_tv_time_wrapper.html.twig', {seriesAvailable: seriesAvailable, seriesUpToDate: seriesUpToDate, loadCount: loadCount}) }}
             </div>
         {% endif %}
         <div id="global-data" class="hidden">
