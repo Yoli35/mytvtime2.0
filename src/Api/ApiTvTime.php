@@ -55,7 +55,7 @@ readonly class ApiTvTime
             'new_episode' => true,
             'view' => $view,
             'noVoteView' => $noVoteView,
-            'lastWatchedEpisodeId' => $lastWatchedSeriesId,
+            /*'lastWatchedEpisodeId' => $lastWatchedSeriesId,*/
         ]);
     }
 

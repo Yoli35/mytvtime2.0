@@ -58,6 +58,8 @@
     }
 
     header {
+        background-color: var(--yellow);
+        color: var(--orange-10);
         padding-inline: 1rem;
         width: 100%;
 
@@ -66,7 +68,7 @@
         }
 
         .display-list, .display-grid {
-            color: var(--orange-90);
+            color: var(--orange-10);
             cursor: pointer;
             margin-inline-start: auto;
 
@@ -106,38 +108,49 @@
                         }
 
                         .infos {
-                            background-color: var(--orange-10);
+                            align-items: center;
+                            background-color: hsl(from var(--orange-10) h 30% l);
+                            font-size: 1rem;
+                            padding: 1rem;
+                            text-align: left;
 
-                            .name {
-                                align-items: flex-start;
-                                background-color: transparent !important;
+                            .details {
+                                display: flex;
                                 flex-direction: column;
-                                font-size: 1rem;
-                                gap:.25rem;
-                                text-align: left;
-                            }
+                                gap: .25rem;
+                                height: 5rem;
+                                justify-content: center;
 
-                            .progress-wrapper {
-                                border: 1px solid hsl(from var(--green) h 0 l);
-                                border-radius: 5rem;
-                                display: none;
-                                width: 10rem;
-
-                                .progress-bar {
-                                    background-color: var(--green);
-                                    height: .5rem;
-                                    border-radius: 5rem;
+                                .name {
+                                    all: unset;
                                 }
-                            }
 
-                            .status {
-                                color: hsl(from var(--green) h 0 l);
-                                display: none;
-                            }
+                                .progress-wrapper {
+                                    border: 1px solid hsl(from var(--green) h 0 l);
+                                    border-radius: 5rem;
+                                    display: none;
+                                    width: 10rem;
 
-                            em {
-                                color: var(--yellow);
-                                font-style: normal;
+                                    .progress-bar {
+                                        background-color: var(--green);
+                                        height: .5rem;
+                                        border-radius: 5rem;
+                                    }
+                                }
+
+                                .status {
+                                    color: hsl(from var(--green) h 0 l);
+                                    display: none;
+                                }
+
+                                .number {
+                                    color: var(--yellow);
+                                    font-style: normal;
+
+                                    span {
+                                        color: hsl(from var(--green) h 0 l);
+                                    }
+                                }
                             }
 
                             .add-badge, .done {
@@ -192,22 +205,29 @@
                             }
 
                             .infos {
+                                align-items: center;
                                 border-radius: 0 .5rem .5rem 0;
-                                gap: 3rem;
                                 height: 9rem;
                                 justify-content: flex-start;
                                 width: calc(100% - 6rem);
 
-                                .name {
-                                    width: unset;
-                                }
+                                .details {
+                                    display: flex;
+                                    flex-direction: column;
+                                    gap: .25rem;
 
-                                .progress-wrapper {
-                                    display: block;
-                                }
+                                    .name {
+                                        height: unset;
+                                        width: unset;
+                                    }
 
-                                .status {
-                                    display: block;
+                                    .progress-wrapper {
+                                        display: block;
+                                    }
+
+                                    .status {
+                                        display: block;
+                                    }
                                 }
 
                                 .vote {

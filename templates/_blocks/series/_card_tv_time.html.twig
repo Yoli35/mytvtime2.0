@@ -7,19 +7,19 @@
                 <div>{{ 'No poster'|trans }}</div>
             {% endif %}
         </div>
-        <div class="infos tv-time">
-            <div class="name">
-                {{ series.name }}
+        <div class="infos">
+            <div class="details">
+                <div class="name">{{ series.name }}</div>
                 {% if next and  series.viewedCount>0 %}
                     <div class="progress-wrapper">
                         <div class="progress-bar" style="width: {{ series.viewedCount/series.episodeCount*100 }}%"></div>
                     </div>
                 {% endif %}
                 {% if series.remainingEpisodeCount==0 %}
-                    <div class="status">{{ 'End of season'|trans }}</div>{% endif %}
-                {% if series.remainingEpisodeCount>0 %}
-                    <div class="status">{{ series.remainingEpisodeCount }} {{ (series.remainingEpisodeCount>1 ?'remaining episodes':'remaining episode')|trans }}</div>{% endif %}
-                <em>{% if next %}{{ series.number }}{% else %}{{ 'Up to date'|trans }}{% endif %}</em>
+                    <div class="status">{{ 'End of season'|trans }}</div>
+                {% endif %}
+                <div class="status">{{ series.remainingEpisodeCount }} {{ (series.remainingEpisodeCount>1 ?'remaining episodes':'remaining episode')|trans }}</div>
+                <div class="number">{% if next %}{{ series.number }}{% else %}{{ series.number }} <span>{{ 'In'|trans }} {{ series.remaingDays }} {{ (series.remaingDays>1?'days':'day')|trans }}{% endif %}</span></div>
             </div>
             {% if next %}
                 <div class="add-badge"

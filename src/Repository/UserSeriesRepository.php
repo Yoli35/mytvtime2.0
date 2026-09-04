@@ -976,13 +976,14 @@ class UserSeriesRepository extends ServiceEntityRepository
                     ue.`id` AS userEpisodeId,
                     ue.`season_number`,
                     ue.`episode_number`,
+                    DATEDIFF(IFNULL(sbd.date, ue.air_date), NOW()) AS remaingDays,
                     prev.`id`             AS prev_episode_id,
                     prev.`vote`           AS prev_episode_vote,
                     prev.`season_number`  AS prev_episode_season,
                     prev.`episode_number` AS prev_episode_number,
                     (SELECT COUNT(remain.`id`)
                      FROM user_episode remain
-                     WHERE remain.`user_series_id`=us.`id`  AND remain.`season_number`=ue.`season_number`  AND remain.`episode_number`>ue.`episode_number`) AS remainingEpisodeCount
+                     WHERE remain.`user_series_id`=us.`id`  AND remain.`season_number`=ue.`season_number`  AND remain.`episode_number`>ue.`episode_number`) + 1 AS remainingEpisodeCount
                 FROM `user_series` us
                     INNER JOIN `user_episode` ue ON ue.`id`=us.`next_user_episode_id`
                     LEFT JOIN `user_season` usa ON usa.`user_series_id`=us.`id` AND usa.`season_number`=ue.`season_number`
@@ -1002,10 +1003,6 @@ class UserSeriesRepository extends ServiceEntityRepository
                     AND us.`last_watch_at` >= SUBDATE(CURDATE(), INTERVAL 3 WEEK)
                     AND ue.`season_number`>0
                     AND CONCAT(IFNULL(DATE(sbd.`date`), ue.`air_date`), IF(sbs.`air_at`, CONCAT(' ', sbs.`air_at`), '')) > NOW()
-                    /*AND IFNULL((SELECT DATE(sbd.`date`)
-                                FROM `series_broadcast_date` sbd
-                                WHERE sbd.`episode_id`=ue.`episode_id`
-                                ORDER BY sbd.`id` DESC LIMIT 1), ue.`air_date`) > CURDATE()*/
                 ORDER BY us.`last_watch_at` DESC;
             SQL;
 
