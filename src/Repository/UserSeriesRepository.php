@@ -407,7 +407,7 @@ class UserSeriesRepository extends ServiceEntityRepository
             'episodeAirDate' => 'last_episode_air_date',/*'lue.`air_date`',*/
             'name' => 's.`name`',
             'addedAt' => 'us.`added_at`',
-            'finalAirDate' => 'IF(sbd.id IS NULL, nue.`air_date`, nsbd.`date`)',
+            'finalAirDate' => 'IF(sbd.id IS NULL, nue.`air_date`, sbd.`date`)',
             default => 's.`first_air_date`',
         };
         if ($network !== 'all') {
@@ -923,19 +923,22 @@ class UserSeriesRepository extends ServiceEntityRepository
                     ue.`episode_id`,
                     ue.`season_number`,
                     ue.`episode_number`,
-                    (SELECT ue2.`id`
-                     FROM `user_episode` ue2
-                     WHERE ue2.`user_series_id`=ue.`user_series_id` AND ue2.`season_number`=ue.`season_number` AND ue2.`episode_number`=ue.`episode_number`+1) IS NULL AS last
+                    next.id IS NULL AS last
                 FROM `user_episode` ue
                     INNER JOIN `user_series` us ON us.`next_user_episode_id`=ue.`id`
+                    LEFT JOIN `user_season` usa ON usa.`user_series_id`=us.`id` AND usa.`season_number`=ue.`season_number`
+                    LEFT JOIN `user_season_series_broadcast_schedule` usa_sbs ON usa_sbs.`user_season_id`=usa.`id`
+                    LEFT JOIN `series_broadcast_schedule` sbs ON sbs.id=usa_sbs.`series_broadcast_schedule_id`
                     LEFT JOIN `series` s ON s.`id`=us.`series_id`
                     LEFT JOIN `series_broadcast_date` sbd ON sbd.`episode_id`=ue.`episode_id`
                     LEFT JOIN `series_localized_name` sln ON sln.`series_id`=s.`id` AND sln.`locale`=:locale
+                    LEFT JOIN user_episode next ON next.`user_series_id`=us.`id` AND next.`season_number`=ue.`season_number` AND next.`episode_number`=ue.`episode_number`+1
                 WHERE ue.`user_id`=:id
                     AND ue.`season_number`>0
                 --  AND us.`progress`>0
                     AND ue.`watch_at` IS NULL
-                    AND IF(sbd.id, DATE(sbd.`date`), ue.`air_date`) <= CURDATE()
+                --  AND IF(sbd.id, DATE(sbd.`date`), ue.`air_date`) <= CURDATE()
+                    AND CONCAT(IFNULL(DATE(sbd.`date`), ue.`air_date`), IF(sbs.`air_at`, CONCAT(' ', sbs.`air_at`), '')) <= NOW()
                 	AND (us.`last_watch_at` >= SUBDATE(CURDATE(), INTERVAL 3 WEEK) or (IF(sbd.id, DATE(sbd.`date`), ue.`air_date`) >= SUBDATE(CURDATE(), INTERVAL 3 WEEK) AND ue.`episode_number`=1))
                 ORDER BY us.`last_watch_at` DESC;
             SQL;
@@ -945,9 +948,9 @@ class UserSeriesRepository extends ServiceEntityRepository
 
     public function findUpToDateSeries(int $userId, string  $locale): array
     {
-        // Les 4 sous-requêtes corrélées d'origine ne servaient qu'à lire 4 colonnes de la même
+        // Les quatre sous-requêtes corrélées d'origine ne servaient qu'à lire quatre colonnes de la même
         // ligne : une seule sous-requête ramène l'id, le reste est lu par accès à la clé primaire.
-        // `series_broadcast_date` (plusieurs parts de saison par épisode) et
+        // 'series_broadcast_date` (plusieurs parts de saison par épisode) et
         // `series_localized_name` (lignes en doublon) sont réduits à une ligne par sous-requête,
         // ce qui rend le résultat déterministe et supprime le besoin de DISTINCT.
         $sql = <<<SQL
@@ -971,6 +974,10 @@ class UserSeriesRepository extends ServiceEntityRepository
                     prev.`episode_number` AS prev_episode_number
                 FROM `user_series` us
                     INNER JOIN `user_episode` ue ON ue.`id`=us.`next_user_episode_id`
+                    LEFT JOIN `user_season` usa ON usa.`user_series_id`=us.`id` AND usa.`season_number`=ue.`season_number`
+                    LEFT JOIN `user_season_series_broadcast_schedule` usa_sbs ON usa_sbs.`user_season_id`=usa.`id`
+                    LEFT JOIN `series_broadcast_schedule` sbs ON sbs.id=usa_sbs.`series_broadcast_schedule_id`
+                    LEFT JOIN `series_broadcast_date` sbd ON sbd.`episode_id`=ue.`episode_id`
                     INNER JOIN `series` s ON s.`id`=us.`series_id`
                     LEFT JOIN `user_episode` prev ON prev.`id` = (
                         SELECT ue2.`id`
@@ -983,14 +990,51 @@ class UserSeriesRepository extends ServiceEntityRepository
                     AND us.`progress`>0
                     AND us.`last_watch_at` >= SUBDATE(CURDATE(), INTERVAL 3 WEEK)
                     AND ue.`season_number`>0
-                    AND IFNULL((SELECT DATE(sbd.`date`)
+                    AND CONCAT(IFNULL(DATE(sbd.`date`), ue.`air_date`), IF(sbs.`air_at`, CONCAT(' ', sbs.`air_at`), '')) > NOW()
+                    /*AND IFNULL((SELECT DATE(sbd.`date`)
                                 FROM `series_broadcast_date` sbd
                                 WHERE sbd.`episode_id`=ue.`episode_id`
-                                ORDER BY sbd.`id` DESC LIMIT 1), ue.`air_date`) > CURDATE()
+                                ORDER BY sbd.`id` DESC LIMIT 1), ue.`air_date`) > CURDATE()*/
                 ORDER BY us.`last_watch_at` DESC;
             SQL;
 
         return $this->getAll($sql, ['id' => $userId, 'locale' => $locale], ['id' => Types::INTEGER, 'locale' => Types::STRING]);
+    }
+
+    /**********************************************************************************/
+    /* Nombre de minutes avant (t<0) ou après (t>0) la diffusion des épisodes du jour */
+    /**********************************************************************************/
+    public function episodeOfTheDayDelays(User $user): array
+    {
+        $userId = $user->getId();
+        $sql = <<<SQL
+            SELECT s.`id` AS sId,
+                IFNULL(sln.name, s.`name`) AS sName,
+                us.`id` AS usId,
+                 ue.`id` AS ueId,
+                 CONCAT('S', LPAD(ue.`season_number`, 2, '0'), 'E', LPAD(ue.`episode_number`, 2, '0')) AS number,
+                 sbs.`air_at` AS sbsAirAt,
+                 sbd.date AS sbdDate,
+                 CONCAT(IFNULL(DATE(sbd.`date`), ue.`air_date`), IF(sbs.`air_at`, CONCAT(' ', sbs.`air_at`), '')) AS finalAirAt,
+                TIMESTAMPDIFF(MINUTE, CONCAT(IFNULL(DATE(sbd.`date`), ue.`air_date`), IF(sbs.`air_at`, CONCAT(' ', sbs.`air_at`), '')), NOW()) AS t
+            FROM `user_episode` ue
+             -- LEFT JOIN `user_series` us ON ue.`user_series_id`=us.`id`
+                INNER JOIN `user_series` us ON us.`next_user_episode_id`=ue.`id`
+                 LEFT JOIN `user_season` usa ON usa.`user_series_id`=us.`id` AND usa.`season_number`=ue.`season_number`
+                 LEFT JOIN `user_season_series_broadcast_schedule` usa_sbs ON usa_sbs.`user_season_id`=usa.`id`
+                 LEFT JOIN `series_broadcast_schedule` sbs ON sbs.id=usa_sbs.`series_broadcast_schedule_id`
+                LEFT JOIN `series` s ON us.`series_id`=s.`id`
+                LEFT JOIN `series_localized_name` sln ON sln.`series_id`=s.`id`
+                LEFT JOIN `series_broadcast_date` sbd ON sbd.`episode_id`=ue.`episode_id`
+             -- LEFT JOIN `series_broadcast_schedule` sbs ON sbd.`series_broadcast_schedule_id`=sbs.`id`
+            WHERE
+                ue.`user_id`=:userId
+                AND ue.`watch_at` IS NULL
+                AND IFNULL(DATE(sbd.`date`), ue.`air_date`)<=CURDATE()
+                AND (us.`last_watch_at` >= SUBDATE(CURDATE(), INTERVAL 3 WEEK) or (IFNULL(DATE(sbd.`date`), ue.`air_date`) >= SUBDATE(CURDATE(), INTERVAL 3 WEEK) AND ue.`episode_number`=1))
+            ORDER BY us.`last_watch_at` DESC;
+        SQL;
+        return $this->getAll($sql, ['userId' => $userId], ['userId' => Types::INTEGER]);
     }
 
     public function getAll(string $sql, array $params = [], array $types = []): array
@@ -1003,13 +1047,13 @@ class UserSeriesRepository extends ServiceEntityRepository
         }
     }
 
-    public function getOne($sql, array $params = [], array $types = []): mixed
+    public function getOne(string $sql, array $params = [], array $types = []): mixed
     {
         try {
             return $this->em->getConnection()->fetchOne($sql, $params, $types);
         } catch (Exception $e) {
             $this->logger->error('Error: ' . $e->getMessage());
-            return [];
+            return null;
         }
     }
 

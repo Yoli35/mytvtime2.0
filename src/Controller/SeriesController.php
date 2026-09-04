@@ -34,6 +34,7 @@ use App\Service\ProviderService;
 use App\Service\SeriesService;
 use App\Service\SettingsAdvancedDbSearchService;
 use App\Service\TMDBService;
+use App\Service\TvTimeService;
 use Collator;
 use DateInvalidTimeZoneException;
 use DateMalformedStringException;
@@ -80,6 +81,7 @@ class SeriesController extends AbstractController
         private readonly SettingsRepository                $settingsRepository,
         private readonly TMDBService                       $tmdbService,
         private readonly TranslatorInterface               $translator,
+        private readonly TvTimeService                     $tvTimeService,
         private readonly UserEpisodeRepository             $userEpisodeRepository,
         private readonly UserSeasonRepository              $userSeasonRepository,
         private readonly UserSeriesRepository              $userSeriesRepository,
@@ -149,17 +151,23 @@ class SeriesController extends AbstractController
         $userId = $user->getId();
         $seriesAvailable = $this->userSeriesRepository->findAvailableSeries($userId, $locale);
         $seriesUpToDate = $this->userSeriesRepository->findUpToDateSeries($userId, $locale);
+        $delays = array_filter(array_column($this->userSeriesRepository->episodeOfTheDayDelays($user), 't', 'ueId'), fn($delay) => $delay < 0);
+        dump($delays);
         $lastEpisodeWithNoVoteArr = array_filter($seriesUpToDate, fn($series) => $series['prev_episode_vote'] === null);
         $tmdbIds = array_unique(array_merge(array_column($seriesAvailable, 'tmdb_id'), array_column($seriesUpToDate, 'tmdb_id')));
         $lastWatchedSeriesId = $this->userSeriesRepository->getLastWatchedSeries($user);
+
+        $settings = $this->tvTimeService->getTvTimeData($user);
 
         return $this->render('series/series_like_tv_time.html.twig', [
             'seriesAvailable' => $seriesAvailable,
             'seriesUpToDate' => $seriesUpToDate,
             'seriesArr' => $lastEpisodeWithNoVoteArr,
+            'delays' => $delays,
             'tmdbIds' => $tmdbIds,
             'lastWatchedSeriesId' => $lastWatchedSeriesId,
-            'list' => false,
+            'loadCount' => $settings['count'],
+            'list' => $settings['list'],
         ]);
     }
 

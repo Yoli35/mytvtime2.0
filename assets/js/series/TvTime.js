@@ -19,11 +19,24 @@ export class TvTime {
 
         displayList?.addEventListener('click', () => {
             wrapper.classList.add('list');
+            self.saveLayout(1);
         });
         displayGrid?.addEventListener('click', () => {
             wrapper.classList.remove('list');
+            self.saveLayout(0);
         });
 
+       this.initAddEpisodes();
+       this.initVotes();
+
+        document.addEventListener("visibilitychange", () => {
+            if (document.visibilityState === 'visible') {
+                self.checkForLastId();
+            }
+        })
+    }
+
+    initAddEpisodes() {
         const addBadges = document.querySelectorAll('.series-tv-time .series-group .add-badge');
         addBadges.forEach(badge => {
             badge.addEventListener('click', (e) => {
@@ -31,42 +44,6 @@ export class TvTime {
                 this.addEpisode(badge);
             })
         });
-
-        const lastEpisodeVoteDivs = document.querySelectorAll('.series-tv-time .last-episode-vote');
-        lastEpisodeVoteDivs.forEach(div => {
-            const yourVoteDiv = div.querySelector('.your-vote');
-            const voteDiv = div.querySelector('.vote');
-            const stars = voteDiv.querySelectorAll('.vote-star');
-            stars.forEach(star => {
-                star.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    const voteValue = parseInt(star.dataset.vote);
-                    const starDivs = voteDiv.querySelectorAll('.vote-star');
-                    starDivs.forEach((starDiv, index) => {
-                        if (index < voteValue) {
-                            starDiv.classList.add('active');
-                        } else {
-                            starDiv.classList.remove('active');
-                        }
-                    });
-                    voteDiv.dataset.vote = voteValue.toString();
-                    yourVoteDiv.textContent = voteValue.toString();
-                });
-            });
-            const button = div.querySelector('.submit-vote button');
-            button.addEventListener('click', (e) => {
-                e.preventDefault();
-                if (voteDiv.dataset.vote) {
-                    this.addVote(button.dataset.id, parseInt(voteDiv.dataset.vote));
-                }
-            });
-        });
-
-        document.addEventListener("visibilitychange", () => {
-            if (document.visibilityState === 'visible') {
-                self.checkForLastId();
-            }
-        })
     }
 
     addEpisode(badge) {
@@ -122,27 +99,59 @@ export class TvTime {
                 self.lastId = data['lastWatchedEpisodeId'];
                 document.querySelector('.series-tv-time').dataset.last = self.lastId;
                 const wrapper = document.querySelector('.series-tv-time .series-group .wrapper');
-                setTimeout(() => {
+
+                const div = document.createElement('div');
+                div.innerHTML = data['view'];
+                const newWrapper = div.querySelector('.wrapper');
+                wrapper.replaceWith(newWrapper);
+                if (data['noVoteView']) {
+                    const tvTimeDiv = document.querySelector('.series-tv-time');
+                    const lastEpisodeVotesDiv = tvTimeDiv.querySelector('.last-episode-votes');
                     const div = document.createElement('div');
-                    div.innerHTML = data['view'];
-                    const newWrapper = div.querySelector('.wrapper');
-                    wrapper.replaceWith(newWrapper);
-                    if (data['noVoteView']) {
-                        const tvTimeDiv = document.querySelector('.series-tv-time');
-                        const lastEpisodeVotesDiv = tvTimeDiv.querySelector('.last-episode-votes');
-                        const div = document.createElement('div');
-                        div.innerHTML = data['noVoteView'];
-                        if (lastEpisodeVotesDiv) {
-                            lastEpisodeVotesDiv.replaceWith(div.querySelector('.last-episode-votes'));
-                        } else {
-                            tvTimeDiv.appendChild(div.querySelector('.last-episode-votes'));
-                        }
+                    div.innerHTML = data['noVoteView'];
+                    if (lastEpisodeVotesDiv) {
+                        lastEpisodeVotesDiv.replaceWith(div.querySelector('.last-episode-votes'));
+                    } else {
+                        tvTimeDiv.appendChild(div.querySelector('.last-episode-votes'));
                     }
-                }, 10);
+                }
+                self.initAddEpisodes();
+                self.initVotes();
             })
             .catch((error) => {
                 console.error('Error:', error);
             });
+    }
+    initVotes() {
+        const lastEpisodeVoteDivs = document.querySelectorAll('.series-tv-time .last-episode-vote');
+        lastEpisodeVoteDivs.forEach(div => {
+            const yourVoteDiv = div.querySelector('.your-vote');
+            const voteDiv = div.querySelector('.vote');
+            const stars = voteDiv.querySelectorAll('.vote-star');
+            stars.forEach(star => {
+                star.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const voteValue = parseInt(star.dataset.vote);
+                    const starDivs = voteDiv.querySelectorAll('.vote-star');
+                    starDivs.forEach((starDiv, index) => {
+                        if (index < voteValue) {
+                            starDiv.classList.add('active');
+                        } else {
+                            starDiv.classList.remove('active');
+                        }
+                    });
+                    voteDiv.dataset.vote = voteValue.toString();
+                    yourVoteDiv.textContent = voteValue.toString();
+                });
+            });
+            const button = div.querySelector('.submit-vote button');
+            button.addEventListener('click', (e) => {
+                e.preventDefault();
+                if (voteDiv.dataset.vote) {
+                    this.addVote(button.dataset.id, parseInt(voteDiv.dataset.vote));
+                }
+            });
+        });
     }
 
     addVote(id, vote) {
@@ -167,6 +176,26 @@ export class TvTime {
                 setTimeout(() => {
                     voteDiv.remove();
                 }, 300);
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+            });
+    }
+
+    saveLayout(layout) {
+        console.log(layout);
+        fetch('/api/tv/time/layout', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                layout: layout
+            })
+        })
+            .then((response) => response.json())
+            .then((data) => {
+                console.log(data);
             })
             .catch((error) => {
                 console.error('Error:', error);

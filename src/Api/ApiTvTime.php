@@ -4,6 +4,7 @@ namespace App\Api;
 
 use App\Entity\User;
 use App\Repository\UserSeriesRepository;
+use App\Service\TvTimeService;
 use Closure;
 use Symfony\Bundle\FrameworkBundle\Controller\ControllerHelper;
 use Symfony\Component\DependencyInjection\Attribute\AutowireMethodOf;
@@ -18,6 +19,7 @@ readonly class ApiTvTime
     public function __construct(
         #[AutowireMethodOf(ControllerHelper::class)]
         private Closure              $renderView,
+        private TvTimeService        $tvTimeService,
         private UserSeriesRepository $userSeriesRepository
     )
     {
@@ -26,13 +28,15 @@ readonly class ApiTvTime
     #[Route('/check', name: 'check', methods: ['POST'])]
     public function check(#[CurrentUser] User $user, Request $request): JsonResponse
     {
-        $inputBag = $request->getPayload();
+        /*$inputBag = $request->getPayload();
         $lastId = $inputBag->get('lastId');
         $lastWatchedSeriesId = $this->userSeriesRepository->getLastWatchedSeries($user);
-
         if ($lastId == $lastWatchedSeriesId) {
             return new JsonResponse(['new_episode' => false]);
-        }
+        }*/
+
+        $settings = $this->tvTimeService->getTvTimeData($user);
+
         $locale = $user->getPreferredLanguage() ?? $request->getLocale();
         $userId = $user->getId();
         $seriesAvailable = $this->userSeriesRepository->findAvailableSeries($userId, $locale);
@@ -40,13 +44,28 @@ readonly class ApiTvTime
         $lastEpisodeWithNoVoteArr = array_filter($seriesUpToDate, fn($series) => $series['prev_episode_vote'] === null);
         $noVoteView = ($this->renderView)('_blocks/series/_card_tv_time_vote.html.twig', ['seriesArr' => $lastEpisodeWithNoVoteArr]);
 
-        $view = ($this->renderView)('_blocks/series/_card_tv_time_wrapper.html.twig', ['seriesAvailable' => $seriesAvailable, 'seriesUpToDate' => $seriesUpToDate, 'list' => true]);
+        $view = ($this->renderView)('_blocks/series/_card_tv_time_wrapper.html.twig', [
+            'seriesAvailable' => $seriesAvailable,
+            'seriesUpToDate' => $seriesUpToDate,
+            'list' => $settings['list'],
+            'loadCount' => $settings['count'],
+        ]);
 
         return new JsonResponse([
             'new_episode' => true,
             'view' => $view,
             'noVoteView' => $noVoteView,
-            'lastWatchedEpisodeId' => $lastWatchedSeriesId
+            'lastWatchedEpisodeId' => $lastWatchedSeriesId,
         ]);
+    }
+
+    #[Route('/layout', name: 'layout', methods: ['POST'])]
+    public function layout(#[CurrentUser] User $user, Request $request): JsonResponse
+    {
+        $inputBag = $request->getPayload();
+        $layout = $inputBag->get('layout');
+        $this->tvTimeService->setTvTimeLayout($user, $layout);
+
+        return new JsonResponse(['layout' => $layout]);
     }
 }

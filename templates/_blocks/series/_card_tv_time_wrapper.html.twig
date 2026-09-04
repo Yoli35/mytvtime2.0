@@ -7,4 +7,7 @@
             {{ include('_blocks/series/_card_tv_time.html.twig', {next: false}) }}
         {% endfor %}
     </div>
+    {% if app.environment == 'dev' %}
+        <div class="count">{{ laodCount }}</div>
+    {% endif %}
 </div>
