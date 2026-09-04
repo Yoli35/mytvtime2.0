@@ -18,7 +18,9 @@
                         {% endfor %}
                     </div>
                 {% endif %}
-                <div class="date">{{ eotdList.date|format_date("full")|capitalize }}</div>
+                {% if relativeDay %}
+                    <div class="date">{{ eotdList.date|format_date("full")|capitalize }}</div>
+                {% endif %}
             </div>
             {% if relativeDay %}
                 {% for eotd in eotdList.results %}
