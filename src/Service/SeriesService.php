@@ -383,14 +383,14 @@ readonly class SeriesService
         if (!$tvSeason) {
             return [0, false];
         }
-        if (!isset($tvSeason['episodes']) || count($tvSeason['episodes']) == 0) {
-            return [0, false];
-        }
 
         $userSeason = $this->userSeasonRepository->findOneBy(['userSeries' => $userSeries, 'seasonNumber' => $seasonNumber]);
         if (!$userSeason) {
             $userSeason = new UserSeason($userSeries, $seasonNumber);
             $this->userSeasonRepository->save($userSeason, true);
+        }
+        if (!isset($tvSeason['episodes']) || count($tvSeason['episodes']) == 0) {
+            return [0, false];
         }
 
         $seasonNumber = $tvSeason['season_number'];
