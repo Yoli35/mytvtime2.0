@@ -122,7 +122,7 @@ window.addEventListener("DOMContentLoaded", () => {
         index.init(globs, menu);
     }
     if (seriesTvTime) {
-        new TvTime();
+        new TvTime(toolTips);
     }
     const tmdbSeriesPage = document.querySelector(".series-show.tmdb-series");
     const seriesPage = document.querySelector(".series-show.user-series-show");

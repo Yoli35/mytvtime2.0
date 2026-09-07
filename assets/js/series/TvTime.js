@@ -1,9 +1,10 @@
 let self;
 
 export class TvTime {
-    constructor() {
+    constructor(toolsTips) {
         self = this;
         this.lastId = 0;
+        this.toolsTips = toolsTips;
 
         this.checkForLastId = this.checkForLastId.bind(this);
 
@@ -13,15 +14,16 @@ export class TvTime {
     init() {
         this.lastId = parseInt(document.querySelector('.series-tv-time').dataset.last);
 
-        const wrapper = document.querySelector('.series-tv-time .series-group .wrapper');
         const displayList = document.querySelector('.series-tv-time header .display-list');
         const displayGrid = document.querySelector('.series-tv-time header .display-grid');
 
         displayList?.addEventListener('click', () => {
+            const wrapper = document.querySelector('.series-tv-time .series-group .wrapper');
             wrapper.classList.add('list');
             self.saveLayout(1);
         });
         displayGrid?.addEventListener('click', () => {
+            const wrapper = document.querySelector('.series-tv-time .series-group .wrapper');
             wrapper.classList.remove('list');
             self.saveLayout(0);
         });
@@ -114,6 +116,7 @@ export class TvTime {
                     } else {
                         tvTimeDiv.appendChild(div.querySelector('.last-episode-votes'));
                     }
+                    self.toolsTips.init(tvTimeDiv.querySelector('.last-episode-votes'));
                 }
                 self.initAddEpisodes();
                 self.initVotes();
@@ -169,8 +172,10 @@ export class TvTime {
             .then((data) => {
                 console.log(data);
                 const seriesCard = document.querySelector('.card[data-prev-id="' + id + '"]');
-                const seriesCardVoteDiv = seriesCard.querySelector('.vote');
-                seriesCardVoteDiv.innerHTML = vote;
+                if (seriesCard) { // Pour les multiples épisodes, la carte n'apparaitra qu'après leurs lectures
+                    const seriesCardVoteDiv = seriesCard.querySelector('.vote');
+                    seriesCardVoteDiv.innerHTML = vote;
+                }
                 const voteDiv = document.querySelector('.last-episode-vote[data-id="' + id + '"]');
                 voteDiv.classList.add('closing');
                 setTimeout(() => {
