@@ -192,7 +192,7 @@ readonly class ApiSeriesEpisode
             }
         }
         if ($userEpisode->getUserSeason() == null) {
-            dump($userEpisode);
+//            dump($userEpisode);
             $userEpisode->setUserSeason($userSeason);
         }
         $this->userEpisodeRepository->save($userEpisode, true);

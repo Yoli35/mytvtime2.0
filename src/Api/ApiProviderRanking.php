@@ -35,13 +35,13 @@ readonly class ApiProviderRanking
         $inputBag = $request->getPayload();
         $type = $inputBag->getString('type'); // evo | month
         $percent = $inputBag->getInt('percent') / 100;
-        dump($percent);
+//        dump($percent);
 
         $firstDate = $this->userSeriesRepository->getFirstDate($user);
         if ($firstDate === null) {
             return new JsonResponse([], Response::HTTP_NO_CONTENT);
         }
-        dump($firstDate);
+//        dump($firstDate);
         $now = new \DateTimeImmutable();
         $rankingStart = new \DateTimeImmutable($firstDate);
         if ($rankingStart > $now) {
@@ -57,7 +57,7 @@ readonly class ApiProviderRanking
             // Nombre de mois
             $nbMonth = 12 * $now->diff($rankingStart)->y + $now->diff($rankingStart)->m;
             $p = intval((1.0 - $percent) * $nbMonth);
-            dump(['jours' => $nbDay, 'mois' => $nbMonth, 'décalage' => $p]);
+//            dump(['jours' => $nbDay, 'mois' => $nbMonth, 'décalage' => $p]);
             $rankingEnd = $now->modify('-' . $p . ' month');
             $rankingStart = $now->modify('-' . ($p + 1) . ' month');
             if ($rankingEnd > $now) {
@@ -65,10 +65,10 @@ readonly class ApiProviderRanking
             }
             $rankingStartString = $rankingStart->format('Y-m-d');
             $rankingEndString = $rankingEnd->format('Y-m-d');
-            dump([
-                'start' => $rankingStartString,
-                'end' => $rankingEndString
-            ]);
+//            dump([
+//                'start' => $rankingStartString,
+//                'end' => $rankingEndString
+//            ]);
         }
 
         if ($type === 'evo') {
@@ -77,7 +77,7 @@ readonly class ApiProviderRanking
                 return new JsonResponse([], Response::HTTP_NO_CONTENT);
             }
             $rankingEndString = $rankingEnd->format('Y-m-d');
-            dump($rankingEndString);
+//            dump($rankingEndString);
         }
 
         $logoUrl = $this->imageConfiguration->getUrl('logo_sizes', 2);
