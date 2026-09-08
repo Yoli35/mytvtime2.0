@@ -297,6 +297,10 @@
     right: 2rem;
     z-index: 100;
 
+    &:not(:has(.last-episode-vote)) {
+        display: none;
+    }
+
     .last-episode-vote {
         border: 4px solid hsl(from var(--ardoise-10) h s l / .25);
         border-radius: 1.25rem;

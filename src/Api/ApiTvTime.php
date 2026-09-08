@@ -41,7 +41,8 @@ readonly class ApiTvTime
         $userId = $user->getId();
         $seriesAvailable = $this->userSeriesRepository->findAvailableSeries($userId, $locale);
         $seriesUpToDate = $this->userSeriesRepository->findUpToDateSeries($userId, $locale);
-        $lastEpisodeWithNoVoteArr = $this->userSeriesRepository->findUpToDateSeriesWithNoVote($userId, $locale);
+        $seriesUpToDateIds = array_unique(array_column($seriesUpToDate, 'userEpisodeId'));
+        $lastEpisodeWithNoVoteArr = $this->userSeriesRepository->findUpToDateSeriesWithNoVote($seriesUpToDateIds, $locale);
         $noVoteView = ($this->renderView)('_blocks/series/_card_tv_time_vote.html.twig', ['seriesArr' => $lastEpisodeWithNoVoteArr]);
 
         $view = ($this->renderView)('_blocks/series/_card_tv_time_wrapper.html.twig', [

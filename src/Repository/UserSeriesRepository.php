@@ -925,7 +925,7 @@ class UserSeriesRepository extends ServiceEntityRepository
                     ue.`episode_number`,
                     (SELECT COUNT(remain.`id`)
                      FROM user_episode remain
-                     WHERE remain.`user_series_id`=us.`id`  AND remain.`season_number`=ue.`season_number`  AND remain.`episode_number`>ue.`episode_number`) AS remainingEpisodeCount,
+                     WHERE remain.`user_series_id`=us.`id`  AND remain.`season_number`=ue.`season_number`  AND remain.`episode_number`>=ue.`episode_number`) AS remainingEpisodeCount,
                     (SELECT COUNT(*)
                     FROM `user_episode` ue3
                     WHERE ue3.`user_season_id`=usa.`id` AND ue3.`watch_at` IS NOT NULL) AS viewedCount,
@@ -1009,10 +1009,10 @@ class UserSeriesRepository extends ServiceEntityRepository
         return $this->getAll($sql, ['id' => $userId, 'locale' => $locale], ['id' => Types::INTEGER, 'locale' => Types::STRING]);
     }
 
-    public function findUpToDateSeriesWithNoVote(int $userId, string  $locale): array
+    public function findUpToDateSeriesWithNoVote(array $ids, string  $locale): array
     {
         $sql = <<<SQL
-                -- Épisodes pas notés, cas des épisodes multiples (ex : The Last Oath S01E01 à S01E04 le 4 septembre
+                -- Épisodes pas notés
                 SELECT
                     s.id                         AS id,
                     IFNULL(sln.`name`, s.`name`) AS name,
@@ -1020,25 +1020,18 @@ class UserSeriesRepository extends ServiceEntityRepository
                     ue.`id`                      AS episode_id,
                     ue.`vote`                    AS episode_vote,
                     ue.`season_number`           AS episode_season,
-                    ue.`episode_number`          AS episode_number,
-                    (SELECT AVG(ue2.vote) FROM user_episode ue2 WHERE ue2.user_season_id=usa.id) AS vote_average
-                FROM `user_series` us
-                    INNER JOIN `user_episode` ue ON ue.`user_series_id` = us.`id`
-                    LEFT JOIN `user_season` usa ON usa.`user_series_id` = us.`id` AND usa.`season_number` = ue.`season_number`
-                    LEFT JOIN `user_season_series_broadcast_schedule` usa_sbs ON usa_sbs.`user_season_id` = usa.`id`
-                    LEFT JOIN `series_broadcast_schedule` sbs ON sbs.id = usa_sbs.`series_broadcast_schedule_id`
+                    ue.`episode_number`          AS episode_number
+                FROM `user_episode` ue
+                    INNER JOIN user_episode ue0 ON ue0.id IN (:ids) AND ue.user_season_id=ue0.user_season_id
                     LEFT JOIN `series_broadcast_date` sbd ON sbd.`episode_id` = ue.`episode_id`
-                    INNER JOIN `series` s ON s.`id` = us.`series_id`
+                    LEFT JOIN `user_series` us ON us.`id` = ue0.`user_series_id`
+                    LEFT JOIN `series` s ON s.`id` = us.`series_id`
                     LEFT JOIN `series_localized_name` sln ON sln.`series_id`=s.`id` AND sln.`locale`=:locale
-                WHERE us.`user_id` = :id
-                    AND ue.`watch_at` >= SUBDATE(CURDATE(), INTERVAL 3 WEEK)
-                    AND ((ue.episode_number=1 AND (SELECT COUNT(*) FROM user_episode ue3 WHERE ue3.user_season_id=usa.id AND ue.watch_at IS NOT NULL)=1) OR (SELECT AVG(ue2.vote) FROM user_episode ue2 WHERE ue2.user_season_id=usa.id) IS NOT NULL) -- EP.1 ou au moins un vote dans la saison
-                    AND ue.`season_number` > 0
-                    AND ue.vote IS NULL
+                WHERE ue.vote IS NULL AND ue.watch_at IS NOT NULL AND IFNULL(sbd.date, ue.air_date) >= SUBDATE(CURDATE(), INTERVAL 3 WEEK)
                 ORDER BY ue.`watch_at` DESC;
             SQL;
 
-        return $this->getAll($sql, ['id' => $userId, 'locale' => $locale], ['id' => Types::INTEGER, 'locale' => Types::STRING]);
+        return $this->getAll($sql, ['ids' => $ids, 'locale' => $locale], ['ids' => ArrayParameterType::INTEGER, 'locale' => ParameterType::STRING]);
     }
 
     /**********************************************************************************/

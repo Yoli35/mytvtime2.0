@@ -151,7 +151,8 @@ class SeriesController extends AbstractController
         $userId = $user->getId();
         $seriesAvailable = $this->userSeriesRepository->findAvailableSeries($userId, $locale);
         $seriesUpToDate = $this->userSeriesRepository->findUpToDateSeries($userId, $locale);
-        $lastEpisodeWithNoVoteArr = $this->userSeriesRepository->findUpToDateSeriesWithNoVote($userId, $locale);
+        $seriesUpToDateIds = array_unique(array_column($seriesUpToDate, 'userEpisodeId'));
+        $lastEpisodeWithNoVoteArr = $this->userSeriesRepository->findUpToDateSeriesWithNoVote($seriesUpToDateIds, $locale);
         $tmdbIds = array_unique(array_merge(array_column($seriesAvailable, 'tmdb_id'), array_column($seriesUpToDate, 'tmdb_id')));
         $lastWatchedSeriesId = $this->userSeriesRepository->getLastWatchedSeries($user);
 
