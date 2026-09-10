@@ -1013,7 +1013,7 @@ class UserSeriesRepository extends ServiceEntityRepository
     {
         $sql = <<<SQL
                 -- Épisodes pas notés
-                SELECT
+                 SELECT
                     s.id                         AS id,
                     IFNULL(sln.`name`, s.`name`) AS name,
                     s.`poster_path`              AS poster_path,
@@ -1022,12 +1022,27 @@ class UserSeriesRepository extends ServiceEntityRepository
                     ue.`season_number`           AS episode_season,
                     ue.`episode_number`          AS episode_number
                 FROM `user_episode` ue
-                    INNER JOIN user_episode ue0 ON ue0.id IN (:ids) AND ue.user_season_id=ue0.user_season_id
                     LEFT JOIN `series_broadcast_date` sbd ON sbd.`episode_id` = ue.`episode_id`
-                    LEFT JOIN `user_series` us ON us.`id` = ue0.`user_series_id`
+                    LEFT JOIN `user_series` us ON us.`id` = ue.`user_series_id`
+                    LEFT JOIN `user_season` usa ON usa.`id` = ue.`user_season_id`
                     LEFT JOIN `series` s ON s.`id` = us.`series_id`
                     LEFT JOIN `series_localized_name` sln ON sln.`series_id`=s.`id` AND sln.`locale`=:locale
-                WHERE ue.vote IS NULL AND ue.watch_at IS NOT NULL AND IFNULL(sbd.date, ue.air_date) >= SUBDATE(CURDATE(), INTERVAL 3 WEEK)
+                WHERE ue.vote IS NULL
+                  AND (
+                          (
+                              ue.id IN (:ids)
+                           AND 
+                              ue.watch_at IS NOT NULL AND IFNULL(sbd.date, ue.air_date) >= SUBDATE(CURDATE(), INTERVAL 3 WEEK)
+                          )
+                      OR
+                          (
+                              DATE(ue.watch_at) >= SUBDATE(CURDATE(), INTERVAL 3 WEEK)
+                           AND
+                             (SELECT AVG(ue1.vote)
+                              FROM `user_episode` ue1
+                              WHERE ue1.user_season_id = ue.user_season_id AND ue1.watch_at IS NOT NULL AND ue1.watch_at <= ue.watch_at) > 0
+                          )
+                      )
                 ORDER BY ue.`watch_at` DESC;
             SQL;
 
