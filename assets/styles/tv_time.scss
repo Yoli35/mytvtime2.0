@@ -396,6 +396,16 @@
                                 display: block;
                             }
                         }
+
+                        /* L'avant-dernière étoile : couleur orange */
+                        &:not(:has(+ .vote-star + .vote-star)) {
+                            color: var(--orange);
+
+                            /* Dernière étoile : couleur verte */
+                            &:not(:has(+ .vote-star)) {
+                                color: var(--yellow);
+                            }
+                        }
                     }
                 }
 
