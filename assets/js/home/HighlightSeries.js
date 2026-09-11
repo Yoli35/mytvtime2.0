@@ -79,6 +79,7 @@ export class HighlightSeries {
 
     cycle() {
         this.highlightDiv.querySelector('.poster').classList.remove('show');
+        this.highlightDiv.querySelector('.backdrop').classList.remove('show');
         this.highlightDiv.querySelector('.details').classList.remove('show');
         this.highlightProgressDiv.classList.remove('show');
         if (this.timeToChangeSeries) {
@@ -94,9 +95,11 @@ export class HighlightSeries {
     }
 
     setSeries() {
-        const poster = this.highlightDiv.querySelector(".poster");
-        const posterImg = poster.querySelector("img");
-        const aPoster = poster.querySelector("a");
+        let backdropDiv = this.highlightDiv.querySelector(".backdrop");
+        let backdropImg = backdropDiv?.querySelector("img");
+        const posterDiv = this.highlightDiv.querySelector(".poster");
+        const posterImg = posterDiv.querySelector("img");
+        const aPoster = posterDiv.querySelector("a");
         const nameDiv = this.highlightDiv.querySelector(".name");
         const aDetails = this.highlightDiv.querySelector(".details").querySelector("a");
         const overviewDiv = this.highlightDiv.querySelector(".overview");
@@ -104,8 +107,22 @@ export class HighlightSeries {
         const series = this.series[this.seriesIndex];
         const link = this.app_tv_tmdb + series['id'] + "-" + series['slug'];
 
-        poster.style.rotate = (5 * (Math.random() - .5)) + "deg";
+        if (series['backdrop_path']) {
+            if (!backdropDiv) {
+                backdropDiv = document.createElement("div");
+                backdropDiv.classList.add("backdrop");
+                this.highlightDiv.insertBefore(backdropDiv, posterDiv);
+                backdropImg = document.createElement("img");
+                backdropDiv.appendChild(backdropImg);
+            }
+            backdropImg.src = series['backdrop_path'];
+            backdropImg.alt = series['name'];
+            backdropImg.title = series['name'];
+        } else {
+            backdropDiv?.remove();
+        }
 
+        posterDiv.style.rotate = (5 * (Math.random() - .5)) + "deg";
         posterImg.src = series['poster_path'];
         aPoster.href = link;
         posterImg.alt = series['name'];
@@ -147,6 +164,7 @@ export class HighlightSeries {
             this.root.style.setProperty("--highlight-bg", "hsl(" + ((hsl.h + 180) % 360) + ", " + hsl.s + "%, " + hsl.l + "%)");
             this.root.style.setProperty("--highlight-color", "hsl(" + ((hsl.h + 180) % 360) + ", " + hsl.s + "%, " + (hsl.l > 60 ? "10" : "90") + "%)");
             this.highlightDiv.querySelector('.poster').classList.add('show');
+            this.highlightDiv.querySelector('.backdrop')?.classList.add('show');
             this.highlightDiv.querySelector('.details').classList.add('show');
             this.highlightProgressDiv.classList.add('show');
         };

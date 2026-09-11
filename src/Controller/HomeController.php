@@ -343,7 +343,7 @@ class HomeController extends AbstractController
             return $this->getAPISelection($filterString, $slugger, $timezone, $language);
         }
         $seriesSelection = $this->getSelection('tv', $filterString, $slugger, $country, $timezone, $language);
-        // array_filter pour retirer les séries sans poster & array_values() pour ré-indexer le tableau
+        // array_filter pour retirer les séries sans poster & array_values() pour indexer à nouveau le tableau
         return array_values(array_filter($seriesSelection, function ($tv) {
             return $tv['poster_path'];
         }));
@@ -407,8 +407,9 @@ class HomeController extends AbstractController
             $name = 'name';
             $date = 'first_air_date';
         }
+        $backdropUrl = $this->imageConfiguration->getUrl('backdrop_sizes', 3);
 
-        return array_map(function ($tv) use ($slugger, $root, $media, $name, $date, $country, $timezone, $preferredLanguage) {
+        return array_map(function ($tv) use ($slugger, $root, $backdropUrl, $media, $name, $date, $country, $timezone, $preferredLanguage) {
 
             $tv['tmdb'] = true;
             $this->imageService->saveImage("posters", $tv['poster_path'], $this->imageConfiguration->getUrl('poster_sizes', 5), $media === 'movie' ? '/movies/' : '/series/');
@@ -422,6 +423,7 @@ class HomeController extends AbstractController
             } else {
                 $tv['poster_path'] = null;
             }
+            $tv['backdrop_path'] = $tv['backdrop_path'] ? $backdropUrl . $tv['backdrop_path'] : null;
             $tv['slug'] = strtolower($slugger->slug($tv[$media === 'tv' ? 'name' : 'title']));
 
             $airDate = $tv[$date] ? $this->dateService->newDateImmutable($tv[$date], $timezone) : null;
@@ -432,6 +434,7 @@ class HomeController extends AbstractController
                 $name => $tv[$name],
                 'overview' => $tv['overview'],
                 'poster_path' => $tv['poster_path'],
+                'backdrop_path' => $tv['backdrop_path'],
                 'slug' => $tv['slug'],
                 'status' => $tv['status'] ?? 'no status',
                 'tmdb' => true,

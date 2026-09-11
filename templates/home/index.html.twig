@@ -21,6 +21,11 @@
 
         <div class="home-content" dir="ltr">
             <div class="highlighted-series">
+                {% if highlightedSeries.0.backdrop_path %}
+                    <div class="backdrop">
+                        <img src="{{ highlightedSeries.0.backdrop_path }}" alt="{{ highlightedSeries.0.name }}">
+                    </div>
+                {% endif %}
                 <div class="poster">
                     <a href="{{ path('app_tv_tmdb', {'id': highlightedSeries.0.id, 'slug': highlightedSeries.0.slug}) }}">
                         <img src="{{ highlightedSeries.0.poster_path }}" alt="{{ highlightedSeries.0.name }}">
