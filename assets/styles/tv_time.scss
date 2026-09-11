@@ -35,7 +35,12 @@
 .series-tv-time {
     align-items: center;
     display: flex;
+    margin-block-start: 3.5rem;
     padding-inline: 1rem;
+
+    .series-search-block {
+        margin-block: 2rem 1rem;
+    }
 
     &:has(.wrapper.list) {
         .display-list {
@@ -80,7 +85,12 @@
     }
 
     .series-group {
+        margin-top: unset;
         width: 100%;
+
+        &.user {
+            margin-block-start: unset;
+        }
 
         .wrapper {
             position: relative;
