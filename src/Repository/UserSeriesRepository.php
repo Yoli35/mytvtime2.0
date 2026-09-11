@@ -1037,10 +1037,13 @@ class UserSeriesRepository extends ServiceEntityRepository
                       OR
                           (
                               DATE(ue.watch_at) >= SUBDATE(CURDATE(), INTERVAL 3 WEEK)
-                           AND
-                             (SELECT AVG(ue1.vote)
-                              FROM `user_episode` ue1
-                              WHERE ue1.user_season_id = ue.user_season_id AND ue1.watch_at IS NOT NULL AND ue1.watch_at <= ue.watch_at) > 0
+                           AND (
+                                 (SELECT AVG(ue1.vote)
+                                  FROM `user_episode` ue1
+                                  WHERE ue1.user_season_id = ue.user_season_id AND ue1.watch_at IS NOT NULL AND ue1.watch_at <= ue.watch_at) > 0
+                               OR 
+                                 ue.episode_number=1 AND DATEDIFF(NOW(), ue.watch_at) <= 7
+                              )
                           )
                       )
                 ORDER BY ue.`watch_at` DESC;
