@@ -169,6 +169,10 @@
                                         color: hsl(from var(--green) h 0 l);
                                     }
                                 }
+
+                                .watch-link {
+                                    display: none;
+                                }
                             }
 
                             .add-badge, .done {
@@ -250,6 +254,26 @@
                                     }
                                 }
 
+                                .watch-links {
+                                    display: flex;
+                                    gap: 1rem;
+                                    margin-inline-start: auto;
+
+                                    .watch-link {
+                                        height: 2.5rem;
+                                        width: 2.5rem;
+
+                                        img {
+                                            border-radius: 50%;
+                                            border: 2px solid;
+                                            height: 100%;
+                                            object-fit: cover;
+                                            width: 100%;
+                                        }
+                                    }
+
+                                }
+
                                 .vote {
                                     align-items: center;
                                     background-color: var(--green-70);
@@ -259,7 +283,7 @@
                                     font-weight: 300;
                                     height: 2.5rem;
                                     justify-content: center;
-                                    margin-inline: auto 1rem;
+                                    margin-inline: 1rem;
                                     width: 2.5rem;
 
                                     svg {
@@ -286,7 +310,7 @@
                                     border: 4px solid;
                                     border-radius: 50%;
                                     color: var(--add-this);
-                                    margin-inline: auto 1rem;
+                                    margin-inline: 1rem;
                                 }
 
                                 .done {
@@ -335,6 +359,45 @@
             }
         }
     }
+
+    .copied {
+        background-color: var(--green);
+        border-radius: 1rem;
+        border: 2px solid;
+        color: var(--orange-90);
+        display: none;
+        left: 0;
+        opacity: 0;
+        padding: .5rem 1rem;
+        position: absolute;
+        top: 0;
+        z-index: 100;
+
+        &.show {
+            display: block;
+        }
+
+        &.active {
+            animation: copied 1s ease-in-out;
+        }
+    }
+}
+
+@keyframes copied {
+    0% {
+        opacity: 0;
+        transform: translateY(0);
+    }
+    20% {
+        opacity: 1;
+    }
+    60% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0;
+        transform: translate(1rem, -8rem);
+    }
 }
 
 .last-episode-votes {
@@ -350,11 +413,11 @@
     padding: 1rem;
     position: fixed;
     right: 2rem;
-    transition: height 1s ease-in-out,
-    border-width 1s ease-in-out 1s,
-    border-radius 1s ease-in-out,
-    padding 1s ease-in-out,
-    width 1s ease-in-out 1s;
+    transition: height .5s ease-in-out,
+    border-width .5s ease-in-out 1.5s,
+    border-radius .25s ease-in-out,
+    padding .25s ease-in-out,
+    width 1s ease-in-out .5s;
     width: 31rem;
     z-index: 100;
 

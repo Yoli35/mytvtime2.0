@@ -150,7 +150,13 @@ class SeriesController extends AbstractController
         $locale = $user->getPreferredLanguage() ?? $request->getLocale();
         $userId = $user->getId();
         $seriesAvailable = $this->userSeriesRepository->findAvailableSeries($userId, $locale);
+        $watchLinks = $this->userSeriesRepository->availableSeriesWatchLinks(array_column($seriesAvailable, 'id'));
         $seriesUpToDate = $this->userSeriesRepository->findUpToDateSeries($userId, $locale);
+        $providerUrl = $this->imageConfiguration->getUrl('logo_sizes', 3);
+        $watchLinks = array_map(function($wp) use ($providerUrl)  {
+            $wp['providerLogoPath'] = $this->providerService->getProviderLogoFullPath($wp['providerLogoPath'], $providerUrl);
+            return $wp;
+        }, array_merge($watchLinks, $this->userSeriesRepository->availableSeriesWatchLinks(array_column($seriesUpToDate, 'id'))));
         $seriesUpToDateIds = array_unique(array_column($seriesUpToDate, 'userEpisodeId'));
         $lastEpisodeWithNoVoteArr = $this->userSeriesRepository->findUpToDateSeriesWithNoVote($seriesUpToDateIds, $locale);
         $tmdbIds = array_unique(array_merge(array_column($seriesAvailable, 'tmdb_id'), array_column($seriesUpToDate, 'tmdb_id')));
@@ -161,6 +167,7 @@ class SeriesController extends AbstractController
         return $this->render('series/series_like_tv_time.html.twig', [
             'seriesAvailable' => $seriesAvailable,
             'seriesUpToDate' => $seriesUpToDate,
+            'watchLinks' => $watchLinks,
             'seriesArr' => $lastEpisodeWithNoVoteArr,
             'tmdbIds' => $tmdbIds,
             'lastWatchedSeriesId' => $lastWatchedSeriesId,

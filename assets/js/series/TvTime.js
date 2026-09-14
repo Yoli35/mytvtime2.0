@@ -30,6 +30,7 @@ export class TvTime {
 
        this.initAddEpisodes();
        this.initVotes();
+       this.initCopyWatchLinks();
 
         document.addEventListener("visibilitychange", () => {
             if (document.visibilityState === 'visible') {
@@ -120,11 +121,42 @@ export class TvTime {
                 }
                 self.initAddEpisodes();
                 self.initVotes();
+                self.initCopyWatchLinks();
+                self.toolsTips.init(document.querySelector('.series-tv-time .wrapper'));
             })
             .catch((error) => {
                 console.error('Error:', error);
             });
     }
+
+    initCopyWatchLinks() {
+        const watchLinks = document.querySelectorAll('.series-tv-time .watch-link');
+        watchLinks.forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                navigator.clipboard.writeText(link.dataset.link).then(() => {
+                    self.copied(link);
+                });
+            });
+        });
+    }
+
+    copied(element) {
+        const elRectBound = element.getBoundingClientRect();
+        const copiedDiv = document.createElement('div');
+        copiedDiv.classList.add('copied');
+        copiedDiv.innerText = 'Copied!';
+        copiedDiv.style.left = `${elRectBound.left}px`;
+        copiedDiv.style.top = elRectBound.top - 80 + 'px';
+        copiedDiv.classList.add('show');
+        copiedDiv.classList.add('active');
+        document.querySelector('.series-tv-time').appendChild(copiedDiv);
+        setTimeout(() => {
+            copiedDiv.remove();
+        }, 1000);
+    }
+
     initVotes() {
         const lastEpisodeVoteDivs = document.querySelectorAll('.series-tv-time .last-episode-vote');
         lastEpisodeVoteDivs.forEach(div => {

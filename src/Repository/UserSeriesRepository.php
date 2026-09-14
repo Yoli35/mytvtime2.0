@@ -954,6 +954,25 @@ class UserSeriesRepository extends ServiceEntityRepository
         return $this->getAll($sql, ['id' => $userId, 'locale' => $locale], ['id' => Types::INTEGER, 'locale' => Types::STRING]);
     }
 
+    public function availableSeriesWatchLinks(array $ids): array
+    {
+        $sql = <<<SQL
+            -- Watch links for available series
+            SELECT swl.series_id                    AS seriesId,
+                   swl.season_number                AS seasonNumber,
+                   swl.url                          AS link,
+                   swl.name                         AS dataTitle,
+                   wp.provider_name                 AS providerName,
+                   wp.logo_path                     AS providerLogoPath,
+                   CONCAT('#', wp.color)            AS providerColor,
+                   CONCAT('#', wp.background_color) AS providerBackgroundColor
+            FROM series_watch_link swl
+                LEFT JOIN watch_provider wp ON wp.provider_id=swl.provider_id
+            WHERE swl.series_id IN (:ids);
+            SQL;
+        return $this->getAll($sql, ['ids' => $ids], ['ids' => ArrayParameterType::INTEGER]);
+    }
+
     public function findUpToDateSeries(int $userId, string  $locale): array
     {
         // Les quatre sous-requêtes corrélées d'origine ne servaient qu'à lire quatre colonnes de la même
