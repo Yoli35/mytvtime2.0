@@ -40,6 +40,11 @@
 
     .series-search-block {
         margin-block: 2rem 1rem;
+
+        .search-results {
+            backdrop-filter: blur(1rem);
+            background-color: hsl(from var(--ardoise-80) h s l / .25);
+        }
     }
 
     &:has(.wrapper.list) {
@@ -193,6 +198,8 @@
             }
 
             &.list {
+                container-name: wrapper-list;
+                container-type: inline-size;
                 width: 100%;
 
                 .content {
@@ -290,6 +297,41 @@
                         }
                     }
                 }
+
+                @container wrapper-list (min-width: 80rem) {
+                    .content {
+                        flex-direction: row;
+                        flex-wrap: wrap;
+
+                        .card {
+                            width: calc(50% - .125rem);
+                        }
+                    }
+                }
+
+                @container wrapper-list (min-width: 120rem) {
+                    .content {
+                        .card {
+                            width: calc(33% - .0625rem);
+                        }
+                    }
+                }
+
+                @container wrapper-list (min-width: 160rem) {
+                    .content {
+                        .card {
+                            width: calc(25% - .25rem);
+                        }
+                    }
+                }
+
+                @container wrapper-list (min-width: 200rem) {
+                    .content {
+                        .card {
+                            width: calc(20% - .25rem);
+                        }
+                    }
+                }
             }
         }
     }
@@ -308,10 +350,21 @@
     padding: 1rem;
     position: fixed;
     right: 2rem;
+    transition: height 1s ease-in-out,
+    border-width 1s ease-in-out 1s,
+    border-radius 1s ease-in-out,
+    padding 1s ease-in-out,
+    width 1s ease-in-out 1s;
+    width: 31rem;
     z-index: 100;
 
     &:not(:has(.last-episode-vote)) {
-        display: none;
+        border-radius: 0;
+        border-width: 0;
+        /*display: none;*/
+        height: 0;
+        padding: 0;
+        width: 0;
     }
 
     .last-episode-vote {
@@ -438,6 +491,95 @@
                         border-radius: 5rem;
                         cursor: pointer;
                         padding: 0.5rem 1rem;
+                    }
+                }
+            }
+        }
+    }
+}
+
+@media (width < 480px) {
+    body:has(.search-results.showing-something) {
+        .episodes-today {
+            display: none;
+        }
+    }
+
+    .container-fluid.series-tv-time {
+        padding-inline: 0;
+
+        .series-search-block {
+            margin-block: 3rem 1rem;
+
+            label input {
+                font-size: 1rem;
+            }
+
+            .search-results {
+                min-width: 100dvw;
+                top: 0;
+
+                ul {
+                    max-height: calc(100dvh - 10rem);
+
+                    li {
+                        a {
+                            padding-block: 0;
+                            padding-inline: 0;
+
+                            .title {
+                                font-size: 1rem;
+                                padding-block: 0;
+                                padding-inline: .25rem;
+                            }
+
+                            .add-this-item {
+                                margin-right: .5rem;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        h1 {
+            left: 1rem;
+            top: 4rem;
+            padding-block: .5rem;
+            padding-inline: 1rem;
+            font-size: 1rem;
+        }
+    }
+
+    .last-episode-votes {
+        border-radius: .75rem;
+        gap: .25rem;
+        padding: .25rem;
+        right: 0;
+        width: 100dvw;
+
+        .last-episode-vote {
+            border-radius: .25rem;
+
+            .content {
+                width: calc(100dvw - 1.5rem);
+
+                .poster {
+                    height: 9rem;
+
+                    img {
+                        border-top-left-radius: .125rem;
+                        border-bottom-left-radius: .125rem;
+                    }
+                }
+
+                .infos {
+                    padding: .5rem;
+
+                    .submit-vote {
+                        a, button {
+                            padding: 0.25rem 1rem;
+                        }
                     }
                 }
             }

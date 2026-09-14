@@ -1776,6 +1776,7 @@ label:has(input[type="text"]) {
 
                 .poster {
                     height: 3em;
+                    flex-shrink: 0;
                     padding: 0;
                     width: 2em;
 
@@ -1812,6 +1813,7 @@ label:has(input[type="text"]) {
                     color: var(--orange-90);
                     cursor: pointer;
                     display: flex;
+                    flex-shrink: 0;
                     height: 2.5rem;
                     justify-content: center;
                     margin-inline-start: .5rem;
@@ -3200,6 +3202,7 @@ section:has(.pages) {
 }
 
 .global-tools {
+    align-items: center;
     backdrop-filter: blur(8px);
     background-color: var(--orange-90-alpha-25);
     border-bottom: 1px solid hsl(0 0% 100% / .1);
@@ -3223,22 +3226,22 @@ section:has(.pages) {
     }
 
     &:hover {
-        > div {
+        .to-top, .theme-toggler, .preview-toggler {
             color: var(--orange-90);
-            height: 6rem;
-            width: 6rem;
+            height: 6rem !important;
+            width: 6rem !important;
 
-            svg {
+            /*svg {
                 height: 3rem;
                 width: 3rem;
-            }
+            }*/
         }
     }
 
     svg {
-        height: 1.5rem;
-        transition: all 0.25s ease-in-out;
-        width: 1.5rem;
+        height: 75%;
+        transition: all 0.3s ease-in-out;
+        width: 75%;
     }
 
     .to-top, .theme-toggler, .preview-toggler {
@@ -3250,7 +3253,7 @@ section:has(.pages) {
         font-size: 1.5rem;
         height: 2rem;
         justify-content: center;
-        transition: display .25s, height .25s, opacity .25s, visibility .25s, width .25s;
+        transition: all .3s;
         transition-behavior: allow-discrete;
         transition-timing-function: ease-in-out;
         width: 2rem;
@@ -3259,11 +3262,15 @@ section:has(.pages) {
 
     .to-top {
         display: none;
+        height: 0;
         opacity: 0;
+        width: 0;
 
         &.show {
             display: flex;
+            height: 2rem;
             opacity: 1;
+            width: 2rem;
         }
     }
 
