@@ -94,8 +94,8 @@
                     }
                 }
 
-                .episode-overview-dialog {
-                    max-width: min(80%, 50rem);
+                .episode-name-dialog, .episode-overview-dialog {
+                    width: min(80%, 50rem);
                 }
 
                 .episode-name-form, .episode-overview-form {
