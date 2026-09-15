@@ -1,7 +1,7 @@
 .card {
     aspect-ratio: 5 / 9;
     background-color: var(--ardoise-90);
-    border-radius: .5rem;
+    border-radius: 1.5rem 1.5rem .5rem .5rem;
     color: var(--ardoise-10);
     display: flex;
     flex-direction: column;
@@ -36,7 +36,7 @@
             align-items: center;
             aspect-ratio: 2 / 3;
             background-color: var(--ardoise-80);
-            border-radius: .5rem .5rem 0 0;
+            border-radius: 1.5rem 1.5rem 0 0;
             color: var(--ardoise-10);
             display: flex;
             flex-shrink: 0;
@@ -46,7 +46,7 @@
 
             img {
                 aspect-ratio: 2 / 3;
-                border-radius: .5rem .5rem 0 0;
+                border-radius: 1.5rem 1.5rem 0 0;
                 height: 100%;
                 object-fit: cover;
                 width: 100%;
