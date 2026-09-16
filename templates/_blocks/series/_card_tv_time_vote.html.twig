@@ -11,7 +11,13 @@
                     <div class="your-vote">--</div>
                 </div>
                 <div class="infos">
-                    <div class="name">{{ series.name }} <span>{{ 'S%02dE%02d'|format(series.episode_season, series.episode_number) }}</span></div>
+                    <div class="name">
+                        {{ series.name }}
+                        <span class="episode-number">{{ 'S%02dE%02d'|format(series.episode_season, series.episode_number) }}</span>
+                        {% if series.isLastEpisode > 0 %}
+                            <span class="last-episode">{{ 'Last episode!'|trans }}</span>
+                        {% endif %}
+                    </div>
                     <div class="vote">
                         {% for vote in 1..12 %}
                             <div class="vote-star" data-vote="{{ vote }}" data-title="{{ vote }}">
