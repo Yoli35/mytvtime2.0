@@ -3289,7 +3289,9 @@ section:has(.pages) {
         .icon-auto, .icon-dark, .icon-light {
             align-items: center;
             display: none;
+            height: 100%;
             justify-content: center;
+            width: 100%;
         }
     }
 
