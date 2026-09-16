@@ -27,7 +27,7 @@
                         >
                             {{ 'Go to episode'|trans }}
                         </a>
-                        <button type="button" class="btn" data-id="{{ series.episode_id }}">{{ 'Vote'|trans }}</button>
+                        <button type="button" class="btn" data-id="{{ series.episode_id }}" data-is-last-episode="{{ series.isLastEpisode }}">{{ 'Vote'|trans }}</button>
                     </div>
                 </div>
             </div>

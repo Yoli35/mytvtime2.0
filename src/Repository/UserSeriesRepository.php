@@ -1039,7 +1039,10 @@ class UserSeriesRepository extends ServiceEntityRepository
                     ue.`id`                      AS episode_id,
                     ue.`vote`                    AS episode_vote,
                     ue.`season_number`           AS episode_season,
-                    ue.`episode_number`          AS episode_number
+                    ue.`episode_number`          AS episode_number,
+                    (SELECT COUNT(remain.id)
+                     FROM user_episode remain
+                     WHERE remain.`user_series_id`=us.`id`  AND remain.`season_number`=ue.`season_number`  AND remain.`episode_number`>ue.`episode_number`)=0 AS isLastEpisode
                 FROM `user_episode` ue
                     LEFT JOIN `series_broadcast_date` sbd ON sbd.`episode_id` = ue.`episode_id`
                     LEFT JOIN `user_series` us ON us.`id` = ue.`user_series_id`

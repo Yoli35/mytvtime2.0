@@ -1,3 +1,5 @@
+import JSConfetti from "js-confetti";
+
 let self;
 
 export class TvTime {
@@ -183,14 +185,14 @@ export class TvTime {
             button.addEventListener('click', (e) => {
                 e.preventDefault();
                 if (voteDiv.dataset.vote) {
-                    this.addVote(button.dataset.id, parseInt(voteDiv.dataset.vote));
+                    this.addVote(button.dataset.id, parseInt(voteDiv.dataset.vote), parseInt(button.dataset.isLastEpisode));
                 }
             });
         });
     }
 
-    addVote(id, vote) {
-        console.log(id, vote);
+    addVote(id, vote, isLastEpisode) {
+        console.log(id, vote, isLastEpisode);
         fetch('/api/episode/vote/' + id, {
             method: 'POST',
             headers: {
@@ -207,6 +209,29 @@ export class TvTime {
                 if (seriesCard) { // Pour les multiples épisodes, la carte n'apparaitra qu'après leurs lectures
                     const seriesCardVoteDiv = seriesCard.querySelector('.vote');
                     seriesCardVoteDiv.innerHTML = vote;
+                }
+                if (isLastEpisode > 0) {
+                    const jsConfetti = new JSConfetti();
+                    jsConfetti.addConfetti({
+                        confettiNumber: 500,
+                        confettiColors: [
+                            'hsl(28deg 100% 48%)',
+                            'hsl(34deg 100% 50%)',
+                            'hsl(41deg 100% 50%)',
+                            'hsl(48deg 100% 50%)',
+                            'hsl(55deg 100% 50%)',
+                            'hsl(55deg 99% 66%)',
+                            'hsl(56deg 98% 75%)',
+                            'hsl(56deg 98% 83%)',
+                            'hsl(58deg 100% 90%)',
+                            'hsl(58deg 100% 93%)',
+                            'hsl(58deg 100% 95%)',
+                            'hsl(57deg 100% 98%)',
+                            'hsl(0deg 0% 100%)',
+                        ],
+                    }).then(() => {
+                        console.log('Vote for a finale!')
+                    });
                 }
                 const voteDiv = document.querySelector('.last-episode-vote[data-id="' + id + '"]');
                 voteDiv.classList.add('closing');
