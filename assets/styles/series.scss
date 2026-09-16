@@ -4855,28 +4855,28 @@ aside:has(.episode__cards) {
             padding-inline: 1rem;
             width: 100%;
 
-            a {
-                &:has(.still) {
-                    height: var(--episode-height);
+            .still {
+                align-items: center;
+                aspect-ratio: var(--episode-aspect-ratio);
+                background-color: hsla(from var(--ardoise-90) h s l / 0.1);
+                border: 2px solid transparent;
+                border-radius: .5rem;
+                color: var(--green-10);
+                display: flex;
+                flex-shrink: 0;
+                height: 100%;
+                justify-content: center;
+                /*max-width: 57%;*/
+                position: relative;
+                transition: width 0.3s ease-in-out;
+
+                &:has(img) {
+                    background: black padding-box;
                 }
 
-                .still {
-                    align-items: center;
-                    aspect-ratio: var(--episode-aspect-ratio);
-                    background-color: hsla(from var(--ardoise-90) h s l / 0.1);
-                    border: 2px solid transparent;
-                    border-radius: .5rem;
-                    color: var(--green-10);
-                    display: flex;
-                    flex-shrink: 0;
-                    height: 100%;
-                    justify-content: center;
-                    /*max-width: 57%;*/
-                    position: relative;
-                    transition: width 0.3s ease-in-out;
-
-                    &:has(img) {
-                        background: black padding-box;
+                a {
+                    &:has(.still) {
+                        height: var(--episode-height);
                     }
 
                     img {
@@ -4885,130 +4885,130 @@ aside:has(.episode__cards) {
                         object-fit: cover;
                         width: 100%;
                     }
+                }
 
-                    &:hover {
-                        .custom-stills {
-                            background-color: hsla(from var(--orange-40) h s l / .2);
-                            border-color: var(--orange-50);
-                            opacity: 1;
-                        }
-
-                        .custom-stills-text {
-                            display: flex;
-                        }
-                    }
-
+                &:hover {
                     .custom-stills {
-                        border-radius: .5rem;
-                        border: 2px dashed transparent;
-                        bottom: .5rem;
-                        display: flex;
-                        gap: .5rem;
-                        justify-content: flex-start;
-                        left: .5rem;
-                        min-height: 4rem;
-                        opacity: 0;
-                        overflow-x: auto;
-                        padding: .5rem;
-                        position: absolute;
-                        right: .5rem;
-                        transition: opacity 0.3s ease-in-out;
-
-                        &.active {
-                            background-color: hsla(from var(--green-40) h s l / .5);
-                            border-color: var(--green-30);
-                        }
-
-                        .custom-still {
-                            aspect-ratio: 16/9;
-                            border-radius: .25rem;
-                            border: 2px solid var(--orange-50);
-                            height: 4rem;
-
-                            img {
-                                border-radius: .125rem;
-                                height: 100%;
-                                object-fit: cover;
-                                width: 100%;
-                            }
-                        }
+                        background-color: hsla(from var(--orange-40) h s l / .2);
+                        border-color: var(--orange-50);
+                        opacity: 1;
                     }
 
                     .custom-stills-text {
-                        align-items: center;
-                        background-color: var(--orange-10);
-                        border-radius: .5rem;
-                        bottom: 5.75rem;
-                        color: var(--orange-60);
+                        display: flex;
+                    }
+                }
+
+                .custom-stills {
+                    border-radius: .5rem;
+                    border: 2px dashed transparent;
+                    bottom: .5rem;
+                    display: flex;
+                    gap: .5rem;
+                    justify-content: flex-start;
+                    left: .5rem;
+                    min-height: 4rem;
+                    opacity: 0;
+                    overflow-x: auto;
+                    padding: .5rem;
+                    position: absolute;
+                    right: .5rem;
+                    transition: opacity 0.3s ease-in-out;
+
+                    &.active {
+                        background-color: hsla(from var(--green-40) h s l / .5);
+                        border-color: var(--green-30);
+                    }
+
+                    .custom-still {
+                        aspect-ratio: 16/9;
+                        border-radius: .25rem;
+                        border: 2px solid var(--orange-50);
+                        height: 4rem;
+
+                        img {
+                            border-radius: .125rem;
+                            height: 100%;
+                            object-fit: cover;
+                            width: 100%;
+                        }
+                    }
+                }
+
+                .custom-stills-text {
+                    align-items: center;
+                    background-color: var(--orange-10);
+                    border-radius: .5rem;
+                    bottom: 5.75rem;
+                    color: var(--orange-60);
+                    display: none;
+                    font-size: 1.5rem;
+                    font-weight: 900;
+                    gap: .5rem;
+                    justify-content: center;
+                    overflow-x: auto;
+                    padding: .25rem 1rem;
+                    position: absolute;
+
+                    &.active {
+                        color: var(--green-30);
+                    }
+                }
+
+                .number {
+                    align-items: center;
+                    background-color: var(--orange-50);
+                    border-radius: .25rem;
+                    bottom: .5rem;
+                    color: var(--ardoise-10);
+                    display: flex;
+                    font-size: 1.5rem;
+                    font-weight: 500;
+                    height: 2rem;
+                    justify-content: center;
+                    min-width: 2rem;
+                    padding-inline: .75rem;
+                    position: absolute;
+                    right: .5rem;
+                    transition: font-size 0.3s ease-in-out, height 0.3s ease-in-out, width 0.3s ease-in-out;
+
+                    &.watched {
+                        background-color: var(--user-episode-actions);
+                    }
+
+                    > span {
                         display: none;
-                        font-size: 1.5rem;
-                        font-weight: 900;
-                        gap: .5rem;
-                        justify-content: center;
-                        overflow-x: auto;
-                        padding: .25rem 1rem;
-                        position: absolute;
+                        font-size: 1rem;
+                        margin-block-start: .25rem;
+                    }
+                }
 
-                        &.active {
-                            color: var(--green-30);
-                        }
+                .finale {
+                    align-items: center;
+                    background-color: var(--orange-50);
+                    border-radius: .25rem;
+                    color: var(--ardoise-10);
+                    display: flex;
+                    font-size: 1.5rem;
+                    font-weight: 500;
+                    justify-content: center;
+                    left: .5rem;
+                    max-width: calc(100% - 1rem);
+                    padding-block: .25rem;
+                    padding-inline: .5rem;
+                    position: absolute;
+                    text-align: center;
+
+                    &.season-finale {
+                        top: .5rem;
                     }
 
-                    .number {
-                        align-items: center;
-                        background-color: var(--orange-50);
-                        border-radius: .25rem;
-                        bottom: .5rem;
-                        color: var(--ardoise-10);
-                        display: flex;
-                        font-size: 1.5rem;
-                        font-weight: 500;
-                        height: 2rem;
-                        justify-content: center;
-                        min-width: 2rem;
-                        padding-inline: .75rem;
-                        position: absolute;
-                        right: .5rem;
-                        transition: font-size 0.3s ease-in-out, height 0.3s ease-in-out, width 0.3s ease-in-out;
-
-                        &.watched {
-                            background-color: var(--user-episode-actions);
-                        }
-
-                        > span {
-                            display: none;
-                            font-size: 1rem;
-                            margin-block-start: .25rem;
-                        }
+                    &.series-finale {
+                        top: 3.5rem;
                     }
 
-                    .finale {
-                        align-items: center;
-                        background-color: var(--orange-50);
-                        border-radius: .25rem;
-                        color: var(--ardoise-10);
-                        display: flex;
-                        font-size: 1.5rem;
-                        font-weight: 500;
-                        justify-content: center;
-                        left: .5rem;
-                        max-width: calc(100% - 1rem);
-                        padding-block: .25rem;
-                        padding-inline: .5rem;
-                        position: absolute;
-                        text-align: center;
-
-                        &.season-finale {
-                            top: .5rem;
-                        }
-
-                        &.series-finale {
-                            top: 3.5rem;
-                        }
-
-                        &.watched {
-                            background-color: var(--user-episode-actions);
-                        }
+                    &.watched {
+                        background-color: var(--user-episode-actions);
                     }
                 }
             }
@@ -5022,8 +5022,8 @@ aside:has(.episode__cards) {
                 height: 100%;
                 position: relative;
                 transition: width .3s ease-in-out;
-                /*width: calc(100% - calc(calc(var(--episode-height) * var(--episode-aspect-ratio)) + 4.75rem));*/
-                width: 100%;
+                width: calc(100% - calc(calc(var(--episode-height) * var(--episode-aspect-ratio)) + 4.75rem));
+                /*width: 100%;*/
 
                 .infos-content {
                     display: flex;

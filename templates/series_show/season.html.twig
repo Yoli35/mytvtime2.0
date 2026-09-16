@@ -241,24 +241,25 @@
                                 {% set air_date = episode.air_date %}
                                 {% if air_date and air_date <= now %}
                                     <div class="episode" id="episode-{{ season.season_number }}-{{ episode.episode_number }}" data-ue-id="{{ ue.id }}" data-episode-id="{{ episode.id }}">
-                                        <a href="{{ path('app_tv_episode', {id: series.id, slug: series.slug, seasonNumber: season.season_number, episodeNumber: episode.episode_number}) }}">
                                         <div class="still"
                                              data-title="{{ episode.name }}{% if ue.substitute_name %} - {{ ue.substitute_name }}{% endif %}"
                                              data-series-id="{{ series.tmdbId }}"
                                              data-season-id="{{ season.id }}"
                                              data-episode-id="{{ episode.id }}">
-                                            {% if episode.still_path %}
-                                                <img src="{{ episode.still_path }}" alt="{{ episode.name }}">
-                                            {% elseif episode.stills|length %}{# is defined and ue.still #}
-                                                {% set still = episode.stills|last %}
-                                                <img src="/series/stills/{{ still.path }}" alt="{{ episode.name }}">
-                                            {% elseif season.backdrop_path %}
-                                                <img src="/series/backdrops{{ season.backdrop_path }}" alt="{{  series.name ~ ' ' ~ episode.name }}">
-                                            {% elseif season.poster_path %}
-                                                <img src="/series/posters{{ season.poster_path }}" alt="{{ season.name ~ ' ' ~ episode.name }}">
-                                            {% else %}
-                                                <div class="no-poster">{{ 'No poster'|trans }}</div>
-                                            {% endif %}
+                                            <a href="{{ path('app_tv_episode', {id: series.id, slug: series.slug, seasonNumber: season.season_number, episodeNumber: episode.episode_number}) }}">
+                                                {% if episode.still_path %}
+                                                    <img src="{{ episode.still_path }}" alt="{{ episode.name }}">
+                                                {% elseif episode.stills|length %}{# is defined and ue.still #}
+                                                    {% set still = episode.stills|last %}
+                                                    <img src="/series/stills/{{ still.path }}" alt="{{ episode.name }}">
+                                                {% elseif season.backdrop_path %}
+                                                    <img src="/series/backdrops{{ season.backdrop_path }}" alt="{{ series.name ~ ' ' ~ episode.name }}">
+                                                {% elseif season.poster_path %}
+                                                    <img src="/series/posters{{ season.poster_path }}" alt="{{ season.name ~ ' ' ~ episode.name }}">
+                                                {% else %}
+                                                    <div class="no-poster">{{ 'No poster'|trans }}</div>
+                                                {% endif %}
+                                            </a>
                                             <div class="custom-stills">
                                                 {% for still in episode.stills %}
                                                     <div class="custom-still" data-title="{{ episode.name }}">
@@ -274,7 +275,6 @@
                                                 <div class="finale season-finale{% if ue and ue.watch_at %} watched{% endif %}">{{ 'Season finale'|trans }}</div>
                                             {% endif %}
                                         </div>
-                                        </a>
                                         <div class="infos">
                                             <div class="infos-content">
                                                 <div class="episode-name">
