@@ -923,6 +923,7 @@ class UserSeriesRepository extends ServiceEntityRepository
                     ue.`episode_id`,
                     ue.`season_number`,
                     ue.`episode_number`,
+                    DATEDIFF(IFNULL(sbd.date, ue.air_date), NOW()) * -1 AS sinceDays,
                     (SELECT COUNT(remain.`id`)
                      FROM user_episode remain
                      WHERE remain.`user_series_id`=us.`id`  AND remain.`season_number`=ue.`season_number`  AND remain.`episode_number`>=ue.`episode_number`) AS remainingEpisodeCount,

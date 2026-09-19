@@ -185,6 +185,11 @@
 
                                     span {
                                         color: hsl(from var(--green) h 0 l);
+
+                                        &.green {
+                                            color: hsl(from var(--green) h 50% l);
+                                            font-weight: bold;
+                                        }
                                     }
                                 }
                             }
@@ -513,6 +518,10 @@
                 width: 20rem;
 
                 .name {
+                    display: flex;
+                    flex-wrap: wrap;
+                    gap: .25rem 1rem;
+
                     span.episode-number {
                         color: var(--yellow);
                     }
