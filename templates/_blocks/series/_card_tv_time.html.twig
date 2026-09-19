@@ -43,6 +43,9 @@
                         {% endif %}
                     {% endif %}
                 </div>
+                {% if series.esn_name %}
+                    <div class="esn-name" data-title="{{ series.esn_name }}">{{ series.esn_name }}</div>
+                {% endif %}
             </div>
 
             {% set wps = watchLinks|filter((wp) => wp.seriesId == series.id and (wp.seasonNumber == -1 or wp.seasonNumber == series.season_number)) %}
