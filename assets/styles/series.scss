@@ -1955,10 +1955,11 @@ h2 {
             overflow: hidden;
             padding: 0;
             transition: all 300ms ease-in-out;
+            transition-behavior: allow-discrete;
             width: calc(100% + 2rem);
 
             &.show {
-                height: auto;
+                height: fit-content;
                 margin-block-end: 1rem;
                 padding: 1rem;
             }
@@ -3571,7 +3572,7 @@ h2 {
 
     .season {
         align-items: flex-start;
-        border: 2px solid transparent;
+        border: 4px solid transparent;
         border-radius: 1rem;
         display: flex;
         height: 32rem;
@@ -3580,7 +3581,7 @@ h2 {
         width: 100%;
 
         &:hover {
-            border: 2px solid var(--orange-50);
+            border-color: hsla(from var(--orange-90) h s l / .25);
 
             .infos {
                 .user-votes .show-tab,
