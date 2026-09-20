@@ -169,12 +169,28 @@
                                     border: 1px solid hsl(from var(--green) h 0 l);
                                     border-radius: 5rem;
                                     display: none;
+                                    position: relative;
                                     width: 10rem;
 
-                                    .progress-bar {
+                                    .progress-content {
+                                        height: .5rem;
+                                    }
+
+                                    .progress-bar-aired {
+                                        background-color: var(--orange);
+                                    }
+
+                                    .progress-bar-viewed {
                                         background-color: var(--green);
+                                    }
+
+                                    .progress-bar-aired,
+                                    .progress-bar-viewed {
                                         height: .5rem;
                                         border-radius: 5rem;
+                                        left: 0;
+                                        position: absolute;
+                                        top: 0;
                                     }
                                 }
 

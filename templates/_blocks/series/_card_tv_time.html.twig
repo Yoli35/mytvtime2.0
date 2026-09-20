@@ -11,8 +11,10 @@
             <div class="details">
                 <div class="name">{{ series.name }}</div>
                 {% if next and  series.viewedCount>0 %}
-                    <div class="progress-wrapper">
-                        <div class="progress-bar" style="width: {{ series.viewedCount/series.episodeCount*100 }}%"></div>
+                    <div class="progress-wrapper" data-title="{{ series.viewedCount }} {{ 'ep.Viewed'|trans }}<br>{{ series.airedCount }} {{ 'ep.Aired'|trans }}<br>{{ series.episodeCount }} {{ 'ep.Total'|trans }}">
+                        <div class="progress-content"></div>
+                        <div class="progress-bar-aired" style="width: {{ series.airedCount/series.episodeCount*100 }}%"></div>
+                        <div class="progress-bar-viewed" style="width: {{ series.viewedCount/series.episodeCount*100 }}%"></div>
                     </div>
                 {% endif %}
                 {% if series.remainingEpisodeCount==0 %}

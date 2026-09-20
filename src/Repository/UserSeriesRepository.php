@@ -932,6 +932,10 @@ class UserSeriesRepository extends ServiceEntityRepository
                     FROM `user_episode` ue3
                     WHERE ue3.`user_season_id`=usa.`id` AND ue3.`watch_at` IS NOT NULL) AS viewedCount,
                     (SELECT COUNT(*)
+                    FROM `user_episode` ue4
+                    LEFT JOIN `series_broadcast_date` sbd4 ON sbd4.`episode_id`=ue4.`episode_id`
+                    WHERE ue4.`user_season_id`=usa.`id` AND IFNULL(sbd4.date, ue4.air_date) <= NOW()) AS airedCount,
+                    (SELECT COUNT(*)
                     FROM `user_episode` ue3
                     WHERE ue3.`user_season_id`=usa.`id`) AS episodeCount
                 FROM `user_episode` ue
