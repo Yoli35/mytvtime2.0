@@ -1085,6 +1085,43 @@ class UserSeriesRepository extends ServiceEntityRepository
         return $this->getAll($sql, ['ids' => $ids, 'locale' => $locale], ['ids' => ArrayParameterType::INTEGER, 'locale' => ParameterType::STRING]);
     }
 
+    public function seriesWithNoVote(string  $locale): array
+    {
+        $sql = <<<SQL
+                -- Épisodes pas notés
+                SELECT
+                    s.id                         AS id,
+                    IFNULL(sln.`name`, s.`name`) AS name,
+                    s.`poster_path`              AS poster_path,
+                    ue.`id`                      AS episode_id,
+                    ue.`vote`                    AS episode_vote,
+                    ue.`season_number`           AS episode_season,
+                    ue.`episode_number`          AS episode_number,
+                    esn.`name`                   AS esn_name,
+                    (SELECT COUNT(remain.id)
+                    FROM user_episode remain
+                    WHERE remain.`user_series_id`=us.`id`  AND remain.`season_number`=ue.`season_number`  AND remain.`episode_number`>ue.`episode_number`)=0 AS isLastEpisode
+                FROM `user_episode` ue
+                    LEFT JOIN `series_broadcast_date` sbd ON sbd.`episode_id` = ue.`episode_id`
+                    LEFT JOIN `user_series` us ON us.`id` = ue.`user_series_id`
+                    LEFT JOIN `user_season` usa ON usa.`id` = ue.`user_season_id`
+                    LEFT JOIN `series` s ON s.`id` = us.`series_id`
+                    LEFT JOIN `series_localized_name` sln ON sln.`series_id`=s.`id` AND sln.`locale`=:locale
+                    LEFT JOIN `episode_substitute_name` esn ON esn.`episode_id`=ue.`episode_id`
+                WHERE ue.vote IS NULL
+                AND DATE(ue.watch_at) >= SUBDATE(CURDATE(), INTERVAL 3 WEEK)
+                AND (
+                    (SELECT AVG(ue1.vote)
+                    FROM `user_episode` ue1
+                    WHERE ue1.user_season_id = ue.user_season_id AND ue1.watch_at IS NOT NULL AND ue1.watch_at <= ue.watch_at) > 0
+                    OR
+                    ue.episode_number=1 AND DATEDIFF(NOW(), ue.watch_at) <= 7
+                );
+            SQL;
+
+        return $this->getAll($sql, ['locale' => $locale], ['locale' => ParameterType::STRING]);
+    }
+
     /**********************************************************************************/
     /* Nombre de minutes avant (t<0) ou après (t>0) la diffusion des épisodes du jour */
     /**********************************************************************************/

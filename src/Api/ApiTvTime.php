@@ -39,9 +39,9 @@ readonly class ApiTvTime
             return new JsonResponse(['new_episode' => false]);
         }*/
 
-        $settings = $this->tvTimeService->getTvTimeData($user);
-
         $locale = $user->getPreferredLanguage() ?? $request->getLocale();
+        /*$settings = $this->tvTimeService->getTvTimeData($user);
+
         $userId = $user->getId();
         $seriesAvailable = $this->userSeriesRepository->findAvailableSeries($userId, $locale);
         $watchLinks = $this->userSeriesRepository->availableSeriesWatchLinks(array_column($seriesAvailable, 'id'));
@@ -52,15 +52,16 @@ readonly class ApiTvTime
             return $wp;
         }, array_merge($watchLinks, $this->userSeriesRepository->availableSeriesWatchLinks(array_column($seriesUpToDate, 'id'))));
         $seriesUpToDateIds = array_unique(array_column($seriesUpToDate, 'userEpisodeId'));
-        $lastEpisodeWithNoVoteArr = $this->userSeriesRepository->findUpToDateSeriesWithNoVote($seriesUpToDateIds, $locale);
-        $noVoteView = ($this->renderView)('_blocks/series/_card_tv_time_vote.html.twig', ['seriesArr' => $lastEpisodeWithNoVoteArr]);
+        $lastEpisodeWithNoVoteArr = $this->userSeriesRepository->findUpToDateSeriesWithNoVote($seriesUpToDateIds, $locale);*/
+        $data = $this->tvTimeService->getData($user, $locale);
+        $noVoteView = ($this->renderView)('_blocks/tv_time/_card_series_vote.html.twig', ['seriesArr' => $data['noVoteArr']]);
 
-        $view = ($this->renderView)('_blocks/series/_card_tv_time_wrapper.html.twig', [
-            'seriesAvailable' => $seriesAvailable,
-            'seriesUpToDate' => $seriesUpToDate,
-            'watchLinks' => $watchLinks,
-            'list' => $settings['list'],
-            'loadCount' => $settings['count'],
+        $view = ($this->renderView)('_blocks/tv_time/_wrapper_series.html.twig', [
+            'seriesAvailable' => $data['seriesAvailable'],
+            'seriesUpToDate' => $data['seriesUpToDate'],
+            'watchLinks' => $data['watchLinks'],
+            'list' => $data['list'],
+            'loadCount' => $data['count'],
         ]);
 
         return new JsonResponse([
@@ -79,5 +80,15 @@ readonly class ApiTvTime
         $this->tvTimeService->setTvTimeLayout($user, $layout);
 
         return new JsonResponse(['layout' => $layout]);
+    }
+
+    #[Route('/tab', name: 'tab', methods: ['POST'])]
+    public function tab(#[CurrentUser] User $user, Request $request): JsonResponse
+    {
+        $inputBag = $request->getPayload();
+        $tabIndex = $inputBag->get('tabIndex');
+        $this->tvTimeService->setTvTimeTab($user, $tabIndex);
+
+        return new JsonResponse(['tabIndex' => $tabIndex]);
     }
 }

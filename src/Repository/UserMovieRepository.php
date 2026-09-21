@@ -133,6 +133,90 @@ class UserMovieRepository extends ServiceEntityRepository
         return $this->getAll($sql, $params, $types);
     }
 
+    public function moviesToSee(User $user, string $locale, int $limit = 100, $offset = 0):array
+    {
+        $userId = $user->getId();
+        $sql = <<<SQL
+                SELECT m.title AS title,
+                       mln.name AS localizedTitle,
+                       m.poster_path AS posterPAth,
+                       CONCAT('/',:locale,'/movie/show/', um.id) AS link,
+                       m.release_date AS releaseDate
+                FROM user_movie um
+                    LEFT JOIN movie m ON um.movie_id=m.id
+                    LEFT JOIN movie_localized_name mln ON mln.movie_id=m.id
+                WHERE um.user_id=:userId
+                    AND m.release_date <= CURDATE()
+                    AND um.last_viewed_at IS NULL
+                ORDER BY m.release_date DESC
+                LIMIT :limit OFFSET :offset;
+                SQL;
+
+        return $this->getAll($sql, ['userId'=>$userId, 'locale'=>$locale, 'limit'=>$limit, 'offset'=>$offset], ['userId'=>ParameterType::INTEGER, 'locale'=>ParameterType::STRING, 'limit'=>ParameterType::INTEGER, 'offset'=>ParameterType::INTEGER]);
+    }
+
+    public function moviesToSeeCount(User $user, string $locale):array
+    {
+        $userId = $user->getId();
+        $sql = <<<SQL
+                SELECT m.title AS title,
+                       mln.name AS localizedTitle,
+                       m.poster_path AS posterPAth,
+                       CONCAT('/',:locale,'/movie/show/', um.id) AS link,
+                       m.release_date AS releaseDate
+                FROM user_movie um
+                    LEFT JOIN movie m ON um.movie_id=m.id
+                    LEFT JOIN movie_localized_name mln ON mln.movie_id=m.id
+                WHERE um.user_id=:userId
+                    AND m.release_date <= CURDATE()
+                    AND um.last_viewed_at IS NULL;
+                SQL;
+
+        return $this->getAll($sql, ['userId'=>$userId, 'locale'=>$locale], ['userId'=>ParameterType::INTEGER, 'locale'=>ParameterType::STRING]);
+    }
+
+    public function moviesSeen(User $user, string $locale, int $limit = 100, $offset = 0):array
+    {
+        $userId = $user->getId();
+        $sql = <<<SQL
+                SELECT m.title AS title,
+                       mln.name AS localizedTitle,
+                       m.poster_path AS posterPAth,
+                       CONCAT('/',:locale,'/movie/show/', um.id) AS link,
+                       m.release_date AS releaseDate
+                FROM user_movie um
+                    LEFT JOIN movie m ON um.movie_id=m.id
+                    LEFT JOIN movie_localized_name mln ON mln.movie_id=m.id
+                WHERE um.user_id=:userId
+                    AND m.release_date <= CURDATE()
+                    AND um.last_viewed_at IS NOT NULL
+                ORDER BY m.release_date DESC
+                LIMIT :limit OFFSET :offset;
+                SQL;
+
+        return $this->getAll($sql, ['userId'=>$userId, 'locale'=>$locale, 'limit'=>$limit, 'offset'=>$offset], ['userId'=>ParameterType::INTEGER, 'locale'=>ParameterType::STRING, 'limit'=>ParameterType::INTEGER, 'offset'=>ParameterType::INTEGER]);
+    }
+
+    public function moviesSeenCount(User $user, string $locale):array
+    {
+        $userId = $user->getId();
+        $sql = <<<SQL
+                SELECT m.title AS title,
+                       mln.name AS localizedTitle,
+                       m.poster_path AS posterPAth,
+                       CONCAT('/',:locale,'/movie/show/', um.id) AS link,
+                       m.release_date AS releaseDate
+                FROM user_movie um
+                    LEFT JOIN movie m ON um.movie_id=m.id
+                    LEFT JOIN movie_localized_name mln ON mln.movie_id=m.id
+                WHERE um.user_id=:userId
+                    AND m.release_date <= CURDATE()
+                    AND um.last_viewed_at IS NOT NULL;
+                SQL;
+
+        return $this->getAll($sql, ['userId'=>$userId, 'locale'=>$locale], ['userId'=>ParameterType::INTEGER, 'locale'=>ParameterType::STRING]);
+    }
+
     public function getAll($sql, array $params = [], array $types = []): array
     {
         try {

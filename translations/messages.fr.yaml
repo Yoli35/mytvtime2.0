@@ -659,6 +659,18 @@ special.episode: l'épisode spécial
 special.episodes: les épisodes spéciaux
 star: étoile
 stars: étoiles
+tv-time.coming.my-list: Ma liste
+tv-time.coming.actors: Acteurs
+tv-time.coming: À venir
+tv-time.layout.list: Liste
+tv-time.layout.grid: Grille
+tv-time.my-list: Ma liste
+tv-time.movies.seen: Vus
+tv-time.movies.to-see: À voir
+tv-time.movies: Films
+tv-time.series.ended: Terminées
+tv-time.series.in-progress: En cours
+tv-time.series: Séries
 visit: visite
 visits: visites
 vote: vote

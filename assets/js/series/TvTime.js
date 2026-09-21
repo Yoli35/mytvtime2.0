@@ -5,6 +5,9 @@ let self;
 export class TvTime {
     constructor(toolsTips) {
         self = this;
+        const globs = JSON.parse(document.querySelector("#global-data").textContent);
+        this.tab = globs.tab;
+        this.sub = globs.sub;
         this.lastId = 0;
         this.toolsTips = toolsTips;
 
@@ -16,16 +19,32 @@ export class TvTime {
     init() {
         this.lastId = parseInt(document.querySelector('.series-tv-time').dataset.last);
 
+        this.changeTab(this.tab, this.sub, false);
+
+        const seriesTabNameDiv = document.querySelector('.series-tv-time header .series-tab-name');
+        const moviesTabNameDiv = document.querySelector('.series-tv-time header .movies-tab-name');
+        const comingTabNameDiv = document.querySelector('.series-tv-time header .coming-tab-name');
+
+        seriesTabNameDiv?.addEventListener('click', () => {
+            this.changeTab(0);
+        });
+        moviesTabNameDiv?.addEventListener('click', () => {
+            this.changeTab(1);
+        });
+        comingTabNameDiv?.addEventListener('click', () => {
+            this.changeTab(2);
+        });
+
         const displayList = document.querySelector('.series-tv-time header .display-list');
         const displayGrid = document.querySelector('.series-tv-time header .display-grid');
 
         displayList?.addEventListener('click', () => {
-            const wrapper = document.querySelector('.series-tv-time .series-group .wrapper');
+            const wrapper = document.querySelector('.series-tv-time .series-tab .wrapper');
             wrapper.classList.add('list');
             self.saveLayout(1);
         });
         displayGrid?.addEventListener('click', () => {
-            const wrapper = document.querySelector('.series-tv-time .series-group .wrapper');
+            const wrapper = document.querySelector('.series-tv-time .series-tab .wrapper');
             wrapper.classList.remove('list');
             self.saveLayout(0);
         });
@@ -41,8 +60,40 @@ export class TvTime {
         })
     }
 
+    changeTab(index, sub = 0, save = true) {
+        if (save) self.saveTab(index);
+
+        const seriesTvTimeDiv = document.querySelector('.series-tv-time');
+        const seriesTabNameDiv = seriesTvTimeDiv.querySelector('header .series-tab-name');
+        const moviesTabNameDiv = seriesTvTimeDiv.querySelector('header .movies-tab-name');
+        const comingTabNameDiv = seriesTvTimeDiv.querySelector('header .coming-tab-name');
+        const seriesTabHeaderDiv = seriesTvTimeDiv.querySelector('header .series-tab-header');
+        const moviesTabHeaderDiv = seriesTvTimeDiv.querySelector('header .movies-tab-header');
+        const comingTabHeaderDiv = seriesTvTimeDiv.querySelector('header .coming-tab-header');
+
+        seriesTabNameDiv.classList.remove('active');
+        moviesTabNameDiv.classList.remove('active');
+        comingTabNameDiv.classList.remove('active');
+
+        seriesTabHeaderDiv.classList.remove('active');
+        moviesTabHeaderDiv.classList.remove('active');
+        comingTabHeaderDiv.classList.remove('active');
+
+        const tabHeaderDiv = seriesTvTimeDiv.querySelector(`header .tab-headers div[data-tab-index="${index}"]`);
+        tabHeaderDiv.classList.add('active');
+
+        const tabNameDiv = seriesTvTimeDiv.querySelector(`header .tab-names div[data-tab-index="${index}"]`);
+        tabNameDiv.classList.add('active');
+
+        seriesTvTimeDiv.style.setProperty('--active-tab', index);
+
+        const h1Spans = seriesTvTimeDiv.querySelectorAll('h1 span');
+        h1Spans.forEach(span => span.classList.remove("active"));
+        h1Spans[index].classList.add("active");
+    }
+
     initAddEpisodes() {
-        const addBadges = document.querySelectorAll('.series-tv-time .series-group .add-badge');
+        const addBadges = document.querySelectorAll('.series-tv-time .series-tab .add-badge');
         addBadges.forEach(badge => {
             badge.addEventListener('click', (e) => {
                 e.preventDefault();
@@ -103,7 +154,7 @@ export class TvTime {
                 }
                 self.lastId = data['lastWatchedEpisodeId'];
                 document.querySelector('.series-tv-time').dataset.last = self.lastId;
-                const wrapper = document.querySelector('.series-tv-time .series-group .wrapper');
+                const wrapper = document.querySelector('.series-tv-time .series-tab .wrapper');
 
                 const div = document.createElement('div');
                 div.innerHTML = data['view'];
@@ -253,6 +304,26 @@ export class TvTime {
             },
             body: JSON.stringify({
                 layout: layout
+            })
+        })
+            .then((response) => response.json())
+            .then((data) => {
+                console.log(data);
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+            });
+    }
+
+    saveTab(tabIndex) {
+        console.log(tabIndex);
+        fetch('/api/tv/time/tab', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                tabIndex: tabIndex
             })
         })
             .then((response) => response.json())

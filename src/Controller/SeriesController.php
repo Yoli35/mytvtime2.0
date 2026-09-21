@@ -144,38 +144,6 @@ class SeriesController extends AbstractController
         ]);
     }
 
-    #[Route('/tv/time', name: 'tv_time')]
-    public function tvTime(#[CurrentUser] User $user, Request $request): Response
-    {
-        $locale = $user->getPreferredLanguage() ?? $request->getLocale();
-        $userId = $user->getId();
-        $seriesAvailable = $this->userSeriesRepository->findAvailableSeries($userId, $locale);
-        $watchLinks = $this->userSeriesRepository->availableSeriesWatchLinks(array_column($seriesAvailable, 'id'));
-        $seriesUpToDate = $this->userSeriesRepository->findUpToDateSeries($userId, $locale);
-        $providerUrl = $this->imageConfiguration->getUrl('logo_sizes', 3);
-        $watchLinks = array_map(function($wp) use ($providerUrl)  {
-            $wp['providerLogoPath'] = $this->providerService->getProviderLogoFullPath($wp['providerLogoPath'], $providerUrl);
-            return $wp;
-        }, array_merge($watchLinks, $this->userSeriesRepository->availableSeriesWatchLinks(array_column($seriesUpToDate, 'id'))));
-        $seriesUpToDateIds = array_unique(array_column($seriesUpToDate, 'userEpisodeId'));
-        $lastEpisodeWithNoVoteArr = $this->userSeriesRepository->findUpToDateSeriesWithNoVote($seriesUpToDateIds, $locale);
-        $tmdbIds = array_unique(array_merge(array_column($seriesAvailable, 'tmdb_id'), array_column($seriesUpToDate, 'tmdb_id')));
-        $lastWatchedSeriesId = $this->userSeriesRepository->getLastWatchedSeries($user);
-
-        $settings = $this->tvTimeService->getTvTimeData($user);
-
-        return $this->render('series/series_like_tv_time.html.twig', [
-            'seriesAvailable' => $seriesAvailable,
-            'seriesUpToDate' => $seriesUpToDate,
-            'watchLinks' => $watchLinks,
-            'seriesArr' => $lastEpisodeWithNoVoteArr,
-            'tmdbIds' => $tmdbIds,
-            'lastWatchedSeriesId' => $lastWatchedSeriesId,
-            'loadCount' => $settings['count'],
-            'list' => $settings['list'],
-        ]);
-    }
-
     #[Route('/to/start', name: 'to_start')]
     public function start(#[CurrentUser] User $user, Request $request): Response
     {

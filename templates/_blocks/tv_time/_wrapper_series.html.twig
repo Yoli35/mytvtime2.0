@@ -1,10 +1,10 @@
 <div class="wrapper{% if list %} list{% endif %}">
-    <div class="content center">
+    <div class="content">
         {% for series in seriesAvailable %}
-            {{ include('_blocks/series/_card_tv_time.html.twig', {next: true}) }}
+            {{ include('_blocks/tv_time/_card_series.html.twig', {next: true}) }}
         {% endfor %}
         {% for series in seriesUpToDate %}
-            {{ include('_blocks/series/_card_tv_time.html.twig', {next: false}) }}
+            {{ include('_blocks/tv_time/_card_series.html.twig', {next: false}) }}
         {% endfor %}
     </div>
     {% if app.environment == 'dev' %}
