@@ -30,7 +30,7 @@ final class TvTimeController extends AbstractController
 
         $data = $this->tvTimeService->getData($user, $locale);
 
-        return $this->render('series/series_like_tv_time.html.twig', [
+        return $this->render('tv_time/index.html.twig', [
             'tab' => $data['tab'],
             'sub' => $data['sub'],
             'series' => $data['series'],
