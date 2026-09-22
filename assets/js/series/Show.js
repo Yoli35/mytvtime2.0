@@ -204,6 +204,26 @@ export class Show {
         console.log(messages);
 
         /******************************************************************************
+         * Quick links to seasons.                                                    *
+         ******************************************************************************/
+        const quickLinksDivs = document.querySelectorAll('.quick-links');
+        quickLinksDivs.forEach((quickLinksDiv) => {
+            const quickLinks = quickLinksDiv.querySelectorAll('.quick-link.enabled');
+            quickLinks.forEach(link => {
+                link.addEventListener('click', e => {
+                    e.preventDefault();
+                    const number = e.currentTarget.dataset.number;
+                    if (!number) {
+                        return;
+                    }
+                    const selector = '#season-' + number;
+                    const target = document.querySelector(selector);
+                    target.scrollIntoView({behavior: 'smooth', block: 'center'});
+                });
+            });
+        });
+
+        /******************************************************************************
          * Go to the map section.                                                     *
          ******************************************************************************/
         const goToButtons = document.querySelectorAll('.go-to-button');

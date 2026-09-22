@@ -27,33 +27,21 @@
     <div class="container-fluid backgroundImageOverlay">
         <div id="series-season" class="series-show" data-theme="none" data-series-id="{{ series.id }}" data-theme-type="{{ themeType|default('') }}" data-theme-id="{{ themeId|default('') }}" data-theme-setting="{{ themeSetting|default('') }}">
             <div class="header">
-                {% if season.backdrop_path and season.poster_path %}
-                    <div class="backdrop">
+                <div class="backdrop">
+                    {% if season.backdrop_path and season.poster_path %}
                         <picture>
                             <source media="(max-aspect-ratio: 2 / 3)" srcset="/series/posters{{ series.posterPath }}">
                             <img src="/series/backdrops{{ tv.backdrop_path }}" alt="{{ tv.name }} backdrop">
                         </picture>
-                    </div>
-                {% elseif season.backdrop_path %}
-                    <div class="backdrop">
+                    {% elseif season.backdrop_path %}
                         <img src="/series/backdrops{{ season.backdrop_path }}" alt="{{ season.name }}">
-                    </div>
-                {% elseif season.poster_path %}
-                    <div class="backdrop">
+                    {% elseif season.poster_path %}
                         <img src="/series/posters{{ season.poster_path }}" alt="{{ season.name }}">
-                    </div>
-                {% endif %}
-                {% if quickLinks.count > 1 %}
-                    <div class="quick-episodes-top">
-                        <div class="quick-episodes" data-season-number="{{ season.season_number }}" style="height: {{ 32 * quickLinks.lineCount + 4 * (quickLinks.lineCount - 1) + 20 }}px; width: {{ 32 * quickLinks.itemPerLine + 4 * (quickLinks.itemPerLine - 1) + 20 }}px;">
-                            {% for item in quickLinks.items %}
-                                <div class="{{ item.class }}" data-number="{{ item.episode_number }}"{% if item.name %} data-title="{{ item.air_date|format_date('relative_long')|capitalize }} | {{ item.name }}"{% endif %}>
-                                    {{ item.episode_number }}
-                                </div>
-                            {% endfor %}
-                        </div>
-                    </div>
-                {% endif %}
+                    {% endif %}
+                </div>
+                <div class="go-to-map go-to-button" data-target="#series-map-content" data-title="{{ 'Filming locations map'|trans }}">{{ ux_icon('mdi:map-outline') }}</div>
+                <div class="go-to-cast go-to-button" data-target="#series-credit" data-title="{{ 'Series credits'|trans }}">{{ ux_icon('mdi:user-outline') }}</div>
+                {{ include('_blocks/series/_quick_links_top.html.twig', {type: 'season', number: season.season_number}) }}
                 <div class="infos">
                     <div class="infos-content">
                         <div class="name">
@@ -174,7 +162,6 @@
             {% set episodeCount = season.episodes|length %}
 
             <div class="season-stuff">
-                {#                <h2>{{ 'Season stuff'|trans }}</h2> #}
                 {{ include('_blocks/series/_watch_links.html.twig', {watchLinks: series.seriesWatchLinks, seasonNumber: season.season_number, hidden: false}) }}
 
                 {% if episodeCount %}
@@ -214,16 +201,7 @@
                             {{ ux_icon('mdi:edit-box-outline') }}
                         </div>
                     </div>
-
-                    {% if quickLinks.count > 1 %}
-                        <div class="quick-episodes" data-season-number="{{ season.season_number }}" style="height: {{ 32 * quickLinks.lineCount + 4 * (quickLinks.lineCount - 1) + 20 }}px; width: {{ 32 * quickLinks.itemPerLine + 4 * (quickLinks.itemPerLine - 1) + 20 }}px;">
-                            {% for item in quickLinks.items %}
-                                <div class="{{ item.class }}" data-number="{{ item.episode_number }}"{% if item.name %} data-title="{{ item.air_date|format_date('relative_long')|capitalize }} | {{ item.name }}"{% endif %}>
-                                    {{ item.episode_number }}
-                                </div>
-                            {% endfor %}
-                        </div>
-                    {% endif %}
+                    {{ include('_blocks/series/_quick_links.html.twig', {type: 'season', number: season.season_number}) }}
                 {% endif %}
             </div>
 

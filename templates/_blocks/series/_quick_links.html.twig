@@ -1,0 +1,9 @@
+{% if quickLinks.count > 1 %}
+    <div class="quick-links" data-type="{{ type }}"{% if number>-1 %} data-block-number="{{ number }}"{% endif %} style="height: {{ 32 * quickLinks.lineCount + 4 * (quickLinks.lineCount - 1) + 20 }}px; width: {{ 32 * quickLinks.itemPerLine + 4 * (quickLinks.itemPerLine - 1) + 20 }}px;">
+        {% for item in quickLinks.items %}
+            <div class="{{ item.class }}" data-number="{{ item.link_number }}"{% if item.name %} data-title="{{ item.air_date|format_date('relative_long')|capitalize }} | {{ item.name }}"{% endif %}>
+                {{ item.link_number }}
+            </div>
+        {% endfor %}
+    </div>
+{% endif %}

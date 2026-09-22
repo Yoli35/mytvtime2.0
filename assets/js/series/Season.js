@@ -317,18 +317,18 @@ export class Season {
             editEpisodeInfosDialog.querySelector('.frame').scrollTo(0, submitRow.offsetTop);
         });
 
-        const quickEpisodesDivs = document.querySelectorAll('.quick-episodes');
-        quickEpisodesDivs.forEach((quickEpisodesDiv) => {
-            const seasonNumber = quickEpisodesDiv.getAttribute('data-season-number');
-            const quickEpisodeLinks = quickEpisodesDiv.querySelectorAll('.quick-episode.enabled');
-            quickEpisodeLinks.forEach(episode => {
-                episode.addEventListener('click', e => {
+        const quickLinksDivs = document.querySelectorAll('.quick-links');
+        quickLinksDivs.forEach((quickLinksDiv) => {
+            const seasonNumber = quickLinksDiv.dataset.blockNumber;
+            const quickLinks = quickLinksDiv.querySelectorAll('.quick-link.enabled');
+            quickLinks.forEach(link => {
+                link.addEventListener('click', e => {
                     e.preventDefault();
-                    const episodeNumber = e.currentTarget.getAttribute('data-number');
-                    if (!episodeNumber) {
+                    const number = e.currentTarget.dataset.number;
+                    if (!number) {
                         return;
                     }
-                    const selector = '#episode-' + seasonNumber + '-' + episodeNumber;
+                    const selector = '#episode-' + seasonNumber + '-' + number;
                     const target = document.querySelector(selector);
                     target.scrollIntoView({behavior: 'smooth', block: 'center'});
                 });

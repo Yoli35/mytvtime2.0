@@ -29,24 +29,23 @@
     <div class="container-fluid {# backgroundImageOverlay #}">
         <div class="series-show user-series-show" data-theme="none" data-series-id="{{ series.id }}" data-theme-type="{{ themeType|default('') }}" data-theme-id="{{ themeId|default('') }}" data-theme-setting="{{ themeSetting|default('') }}">
             <div class="header">
-                {% if tv.backdrop_path and series.posterPath %}
-                    <div class="backdrop">
+                <div class="backdrop">
+                    {% set backdrop = tv.backdrop_path %}
+                    {% set poster = series.posterPath %}
+                    {% if backdrop and poster %}
                         <picture>
-                            <source media="(max-aspect-ratio: 2 / 3)" srcset="/series/posters{{ series.posterPath }}">
-                            <img src="/series/backdrops{{ tv.backdrop_path }}" alt="{{ tv.name }} backdrop">
+                            <source media="(max-aspect-ratio: 2 / 3)" srcset="/series/posters{{ poster }}">
+                            <img src="/series/backdrops{{ backdrop }}" alt="{{ tv.name }} backdrop">
                         </picture>
-                    </div>
-                {% elseif tv.backdrop_path %}
-                    <div class="backdrop">
-                        <img src="/series/backdrops{{ tv.backdrop_path }}" alt="{{ series.name }}">
-                    </div>
-                {% elseif series.posterPath %}
-                    <div class="backdrop">
-                        <img src="/series/posters{{ series.posterPath }}" alt="{{ series.name }}">
-                    </div>
-                {% endif %}
+                    {% elseif backdrop %}
+                        <img src="/series/backdrops{{ tv.backdrop }}" alt="{{ series.name }}">
+                    {% elseif poster %}
+                        <img src="/series/posters{{ poster }}" alt="{{ series.name }}">
+                    {% endif %}
+                </div>
                 <div class="go-to-map go-to-button" data-target="#series-map-content" data-title="{{ 'Filming locations map'|trans }}">{{ ux_icon('mdi:map-outline') }}</div>
                 <div class="go-to-cast go-to-button" data-target="#series-credit" data-title="{{ 'Series credits'|trans }}">{{ ux_icon('mdi:user-outline') }}</div>
+                {{ include('_blocks/series/_quick_links_top.html.twig', {type: "series", number: -1}) }}
                 <div class="infos">
                     <div class="poster-container">
                         <div class="poster">
@@ -97,7 +96,7 @@
                             {% endif %}
                             {{ n }} {{ (n > 1 ? 'visits':'visit')|trans }} - {{ 'Added at'|trans }} {{ userSeries.addedAt|format_date('long') }}
                         </h5>
-                        <div class="series-overview">{{ tv.overview }}</div>
+                        <div class="series-overview"><div class="content">{{ tv.overview }}</div></div>
                         <div class="localized overviews">
                             <h4 class="localized-h4">{{ 'Localized overviews'|trans }}</h4>
                             {% if tv.localized_overviews|length %}
@@ -254,7 +253,7 @@
                         <div class="seasons">
                             {% for season in series.seasons %}
                                 {% set viewedEpisodes = userSeries.userEpisodes|filter(ue => ue.seasonNumber == season.season_number and ue.watchAt)|length %}
-                                <div class="season" data-season-number="{{ season.season_number }}">
+                                <div id="season-{{ season.season_number }}" class="season" data-season-number="{{ season.season_number }}">
                                     <a href="{{ path('app_tv_season', {id: series.id, seasonNumber: season.season_number, slug: (series.localizedName ?? series.name)|slug|lower}) }}"
                                        class="poster" data-title="{{ "Season poster"|trans }}">
                                         {% if season.poster_path %}
