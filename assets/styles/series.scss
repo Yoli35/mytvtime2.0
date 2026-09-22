@@ -858,111 +858,6 @@ h2 {
                 top: 2rem;
             }
 
-            /*.poster {
-                align-items: center;
-                aspect-ratio: 2 / 3;
-                background-color: var(--ardoise-80);
-                border-radius: .5rem;
-                color: var(--ardoise-10);
-                display: flex;
-                flex-shrink: 0;
-                height: 5rem;
-                justify-content: center;
-                position: relative;
-                transition: height 0.3s ease-in-out;
-                width: auto;
-                z-index: 2;
-
-                &:hover {
-                    height: 90vh;
-
-                    .debug {
-                        display: block;
-                        left: 6rem;
-                        top: 6rem;
-                    }
-
-                    div.text {
-                        font-size: 2vw; !* No poster *!
-                        display: block;
-                    }
-
-                    div.icon {
-                        svg {
-                            height: 0;
-                            width: 0;
-                        }
-                    }
-                }
-
-                img {
-                    border-radius: .5rem;
-                    height: 100%;
-                    object-fit: cover;
-                    width: 100%;
-                }
-
-                div.text {
-                    font-size: 0; !* No poster *!
-                    display: none;
-                    transition: font-size 0.3s ease-in-out;
-                }
-
-                div.icon {
-                    svg {
-                        height: 2rem;
-                        transition: height 0.3s ease-in-out;
-                        width: 2rem;
-                    }
-                }
-
-                .progress {
-                    background-color: var(--orange-20);
-                    border: .125rem solid var(--orange-50);
-                    border-radius: 999px;
-                    bottom: 1rem;
-                    color: transparent;
-                    height: 1rem;
-                    left: 1rem;
-                    position: absolute;
-                    right: 1rem;
-                    width: calc(100% - 2rem);
-
-                    &.full {
-                        background-color: var(--green-80);
-                        border-color: var(--green-70);
-                        transition: background-color 2s ease-out, border-color 2s ease-out;
-
-                        .progress-bar {
-                            background-color: var(--green-40);
-                            transition: background-color 2s ease-out;
-                        }
-                    }
-
-                    .progress-bar {
-                        background-color: var(--orange-50);
-                        border-radius: 999px;
-                        height: 100%;
-                        width: 0;
-
-                        &.set {
-                            transition: width 2s ease-out;
-                        }
-                    }
-                }
-
-                .debug {
-                    display: none;
-                    font-size: 2rem;
-                    font-weight: 300;
-                    left: 2rem;
-                    line-height: 1.25em;
-                    position: absolute;
-                    top: 2rem;
-                    width: fit-content;
-                }
-            }*/
-
             .infos-content {
                 align-items: flex-start;
                 //background-color: hsla(from var(--grey-50) h s l / .1);
@@ -2790,6 +2685,12 @@ h2 {
                 }
             }
         }
+    }
+}
+
+.series-show[data-blur="blur"] {
+    .header .infos .infos-content:hover {
+        backdrop-filter: blur(1rem);
     }
 }
 

@@ -1,5 +1,9 @@
 <div class="global-tools{% if app.environment is same as 'dev' %} dev{% endif %}">
     <div class="to-top" data-title="{{ 'Back to top'|trans }}">{{ ux_icon('mdi:arrow-up') }}</div>
+    <div class="blur-toggler" data-title="{{ 'Toggle blur under overview'|trans }}">
+        <span class="icon-blur">{{ ux_icon('mdi:blur') }}</span>
+        <span class="icon-blur-off">{{ ux_icon('mdi:blur-off') }}</span>
+    </div>
     <div class="theme-toggler" data-title="{{ 'Toggle text color'|trans }}" data-theme-state="none">
         <span class="icon-auto">{{ ux_icon('mdi:theme-light-dark') }}</span>
         <span class="icon-dark">{{ ux_icon('mdi:moon-and-stars') }}</span>

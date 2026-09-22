@@ -32,6 +32,26 @@ export class Application {
         }
 
         /******************************************************************************************
+         * Blur toggler
+         ******************************************************************************************/
+        const eligiblePage = document.querySelector(".series-show") || document.querySelector(".episode-show");
+        const blurToggler = document.querySelector(".blur-toggler");
+        if (eligiblePage) {
+            const blur = eligiblePage.dataset.blur === 'blur';
+            blurToggler.classList.toggle("active", blur);
+            blurToggler.addEventListener("click", () => {
+                blurToggler.classList.toggle("active");
+                if (blurToggler.classList.contains("active")) {
+                    eligiblePage.dataset.blur = 'blur';
+                } else {
+                    eligiblePage.dataset.blur = 'blur-off';
+                }
+            });
+        } else {
+            blurToggler.classList.add("d-none"); // Hide it
+        }
+
+        /******************************************************************************************
          * Theme toggler
          ******************************************************************************************/
         const page = document.querySelector(".series-show") || document.querySelector(".episode-show");

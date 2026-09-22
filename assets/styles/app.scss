@@ -3229,7 +3229,7 @@ section:has(.pages) {
     }
 
     &:hover {
-        .to-top, .theme-toggler, .preview-toggler {
+        .to-top, .blur-toggler, .theme-toggler, .preview-toggler {
             color: var(--orange-90);
             height: 6rem !important;
             width: 6rem !important;
@@ -3247,7 +3247,7 @@ section:has(.pages) {
         width: 75%;
     }
 
-    .to-top, .theme-toggler, .preview-toggler {
+    .to-top, .blur-toggler, .theme-toggler, .preview-toggler {
         align-items: center;
         background-color: var(--orange-50);
         border-radius: 50%;
@@ -3277,13 +3277,31 @@ section:has(.pages) {
         }
     }
 
-    .theme-toggler, .preview-toggler {
+    .blur-toggler,.theme-toggler, .preview-toggler {
         display: flex;
 
         &.active {
             background-color: var(--green-50);
             color: var(--green-20);
         }
+    }
+
+    .blur-toggler {
+        .icon-blur, .icon-blur-off {
+            align-items: center;
+            display: none;
+            height: 100%;
+            justify-content: center;
+            width: 100%;
+        }
+    }
+
+    .blur-toggler.active .icon-blur {
+        display: flex;
+    }
+
+    .blur-toggler:not(.active) .icon-blur-off {
+        display: flex;
     }
 
     // Theme toggler: show a single icon reflecting the current state.
