@@ -1062,7 +1062,7 @@ final class SeriesShowController extends AbstractController
             if ($count % 2 == 0)
                 $itemPerLine = $count / 2;
             else {
-                $quickLinks[] = ['name' => null, 'episode_number' => null, 'air_date' => null, 'watched' => null, 'future' => null, 'class' => 'quick-link empty'];
+                $quickLinks[] = ['name' => null, 'link_number' => null, 'air_date' => null, 'watched' => null, 'future' => null, 'class' => 'quick-link empty'];
                 $itemPerLine = ($count + 1) / 2;
                 $count += 1;
             }
