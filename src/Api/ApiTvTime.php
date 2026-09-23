@@ -21,10 +21,7 @@ readonly class ApiTvTime
     public function __construct(
         #[AutowireMethodOf(ControllerHelper::class)]
         private Closure              $renderView,
-        private ImageConfiguration   $imageConfiguration,
-        private ProviderService      $providerService,
         private TvTimeService        $tvTimeService,
-        private UserSeriesRepository $userSeriesRepository
     )
     {
     }
@@ -32,43 +29,39 @@ readonly class ApiTvTime
     #[Route('/check', name: 'check', methods: ['POST'])]
     public function check(#[CurrentUser] User $user, Request $request): JsonResponse
     {
-        /*$inputBag = $request->getPayload();
-        $lastId = $inputBag->get('lastId');
-        $lastWatchedSeriesId = $this->userSeriesRepository->getLastWatchedSeries($user);
-        if ($lastId == $lastWatchedSeriesId) {
-            return new JsonResponse(['new_episode' => false]);
-        }*/
-
+        $view = 'No data yet ;p';
+        $noVoteView = '';
         $locale = $user->getPreferredLanguage() ?? $request->getLocale();
-        /*$settings = $this->tvTimeService->getTvTimeData($user);
 
-        $userId = $user->getId();
-        $seriesAvailable = $this->userSeriesRepository->findAvailableSeries($userId, $locale);
-        $watchLinks = $this->userSeriesRepository->availableSeriesWatchLinks(array_column($seriesAvailable, 'id'));
-        $seriesUpToDate = $this->userSeriesRepository->findUpToDateSeries($userId, $locale);
-        $providerUrl = $this->imageConfiguration->getUrl('logo_sizes', 3);
-        $watchLinks = array_map(function($wp) use ($providerUrl)  {
-            $wp['providerLogoPath'] = $this->providerService->getProviderLogoFullPath($wp['providerLogoPath'], $providerUrl);
-            return $wp;
-        }, array_merge($watchLinks, $this->userSeriesRepository->availableSeriesWatchLinks(array_column($seriesUpToDate, 'id'))));
-        $seriesUpToDateIds = array_unique(array_column($seriesUpToDate, 'userEpisodeId'));
-        $lastEpisodeWithNoVoteArr = $this->userSeriesRepository->findUpToDateSeriesWithNoVote($seriesUpToDateIds, $locale);*/
         $data = $this->tvTimeService->getData($user, $locale);
-        $noVoteView = ($this->renderView)('_blocks/tv_time/_card_series_vote.html.twig', ['seriesArr' => $data['noVoteArr']]);
 
-        $view = ($this->renderView)('_blocks/tv_time/_wrapper_series.html.twig', [
-            'seriesAvailable' => $data['seriesAvailable'],
-            'seriesUpToDate' => $data['seriesUpToDate'],
-            'watchLinks' => $data['watchLinks'],
-            'list' => $data['list'],
-            'loadCount' => $data['count'],
-        ]);
+        if ($data['tab'] == 0) {
+            $noVoteView = ($this->renderView)('_blocks/tv_time/_card_series_vote.html.twig', ['seriesArr' => $data['noVoteArr']]);
+            $view = ($this->renderView)('_blocks/tv_time/_wrapper_series.html.twig', [
+                'seriesAvailable' => $data['series']['available'],
+                'seriesUpToDate' => $data['series']['upToDate'],
+                'watchLinks' => $data['series']['watchLinks'],
+                'list' => $data['list'],
+                'loadCount' => $data['loadCount'],
+            ]);
+        }
+
+        if ($data['tab'] == 1) {
+            $view = ($this->renderView)('_blocks/tv_time/_wrapper_movies.html.twig', [
+                'moviesToSee' => $data['movies']['toSee'],
+                'moviesSeen' => $data['movies']['seen'],
+                'moviesToSeeCount' => $data['movies']['toSeeCount'],
+                'moviesSeenCount' => $data['movies']['seenCount'],
+                'list' => $data['list'],
+                'sub' => $data['sub'],
+                'loadCount' => $data['loadCount'],
+            ]);
+        }
 
         return new JsonResponse([
             'new_episode' => true,
             'view' => $view,
             'noVoteView' => $noVoteView,
-            /*'lastWatchedEpisodeId' => $lastWatchedSeriesId,*/
         ]);
     }
 

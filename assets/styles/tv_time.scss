@@ -181,21 +181,28 @@
         }
     }
 
-    .series-tab {
+    .series-tab, .movies-tab, .coming-tab {
+        display: none;
         width: 100%;
+
+        &.active {
+            display: block;
+        }
 
         .wrapper {
             position: relative;
 
             .content {
                 display: flex;
+                flex-wrap: wrap;
                 gap: .25rem;
+                margin-inline: auto;
                 width: round(down, 100%, 15.75rem);
 
                 .card {
                     border-radius: .75rem;
                     border: 4px solid hsl(from var(--green) h 0 l / 0.5);
-                    height: 29rem;
+                    height: 32rem;
                     width: 15.5rem;
 
                     &.premiere {
@@ -219,6 +226,10 @@
                     a {
                         .poster {
                             position: relative;
+
+                            img {
+                                border-radius: .5rem .5rem 0 0 ;
+                            }
                         }
 
                         .infos {
@@ -234,13 +245,24 @@
                                 flex-direction: column;
                                 font-weight: 600;
                                 gap: .25rem;
-                                height: 5rem;
+                                /*height: 5rem;*/
                                 justify-content: center;
+
+                                /*&:has(.overview) {
+                                    height: 8rem;
+                                }*/
 
                                 .name {
                                     all: unset;
                                     line-height: 1.1;
                                     text-wrap: balance;
+                                }
+
+                                .date {
+                                    all: unset;
+                                    color: hsl(from var(--green) h 50% l);
+                                    font-size: .875rem;
+                                    line-height: 1.1;
                                 }
 
                                 .esn-name {
@@ -300,6 +322,14 @@
                                             font-weight: bold;
                                         }
                                     }
+                                }
+
+                                .overview {
+                                    color: hsl(from var(--green) h 0 l);
+                                    display: none;
+                                    max-height: 6rem;
+                                    overflow-y: auto;
+                                    width: min(100%, 70ch);
                                 }
                             }
 
@@ -370,6 +400,7 @@
                                 .details {
                                     display: flex;
                                     flex-direction: column;
+                                    flex-grow: 1;
                                     gap: .25rem;
 
                                     .name {
@@ -382,6 +413,10 @@
                                     }
 
                                     .status {
+                                        display: block;
+                                    }
+
+                                    .overview {
                                         display: block;
                                     }
                                 }
@@ -411,6 +446,7 @@
                                     background-color: var(--green-70);
                                     border-radius: 50%;
                                     display: flex;
+                                    flex-shrink: 0;
                                     font-size: 1.5rem;
                                     font-weight: 300;
                                     height: 2.5rem;
@@ -428,6 +464,7 @@
                                 .add-badge, .done {
                                     align-items: center;
                                     display: flex;
+                                    flex-shrink: 0;
                                     height: 2.5rem;
                                     justify-content: center;
                                     width: 2.5rem;

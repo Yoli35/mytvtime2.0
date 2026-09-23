@@ -1,0 +1,9 @@
+<div class="wrapper{% if list %} list{% endif %}">
+    <div class="content">
+        {{ dump(coming.media) }}
+        {{ dump(coming.actors) }}
+        {% if app.environment == 'dev' %}
+            <div class="count">{{ loadCount }}</div>
+        {% endif %}
+    </div>
+</div>

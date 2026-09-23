@@ -1,2 +1,19 @@
-{{ dump(movies.toSee) }}
-{{ dump(movies.seen) }}
+<div class="wrapper{% if list %} list{% endif %}">
+    <div class="content">
+        {% if sub == 0 %}
+            {% for movie in movies %}
+                {{ include('_blocks/tv_time/_card_movies.html.twig', {next: true}) }}
+            {% endfor %}
+        {% endif %}
+        {% if sub == 1 %}
+            {% for movie in movies %}
+                {{ include('_blocks/tv_time/_card_movies.html.twig', {next: false}) }}
+            {% endfor %}
+        {% endif %}
+        {{ dump(movieCount) }}
+        {{ dump(movies|first) }}
+    </div>
+    {% if app.environment == 'dev' %}
+        <div class="count">{{ loadCount }}</div>
+    {% endif %}
+</div>

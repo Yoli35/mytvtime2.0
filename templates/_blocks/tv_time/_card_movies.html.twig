@@ -1,0 +1,27 @@
+<div class="card">
+    <a href="{{ movie.link }}">
+        <div class="poster">
+            {% if movie.posterPath %}
+                <img src="/movies/posters{{ movie.posterPath }}" alt="{{ movie.title }}">
+            {% else %}
+                <div>{{ 'No poster'|trans }}</div>
+            {% endif %}
+        </div>
+        <div class="infos">
+            <div class="details">
+                <div class="name">{{ movie.title }}</div>
+                <div class="date">{{ movie.releaseDate|format_date('relative_full')|capitalize }}</div>
+                {% if movie.overview %}
+                    <div class="overview" data-title="{{ movie.overview }}">{{ movie.overview }}</div>
+                {% endif %}
+            </div>
+
+            {% if next %}
+                <div class="add-badge" data-movie-id="{{ movie.id }}">{{ ux_icon('mdi:eye') }}</div>
+            {% else %}
+                <div class="vote" data-id="{{ movie.userMovieId }}">{% if movie.rating %}{{ movie.rating }}{% else %}{{ ux_icon('mdi:star') }}{% endif %}</div>
+                <div class="done">{{ ux_icon('mdi:check') }}</div>
+            {% endif %}
+        </div>
+    </a>
+</div>

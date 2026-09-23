@@ -39,12 +39,12 @@ export class TvTime {
         const displayGrid = document.querySelector('.series-tv-time header .display-grid');
 
         displayList?.addEventListener('click', () => {
-            const wrapper = document.querySelector('.series-tv-time .series-tab .wrapper');
+            const wrapper = document.querySelector('.series-tv-time .active .wrapper');
             wrapper.classList.add('list');
             self.saveLayout(1);
         });
         displayGrid?.addEventListener('click', () => {
-            const wrapper = document.querySelector('.series-tv-time .series-tab .wrapper');
+            const wrapper = document.querySelector('.series-tv-time .active .wrapper');
             wrapper.classList.remove('list');
             self.saveLayout(0);
         });

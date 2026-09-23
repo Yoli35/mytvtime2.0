@@ -66,6 +66,7 @@ readonly class TvTimeService
     {
         $userId = $user->getId();
         $settings = $this->getTvTimeData($user);
+        /*$settings['tab'] = 1;*/
         $series = [
             'available' => [],
             'upToDate' => [],
@@ -73,8 +74,8 @@ readonly class TvTimeService
             'tmdbIds' => [],
             'lastWatchedSeriesId' => 0,
         ];
-        $movies = ['toSee' => [], 'seen' => []];
-        $coming = ['media' => [], 'actors' => []];
+        $movies = [];
+        $coming = [];
 
         if ($settings['tab'] === 0) { // series
             $seriesAvailable = $this->userSeriesRepository->findAvailableSeries($userId, $locale);
@@ -102,29 +103,39 @@ readonly class TvTimeService
         }
 
         if ($settings['tab'] === 1) {// movies
-            $moviesToSee = $this->userMovieRepository->moviesToSee($user, $locale);
-            $moviesSeen = $this->userMovieRepository->moviesSeen($user, $locale);
+            if ($settings['sub'] == 0) {
+                $movies = $this->userMovieRepository->moviesToSee($user, $locale);
+                $movieCount = $this->userMovieRepository->moviesToSeeCount($user);
+            } else {
+                $movies = $this->userMovieRepository->moviesSeen($user, $locale);
+                $movieCount = $this->userMovieRepository->moviesSeenCount($user);
+            }
             $movies = [
-                'toSee' => $moviesToSee,
-                'seen' => $moviesSeen,
+                'movies' => $movies,
+                'movieCount' => $movieCount,
             ];
         }
         if ($settings['tab'] === 2) {// coming
-            $media = [];
-            $actors = [];
-            $movies = [
+            if ($settings['sub'] == 0) {
+                $media = [];
+                $actors = [];
+            } else {
+                $media = [];
+                $actors = [];
+            }
+            $coming = [
                 'media' => $media,
                 'actors' => $actors,
             ];
         }
         return [
-            'tab' => $settings['tab'],
-            'sub' => $settings['sub'],
             'series' => $series,
             'movies' => $movies,
             'coming' => $coming,
             'noVoteArr' => $noVoteArr,
             'loadCount' => $settings['count'],
+            'tab' => $settings['tab'],
+            'sub' => $settings['sub'],
             'list' => $settings['list'],
         ];
     }
