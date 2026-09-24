@@ -1027,8 +1027,8 @@ class UserSeriesRepository extends ServiceEntityRepository
                             AND ue2.`season_number`>0
                         ORDER BY ue2.`id` DESC LIMIT 1)
                 WHERE us.`user_id`=:id
-                    AND us.`progress`>0
-                    AND us.`last_watch_at` >= SUBDATE(CURDATE(), INTERVAL 3 WEEK)
+                    AND (us.`progress`>0 OR IFNULL(DATE(sbs.`first_air_date`), s.`first_air_date`)>=CURDATE())
+                    AND (us.`last_watch_at` >= SUBDATE(CURDATE(), INTERVAL 3 WEEK) OR ue.episode_number=1) -- Nouvelle saison
                     AND ue.`season_number`>0
                     AND CONCAT(IFNULL(DATE(sbd.`date`), ue.`air_date`), IF(sbs.`air_at`, CONCAT(' ', sbs.`air_at`), '')) > NOW()
                 ORDER BY us.`last_watch_at` DESC;

@@ -223,6 +223,15 @@
                         }
                     }
 
+                    &:has(.new) {
+                        border-color: var(--purple);
+                        box-shadow: inset 0 0 10rem .25rem hsl(from var(--purple) h s l / 0.5);
+
+                        .infos {
+                            background-color: transparent;
+                        }
+                    }
+
                     a {
                         .poster {
                             position: relative;
@@ -306,7 +315,11 @@
                                     display: none;
 
                                     .last {
-                                        color: var(--orange);
+                                        color: hsl(from var(--orange) h s 75%);
+                                    }
+
+                                    .new {
+                                        color: hsl(from var(--purple) h s 75%);
                                     }
                                 }
 
