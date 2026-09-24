@@ -33,6 +33,14 @@
     ::view-transition-new(root) {
         animation: fadeIn .5s ease-in-out;
     }
+
+    html {
+        scroll-behavior: smooth; /* Kevin Powell */
+    }
+}
+
+:target {
+    scroll-margin-top: 20vb; /* Kevin Powell */
 }
 
 *, *::before, *::after {
@@ -113,7 +121,8 @@ body {
     }
 
     textarea {
-        field-sizing: content;
+        field-sizing: content; /* Kevin Powell */
+        min-block-size: 5lh; /* Kevin Powell */
         resize: none;
     }
 
@@ -2480,9 +2489,9 @@ section:has(.pages) {
                 input[type="text"],
                 input[type="password"] {
                     background-color: hsla(from var(--green-80) h s l/0.5);
-                    border: 2px solid hsla(from var(--green-20) h s l/0.5);
                     border-radius: 5rem;
                     color: var(--ardoise-10);
+                    outline: 3px solid hsla(from var(--green-20) h s l/0.5);
                     padding-block: 0.5rem;
                     padding-inline: 1rem;
                     transition: border-color .250ms;
@@ -2490,6 +2499,14 @@ section:has(.pages) {
 
                     &:focus {
                         border-color: var(--orange-50);
+                    }
+
+                    &:user-valid { /* Kevin Powell */
+                        outline-color: var(--green);
+                    }
+
+                    &:user-invalid { /* Kevin Powell */
+                        outline-color: var(--red);
                     }
                 }
 
@@ -3277,7 +3294,7 @@ section:has(.pages) {
         }
     }
 
-    .blur-toggler,.theme-toggler, .preview-toggler {
+    .blur-toggler, .theme-toggler, .preview-toggler {
         display: flex;
 
         &.active {
