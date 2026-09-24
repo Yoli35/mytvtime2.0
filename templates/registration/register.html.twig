@@ -22,11 +22,25 @@
                     <input type="text" name="{{ field_name(registrationForm.email) }}" id="{{ registrationForm.email.vars.id }}" placeholder="{{ registrationForm.email.vars.attr.placeholder|trans }}" autocomplete="new-password" required>
                 </label>
                 <label for="{{ registrationForm.plainPassword.vars.id }}" class="required">{{ 'Password'|trans }}
-                    <input type="password" name="{{ field_name(registrationForm.plainPassword) }}" id="{{ registrationForm.plainPassword.vars.id }}" placeholder="{{ registrationForm.plainPassword.vars.attr.placeholder|trans }}" autocomplete="new-password" required>
+                    <input type="password"
+                           minlength="12"
+                           pattern="^(?=.*[A-Za-z])(?=.*\d).+$"
+                           name="{{ field_name(registrationForm.plainPassword) }}"
+                           id="{{ registrationForm.plainPassword.vars.id }}"
+                           placeholder="{{ registrationForm.plainPassword.vars.attr.placeholder|trans }}"
+                           autocomplete="new-password"
+                           required>
                     <div class="password-toggle-view"><i class="fas fa-eye"></i></div>
                 </label>
                 <label for="{{ registrationForm.confirmPassword.vars.id }}" class="required">{{ 'Password'|trans }}
-                    <input type="password" name="{{ field_name(registrationForm.confirmPassword) }}" id="{{ registrationForm.confirmPassword.vars.id }}" placeholder="{{ registrationForm.confirmPassword.vars.attr.placeholder|trans }}" autocomplete="new-password" required>
+                    <input type="password"
+                           minlength="12"
+                           pattern="^(?=.*[A-Za-z])(?=.*\d).+$"
+                           name="{{ field_name(registrationForm.confirmPassword) }}"
+                           id="{{ registrationForm.confirmPassword.vars.id }}"
+                           placeholder="{{ registrationForm.confirmPassword.vars.attr.placeholder|trans }}"
+                           autocomplete="new-password"
+                           required>
                     <div class="password-toggle-view"><i class="fas fa-eye"></i></div>
                 </label>
                 <label for="{{ registrationForm.country.vars.id }}" class="{{ registrationForm.country.vars.required ? 'required' }}">
