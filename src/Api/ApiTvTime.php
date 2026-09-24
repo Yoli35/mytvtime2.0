@@ -29,10 +29,16 @@ readonly class ApiTvTime
     #[Route('/check', name: 'check', methods: ['POST'])]
     public function check(#[CurrentUser] User $user, Request $request): JsonResponse
     {
+        $inputBag = $request->getPayload();
+        $sort = $inputBag->get('sort');
+
         $view = 'No data yet ;p';
         $noVoteView = '';
         $locale = $user->getPreferredLanguage() ?? $request->getLocale();
 
+        if ($sort != null) {
+            $this->tvTimeService->setTvTimeSort($user, intval($sort));
+        }
         $data = $this->tvTimeService->getData($user, $locale);
 
         if ($data['tab'] == 0) {

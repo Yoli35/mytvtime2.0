@@ -42,11 +42,18 @@ readonly class TvTimeService
         $this->setSettings($user, $data);
     }
 
+    public function setTvTimeSort(User $user, int $sort): void
+    {
+        $data = $this->getSettings($user);
+        $data['sort'] = $sort;
+        $this->setSettings($user, $data);
+    }
+
     private function getSettings(User $user): array
     {
         $s = $this->settingsRepository->findOneBy(['user' => $user, 'name' => 'tv time']);
         if ($s === null) {
-            return ['count' => 0, 'list' => 0, 'tab' => 0, 'sub' => 0];
+            return ['count' => 0, 'list' => 0, 'tab' => 0, 'sub' => 0, 'sort' => 0];
         }
         return $s->getData();
     }
@@ -80,7 +87,7 @@ readonly class TvTimeService
         if ($settings['tab'] === 0) { // series
             $seriesAvailable = $this->userSeriesRepository->findAvailableSeries($userId, $locale);
             $watchLinks = $this->userSeriesRepository->availableSeriesWatchLinks(array_column($seriesAvailable, 'id'));
-            $seriesUpToDate = $this->userSeriesRepository->findUpToDateSeries($userId, $locale);
+            $seriesUpToDate = $this->userSeriesRepository->findUpToDateSeries($userId, $settings['sort'], $locale);
             $providerUrl = $this->imageConfiguration->getUrl('logo_sizes', 3);
             $watchLinks = array_map(function ($wp) use ($providerUrl) {
                 $wp['providerLogoPath'] = $this->providerService->getProviderLogoFullPath($wp['providerLogoPath'], $providerUrl);
@@ -137,6 +144,7 @@ readonly class TvTimeService
             'tab' => $settings['tab'],
             'sub' => $settings['sub'],
             'list' => $settings['list'],
+            'sort' => $settings['sort'],
         ];
     }
 }

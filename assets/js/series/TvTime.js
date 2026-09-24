@@ -11,7 +11,7 @@ export class TvTime {
         this.lastId = 0;
         this.toolsTips = toolsTips;
 
-        this.checkForLastId = this.checkForLastId.bind(this);
+        this.getEpisodes = this.getEpisodes.bind(this);
 
         this.init();
     }
@@ -35,6 +35,39 @@ export class TvTime {
             this.changeTab(2);
         });
 
+        const filterSeriesInput = document.querySelector('#filter-series-input');
+        filterSeriesInput?.addEventListener('input', () => {
+            this.filterSeries(filterSeriesInput.value.toLowerCase());
+        });
+        const sortDivs = document.querySelectorAll('.series-tv-time header .sort-by');
+        const sortR = document.querySelector("#sort-by-remaining-days");
+        sortR.addEventListener('click', () => {
+            if (sortR.classList.contains('active')) return;
+            self.getEpisodes('0');
+            sortDivs.forEach((sortDiv) => {
+                sortDiv.classList.remove('active');
+            });
+            sortR.classList.add('active');
+        });
+        const sortL = document.querySelector("#sort-by-last-watch-at");
+        sortL.addEventListener('click', () => {
+            if (sortL.classList.contains('active')) return;
+            self.getEpisodes('1');
+            sortDivs.forEach((sortDiv) => {
+                sortDiv.classList.remove('active');
+            });
+            sortL.classList.add('active');
+        });
+        const sortA = document.querySelector("#sort-by-air-date");
+        sortA.addEventListener('click', () => {
+            if (sortA.classList.contains('active')) return;
+            self.getEpisodes('2');
+            sortDivs.forEach((sortDiv) => {
+                sortDiv.classList.remove('active');
+            });
+            sortA.classList.add('active');
+        });
+
         const displayList = document.querySelector('.series-tv-time header .display-list');
         const displayGrid = document.querySelector('.series-tv-time header .display-grid');
 
@@ -55,7 +88,7 @@ export class TvTime {
 
         document.addEventListener("visibilitychange", () => {
             if (document.visibilityState === 'visible') {
-                self.checkForLastId();
+                self.getEpisodes();
             }
         })
     }
@@ -102,6 +135,24 @@ export class TvTime {
         });
     }
 
+    filterSeries(needle) {
+        const cards = document.querySelectorAll('.series-tv-time .series-tab.active .wrapper .content .card');
+        if (needle.length === 0) {
+            cards.forEach(card => {
+                card.removeAttribute('style');
+            });
+            return;
+        }
+        cards.forEach(card => {
+            const name = card.querySelector('.name').textContent.toLowerCase();
+            if (name.includes(needle)) {
+                card.removeAttribute('style');
+            } else {
+                card.style.display = 'none';
+            }
+        });
+    }
+
     addEpisode(badge) {
         const seriesId = badge.dataset.seriesId;
         const tmdbId = badge.dataset.tmdbId;
@@ -131,11 +182,11 @@ export class TvTime {
             .then(response => response.json())
             .then(data => {
                 console.log(data);
-                self.checkForLastId();
+                self.getEpisodes();
             });
     }
 
-    checkForLastId() {
+    getEpisodes(sort = null) {
         fetch('/api/tv/time/check', {
             method: 'POST',
             headers: {
@@ -143,7 +194,7 @@ export class TvTime {
                 'X-Requested-With': 'XMLHttpRequest'
             },
             body: JSON.stringify({
-                lastId: this.lastId
+                sort: sort
             })
         })
             .then(response => response.json())

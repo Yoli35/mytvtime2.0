@@ -21,13 +21,21 @@
         <header>
             <div class="tab-names">
                 <div class="active-tab-name"></div>
-                <div class="series-tab-name active" data-tab-index="0">{{ 'tv-time.series'|trans }}</div>
-                <div class="movies-tab-name" data-tab-index="1">{{ 'tv-time.movies'|trans }}</div>
-                <div class="coming-tab-name" data-tab-index="2">{{ 'tv-time.coming'|trans }}</div>
+                <div class="series-tab-name{% if tab == 0 %} active{% endif %}" data-tab-index="0">{{ 'tv-time.series'|trans }}</div>
+                <div class="movies-tab-name{% if tab == 1 %} active{% endif %}" data-tab-index="1">{{ 'tv-time.movies'|trans }}</div>
+                <div class="coming-tab-name{% if tab == 2 %} active{% endif %}" data-tab-index="2">{{ 'tv-time.coming'|trans }}</div>
             </div>
             <div class="tab-headers">
                 <div class="tab-header series-tab-header{% if tab == 0 %} active{% endif %}" data-tab-index="0">
                     <div class="infos">{{ 'tv-time.my-list'|trans }}</div>
+                    <div class="filter">
+                        <label for="filter-series-input"><input type="search" id="filter-series-input" placeholder="Search..."></label>
+                    </div>
+                    <div class="sort">
+                        <div id="sort-by-remaining-days" class="sort-by{% if sort==0 %} active{% endif %}" data-title="{{ 'tv-time.remaining-days'|trans }}">{{ ux_icon('mdi:calendar') }}</div>{# remainingDays #}
+                        <div id="sort-by-last-watch-at" class="sort-by{% if sort==1 %} active{% endif %}" data-title="{{ 'tv-time.last-episodes-seen'|trans }}">{{ ux_icon('mdi:eye-outline') }}</div> {# us.`last_watch_at` DESC #}
+                        <div id="sort-by-air-date" class="sort-by{% if sort==2 %} active{% endif %}" data-title="{{ 'tv-time.air-date'|trans }}">{{ ux_icon('mdi:wifi') }}</div> {# IFNULL(DATE(sbd.`date`), ue.`air_date`) DESC #}
+                    </div>
                     <div class="in-progress{% if sub == 0 %} active{% endif %}">{{ 'tv-time.series.in-progress'|trans }}</div>
                     <div class="ended{% if sub == 1 %} active{% endif %}">{{ 'tv-time.series.ended'|trans }}</div>
                 </div>

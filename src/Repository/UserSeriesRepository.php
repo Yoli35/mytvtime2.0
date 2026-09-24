@@ -980,7 +980,7 @@ class UserSeriesRepository extends ServiceEntityRepository
         return $this->getAll($sql, ['ids' => $ids], ['ids' => ArrayParameterType::INTEGER]);
     }
 
-    public function findUpToDateSeries(int $userId, string  $locale): array
+    public function findUpToDateSeries(int $userId, int $sort, string  $locale): array
     {
         // Les quatre sous-requêtes corrélées d'origine ne servaient qu'à lire quatre colonnes de la même
         // ligne : une seule sous-requête ramène l'id, le reste est lu par accès à la clé primaire.
@@ -1003,7 +1003,7 @@ class UserSeriesRepository extends ServiceEntityRepository
                     ue.`season_number`,
                     ue.`episode_number`,
                     esn.`name` AS esn_name,
-                    DATEDIFF(IFNULL(sbd.date, ue.air_date), NOW()) AS remaingDays,
+                    DATEDIFF(IFNULL(sbd.date, ue.air_date), NOW()) AS remainingDays,
                     prev.`id`             AS prev_episode_id,
                     prev.`vote`           AS prev_episode_vote,
                     prev.`season_number`  AS prev_episode_season,
@@ -1031,10 +1031,14 @@ class UserSeriesRepository extends ServiceEntityRepository
                     AND (us.`last_watch_at` >= SUBDATE(CURDATE(), INTERVAL 3 WEEK) OR ue.episode_number=1) -- Nouvelle saison
                     AND ue.`season_number`>0
                     AND CONCAT(IFNULL(DATE(sbd.`date`), ue.`air_date`), IF(sbs.`air_at`, CONCAT(' ', sbs.`air_at`), '')) > NOW()
-                ORDER BY us.`last_watch_at` DESC;
             SQL;
+        match ($sort) {
+            1 => $sql .= " ORDER BY us.`last_watch_at` DESC",
+            2 => $sql .= " ORDER BY IFNULL(DATE(sbd.`date`), ue.`air_date`) DESC",
+            default => $sql .= " ORDER BY remainingDays"
+        };
 
-        return $this->getAll($sql, ['id' => $userId, 'locale' => $locale], ['id' => Types::INTEGER, 'locale' => Types::STRING]);
+        return $this->getAll($sql, ['id' => $userId, 'sort'=> $sort, 'locale' => $locale], ['id' => Types::INTEGER, 'sort' => Types::STRING, 'locale' => Types::STRING]);
     }
 
     public function findUpToDateSeriesWithNoVote(array $ids, string  $locale): array

@@ -298,6 +298,21 @@ seconds: seconds
 since: since
 star: star
 stars: stars
+tv-time.air-date: Date de diffusion
+tv-time.coming.actors: Acteurs
+tv-time.coming.my-list: Ma liste
+tv-time.coming: À venir
+tv-time.last-episodes-seen: Derniers épisodes vus
+tv-time.layout.grid: Grille
+tv-time.layout.list: Liste
+tv-time.movies.seen: Vus
+tv-time.movies.to-see: À voir
+tv-time.movies: Films
+tv-time.my-list: Ma liste
+tv-time.remaining-days: Jours restants
+tv-time.series.ended: Terminées
+tv-time.series.in-progress: En cours
+tv-time.series: Séries
 visit: visit
 visits: visits
 x star: x star
