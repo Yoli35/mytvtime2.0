@@ -28,7 +28,9 @@ final class TvTimeController extends AbstractController
 
         return $this->render('tv_time/index.html.twig', [
             'tab' => $data['tab'],
-            'sub' => $data['sub'],
+            'sub_0' => $data['sub_0'],
+            'sub_1' => $data['sub_1'],
+            'sub_2' => $data['sub_2'],
             'sort' => $data['sort'],
             'series' => $data['series'],
             'movies' => $data['movies'],

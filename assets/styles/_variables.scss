@@ -131,3 +131,43 @@
     flex-direction: column;
     justify-content: $justify;
 }
+
+@mixin tab-menu($color: var(--green-60), $activeColor: var(--yellow)) {
+    background-color: hsl(from $color h s l / .25);
+    border-radius: 5rem;
+    box-shadow: 0 0 3rem .5em hsl(from $color h s l / .75) inset;
+    display: flex;
+    gap: 1rem;
+    line-height: 1;
+    list-style: none;
+    margin-inline: auto;
+    padding: .25rem;
+    position: relative;
+
+    li {
+        border-radius: 5rem;
+        cursor: pointer;
+        padding: .25rem 1rem;
+        z-index: 1;
+
+        svg {
+            height: 1.5em;
+            width: 1.5em;
+        }
+
+        &:hover {
+            background-color: hsl(from $color h s l / .5);
+        }
+
+        &.active-menu {
+            background-color: $activeColor;
+            border-radius: 5rem;
+            height: calc(100% - .5rem);
+            left: 0;
+            position: absolute;
+            top: .25rem;
+            transition: left .25s ease-in-out, width .25s ease-in-out;
+            z-index: 0;
+        }
+    }
+}

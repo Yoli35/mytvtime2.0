@@ -1,0 +1,30 @@
+<menu class="tab-menu" id="{{ menuId }}">
+    {% for item in list %}
+    <li id="{{ menuId }}-{{ loop.index0 }}" data-title="{{ item.title }}">{{ item.icon|raw }}</li>
+    {% endfor %}
+    <li class="active-menu"></li>
+</menu>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const menu = document.querySelector('menu#{{ menuId }}');
+        const firstLi = menu.querySelector('li');
+        const menuItems = menu.querySelectorAll('li');
+        const activeMenu = menu.querySelector('.active-menu');
+
+        setActiveMenu(firstLi);
+
+        menuItems.forEach((item, index) => {
+            item.addEventListener('click', () => {
+                setActiveMenu(item);
+            });
+        });
+
+        function setActiveMenu(item) {
+            const left = item.offsetLeft;
+            const width = item.offsetWidth;
+            activeMenu.style.left = `${left}px`;
+            activeMenu.style.width = `${width}px`;
+        }
+    });
+</script>
+

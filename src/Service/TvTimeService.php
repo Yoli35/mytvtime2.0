@@ -110,7 +110,7 @@ readonly class TvTimeService
         }
 
         if ($settings['tab'] === 1) {// movies
-            if ($settings['sub'] == 0) {
+            if ($settings['sub-1'] == 0) {
                 $movies = $this->userMovieRepository->moviesToSee($user, $locale);
                 $movieCount = $this->userMovieRepository->moviesToSeeCount($user);
             } else {
@@ -123,7 +123,7 @@ readonly class TvTimeService
             ];
         }
         if ($settings['tab'] === 2) {// coming
-            if ($settings['sub'] == 0) {
+            if ($settings['sub-2'] == 0) {
                 $media = [];
                 $actors = [];
             } else {
@@ -142,7 +142,9 @@ readonly class TvTimeService
             'noVoteArr' => $noVoteArr,
             'loadCount' => $settings['count'],
             'tab' => $settings['tab'],
-            'sub' => $settings['sub'],
+            'sub_0' => $settings['sub-0'],
+            'sub_1' => $settings['sub-1'],
+            'sub_2' => $settings['sub-2'],
             'list' => $settings['list'],
             'sort' => $settings['sort'],
         ];

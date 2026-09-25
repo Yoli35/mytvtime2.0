@@ -11,7 +11,7 @@
 
 {% block body %}
     {% include('_blocks/_menu.html.twig') %}
-    <div class="container-fluid series-tv-time"{# data-last="{{ lastWatchedSeriesId }}"#}>
+    <div class="container-fluid series-tv-time"{# data-last="{{ lastWatchedSeriesId }}" #}>
         <h1>
             <span class="series-tab-name active">{{ 'tv-time.series'|trans }}</span>
             <span class="movies-tab-name">{{ 'tv-time.movies'|trans }}</span>
@@ -26,31 +26,62 @@
                 <div class="coming-tab-name{% if tab == 2 %} active{% endif %}" data-tab-index="2">{{ 'tv-time.coming'|trans }}</div>
             </div>
             <div class="tab-headers">
+                <!-- Series tab header-->
                 <div class="tab-header series-tab-header{% if tab == 0 %} active{% endif %}" data-tab-index="0">
-                    <div class="infos">{{ 'tv-time.my-list'|trans }}</div>
-                    <div class="filter">
+                    <div class="tab-name">{{ 'tv-time.my-list'|trans }}</div>
+                    <div class="tab-filter">
                         <label for="filter-series-input"><input type="search" id="filter-series-input" placeholder="Search..."></label>
                     </div>
-                    <div class="sort">
+                    {{ include('_blocks/tv_time/_tab_menu.html.twig', { menuId: 'series-tab-menu', list: [{'title': 'tv-time.remaining-days'|trans, icon: ux_icon('mdi:calendar')}, {'title': 'tv-time.last-episodes-seen'|trans, icon: ux_icon('mdi:eye-outline')}, {title: 'tv-time.air-date'|trans, icon: ux_icon('mdi:wifi')}] }) }}
+                    <div class="tab-sort">
                         <div id="sort-by-remaining-days" class="sort-by{% if sort==0 %} active{% endif %}" data-title="{{ 'tv-time.remaining-days'|trans }}">{{ ux_icon('mdi:calendar') }}</div>{# remainingDays #}
                         <div id="sort-by-last-watch-at" class="sort-by{% if sort==1 %} active{% endif %}" data-title="{{ 'tv-time.last-episodes-seen'|trans }}">{{ ux_icon('mdi:eye-outline') }}</div> {# us.`last_watch_at` DESC #}
                         <div id="sort-by-air-date" class="sort-by{% if sort==2 %} active{% endif %}" data-title="{{ 'tv-time.air-date'|trans }}">{{ ux_icon('mdi:wifi') }}</div> {# IFNULL(DATE(sbd.`date`), ue.`air_date`) DESC #}
                     </div>
-                    <div class="in-progress{% if sub == 0 %} active{% endif %}">{{ 'tv-time.series.in-progress'|trans }}</div>
-                    <div class="ended{% if sub == 1 %} active{% endif %}">{{ 'tv-time.series.ended'|trans }}</div>
+                    <div class="tab-content">
+                        <div class="sub-tab">
+                            <div class="active-sub-tab"></div>
+                            <div class="in-progress{% if sub_0 == 0 %} active{% endif %}">{{ 'tv-time.series.in-progress'|trans }}</div>
+                            <div class="ended{% if sub_0 == 1 %} active{% endif %}">{{ 'tv-time.series.ended'|trans }}</div>
+                        </div>
+                        <div class="tab-layout">
+                            <div class="display-list" data-title="{{ 'tv-time.layout.list'|trans }}">{{ ux_icon('mdi:format-list-bulleted') }}</div>
+                            <div class="display-grid" data-title="{{ 'tv-time.layout.grid'|trans }}">{{ ux_icon('mdi:grid') }}</div>
+                        </div>
+                    </div>
                 </div>
+
+                <!-- Movies tab header-->
                 <div class="tab-header movies-tab-header{% if tab == 1 %} active{% endif %}" data-tab-index="1">
                     <div class="infos">{{ 'tv-time.my-list'|trans }}</div>
-                    <div class="to-see{% if sub == 0 %} active{% endif %}">{{ 'tv-time.movies.to-see'|trans }}</div>
-                    <div class="seen{% if sub == 1 %} active{% endif %}">{{ 'tv-time.movies.seen'|trans }}</div>
+                    <div class="tab-content">
+                        <div class="sub-tab">
+                            <div class="active-sub-tab"></div>
+                            <div class="to-see{% if sub_1 == 0 %} active{% endif %}">{{ 'tv-time.movies.to-see'|trans }}</div>
+                            <div class="seen{% if sub_1 == 1 %} active{% endif %}">{{ 'tv-time.movies.seen'|trans }}</div>
+                        </div>
+                        <div class="tab-layout">
+                            <div class="display-list" data-title="{{ 'tv-time.layout.list'|trans }}">{{ ux_icon('mdi:format-list-bulleted') }}</div>
+                            <div class="display-grid" data-title="{{ 'tv-time.layout.grid'|trans }}">{{ ux_icon('mdi:grid') }}</div>
+                        </div>
+                    </div>
                 </div>
+
+                <!-- Coming tab header-->
                 <div class="tab-header coming-tab-header{% if tab == 2 %} active{% endif %}" data-tab-index="2">
                     <div class="infos">{{ 'tv-time.coming'|trans }}</div>
-                    <div class="my-list{% if sub == 0 %} active{% endif %}">{{ 'tv-time.coming.my-list'|trans }}</div>
-                    <div class="actors{% if sub == 1 %} active{% endif %}">{{ 'tv-time.coming.actors'|trans }}</div>
+                    <div class="tab-content">
+                        <div class="sub-tab">
+                            <div class="active-sub-tab"></div>
+                            <div class="my-list{% if sub_2 == 0 %} active{% endif %}">{{ 'tv-time.coming.my-list'|trans }}</div>
+                            <div class="actors{% if sub_2 == 1 %} active{% endif %}">{{ 'tv-time.coming.actors'|trans }}</div>
+                        </div>
+                        <div class="tab-layout">
+                            <div class="display-list" data-title="{{ 'tv-time.layout.list'|trans }}">{{ ux_icon('mdi:format-list-bulleted') }}</div>
+                            <div class="display-grid" data-title="{{ 'tv-time.layout.grid'|trans }}">{{ ux_icon('mdi:grid') }}</div>
+                        </div>
+                    </div>
                 </div>
-                <div class="display-list" data-title="{{ 'tv-time.layout.list'|trans }}">{{ ux_icon('mdi:format-list-bulleted') }}</div>
-                <div class="display-grid" data-title="{{ 'tv-time.layout.grid'|trans }}">{{ ux_icon('mdi:grid') }}</div>
             </div>
         </header>
         <div class="series-tab{% if tab == 0 %} active{% endif %}" data-tab-index="0">
@@ -71,7 +102,9 @@
         <div id="global-data" class="hidden">
             {
                 "tab": {{ tab }},
-                "sub": {{ sub }},
+                "sub_0": {{ sub_0 }},
+                "sub_1": {{ sub_1 }},
+                "sub_2": {{ sub_2 }},
                 "tmdbIds": {{ series.tmdbIds|json_encode|raw }},
                 "app_series_tmdb_check": "{{ path('app_series_tmdb_check') }}"
             }
