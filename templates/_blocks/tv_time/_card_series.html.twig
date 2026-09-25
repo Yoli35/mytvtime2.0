@@ -45,8 +45,10 @@
                         {% endif %}
                     {% else %}
                         {{ series.number }}
-                        {% if series.remainingDays>0 %}
-                            <span>{{ 'In'|trans }} {{ series.remainingDays }} {{ (series.remainingDays>1?'days':'day')|trans }}</span>
+                        {% if series.remainingDays>1 %}
+                            <span>{{ 'In'|trans }} {{ series.remainingDays }} {{ 'days'|trans }}</span>
+                        {% elseif series.remainingDays == 1 %}
+                            <span class="green">{{ 'Tomorrow'|trans }}</span>
                         {% else %}
                             <span class="green">{{ 'Today'|trans }}</span>
                         {% endif %}
