@@ -23,10 +23,15 @@
                 <div class="status">
                     {% if series.remainingEpisodeCount == 1 %}
                         <div class="last">{{ 'Last episode'|trans }}</div>
-                    {% elseif series.episode_number == 1 and series.season_number > 1 %}
-                        <div class="new">{{ 'New season'|trans }}</div>
                     {% else %}
                         {{ series.remainingEpisodeCount }} {{ 'remaining episodes'|trans }}
+                    {% endif %}
+                    {% if series.episode_number == 1 %}
+                        {% if series.season_number > 1 %}
+                            <div class="new">{{ 'New season'|trans }}</div>
+                        {% else %}
+                            <div class="new">{{ 'New series'|trans }}</div>
+                        {% endif %}
                     {% endif %}
                 </div>
                 {#                <div class="status">{{ series.remainingEpisodeCount }} {{ (series.remainingEpisodeCount>1 ?'remaining episodes':'remaining episode')|trans }}</div> #}

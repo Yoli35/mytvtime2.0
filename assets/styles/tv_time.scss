@@ -65,13 +65,13 @@
         }
 
         .display-grid {
-            display: block;
+            display: flex;
         }
     }
 
     &:not(:has(.wrapper.list)) {
         .display-list {
-            display: block;
+            display: flex;
         }
 
         .display-grid {
@@ -146,18 +146,25 @@
 
                 .filter {
                     background-color: hsl(from var(--orange) h s l /.1);
+                    border-radius: 5rem;
+
+                    input {
+                        background-color: transparent;
+                        line-height: 1.5;
+                        padding-block: 0.25rem;
+                    }
                 }
 
                 .sort {
-                    background-color: var(--orange-10);
+                    background-color: hsl(from var(--orange) h s l /.1);
                     border-radius: 5rem;
                     display: flex;
                     gap: 2px;
-                    height: 2.5rem;
+                    height: 2rem;
+                    outline: 4px solid hsl(from var(--orange-90) h s l /.25);
                     overflow: hidden;
 
                     .sort-by {
-                        background-color: hsl(from var(--orange) h s l /.1);
                         align-items: center;
                         cursor: pointer;
                         display: flex;
@@ -185,10 +192,13 @@
 
                 .in-progress, .to-see, .my-list,
                 .ended, .seen, .actors {
+                    align-items: center;
                     background-color: hsl(from var(--orange) h s l /.1);
                     border-radius: 5rem;
-                    line-height: 1.5rem;
-                    padding: .5rem 1rem;
+                    display:flex;
+                    height: 2rem;
+                    outline: 4px solid hsl(from var(--orange-90) h s l /.25);
+                    padding-inline: 1rem;
 
                     &.active {
                         background-color: var(--yellow);
@@ -208,9 +218,15 @@
             }
 
             .display-list, .display-grid {
+                align-items: center;
+                aspect-ratio: 1;
+                border-radius: 5rem;
                 color: var(--orange-90);
                 cursor: pointer;
-                /*margin-inline-start: auto;*/
+                display: none;
+                height: 2rem;
+                justify-content: center;
+                outline: 4px solid hsl(from var(--orange-90) h s l /.25);
 
                 svg {
                     height: 1.5rem;
