@@ -3,10 +3,6 @@
 namespace App\Controller;
 
 use App\Entity\User;
-use App\Repository\UserMovieRepository;
-use App\Repository\UserSeriesRepository;
-use App\Service\ImageConfiguration;
-use App\Service\ProviderService;
 use App\Service\TvTimeService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
