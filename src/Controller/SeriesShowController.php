@@ -417,7 +417,7 @@ final class SeriesShowController extends AbstractController
             'translations' => $this->seriesService->getSeasonShowTranslations(),
             'quickLinks' => $this->getseasonQuickLinks($user, $season['episodes']),
             'season' => $season,
-            'tvdbEpisodeArr' => $this->thetvdbSeriesService->getTvdbEpisodes($tv['external_ids']['tvdb_id'] ?? 0, $seasonNumber),
+//            'tvdbEpisodeArr' => $this->thetvdbSeriesService->getTvdbEpisodes($tv['external_ids']['tvdb_id'] ?? 0, $seasonNumber),
             'today' => $this->now($user)->format('Y-m-d H:I:s'),
             'filmingLocation' => $filmingLocation,
             'language' => $locale . '-' . $country,
