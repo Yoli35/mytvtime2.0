@@ -136,6 +136,11 @@
         <a href="{{ path('app_contact_form') }}" class="desktop">
             {{ ux_icon('mdi:email', {'data-title': 'Contact me'|trans}) }}
         </a>
+        {% if app.environment == 'dev' %}
+            <a href="{{ path('app_tools_index') }}" class="desktop">
+                {{ ux_icon('mdi:tools', {'data-title': 'Tools'|trans}) }}
+            </a>
+        {% endif %}
     </div>
     <script>
         const navbarItemsToggler = document.querySelector('.navbar-items-toggler');
@@ -250,7 +255,7 @@
                         <img src="/images/users/avatars/{{ app.user.avatar }}" alt="{{ app.user.username }}">
                     {% else %}
                         <img src="https://i.pravatar.cc/450?img={{ app.user.id }}" alt="{{ app.user.username }}'s avatar">
-                        {#<img src="/images/users/avatars/default.png" alt="{{ app.user ? app.user.username : ('Guest'|trans) }}">#}
+                        {# <img src="/images/users/avatars/default.png" alt="{{ app.user ? app.user.username : ('Guest'|trans) }}"> #}
                     {% endif %}
                 {% else %}
                     <div class="svg">

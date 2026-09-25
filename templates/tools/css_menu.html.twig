@@ -1,0 +1,58 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Tools!{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('styles/tools.scss') }}">
+{% endblock %}
+
+{% block body %}
+    {% if background %}
+        <script>
+            const bd = '{{ background }}';
+            const body = document.querySelector("body");
+            body.style.backgroundImage = "url(" + bd + ")";
+        </script>
+    {% endif %}
+    {% include('_blocks/_menu.html.twig') %}
+    <div class="container-fluid">
+        <div class="content">
+            <menu class="css-menu">
+                <li>Home</li>
+                <li>Series</li>
+                <li>Movies</li>
+                <li>Filming locations</li>
+                <li>Schedule</li>
+                <li>Contact</li>
+                <li class="active-menu"></li>
+            </menu>
+        </div>
+        {% include('_blocks/_footer.html.twig') %}
+    </div>
+{% endblock %}
+{% block javascripts %}
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const menu = document.querySelector('.css-menu');
+            const firstLi = menu.querySelector('li');
+            const menuItems = menu.querySelectorAll('li');
+            const activeMenu = menu.querySelector('.active-menu');
+
+            setActiveMenu(firstLi);
+
+            menuItems.forEach((item, index) => {
+                item.addEventListener('click', () => {
+                    setActiveMenu(item);
+                });
+            });
+
+            function setActiveMenu(item) {
+                const left = item.offsetLeft;
+                const width = item.offsetWidth;
+                activeMenu.style.left = `${left}px`;
+                activeMenu.style.width = `${width}px`;
+            }
+        });
+    </script>
+{% endblock %}

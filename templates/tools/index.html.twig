@@ -1,0 +1,27 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Tools!{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('styles/tools.scss') }}">
+{% endblock %}
+
+{% block body %}
+    {% if background %}
+        <script>
+            const bd = '{{ background }}';
+            const body = document.querySelector("body");
+            body.style.backgroundImage = "url(" + bd + ")";
+        </script>
+    {% endif %}
+    {% include('_blocks/_menu.html.twig') %}
+    <div class="container-fluid">
+        <div class="content">
+            <a href="{{ path('app_tools_css_menu') }}">
+                <div class="module css">{{ ux_icon('mdi:language-css3') }} Menu</div>
+            </a>
+        </div>
+        {% include('_blocks/_footer.html.twig') %}
+    </div>
+{% endblock %}
