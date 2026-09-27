@@ -4,17 +4,18 @@ namespace App\Controller;
 
 use App\Api\ApiWatchLink;
 use App\Entity\EpisodeLocalizedOverview;
+use App\Entity\EpisodeSubstituteName;
 use App\Entity\Network;
 use App\Entity\Series;
 use App\Entity\SeriesExternal;
 use App\Entity\Settings;
 use App\Entity\User;
 use App\Entity\UserEpisode;
-use App\Entity\UserSeason;
 use App\Entity\UserSeries;
 use App\Repository\DeviceRepository;
 use App\Repository\EpisodeLocalizedOverviewRepository;
 use App\Repository\EpisodeStillRepository;
+use App\Repository\EpisodeSubstituteNameRepository;
 use App\Repository\FilmingLocationRepository;
 use App\Repository\NetworkRepository;
 use App\Repository\PeopleUserPreferredNameRepository;
@@ -35,7 +36,7 @@ use App\Service\ImageConfiguration;
 use App\Service\ImageService;
 use App\Service\ProviderService;
 use App\Service\SeriesService;
-use App\Service\ThetvdbSeriesService;
+//use App\Service\ThetvdbSeriesService;
 use App\Service\TMDBService;
 use DateMalformedStringException;
 use DateTimeImmutable;
@@ -61,8 +62,9 @@ final class SeriesShowController extends AbstractController
         private readonly ApiWatchLink                       $watchLinkApi,
         private readonly DateService                        $dateService,
         private readonly DeviceRepository                   $deviceRepository,
-        private readonly EpisodeStillRepository             $episodeStillRepository,
         private readonly EpisodeLocalizedOverviewRepository $episodeLocalizedOverviewRepository,
+        private readonly EpisodeStillRepository             $episodeStillRepository,
+        private readonly EpisodeSubstituteNameRepository    $episodeSubstituteNameRepository,
         private readonly FilmingLocationRepository          $filmingLocationRepository,
         private readonly ImageConfiguration                 $imageConfiguration,
         private readonly ImageService                       $imageService,
@@ -78,9 +80,9 @@ final class SeriesShowController extends AbstractController
         private readonly SeriesService                      $seriesService,
         private readonly SettingsRepository                 $settingsRepository,
         private readonly SourceRepository                   $sourceRepository,
-        private readonly ThetvdbSeriesService               $thetvdbSeriesService,
-        private readonly TimezoneBookmarkRepository         $timezoneBookmarkRepository,
+//        private readonly ThetvdbSeriesService               $thetvdbSeriesService,
         private readonly TMDBService                        $tmdbService,
+        private readonly TimezoneBookmarkRepository         $timezoneBookmarkRepository,
         private readonly TranslatorInterface                $translator,
         private readonly UserEpisodeRepository              $userEpisodeRepository,
         private readonly UserSeasonRepository               $userSeasonRepository,
@@ -778,7 +780,7 @@ final class SeriesShowController extends AbstractController
         return $peopleUserPreferredNames;
     }
 
-    private function seasonEpisode(array $episode, UserSeries $userSeries, array $userEpisodes, int $seasonNumber, int $finaleEpisodeNumber, $language, ?array $stills = null): array
+    private function seasonEpisode(array $episode, UserSeries $userSeries, array $userEpisodes, int $seasonNumber, int $finaleEpisodeNumber, string $language, ?array $stills = null): array
     {
         $user = $userSeries->getUser();
         if ($episode['episode_number'] > $finaleEpisodeNumber) {
@@ -859,27 +861,49 @@ final class SeriesShowController extends AbstractController
         if ($episode['overview'] && strlen($episode['overview'])) {
             return $episode;
         }
-        $language = $episode['language_query'];
-        $noOverview = !strlen($userEpisode['localized_overview'] ?? '');
-        $noFRName = $language === 'fr-FR' && $episode['name'] && str_starts_with($episode['name'], 'Épisode ') && !$userEpisode['substitute_name'];
 
-        if (($noOverview || $noFRName) && $language !== 'en-US') {
-            $episodeUS = json_decode($this->tmdbService->getTvEpisode($series->getTmdbId(), $episode['season_number'], $episode['episode_number'], 'en-US'), true);
-            if ($episodeUS['overview']) {
+        $locale = substr($language, 0, 2);
+        $localizedOverviews = $this->episodeLocalizedOverviewRepository->findBy(['episodeId' => $episode['id']]);
+        $localizedOverview = array_find($localizedOverviews, fn($overview) => $overview->getLocale() === $locale);
+        if (!$localizedOverview && $locale !== 'en') {
+            $localizedOverview = array_find($localizedOverviews, fn($overview) => $overview->getLocale() === 'en');
+        }
+
+        if ($localizedOverview) {
+            $episode['overview'] = $localizedOverview->getOverview();
+            return $episode;
+        }
+        if ($locale == "ko") {
+            return $episode;
+        }
+
+        $noFRName = $language === 'fr-FR' && $episode['name'] && str_starts_with($episode['name'], 'Épisode ')/* && !$userEpisode['substitute_name']*/;
+        $episodeUS = json_decode($this->tmdbService->getTvEpisode($series->getTmdbId(), $episode['season_number'], $episode['episode_number'], 'en-US'), true);
+        if ($noFRName) {
+            $substituteName = $this->episodeSubstituteNameRepository->findOneBy(['episodeId' => $episode['id']]);
+            if ($substituteName) {
+                $episode['name'] = $substituteName->getName();
+            } else {
+                $episode['name'] = $episodeUS['name'];
+                $substituteName = new EpisodeSubstituteName($episode['id'], $episodeUS['name']);
+                $this->episodeSubstituteNameRepository->save($substituteName, true);
+                $this->addFlash('success', 'Nom de l\'épisode en anglais ajouté');
+            }
+        }
+
+        if ($episodeUS['overview']) {
+            $episode['overview'] = $episodeUS['overview'];
+            $localizedOverview = new EpisodeLocalizedOverview($episode['id'], $episode['overview'], 'en');
+            $this->episodeLocalizedOverviewRepository->save($localizedOverview, true);
+            $this->addFlash('success', 'Résumé de l\'épisode en anglais ajouté');
+        } else {
+            $seasonUS = json_decode($this->tmdbService->getTvSeason($series->getTmdbId(), $episode['season_number'], 'en-US'), true);
+            $episodeUS = array_find($seasonUS['episodes'], fn($ep) => $ep['episode_number'] === $episode['episode_number']);
+            if (strlen($episodeUS['overview'] ?? '')) {
                 $episode['overview'] = $episodeUS['overview'];
                 $localizedOverview = new EpisodeLocalizedOverview($episode['id'], $episode['overview'], 'en');
                 $this->episodeLocalizedOverviewRepository->save($localizedOverview, true);
-            } else {
-                $seasonUS = json_decode($this->tmdbService->getTvSeason($series->getTmdbId(), $episode['season_number'], 'en-US'), true);
-                $episodeUS = $seasonUS['episodes'][$episode['episode_number'] - 1];
-                if (strlen($episodeUS['overview'] ?? '')) {
-                    $episode['overview'] = $episodeUS['overview'];
-                    $localizedOverview = new EpisodeLocalizedOverview($episode['id'], $episode['overview'], 'en');
-                    $this->episodeLocalizedOverviewRepository->save($localizedOverview, true);
-                }
-            }
-            if ($noFRName) {
-                $episode['name'] = $episodeUS['name'];
+                $this->addFlash('success', 'Résumé de l\'épisode en anglais ajouté (depuis la saison)');
             }
         }
         return $episode;
@@ -963,7 +987,7 @@ final class SeriesShowController extends AbstractController
         $now = $this->now($user);
         $nowString = $now->format('Y-m-d H:i');
 
-        $quickLinks = array_map(function ($link) use($nowString) {
+        $quickLinks = array_map(function ($link) use ($nowString) {
             if (!$link['air_date']) {
                 $class = "quick-link future";
                 $future = true;
