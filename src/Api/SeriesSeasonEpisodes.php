@@ -14,7 +14,7 @@ use App\Repository\WatchProviderRepository;
 use App\Service\DateService;
 use App\Service\ImageConfiguration;
 use App\Service\ImageService;
-use App\Service\SeriesService;
+//use App\Service\SeriesService;
 use App\Service\TMDBService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -49,7 +49,7 @@ class SeriesSeasonEpisodes extends AbstractController
         private readonly ImageConfiguration                 $imageConfiguration,
         private readonly ImageService                       $imageService,
         private readonly SeriesBroadcastDateRepository      $seriesBroadcastDateRepository,
-        private readonly SeriesService                      $seriesService,
+//        private readonly SeriesService                      $seriesService,
         private readonly SettingsRepository                 $settingsRepository,
         private readonly TMDBService                        $tmdbService,
         private readonly TranslatorInterface                $translator,
@@ -126,7 +126,7 @@ class SeriesSeasonEpisodes extends AbstractController
             $substituteName = array_find($this->dbEpisodeSubstituteNames, function ($esn) use ($episode) {
                 return $esn->getEpisodeId() === $episode['id'];
             });
-            if ($substituteName) {
+            if ($substituteName && !str_contains($substituteName->getName(), 'Episode ')) {
                 $episode['name'] .= " - " . $substituteName->getName();
             }
             // Overview
