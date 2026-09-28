@@ -10,8 +10,8 @@
                 {{ include('_blocks/tv_time/_card_movies.html.twig', {next: false}) }}
             {% endfor %}
         {% endif %}
-        {{ dump(movieCount) }}
-        {{ dump(movies|first) }}
+{#        {{ dump(movieCount) }}#}
+{#        {{ dump(movies|first) }}#}
     </div>
     {% if app.environment == 'dev' %}
         <div class="count">{{ loadCount }}</div>
