@@ -8,7 +8,8 @@
         <div class="ranking-items">
             {% for p in providerArray %}
                 {% set percent = (100 * p.count / total)|round(1) %}
-                <div class="ranking-item" data-title="{{ p.provider_name }} - {{ p.count }}" style="height: {{ 4+percent }}rem">
+                {% set h = (90 * p.count / total)|round(1) %}
+                <div class="ranking-item" data-title="{{ p.provider_name }} - {{ p.count }}" style="height: calc(4rem + {{ h }}%)">
                     <div class="logo">
                         <img src="{{ p.logo_path }}" alt="{{ p.provider_name }}">
                     </div>
