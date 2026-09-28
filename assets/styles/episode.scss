@@ -18,6 +18,7 @@
                 transition: opacity .25s ease-in-out;
                 opacity: 1;
             }
+
             .user-episode {
                 opacity: 1;
             }
@@ -29,6 +30,7 @@
             mask-image: linear-gradient(to bottom, #000 85%, #ffffffaf 92%, #ffffff3f 96%, #ffffff00 100%);
             mask-mode: alpha;
             position: absolute;
+            transition: filter .25s ease-in-out;
             width: calc(100% + 20rem);
             z-index: -1;
 
@@ -52,7 +54,7 @@
             margin: -2rem;
             opacity: 0;
             padding: 2rem;
-            transition: background 0.3s ease-in-out, box-shadow 0.3s ease-in-out, opacity 25s ease-in-out;
+            transition: all 25s ease-in-out;
 
             @starting-style {
                 opacity: 1;
@@ -533,6 +535,18 @@
                     flex-shrink: 0;
                 }
             }
+        }
+    }
+}
+
+.episode-show[data-blur="blur"] {
+    header {
+        &:has(.infos:hover) .still {
+            filter: blur(1rem);
+        }
+
+        .infos:hover {
+            backdrop-filter: blur(16rem);
         }
     }
 }
