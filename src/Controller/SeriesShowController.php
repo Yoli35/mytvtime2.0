@@ -883,7 +883,7 @@ final class SeriesShowController extends AbstractController
             $substituteName = $this->episodeSubstituteNameRepository->findOneBy(['episodeId' => $episode['id']]);
             if ($substituteName) {
                 $episode['name'] = $substituteName->getName();
-            } else {
+            } elseif (!str_starts_with($episodeUS['name'], 'Episode ')) {
                 $episode['name'] = $episodeUS['name'];
                 $substituteName = new EpisodeSubstituteName($episode['id'], $episodeUS['name']);
                 $this->episodeSubstituteNameRepository->save($substituteName, true);
@@ -980,7 +980,7 @@ final class SeriesShowController extends AbstractController
 
     private function getSeriesQuickLinks(User $user, array $seasons): array
     {
-        dump($seasons);
+//        dump($seasons);
         if (!count($seasons)) {
             return ['items' => [], 'count' => 0, 'itemPerLine' => 0, 'lineCount' => 0];
         }
