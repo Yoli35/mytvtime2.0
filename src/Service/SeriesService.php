@@ -571,7 +571,7 @@ readonly class SeriesService
             $this->userEpisodeRepository->flush();
             return 1;
         }
-        if ($userSeries->getNextUserEpisode() === null && $airDate && $airDate > $this->now()) {
+        if ($userSeries->getNextUserEpisode() === null && $airDate /*&& $airDate > $this->now()*/) {
             $this->userEpisodeRepository->flush();
             $userSeries->setNextUserEpisode($userEpisode);
             $this->userSeriesRepository->save($userSeries, true);
