@@ -1041,6 +1041,78 @@ class UserSeriesRepository extends ServiceEntityRepository
         return $this->getAll($sql, ['id' => $userId, 'sort'=> $sort, 'locale' => $locale], ['id' => Types::INTEGER, 'sort' => Types::STRING, 'locale' => Types::STRING]);
     }
 
+    public function findUpToDateSeriesInAWhile(int $userId, int $sort, string  $locale, int $limit = 20, int $offset = 0): array
+    {
+        $sql = <<<SQL
+                -- Derniers épisodes à jours pas vu depuis un moment (3 semaines)
+                SELECT
+                    s.`id`,
+                    s.`tmdb_id`,
+                    IFNULL((SELECT sln.`name`
+                            FROM `series_localized_name` sln
+                            WHERE sln.`series_id`=s.`id` AND sln.`locale`=:locale
+                            ORDER BY sln.`id` LIMIT 1), s.`name`) AS name,
+                    CONCAT('S', LPAD(ue.`season_number`, 2, '0'), 'E', LPAD(ue.`episode_number`, 2, '0')) AS `number`,
+                    us.`last_watch_at`,
+                    s.`poster_path`,
+                    ue.`id` AS userEpisodeId,
+                    ue.`season_number`,
+                    ue.`episode_number`,
+                    esn.`name` AS esn_name,
+                    DATEDIFF(NOW(), us.`last_watch_at`) AS sinceDays,
+                    prev.`id`             AS prev_episode_id,
+                    prev.`vote`           AS prev_episode_vote,
+                    prev.`season_number`  AS prev_episode_season,
+                    prev.`episode_number` AS prev_episode_number,
+                    (SELECT COUNT(remain.`id`)
+                     FROM user_episode remain
+                     WHERE remain.`user_series_id`=us.`id`  AND remain.`season_number`=ue.`season_number`  AND remain.`episode_number`>ue.`episode_number`) + 1 AS remainingEpisodeCount
+                FROM `user_series` us
+                    INNER JOIN `user_episode` ue ON ue.`id`=us.`next_user_episode_id`
+                    LEFT JOIN `user_season` usa ON usa.`user_series_id`=us.`id` AND usa.`season_number`=ue.`season_number`
+                    LEFT JOIN `user_season_series_broadcast_schedule` usa_sbs ON usa_sbs.`user_season_id`=usa.`id`
+                    LEFT JOIN `series_broadcast_schedule` sbs ON sbs.id=usa_sbs.`series_broadcast_schedule_id`
+                    LEFT JOIN `series_broadcast_date` sbd ON sbd.`episode_id`=ue.`episode_id`
+                    LEFT JOIN `episode_substitute_name` esn ON esn.`episode_id`=ue.`episode_id`
+                    INNER JOIN `series` s ON s.`id`=us.`series_id`
+                    LEFT JOIN `user_episode` prev ON prev.`id` = (
+                        SELECT ue2.`id`
+                        FROM `user_episode` ue2
+                        WHERE ue2.`user_series_id`=ue.`user_series_id`
+                            AND ue2.`id`<ue.`id`
+                            AND ue2.`season_number`>0
+                        ORDER BY ue2.`id` DESC LIMIT 1)
+                WHERE us.`user_id`=:id
+                    AND us.`progress`>0
+                    AND us.`last_watch_at` < SUBDATE(CURDATE(), INTERVAL 3 WEEK)
+                    AND ue.`season_number`>0
+                ORDER BY us.`last_watch_at` DESC
+                LIMIT :limit OFFSET :offset;
+            SQL;
+
+        return $this->getAll(
+            $sql,
+            ['id' => $userId, 'sort'=> $sort, 'locale' => $locale, 'limit' => $limit, 'offset' => $offset],
+            ['id' => Types::INTEGER, 'sort' => Types::STRING, 'locale' => Types::STRING, 'limit' => Types::INTEGER, 'offset' => Types::INTEGER]
+        );
+    }
+
+    public function countUpToDateSeriesInAWhile(int $userId): int
+    {
+        $sql = <<<SQL
+                -- Décompte des derniers épisodes à jours pas vu depuis un moment (3 semaines)
+                SELECT
+                    COUNT(ue.id)
+                FROM `user_series` us
+                    INNER JOIN `user_episode` ue ON ue.`id`=us.`next_user_episode_id`
+                WHERE us.`user_id`=:id
+                    AND us.`progress`>0
+                    AND us.`last_watch_at` < SUBDATE(CURDATE(), INTERVAL 3 WEEK)
+                    AND ue.`season_number`>0;
+            SQL;
+        return $this->getOne($sql, ['id' => $userId], ['id' => Types::INTEGER]);
+    }
+
     public function findUpToDateSeriesWithNoVote(array $ids, string  $locale): array
     {
         $sql = <<<SQL

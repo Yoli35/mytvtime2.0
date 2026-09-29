@@ -1,10 +1,15 @@
 <div class="wrapper{% if list %} list{% endif %}">
     <div class="content">
         {% for series in seriesAvailable %}
-            {{ include('_blocks/tv_time/_card_series.html.twig', {next: true}) }}
+            {{ include('_blocks/tv_time/_card_series.html.twig', {next: true, while: false}) }}
         {% endfor %}
+        <div class="divider">{{ 'Up to date'|trans }}</div>
         {% for series in seriesUpToDate %}
-            {{ include('_blocks/tv_time/_card_series.html.twig', {next: false}) }}
+            {{ include('_blocks/tv_time/_card_series.html.twig', {next: false, while: false}) }}
+        {% endfor %}
+        <div class="divider">{{ 'Not watched in a while'|trans }} ({{ upToDateInAWhileCount }})</div>
+        {% for series in upToDateInAWhile %}
+            {{ include('_blocks/tv_time/_card_series.html.twig', {next: false, while: true}) }}
         {% endfor %}
     </div>
     {% if app.environment == 'dev' %}

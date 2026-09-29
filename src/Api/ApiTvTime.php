@@ -46,6 +46,8 @@ readonly class ApiTvTime
             $view = ($this->renderView)('_blocks/tv_time/_wrapper_series.html.twig', [
                 'seriesAvailable' => $data['series']['available'],
                 'seriesUpToDate' => $data['series']['upToDate'],
+                'upToDateInAWhile' => $data['series']['upToDateInAWhile'],
+                'upToDateInAWhileCount' => $data['series']['upToDateInAWhileCount'],
                 'watchLinks' => $data['series']['watchLinks'],
                 'list' => $data['list'],
                 'loadCount' => $data['loadCount'],

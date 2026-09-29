@@ -86,7 +86,13 @@
         </header>
         <div class="series-tab{% if tab == 0 %} active{% endif %}" data-tab-index="0">
             {% if tab==0 and (series.available|length or series.upToDate|length) %}
-                {{ include('_blocks/tv_time/_wrapper_series.html.twig', {seriesAvailable: series.available, seriesUpToDate: series.upToDate, watchLinks: series.watchLinks, loadCount: loadCount}) }}
+                {{ include('_blocks/tv_time/_wrapper_series.html.twig', {
+                    seriesAvailable: series.available,
+                    seriesUpToDate: series.upToDate,
+                    upToDateInAWhile: series.upToDateInAWhile,
+                    upToDateInAWhileCount: series.upToDateInAWhileCount,
+                    watchLinks: series.watchLinks,
+                    loadCount: loadCount}) }}
             {% endif %}
         </div>
         <div class="movies-tab{% if tab == 1 %} active{% endif %}" data-tab-index="1">

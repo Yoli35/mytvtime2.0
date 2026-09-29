@@ -192,7 +192,7 @@
                     }
                 }
 
-                .tab-menu {
+                .tab-menu, .sub-tab-2 {
                     @include tab-menu(var(--orange));
                 }
 
@@ -267,6 +267,17 @@
                 gap: .25rem;
                 margin-inline: auto;
                 width: round(down, 100%, 15.75rem);
+
+                .divider {
+                    background-color: var(--orange-40);
+                    border-radius: 5rem;
+                    font-size: 1.25rem;
+                    font-weight: bold;
+                    margin-block: .5rem;
+                    padding-block: .5rem;
+                    text-align: center;
+                    width: 100%;
+                }
 
                 .card {
                     border-radius: .75rem;

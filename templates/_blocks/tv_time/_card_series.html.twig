@@ -43,6 +43,8 @@
                         {% else %}
                             <span class="green">{{ 'Today'|trans }}</span>
                         {% endif %}
+                    {% elseif while %}
+                        <span class="green">{{ 'Since'|trans }} {{ series.sinceDays }} {{ 'days'|trans }}</span>
                     {% else %}
                         {{ series.number }}
                         {% if series.remainingDays>1 %}
