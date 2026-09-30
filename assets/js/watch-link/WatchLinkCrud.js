@@ -50,7 +50,8 @@ export class WatchLinkCrud {
             {needle: 'www.arte.tv', providerId: 234},
             {needle: 'www.hbo.com', providerId: 1899},
             {needle: 'play.hbomax.com', providerId: 1899},
-            {needle: 'www.m6.fr', providerId: 10006}
+            {needle: 'www.m6.fr', providerId: 10006},
+            {needle: 'heavenly.tv', providerId: 3269}
         ];
 
         this.init();
