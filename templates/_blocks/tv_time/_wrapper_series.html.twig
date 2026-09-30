@@ -3,15 +3,23 @@
         {% for series in seriesAvailable %}
             {{ include('_blocks/tv_time/_card_series.html.twig', {next: true, while: false}) }}
         {% endfor %}
-        <div class="divider">{{ 'Up to date'|trans }}</div>
-        {% for series in seriesUpToDate %}
-            {{ include('_blocks/tv_time/_card_series.html.twig', {next: false, while: false}) }}
-        {% endfor %}
-        <div class="divider">{{ 'Not watched in a while'|trans }} ({{ upToDateInAWhileCount }})</div>
-        {% for series in upToDateInAWhile %}
-            {{ include('_blocks/tv_time/_card_series.html.twig', {next: false, while: true}) }}
-        {% endfor %}
     </div>
+    {% if seriesUpToDate|length %}
+        <div class="divider"><span>{{ 'Up to date'|trans }} ({{ seriesUpToDate|length }})</span></div>
+        <div class="content">
+            {% for series in seriesUpToDate %}
+                {{ include('_blocks/tv_time/_card_series.html.twig', {next: false, while: false}) }}
+            {% endfor %}
+        </div>
+    {% endif %}
+    {% if upToDateInAWhileCount %}
+        <div class="divider"><span>{{ 'Not watched in a while'|trans }} ({{ upToDateInAWhileCount }})</span></div>
+        <div class="content">
+            {% for series in upToDateInAWhile %}
+                {{ include('_blocks/tv_time/_card_series.html.twig', {next: false, while: true}) }}
+            {% endfor %}
+        </div>
+    {% endif %}
     {% if app.environment == 'dev' %}
         <div class="count">{{ loadCount }}</div>
     {% endif %}

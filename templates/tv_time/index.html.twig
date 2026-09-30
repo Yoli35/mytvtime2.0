@@ -44,10 +44,6 @@
                             <div class="in-progress{% if sub_0 == 0 %} active{% endif %}">{{ 'tv-time.series.in-progress'|trans }}</div>
                             <div class="ended{% if sub_0 == 1 %} active{% endif %}">{{ 'tv-time.series.ended'|trans }}</div>
                         </div>
-                        <div class="tab-layout">
-                            <div class="display-list" data-title="{{ 'tv-time.layout.list'|trans }}">{{ ux_icon('mdi:format-list-bulleted') }}</div>
-                            <div class="display-grid" data-title="{{ 'tv-time.layout.grid'|trans }}">{{ ux_icon('mdi:grid') }}</div>
-                        </div>
                     </div>
                 </div>
 
@@ -59,10 +55,6 @@
                             <div class="active-sub-tab"></div>
                             <div class="to-see{% if sub_1 == 0 %} active{% endif %}">{{ 'tv-time.movies.to-see'|trans }}</div>
                             <div class="seen{% if sub_1 == 1 %} active{% endif %}">{{ 'tv-time.movies.seen'|trans }}</div>
-                        </div>
-                        <div class="tab-layout">
-                            <div class="display-list" data-title="{{ 'tv-time.layout.list'|trans }}">{{ ux_icon('mdi:format-list-bulleted') }}</div>
-                            <div class="display-grid" data-title="{{ 'tv-time.layout.grid'|trans }}">{{ ux_icon('mdi:grid') }}</div>
                         </div>
                     </div>
                 </div>
@@ -76,35 +68,37 @@
                             <div class="my-list{% if sub_2 == 0 %} active{% endif %}">{{ 'tv-time.coming.my-list'|trans }}</div>
                             <div class="actors{% if sub_2 == 1 %} active{% endif %}">{{ 'tv-time.coming.actors'|trans }}</div>
                         </div>
-                        <div class="tab-layout">
-                            <div class="display-list" data-title="{{ 'tv-time.layout.list'|trans }}">{{ ux_icon('mdi:format-list-bulleted') }}</div>
-                            <div class="display-grid" data-title="{{ 'tv-time.layout.grid'|trans }}">{{ ux_icon('mdi:grid') }}</div>
-                        </div>
                     </div>
+                </div>
+                <div class="tab-layout">
+                    <div class="display-list" data-title="{{ 'tv-time.layout.list'|trans }}">{{ ux_icon('mdi:format-list-bulleted') }}</div>
+                    <div class="display-grid" data-title="{{ 'tv-time.layout.grid'|trans }}">{{ ux_icon('mdi:grid') }}</div>
                 </div>
             </div>
         </header>
-        <div class="series-tab{% if tab == 0 %} active{% endif %}" data-tab-index="0">
-            {% if tab==0 and (series.available|length or series.upToDate|length) %}
-                {{ include('_blocks/tv_time/_wrapper_series.html.twig', {
-                    seriesAvailable: series.available,
-                    seriesUpToDate: series.upToDate,
-                    upToDateInAWhile: series.upToDateInAWhile,
-                    upToDateInAWhileCount: series.upToDateInAWhileCount,
-                    watchLinks: series.watchLinks,
-                    loadCount: loadCount}) }}
-            {% endif %}
-        </div>
-        <div class="movies-tab{% if tab == 1 %} active{% endif %}" data-tab-index="1">
-            {% if tab==1 and movies.movieCount %}
-                {{ include('_blocks/tv_time/_wrapper_movies.html.twig', {movies: movies.movies, movieCount: movies.movieCount, loadCount: loadCount}) }}
-            {% endif %}
-        </div>
-        <div class="coming-tab{% if tab == 2 %} active{% endif %}" data-tab-index="2">
-            {% if tab==2 %}
-                {{ include('_blocks/tv_time/_wrapper_coming.html.twig', {comingMedia: coming.media, comingActors: coming.actors, loadCount: loadCount}) }}
-            {% endif %}
-        </div>
+        <main>
+            <div class="content-tab series-tab{% if tab == 0 %} active{% endif %}" data-tab-index="0">
+                {% if tab==0 %}
+                    {{ include('_blocks/tv_time/_wrapper_series.html.twig', {
+                        seriesAvailable: series.available,
+                        seriesUpToDate: series.upToDate,
+                        upToDateInAWhile: series.upToDateInAWhile,
+                        upToDateInAWhileCount: series.upToDateInAWhileCount,
+                        watchLinks: series.watchLinks,
+                        loadCount: loadCount}) }}
+                {% endif %}
+            </div>
+            <div class="content-tab movies-tab{% if tab == 1 %} active{% endif %}" data-tab-index="1">
+                {% if tab==1 %}
+                    {{ include('_blocks/tv_time/_wrapper_movies.html.twig', {movies: movies.movies, movieCount: movies.movieCount, loadCount: loadCount}) }}
+                {% endif %}
+            </div>
+            <div class="content-tab coming-tab{% if tab == 2 %} active{% endif %}" data-tab-index="2">
+                {% if tab==2 %}
+                    {{ include('_blocks/tv_time/_wrapper_coming.html.twig', {comingMedia: coming.media, comingActors: coming.actors, loadCount: loadCount}) }}
+                {% endif %}
+            </div>
+        </main>
         <div id="global-data" class="hidden">
             {
                 "tab": {{ tab }},

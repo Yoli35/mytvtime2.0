@@ -61,26 +61,6 @@
         }
     }
 
-    &:has(.wrapper.list) {
-        .display-list {
-            display: none;
-        }
-
-        .display-grid {
-            display: flex;
-        }
-    }
-
-    &:not(:has(.wrapper.list)) {
-        .display-list {
-            display: flex;
-        }
-
-        .display-grid {
-            display: none;
-        }
-    }
-
     header {
         color: var(--orange-90);
         display: flex;
@@ -207,7 +187,7 @@
                     align-items: center;
                     background-color: hsl(from var(--orange) h s l /.1);
                     border-radius: 5rem;
-                    display:flex;
+                    display: flex;
                     height: 2rem;
                     outline: 4px solid hsl(from var(--orange-90) h s l /.25);
                     padding-inline: 1rem;
@@ -230,6 +210,9 @@
             }
 
             .tab-layout {
+                border-left: 2px solid var(--orange-30);
+                padding-inline-start: 1rem;
+
                 .display-list, .display-grid {
                     align-items: center;
                     aspect-ratio: 1;
@@ -250,371 +233,394 @@
         }
     }
 
-    .series-tab, .movies-tab, .coming-tab {
-        display: none;
+    main {
         width: 100%;
 
-        &.active {
-            display: block;
-        }
+        .content-tab {
+            display: none;
+            width: 100%;
 
-        .wrapper {
-            position: relative;
+            &.active {
+                display: block;
+            }
 
-            .content {
-                display: flex;
-                flex-wrap: wrap;
-                gap: .25rem;
-                margin-inline: auto;
-                width: round(down, 100%, 15.75rem);
+            .wrapper {
+                position: relative;
 
                 .divider {
+                    align-items: center;
                     background-color: var(--orange-40);
                     border-radius: 5rem;
-                    font-size: 1.25rem;
-                    font-weight: bold;
-                    margin-block: .5rem;
-                    padding-block: .5rem;
+                    cursor: pointer;
+                    display: flex;
+                    height: .5rem;
+                    justify-content: center;
+                    margin-block: 1.5rem;
                     text-align: center;
                     width: 100%;
-                }
 
-                .card {
-                    border-radius: .75rem;
-                    border: 4px solid hsl(from var(--green) h 0 l / 0.5);
-                    height: 32rem;
-                    width: 15.5rem;
-
-                    &.premiere {
-                        border-color: var(--orange-50);
-                        box-shadow: inset 0 0 10rem 0.25rem hsl(from var(--orange) h s l / 0.5);
-
-                        .infos {
-                            background-color: transparent;
-                        }
-                    }
-
-                    &:has(.last) {
-                        border-color: var(--green);
-                        box-shadow: inset 0 0 10rem .25rem hsl(from var(--green) h s l / 0.5);
-
-                        .infos {
-                            background-color: transparent;
-                        }
-                    }
-
-                    &:has(.new) {
-                        border-color: var(--purple);
-                        box-shadow: inset 0 0 10rem .25rem hsl(from var(--purple) h s l / 0.5);
-
-                        .infos {
-                            background-color: transparent;
-                        }
-                    }
-
-                    a {
-                        .poster {
-                            position: relative;
-
-                            img {
-                                border-radius: .5rem .5rem 0 0 ;
-                            }
-                        }
-
-                        .infos {
-                            align-items: center;
-                            background-color: hsl(from var(--green-80) h s l / .25);
-                            font-size: 1rem;
-                            height: 6rem;
-                            padding-inline: .5rem;
-                            text-align: left;
-
-                            .details {
-                                display: flex;
-                                flex-direction: column;
-                                font-weight: 600;
-                                gap: .25rem;
-                                /*height: 5rem;*/
-                                justify-content: center;
-
-                                /*&:has(.overview) {
-                                    height: 8rem;
-                                }*/
-
-                                .name {
-                                    all: unset;
-                                    line-height: 1.1;
-                                    text-wrap: balance;
-                                }
-
-                                .date {
-                                    all: unset;
-                                    color: hsl(from var(--green) h 50% l);
-                                    font-size: .875rem;
-                                    line-height: 1.1;
-                                }
-
-                                .esn-name {
-                                    font-size: .875rem;
-                                    max-width: 100%;
-                                    text-overflow: ellipsis;
-                                    white-space: nowrap;
-                                }
-
-                                .progress-wrapper {
-                                    border: 1px solid hsl(from var(--green) h 0 l);
-                                    border-radius: 5rem;
-                                    display: none;
-                                    position: relative;
-                                    width: 10rem;
-
-                                    .progress-content {
-                                        height: .5rem;
-                                    }
-
-                                    .progress-bar-aired {
-                                        background-color: var(--orange);
-                                    }
-
-                                    .progress-bar-viewed {
-                                        background-color: var(--green);
-                                    }
-
-                                    .progress-bar-aired,
-                                    .progress-bar-viewed {
-                                        height: .5rem;
-                                        border-radius: 5rem;
-                                        left: 0;
-                                        position: absolute;
-                                        top: 0;
-                                    }
-                                }
-
-                                .status {
-                                    color: hsl(from var(--green) h 0 l);
-                                    display: none;
-
-                                    .last {
-                                        color: hsl(from var(--orange) h s 75%);
-                                    }
-
-                                    .new {
-                                        color: hsl(from var(--purple) h s 75%);
-                                    }
-                                }
-
-                                .number {
-                                    color: var(--yellow);
-                                    font-style: normal;
-
-                                    span {
-                                        color: hsl(from var(--green) h 0 l);
-
-                                        &.green {
-                                            color: hsl(from var(--green) h 50% l);
-                                            font-weight: bold;
-                                        }
-                                    }
-                                }
-
-                                .overview {
-                                    color: hsl(from var(--green) h 0 l);
-                                    display: none;
-                                    max-height: 6rem;
-                                    overflow-y: auto;
-                                    width: min(100%, 70ch);
-                                }
-                            }
-
-                            .watch-links {
-                                display: none;
-                            }
-
-                            .add-badge, .done {
-                                display: none;
-                            }
-
-                            .vote {
-                                display: none;
-                            }
-                        }
+                    span {
+                        background-color: var(--orange-40);
+                        border-radius: 5rem;
+                        font-size: 1.25rem;
+                        font-weight: bold;
+                        padding-block: .5rem;
+                        padding-inline: 2.5rem;
                     }
                 }
-            }
-
-            .count {
-                backdrop-filter: blur(1rem);
-                background-color: hsl(from var(--orange-20) h s l / 0.25);
-                border-radius: 5rem;
-                border: 4px solid hsl(from var(--orange-90) h s l / 0.25);
-                font-size: 1.5rem;
-                font-weight: 300;
-                padding: .5rem 1rem;
-                position: absolute;
-                right: .5rem;
-                top: .5rem;
-                width: fit-content;
-            }
-
-            &.list {
-                container-name: wrapper-list;
-                container-type: inline-size;
-                width: 100%;
 
                 .content {
-                    flex-direction: column;
-                    width: 100%;
+                    display: flex;
+                    flex-wrap: wrap;
+                    gap: .25rem;
+                    height: fit-content;
+                    margin-inline: auto;
+                    overflow: hidden;
+                    transition: height .25s ease-in-out;
+                    transition-behavior: allow-discrete;
+                    width: round(down, 100%, 15.75rem);
+
+                    &.folded {
+                        height: 0;
+                    }
 
                     .card {
-                        height: 9.5rem;
-                        width: 100%;
+                        border-radius: .75rem;
+                        border: 4px solid hsl(from var(--green) h 0 l / 0.5);
+                        height: 32rem;
+                        width: 15.5rem;
+
+                        &.premiere {
+                            border-color: var(--orange-50);
+                            box-shadow: inset 0 0 10rem 0.25rem hsl(from var(--orange) h s l / 0.5);
+
+                            .infos {
+                                background-color: transparent;
+                            }
+                        }
+
+                        &:has(.last) {
+                            border-color: var(--green);
+                            box-shadow: inset 0 0 10rem .25rem hsl(from var(--green) h s l / 0.5);
+
+                            .infos {
+                                background-color: transparent;
+                            }
+                        }
+
+                        &:has(.new) {
+                            border-color: var(--purple);
+                            box-shadow: inset 0 0 10rem .25rem hsl(from var(--purple) h s l / 0.5);
+
+                            .infos {
+                                background-color: transparent;
+                            }
+                        }
 
                         a {
-                            flex-direction: row;
-
                             .poster {
-                                height: 9rem;
-                                width: 6rem;
+                                position: relative;
 
                                 img {
-                                    border-radius: .5rem 0 0 .5rem;
-                                    height: 100%;
-                                    width: 100%;
+                                    border-radius: .5rem .5rem 0 0;
                                 }
                             }
 
                             .infos {
                                 align-items: center;
-                                border-radius: 0 .5rem .5rem 0;
-                                height: 9rem;
-                                justify-content: flex-start;
-                                width: calc(100% - 6rem);
+                                background-color: hsl(from var(--green-80) h s l / .25);
+                                font-size: 1rem;
+                                height: 6rem;
+                                padding-inline: .5rem;
+                                text-align: left;
 
                                 .details {
                                     display: flex;
                                     flex-direction: column;
-                                    flex-grow: 1;
+                                    font-weight: 600;
                                     gap: .25rem;
+                                    /*height: 5rem;*/
+                                    justify-content: center;
+
+                                    /*&:has(.overview) {
+                                        height: 8rem;
+                                    }*/
 
                                     .name {
-                                        height: unset;
-                                        width: unset;
+                                        all: unset;
+                                        line-height: 1.1;
+                                        text-wrap: balance;
+                                    }
+
+                                    .date {
+                                        all: unset;
+                                        color: hsl(from var(--green) h 50% l);
+                                        font-size: .875rem;
+                                        line-height: 1.1;
+                                    }
+
+                                    .esn-name {
+                                        font-size: .875rem;
+                                        max-width: 100%;
+                                        text-overflow: ellipsis;
+                                        white-space: nowrap;
                                     }
 
                                     .progress-wrapper {
-                                        display: block;
+                                        border: 1px solid hsl(from var(--green) h 0 l);
+                                        border-radius: 5rem;
+                                        display: none;
+                                        position: relative;
+                                        width: 10rem;
+
+                                        .progress-content {
+                                            height: .5rem;
+                                        }
+
+                                        .progress-bar-aired {
+                                            background-color: var(--orange);
+                                        }
+
+                                        .progress-bar-viewed {
+                                            background-color: var(--green);
+                                        }
+
+                                        .progress-bar-aired,
+                                        .progress-bar-viewed {
+                                            height: .5rem;
+                                            border-radius: 5rem;
+                                            left: 0;
+                                            position: absolute;
+                                            top: 0;
+                                        }
                                     }
 
                                     .status {
-                                        display: block;
+                                        color: hsl(from var(--green) h 0 l);
+                                        display: none;
+
+                                        .last {
+                                            color: hsl(from var(--orange) h s 75%);
+                                        }
+
+                                        .new {
+                                            color: hsl(from var(--purple) h s 75%);
+                                        }
+                                    }
+
+                                    .number {
+                                        color: var(--yellow);
+                                        font-style: normal;
+
+                                        span {
+                                            color: hsl(from var(--green) h 0 l);
+
+                                            &.green {
+                                                color: hsl(from var(--green) h 50% l);
+                                                font-weight: bold;
+                                            }
+                                        }
                                     }
 
                                     .overview {
-                                        display: block;
+                                        color: hsl(from var(--green) h 0 l);
+                                        display: none;
+                                        max-height: 6rem;
+                                        overflow-y: auto;
+                                        width: min(100%, 70ch);
                                     }
                                 }
 
                                 .watch-links {
-                                    display: flex;
-                                    gap: 1rem;
-                                    margin-inline-start: auto;
-
-                                    .watch-link {
-                                        height: 2.5rem;
-                                        width: 2.5rem;
-
-                                        img {
-                                            border-radius: 50%;
-                                            border: 2px solid;
-                                            height: 100%;
-                                            object-fit: cover;
-                                            width: 100%;
-                                        }
-                                    }
-
-                                }
-
-                                .vote {
-                                    align-items: center;
-                                    background-color: var(--green-70);
-                                    border-radius: 50%;
-                                    display: flex;
-                                    flex-shrink: 0;
-                                    font-size: 1.5rem;
-                                    font-weight: 300;
-                                    height: 2.5rem;
-                                    justify-content: center;
-                                    margin-inline: 1rem;
-                                    width: 2.5rem;
-
-                                    svg {
-                                        color: var(--yellow);
-                                        height: 1.75rem;
-                                        width: 1.75rem;
-                                    }
+                                    display: none;
                                 }
 
                                 .add-badge, .done {
-                                    align-items: center;
-                                    display: flex;
-                                    flex-shrink: 0;
-                                    height: 2.5rem;
-                                    justify-content: center;
-                                    width: 2.5rem;
-
-                                    svg {
-                                        height: 1.75rem;
-                                        width: 1.75rem;
-                                    }
+                                    display: none;
                                 }
 
-                                .add-badge {
-                                    border: 4px solid;
-                                    border-radius: 50%;
-                                    color: var(--add-this);
-                                    margin-inline: 1rem;
-                                }
-
-                                .done {
-                                    color: var(--green);
-                                    margin-inline: 1rem;
+                                .vote {
+                                    display: none;
                                 }
                             }
                         }
                     }
                 }
 
-                @container wrapper-list (min-width: 80rem) {
-                    .content {
-                        flex-direction: row;
-                        flex-wrap: wrap;
-
-                        .card {
-                            width: calc(50% - .125rem);
-                        }
-                    }
+                .count {
+                    backdrop-filter: blur(1rem);
+                    background-color: hsl(from var(--orange-20) h s l / 0.25);
+                    border-radius: 5rem;
+                    border: 4px solid hsl(from var(--orange-90) h s l / 0.25);
+                    font-size: 1.5rem;
+                    font-weight: 300;
+                    padding: .5rem 1rem;
+                    position: fixed;
+                    right: .5rem;
+                    top: 5.5rem;
+                    width: fit-content;
                 }
 
-                @container wrapper-list (min-width: 120rem) {
+                &.list {
+                    container-name: wrapper-list;
+                    container-type: inline-size;
+                    width: 100%;
+
                     .content {
+                        flex-direction: column;
+                        width: 100%;
+
                         .card {
-                            width: calc(33% - .0625rem);
+                            height: 9.5rem;
+                            width: 100%;
+
+                            a {
+                                flex-direction: row;
+
+                                .poster {
+                                    height: 9rem;
+                                    width: 6rem;
+
+                                    img {
+                                        border-radius: .5rem 0 0 .5rem;
+                                        height: 100%;
+                                        width: 100%;
+                                    }
+                                }
+
+                                .infos {
+                                    align-items: center;
+                                    border-radius: 0 .5rem .5rem 0;
+                                    height: 9rem;
+                                    justify-content: flex-start;
+                                    width: calc(100% - 6rem);
+
+                                    .details {
+                                        display: flex;
+                                        flex-direction: column;
+                                        flex-grow: 1;
+                                        gap: .25rem;
+
+                                        .name {
+                                            height: unset;
+                                            width: unset;
+                                        }
+
+                                        .progress-wrapper {
+                                            display: block;
+                                        }
+
+                                        .status {
+                                            display: block;
+                                        }
+
+                                        .overview {
+                                            display: block;
+                                        }
+                                    }
+
+                                    .watch-links {
+                                        display: flex;
+                                        gap: 1rem;
+                                        margin-inline-start: auto;
+
+                                        .watch-link {
+                                            height: 2.5rem;
+                                            width: 2.5rem;
+
+                                            img {
+                                                border-radius: 50%;
+                                                border: 2px solid;
+                                                height: 100%;
+                                                object-fit: cover;
+                                                width: 100%;
+                                            }
+                                        }
+
+                                    }
+
+                                    .vote {
+                                        align-items: center;
+                                        background-color: var(--green-70);
+                                        border-radius: 50%;
+                                        display: flex;
+                                        flex-shrink: 0;
+                                        font-size: 1.5rem;
+                                        font-weight: 300;
+                                        height: 2.5rem;
+                                        justify-content: center;
+                                        margin-inline: 1rem;
+                                        width: 2.5rem;
+
+                                        svg {
+                                            color: var(--yellow);
+                                            height: 1.75rem;
+                                            width: 1.75rem;
+                                        }
+                                    }
+
+                                    .add-badge, .done {
+                                        align-items: center;
+                                        display: flex;
+                                        flex-shrink: 0;
+                                        height: 2.5rem;
+                                        justify-content: center;
+                                        width: 2.5rem;
+
+                                        svg {
+                                            height: 1.75rem;
+                                            width: 1.75rem;
+                                        }
+                                    }
+
+                                    .add-badge {
+                                        border: 4px solid;
+                                        border-radius: 50%;
+                                        color: var(--add-this);
+                                        margin-inline: 1rem;
+                                    }
+
+                                    .done {
+                                        color: var(--green);
+                                        margin-inline: 1rem;
+                                    }
+                                }
+                            }
                         }
                     }
-                }
 
-                @container wrapper-list (min-width: 160rem) {
-                    .content {
-                        .card {
-                            width: calc(25% - .25rem);
+                    @container wrapper-list (min-width: 80rem) {
+                        .content {
+                            flex-direction: row;
+                            flex-wrap: wrap;
+
+                            .card {
+                                width: calc(50% - .125rem);
+                            }
                         }
                     }
-                }
 
-                @container wrapper-list (min-width: 200rem) {
-                    .content {
-                        .card {
-                            width: calc(20% - .25rem);
+                    @container wrapper-list (min-width: 120rem) {
+                        .content {
+                            .card {
+                                width: calc(33% - .0625rem);
+                            }
+                        }
+                    }
+
+                    @container wrapper-list (min-width: 160rem) {
+                        .content {
+                            .card {
+                                width: calc(25% - .25rem);
+                            }
+                        }
+                    }
+
+                    @container wrapper-list (min-width: 200rem) {
+                        .content {
+                            .card {
+                                width: calc(20% - .25rem);
+                            }
                         }
                     }
                 }
@@ -641,6 +647,34 @@
 
         &.active {
             animation: copied 1s ease-in-out;
+        }
+    }
+}
+
+.series-tv-time:has(.wrapper.list) {
+    header {
+        .tab-headers {
+            .display-list {
+                display: none;
+            }
+
+            .display-grid {
+                display: flex;
+            }
+        }
+    }
+}
+
+.series-tv-time:not(:has(.wrapper.list)) {
+    header {
+        .tab-headers {
+            .display-list {
+                display: flex;
+            }
+
+            .display-grid {
+                display: none;
+            }
         }
     }
 }

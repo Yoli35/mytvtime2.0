@@ -35,6 +35,15 @@ export class TvTime {
             this.changeTab(2);
         });
 
+        const dividerDivs = document.querySelectorAll('.series-tv-time main .content-tab .wrapper .divider');
+        dividerDivs.forEach(dividerDiv => {
+            dividerDiv.addEventListener('click', () => {
+                // Élément suivant
+                const contentDiv = dividerDiv.nextElementSibling;
+                contentDiv.classList.toggle('folded');
+            });
+        });
+
         const filterSeriesInput = document.querySelector('#filter-series-input');
         filterSeriesInput?.addEventListener('input', () => {
             this.filterSeries(filterSeriesInput.value.toLowerCase());
