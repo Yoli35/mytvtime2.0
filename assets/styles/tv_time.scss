@@ -130,10 +130,19 @@
                     background-color: hsl(from var(--orange) h s l /.1);
                     border-radius: 5rem;
 
-                    input {
-                        background-color: transparent;
-                        line-height: 1.5;
-                        padding-block: 0.25rem;
+                    label {
+                        align-items: center;
+                        display: flex;
+                        gap: 1rem;
+
+                        input {
+                            background-color: transparent;
+                            border: none;
+                            line-height: 1.5;
+                            outline: 4px solid hsl(from var(--ardoise-20) h s l/0.25);
+                            padding-block: 0.25rem;
+                            padding-inline: 1rem;
+                        }
                     }
                 }
 
@@ -308,8 +317,8 @@
                         }
 
                         &:has(.new) {
-                            border-color: var(--purple);
-                            box-shadow: inset 0 0 10rem .25rem hsl(from var(--purple) h s l / 0.5);
+                            border-color: var(--yellow);
+                            box-shadow: inset 0 0 10rem .25rem hsl(from var(--yellow) h s l / 0.5);
 
                             .infos {
                                 background-color: transparent;
@@ -403,7 +412,7 @@
                                         }
 
                                         .new {
-                                            color: hsl(from var(--purple) h s 75%);
+                                            color: hsl(from var(--yellow) h s 75%);
                                         }
                                     }
 
@@ -575,7 +584,7 @@
                                     .add-badge {
                                         border: 4px solid;
                                         border-radius: 50%;
-                                        color: var(--add-this);
+                                        color: var(--yellow);
                                         margin-inline: 1rem;
                                     }
 

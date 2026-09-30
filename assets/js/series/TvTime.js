@@ -12,6 +12,7 @@ export class TvTime {
         this.toolsTips = toolsTips;
 
         this.getEpisodes = this.getEpisodes.bind(this);
+        this.initComponents = this.initComponents.bind(this);
 
         this.init();
     }
@@ -35,35 +36,12 @@ export class TvTime {
             this.changeTab(2);
         });
 
-        const dividerDivs = document.querySelectorAll('.series-tv-time main .content-tab .wrapper .divider');
-        dividerDivs.forEach(dividerDiv => {
-            dividerDiv.addEventListener('click', () => {
-                // Élément suivant
-                const contentDiv = dividerDiv.nextElementSibling;
-                const bounds = contentDiv.getBoundingClientRect();
-                console.log(bounds);
-                if (contentDiv) {
-                    if (!contentDiv.classList.contains('folded')) {
-                        contentDiv.style.height = `${bounds.height}px`;
-                        setTimeout(() => {
-                            contentDiv.classList.add('folded');
-                        }, 10);
-                    } else {
-                        contentDiv.classList.remove('folded');
-                        setTimeout(() => {
-                            contentDiv.scrollIntoView({ behavior: 'smooth' });
-                        }, 500);
-                    }
-                }
-            });
-        });
-
         const filterSeriesInput = document.querySelector('#filter-series-input');
         filterSeriesInput?.addEventListener('input', () => {
             this.filterSeries(filterSeriesInput.value.toLowerCase());
         });
         const sortDivs = document.querySelectorAll('.series-tv-time header .sort-by');
-        const sortR = document.querySelector("#sort-by-remaining-days");
+        const sortR = document.querySelector("#series-sort-menu-remaining-days");
         sortR.addEventListener('click', () => {
             if (sortR.classList.contains('active')) return;
             self.getEpisodes('0');
@@ -72,7 +50,7 @@ export class TvTime {
             });
             sortR.classList.add('active');
         });
-        const sortL = document.querySelector("#sort-by-last-watch-at");
+        const sortL = document.querySelector("#series-sort-menu-last-watch-at");
         sortL.addEventListener('click', () => {
             if (sortL.classList.contains('active')) return;
             self.getEpisodes('1');
@@ -81,7 +59,7 @@ export class TvTime {
             });
             sortL.classList.add('active');
         });
-        const sortA = document.querySelector("#sort-by-air-date");
+        const sortA = document.querySelector("#series-sort-menu-air-date");
         sortA.addEventListener('click', () => {
             if (sortA.classList.contains('active')) return;
             self.getEpisodes('2');
@@ -98,22 +76,61 @@ export class TvTime {
             const wrapper = document.querySelector('.series-tv-time .active .wrapper');
             wrapper.classList.add('list');
             self.saveLayout(1);
+            self.resetDividers();
         });
         displayGrid?.addEventListener('click', () => {
             const wrapper = document.querySelector('.series-tv-time .active .wrapper');
             wrapper.classList.remove('list');
             self.saveLayout(0);
+            self.resetDividers();
         });
 
-       this.initAddEpisodes();
-       this.initVotes();
-       this.initCopyWatchLinks();
+        this.initComponents();
 
         document.addEventListener("visibilitychange", () => {
             if (document.visibilityState === 'visible') {
                 self.getEpisodes();
             }
-        })
+        });
+    }
+
+    initComponents() {
+        this.initAddEpisodes();
+        this.initVotes();
+        this.initCopyWatchLinks();
+        this.initDividers();
+    }
+
+    initDividers() {
+        const dividerDivs = document.querySelectorAll('.series-tv-time main .content-tab .wrapper .divider');
+        dividerDivs.forEach(dividerDiv => {
+            dividerDiv.addEventListener('click', () => {
+                // Élément suivant
+                const contentDiv = dividerDiv.nextElementSibling;
+                const bounds = contentDiv.getBoundingClientRect();
+                console.log(bounds);
+                if (contentDiv) {
+                    if (!contentDiv.classList.contains('folded')) {
+                        contentDiv.style.height = `${bounds.height}px`;
+                        setTimeout(() => {
+                            contentDiv.classList.add('folded');
+                        }, 10);
+                    } else {
+                        contentDiv.classList.remove('folded');
+                        setTimeout(() => {
+                            contentDiv.scrollIntoView({behavior: 'smooth'});
+                        }, 500);
+                    }
+                }
+            });
+        });
+    }
+
+    resetDividers() {
+        const dividerDivs = document.querySelectorAll('.series-tv-time .active .divider');
+        dividerDivs.forEach(dividerDiv => {
+            dividerDiv.removeAttribute('style');
+        });
     }
 
     changeTab(index, sub = 0, save = true) {
@@ -246,9 +263,7 @@ export class TvTime {
                     }
                     self.toolsTips.init(tvTimeDiv.querySelector('.last-episode-votes'));
                 }
-                self.initAddEpisodes();
-                self.initVotes();
-                self.initCopyWatchLinks();
+                self.initComponents();
                 self.toolsTips.init(document.querySelector('.series-tv-time .wrapper'));
             })
             .catch((error) => {

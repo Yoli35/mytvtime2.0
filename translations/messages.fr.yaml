@@ -349,9 +349,7 @@ Add to favorites: Ajouter aux favoris
 Add: Ajouter
 Additional image: Image supplémentaire
 Additional images: Images supplémentaires
-Thumbnail and images: Vignette et images
 Additional overviews for the series: Aperçus supplémentaires pour la série
-No images currently selected for upload: Aucune image sélectionnée pour l'envoi
 Additional overviews: Aperçus supplémentaires
 Adjust search: Ajuster la recherche
 After tomorrow: Après-demain
@@ -403,14 +401,14 @@ Delete: Supprimer
 Desktop: Ordinateur de bureau
 Discover TV: Découvrir des séries
 Drag and drop a file or click to browse: Glissez-déposez un fichier ou cliquez pour parcourir
-Drop your images files here: Déposez vos images supplémentaires ici
 Drop your file here: Déposez votre fichier ici
 Drop your image file here: Déposez votre image ici
+Drop your images files here: Déposez vos images supplémentaires ici
+Edit Schedule: Modifier le planning
+Edit all episodes name and overview: Modifier le nom et l'aperçu de tous les épisodes
 Edit episode name: Modifier le nom de l'épisode
 Edit episode overview: Modifier l'aperçu de l'épisode
-Edit all episodes name and overview: Modifier le nom et l'aperçu de tous les épisodes
 Edit location: Modifier le lieu
-Edit Schedule: Modifier le planning
 Edit watch link: Modifier le lien
 Edit: Modifier
 End of season: Fin de saison
@@ -419,8 +417,10 @@ Episode name: Nom de l'épisode
 Episode number: Numéro de l'épisode
 Episode of the day: Épisode du jour
 Episode overview: Aperçu de l'épisode
+Episode page: Page de l'épisode
 Episode: Épisode
 Episodes of the day: Épisodes du jour
+Episodes watched as they come out: Série vue au fur et à mesure
 Episodes: Épisodes
 Error → votes and episodes do not match: Erreur → les votes et les épisodes ne correspondent pas
 Expand all videos: Développer toutes les vidéos
@@ -435,7 +435,6 @@ Freq.: Fréquence
 Give a rating: Donnez une note
 Go to episode: Aller à l'épisode
 Guest stars: Personnages invités
-In: Dans
 In Production: En Production
 In five days: Dans cinq jours
 In four days: Dans quatre jours
@@ -444,6 +443,7 @@ In seven days: Dans sept jours
 In six days: Dans six jours
 In three days: Dans trois jours
 In two days: Dans deux jours
+In: Dans
 Key facts: Points clés
 Laptop: Ordinateur portable
 Last episode to air: Dernier épisode
@@ -453,6 +453,7 @@ Last to air: Dernier à diffuser
 Last to watch: Dernier épisode à voir
 Last watched series: Dernière séries regardées
 Latest LGBT & bl Series: Dernières séries LGBT et boys love
+Links to: Liens vers
 Loading filming locations…: Chargement des lieux de tournage…
 Local files: Fichiers depuis votre ordinateur
 Localized name: Nom localisé
@@ -462,8 +463,9 @@ Location marker: Marqueur de lieu
 Logo added: Logo ajouté
 Marathoner badge unlocked: Badge de marathonien débloqué
 Mark this episode as seen: Marquer cet épisode comme vu
-My list: Ma liste
 Mobile: Mobile
+More episodes to come: Plus d'épisodes à venir
+My list: Ma liste
 Name updated: Nom mis à jour
 Network: Réseau
 Networks: Réseaux
@@ -484,6 +486,7 @@ No date: Pas de date
 No episode seen: Aucun épisode vu
 No image currently selected for upload: Pas d'image actuellement sélectionnée pour le téléversement
 No image: Pas d'image
+No images currently selected for upload: Aucune image sélectionnée pour l'envoi
 No logo: Aucun logo
 No overview: Pas d'aperçu
 No picture: Pas d'image
@@ -528,6 +531,7 @@ Quick week watch badge unlocked: Badge de visionnage rapide hebdomadaire débloq
 Remove from a list: Ajouter à ou retirer d'une liste
 Remove from favorites: Retirer des favoris
 Remove this series from your watchlist: Retirer cette série de votre liste de suivi
+Remove this series: Retirer cette série
 Remove: Pas vu
 Rental: Location
 Returning Series: Série renouvelée
@@ -539,11 +543,13 @@ Season completed: Saison terminée
 Season finale: Fin de la saison
 Season localized overview: Aperçu localisé de la saison
 Season number: Numéro de la saison
+Season page: Page de la saison
 Season poster: Affiche de la saison
 Season x: Saison x
 Season: Saison
 Seasons: Saisons
 See all: Voir tout
+See later list not found: Liste à regarder plus tard non trouvée
 See on Google: Voir sur Google
 Select a provider: Sélectionnez une plateforme
 Select a source: Sélectionnez une source
@@ -558,21 +564,23 @@ Series currently airing: Séries en cours
 Series finale: Fin de la série
 Series in progress: Séries en cours
 Series not found on The Movie Database: Série non trouvée sur The Movie Database
+Series not found: Série non trouvée
 Series not seen in a while: Séries non vues depuis un moment
 Series of the day: Série du jour
 Series of the next 7 days: Séries des 7 prochains jours
+Series page: Page de la série
+Series removed from watch later list: Série supprimée de la liste à regarder plus tard
 Series schedule menu range: Plage du menu de l’agenda des séries
-Episodes watched as they come out: Série vue au fur et à mesure
 Series: Séries
 Seven days ago: Il y a sept jours
 Show all: Afficher tout
 Since: Depuis
 Six days ago: Il y a six jours
 Slug updated: Slug mis à jour
-Upcoming Series: Séries à venir
 Source: Source
 Special episodes: Épisodes spéciaux
 Specials: Épisodes spéciaux
+Start typing…: Commencer à taper…
 Status: Statut
 Still: Vignette
 Streaming: Streaming
@@ -590,6 +598,7 @@ The link has been copied to your clipboard: Le lien a été copié dans votre pr
 This field is required: Ce champ est requis
 This series belongs to your watch later list!: Cette série appartient à votre liste de suivi ultérieurement !
 Three days ago: Il y a trois jours
+Thumbnail and images: Vignette et images
 Thumbnail, additional images: Vignette, images supplémentaires
 Thumbnail: Vignette
 Time: Heure
@@ -605,6 +614,7 @@ Two days ago: Il y a deux jours
 URL: URL
 Up to date!: À jour !
 Up to date: À jour
+Upcoming Series: Séries à venir
 Updates: Mises à jour
 Upload it!: Téléversez-le !
 Url: URL
@@ -631,6 +641,7 @@ Your episodes have been updated according to the series information.: Vos épiso
 and: et
 available: disponible
 backdrops: arrière-plans
+count new episodes are now available in season number: count nouveaux épisodes dans la saison number
 day: jour
 days: jours
 ep.Aired: épisodes diffusés
@@ -686,16 +697,6 @@ x star: x étoile
 x stars: x étoiles
 year: an
 years: ans
-Remove this series: Retirer cette série
-See later list not found: Liste à regarder plus tard non trouvée
-Series not found: Série non trouvée
-Series removed from watch later list: Série supprimée de la liste à regarder plus tard
-Links to: Liens vers
-Series page: Page de la série
-Season page: Page de la saison
-Episode page: Page de l'épisode
-More episodes to come: Plus d'épisodes à venir
-count new episodes are now available in season number: count nouveaux épisodes dans la saison number
 
 #Schedule form
 All at once: Tous à la fois

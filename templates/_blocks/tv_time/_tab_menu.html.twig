@@ -1,6 +1,6 @@
 <menu class="tab-menu" id="{{ menuId }}">
     {% for item in list %}
-    <li id="{{ menuId }}-{{ loop.index0 }}" data-title="{{ item.title }}">{{ item.icon|raw }}</li>
+    <li id="{{ menuId }}-{{ item.id }}" class="sort-by" data-title="{{ item.title }}">{{ item.icon|raw }}</li>
     {% endfor %}
     <li class="active-menu"></li>
 </menu>
