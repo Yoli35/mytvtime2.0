@@ -276,12 +276,11 @@
                     height: fit-content;
                     margin-inline: auto;
                     overflow: hidden;
-                    transition: height .25s ease-in-out;
-                    transition-behavior: allow-discrete;
+                    transition: height .5s ease-in-out;
                     width: round(down, 100%, 15.75rem);
 
                     &.folded {
-                        height: 0;
+                        height: 0 !important;
                     }
 
                     .card {

@@ -40,7 +40,21 @@ export class TvTime {
             dividerDiv.addEventListener('click', () => {
                 // Élément suivant
                 const contentDiv = dividerDiv.nextElementSibling;
-                contentDiv.classList.toggle('folded');
+                const bounds = contentDiv.getBoundingClientRect();
+                console.log(bounds);
+                if (contentDiv) {
+                    if (!contentDiv.classList.contains('folded')) {
+                        contentDiv.style.height = `${bounds.height}px`;
+                        setTimeout(() => {
+                            contentDiv.classList.add('folded');
+                        }, 10);
+                    } else {
+                        contentDiv.classList.remove('folded');
+                        setTimeout(() => {
+                            contentDiv.scrollIntoView({ behavior: 'smooth' });
+                        }, 500);
+                    }
+                }
             });
         });
 
