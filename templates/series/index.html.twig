@@ -123,8 +123,8 @@
         {% endif %}
         <div id="global-data" class="hidden">
             {
-            "tmdbIds": {{ tmdbIds|json_encode|raw }},
-            "app_series_tmdb_check": "{{ path('app_series_tmdb_check') }}"
+                "tmdbIds": {{ tmdbIds|json_encode|raw }},
+                "api_series_tmdb_check": "{{ path('api_series_tmdb_check') }}"
             }
         </div>
         <div id="svgs" style="display: none">
