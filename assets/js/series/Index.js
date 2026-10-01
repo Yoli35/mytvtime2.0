@@ -6,7 +6,7 @@ import {ToolTips} from "ToolTips";
  *  @typedef Globs
  * @type {Object}
  * @property {Array} tmdbIds
- * @property {String} app_series_tmdb_check
+ * @property {String} api_series_tmdb_check
  */
 
 export class Index {
@@ -26,7 +26,7 @@ export class Index {
         console.log("Index.js loaded");
 
         this.seriesId = globs.tmdbIds;
-        this.app_series_tmdb_check = globs.app_series_tmdb_check;
+        this.api_series_tmdb_check = globs.api_series_tmdb_check;
         this.menu = menu;
         const seriesSearchBlockDiv = document.querySelector('.series-search-block');
         if (seriesSearchBlockDiv) {
@@ -38,7 +38,7 @@ export class Index {
 
         new UserList(this.flashMessage, this.toolTips, null);
 
-        fetch(this.app_series_tmdb_check, {
+        fetch(this.api_series_tmdb_check, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
