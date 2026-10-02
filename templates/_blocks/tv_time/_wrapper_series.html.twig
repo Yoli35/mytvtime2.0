@@ -13,7 +13,7 @@
         </div>
     {% endif %}
     {% if upToDateInAWhileCount %}
-        <div class="divider"><span>{{ 'Not watched in a while'|trans }} ({{ upToDateInAWhileCount }})</span></div>
+        <div class="divider"><span>{{ 'Not watched in a while'|trans }} ({{ upToDateInAWhile|length }}/{{ upToDateInAWhileCount }})</span></div>
         <div class="content">
             {% for series in upToDateInAWhile %}
                 {{ include('_blocks/tv_time/_card_series.html.twig', {next: false, while: true}) }}
