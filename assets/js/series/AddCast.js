@@ -25,6 +25,8 @@ export class AddCast {
 
             castSearchClose.addEventListener('click', () => {
                 peopleSearchBlockDiv.classList.remove('active');
+                self.cleanForm();
+                self.cleanSearchMenuElements();
             });
 
             form.addEventListener('submit', (e) => {
@@ -55,14 +57,31 @@ export class AddCast {
                         const lastAdded = wrapperDiv.querySelector("a:last-child");
                         lastAdded.scrollIntoView({behavior: 'smooth', inline: 'end'});
                         flashMessage.add('success', data['message']);
-                        characterNameInput.value = '';
-                        peopleSearchInput.value = '';
-                        characterNameInput.focus();
+
+                        self.cleanForm();
+                        self.cleanSearchMenuElements();
                     })
                     .catch((error) => {
                         console.log(error);
                     });
             });
         }
+    }
+
+    cleanForm() {
+        const peopleSearchBlockDiv = document.querySelector('.cast-search-block');
+        const characterNameInput = peopleSearchBlockDiv.querySelector('#character-name');
+        const peopleSearchInput = peopleSearchBlockDiv.querySelector('#cast-search');
+        characterNameInput.value = '';
+        peopleSearchInput.value = '';
+        characterNameInput.focus();
+    }
+
+    cleanSearchMenuElements() {
+        const searchResult = document.querySelector(".search-results.__people.__form");
+        const ul = searchResult.querySelector("ul");
+        const lis = ul.querySelectorAll("li");
+        lis.forEach(li => li.remove());
+        searchResult.classList.remove("showing-something");
     }
 }

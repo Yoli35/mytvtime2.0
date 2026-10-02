@@ -21,7 +21,7 @@ class People
     #[ORM\Column]
     private ?bool $adult;
 
-    #[ORM\Column(type: Types::JSON)]
+    #[ORM\Column]
     private array $alsoKnownAs;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]

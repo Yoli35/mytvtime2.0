@@ -44,8 +44,9 @@ class SeriesCastRepository extends ServiceEntityRepository
                 p.`name`                 AS name,
                 sc.`character_name`      AS character_name,
                 p.`profile_path`         AS profile_path
-            FROM people p
-                INNER JOIN `series_cast` sc ON sc.`series_id` = :seriesId AND sc.`people_id`=p.`id`
+            FROM `series_cast` sc
+                LEFT JOIN people p ON sc.`people_id`=p.`id`
+            WHERE sc.`series_id` = :seriesId
         SQL;
         return $this->getAll($sql, $params, $types);
     }
