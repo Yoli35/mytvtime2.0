@@ -1,5 +1,7 @@
+let self = null;
 export class AddCast {
     constructor() {
+        self = this;
         this.lang = document.documentElement.lang;
     }
 
