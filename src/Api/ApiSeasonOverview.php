@@ -67,10 +67,9 @@ readonly class ApiSeasonOverview
             if ($overviewId) {
                 $seasonLocalizedOverview = $this->seasonLocalizedOverviewRepository->findOneBy(['id' => $overviewId]);
                 $seasonLocalizedOverview->setOverview($overview);
-                $seasonLocalizedOverview->setSource($source);
                 $this->seasonLocalizedOverviewRepository->save($seasonLocalizedOverview, true);
             } else {
-                $seasonLocalizedOverview = new SeasonLocalizedOverview($series, $seasonNumber, $overview, $locale, $source);
+                $seasonLocalizedOverview = new SeasonLocalizedOverview($series, $seasonNumber, $overview, $locale);
                 $this->seasonLocalizedOverviewRepository->save($seasonLocalizedOverview, true);
                 $overviewId = $seasonLocalizedOverview->getId();
             }

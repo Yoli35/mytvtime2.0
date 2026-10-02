@@ -27,18 +27,14 @@ class SeasonLocalizedOverview
     #[ORM\Column(length: 8)]
     private ?string $locale;
 
-    #[ORM\ManyToOne(inversedBy: 'seriesAdditionalOverviews')]
-    #[ORM\JoinColumn(nullable: true)]
-    private ?Source $source;
-
-    public function __construct(Series $series, int $seasonNumber, string $overview, string $locale, ?Source $source = null)
+    public function __construct(Series $series, int $seasonNumber, string $overview, string $locale)
     {
         $this->series = $series;
         $this->seasonNumber = $seasonNumber;
         $this->overview = $overview;
         $this->locale = $locale;
-        $this->source = $source;
     }
+
     public function getId(): ?int
     {
         return $this->id;
@@ -90,15 +86,5 @@ class SeasonLocalizedOverview
         $this->locale = $locale;
 
         return $this;
-    }
-
-    public function getSource(): ?Source
-    {
-        return $this->source;
-    }
-
-    public function setSource(?Source $source): void
-    {
-        $this->source = $source;
     }
 }
