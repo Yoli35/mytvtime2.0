@@ -70,6 +70,7 @@ readonly class ApiTvTime
             'new_episode' => true,
             'view' => $view,
             'noVoteView' => $noVoteView,
+            'data' => $data,
         ]);
     }
 

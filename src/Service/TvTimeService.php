@@ -86,6 +86,7 @@ readonly class TvTimeService
 
         if ($settings['tab'] === 0) { // series
             $seriesAvailable = $this->userSeriesRepository->findAvailableSeries($userId, $locale);
+            $episodesAvailable = array_map(fn ($series) => ['id'=>$series['tmdb_id'],'episodeNumber'=>$series['episode_number'], 'seasonNumber'=>$series['season_number']], $seriesAvailable);
             $seriesUpToDate = $this->userSeriesRepository->findUpToDateSeries($userId, $settings['sort'], $locale);
             $seriesUpToDateInAWhile = $this->userSeriesRepository->findUpToDateSeriesInAWhile($userId, $settings['sort'], $locale);
             $seriesUpToDateInAWhileCount = $this->userSeriesRepository->countUpToDateSeriesInAWhile($userId);
@@ -109,6 +110,7 @@ readonly class TvTimeService
                 'upToDateInAWhileCount' => $seriesUpToDateInAWhileCount,
                 'watchLinks' => $watchLinks,
                 'tmdbIds' => $tmdbIds,
+                'episodesAvailable' => $episodesAvailable,
                 'lastWatchedSeriesId' => $lastWatchedSeriesId,
             ];
             $noVoteArr = $lastEpisodeWithNoVoteArr;

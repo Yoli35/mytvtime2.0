@@ -8,18 +8,18 @@ export class TvTime {
         const globs = JSON.parse(document.querySelector("#global-data").textContent);
         this.tab = globs.tab;
         this.sub = globs.sub;
-        this.lastId = 0;
+        this.episodesAvailable = globs.episodesAvailable;
         this.toolsTips = toolsTips;
 
         this.getEpisodes = this.getEpisodes.bind(this);
         this.initComponents = this.initComponents.bind(this);
 
+        console.log(this.episodesAvailable);
+
         this.init();
     }
 
     init() {
-        this.lastId = parseInt(document.querySelector('.series-tv-time').dataset.last);
-
         this.changeTab(this.tab, this.sub, false);
 
         const seriesTabNameDiv = document.querySelector('.series-tv-time header .series-tab-name');
@@ -243,8 +243,6 @@ export class TvTime {
                 if (data['new_episode'] === false) {
                     return;
                 }
-                self.lastId = data['lastWatchedEpisodeId'];
-                document.querySelector('.series-tv-time').dataset.last = self.lastId;
                 const wrapper = document.querySelector('.series-tv-time .series-tab .wrapper');
 
                 const div = document.createElement('div');

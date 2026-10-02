@@ -1,4 +1,6 @@
-<div class="card{% if series.episode_number==1 %} premiere{% endif %}"{% if next==0 %} data-prev-id="{{ series.prev_episode_id }}"{% endif %}>
+<div class="card{% if series.episode_number==1 %} premiere{% endif %}"
+     {% if next==0 %}data-prev-id="{{ series.prev_episode_id }}"{% endif %}
+     data-episode-id="{{ series.episode_id }}">
     <a href="{{ path('app_tv_episode', { 'id': series.id, slug: series.name|slug, seasonNumber: series.season_number, episodeNumber: series.episode_number }) }}">
         <div class="poster">
             {% if series.poster_path is defined and series.poster_path %}
