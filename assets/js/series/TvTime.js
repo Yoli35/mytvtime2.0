@@ -344,7 +344,7 @@ export class TvTime {
                     if (episodeCard) {
                         const esnNameDiv = episodeCard.querySelector('.esn-name');
                         if (esnNameDiv) {
-                            esnNameDiv.innerText = update.content.name;
+                            esnNameDiv.innerText = update.content.name + (update.content.runtime ? ' (' + update.content.runtime + ' minutes)' : '');
                             esnNameDiv.classList.add('updated');
                             esnNameDiv.setAttribute('data-title', update.content.name);
                         }

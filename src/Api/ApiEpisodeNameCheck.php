@@ -173,6 +173,7 @@ readonly class ApiEpisodeNameCheck
                     'name' => $episode['name'] . ($ep['esn'] ? ' - ' . $ep['esn'] : ''),
                     'languages' => array_column($translations, 'iso_639_1'),
                     'translations' => array_column($translations, 'data.name'),
+                    'runtime' => $episode['runtime'],
                 ],
             ];
 
