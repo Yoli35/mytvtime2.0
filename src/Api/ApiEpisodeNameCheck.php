@@ -18,7 +18,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
-#[Route('/api/episode', name: 'api_episode_')]
+#[Route('/api/tv/time', name: 'api_tv_time_')]
 readonly class ApiEpisodeNameCheck
 {
     public function __construct(
@@ -34,7 +34,7 @@ readonly class ApiEpisodeNameCheck
     {
     }
 
-    #[Route('/tmdb/check', name: 'tmdb_check', methods: ['POST'])]
+    #[Route('/episode/check', name: 'episode_check', methods: ['POST'])]
     public function tmdbCheck(Request $request): Response
     {
         $user = ($this->getUser)();
@@ -52,7 +52,9 @@ readonly class ApiEpisodeNameCheck
         $data = json_decode($request->getContent(), true);
         $episodeData = $data['episodeData'];
 
-        $lastUpdates = $this->getSettings($user);
+        $data = $this->getSettings($user);
+        $lastUpdates = $data['last_checks'] ?? [];
+
         $now = $this->now($user);
         $tmdbCalls = 0;
         $updates = [];
@@ -61,10 +63,11 @@ readonly class ApiEpisodeNameCheck
         $t0 = microtime(true);
         foreach ($episodeData as $ep) {
             $seriesId = $ep['id'];
+            $episodeId = $ep['episodeId'];
             $seasonNumber = $ep['seasonNumber'];
             $episodeNumber = $ep['episodeNumber'];
 
-            $lastUpdate = array_find($lastUpdates, fn($update) => $update['id'] === $seriesId && $update['season'] === $seasonNumber && $update['episode'] === $episodeNumber);
+            $lastUpdate = array_find($lastUpdates, fn($update) => $update['id'] === $episodeId);
             if ($lastUpdate) {
                 $lastUpdate = $this->date($user, $lastUpdate['updatedAt']);
                 $interval = $now->diff($lastUpdate);
@@ -76,19 +79,24 @@ readonly class ApiEpisodeNameCheck
 
             if ($skip) {
                 $updates[] = [
-                    'id' => $seriesId,
-                    'name' => sprintf('S%02dE%02d', $seasonNumber, $episodeNumber),
-                    'updates' => [], // '*** Updated less than 24 hours ago ***'
+                    'episode_id' => $episodeId,
+                    'name' => sprintf('%s S%02dE%02d', $ep['name'], $seasonNumber, $episodeNumber),
+                    'still' => null,
+                    'poster' => $ep['poster_path'],
+                    'content' => ['status' => 'skip', 'reason' => '*** Updated less than 24 hours ago ***'],
                 ];
                 continue;
             }
             $episode = json_decode($this->tmdbService->getTvEpisode($seriesId, $seasonNumber, $episodeNumber, $locale, ['translations']), true);
             $tmdbCalls++;
+
             if ($episode == null || isset($episode['error'])) {
                 $updates[] = [
-                    'id' => $seriesId,
-                    'name' => sprintf('S%02dE%02d', $seasonNumber, $episodeNumber),
-                    'updates' => ['*** Episode not found ***'],
+                    'episode_id' => $episodeId,
+                    'name' => sprintf('%s S%02dE%02d', $ep['name'], $seasonNumber, $episodeNumber),
+                    'still' => null,
+                    'poster' => $ep['poster_path'],
+                    'content' => ['status' => 'error', 'reason' => '*** Episode not found ***'],
                 ];
                 continue;
             }
@@ -154,10 +162,22 @@ readonly class ApiEpisodeNameCheck
             //}
             // TODO: Retourner l'identifiant TMDB de l'épisode pour retrouver la carte correspondante (data-episode-id)
 
+            $translations = $episode['translations']['translations'];
+//            $translations = array_filter($translations, function ($translation) {
+//                return ($translation['iso_639_1'] == 'en' || $translation['iso_639_1'] == 'fr') && strlen($translation['data']['name']) > 0;
+//            });
+
             $updates[] = [
-                'id' => $seriesId,
-                'name' => sprintf('S%02dE%02d', $seasonNumber, $episodeNumber),
-                'updates' => ['*** Episode not found ***'],
+                'episode_id' => $episodeId,
+                'name' => sprintf('%s S%02dE%02d', $ep['name'], $seasonNumber, $episodeNumber),
+                'still' => $episode['still_path'],
+                'poster' => $ep['poster_path'],
+                'content' => [
+                    'status' => 'success',
+                    'name' => $episode['name'] . ($ep['esn'] ? ' - ' . $ep['esn'] : ''),
+                    'languages' => array_column($translations, 'iso_639_1'),
+                    'translations' => array_column($translations, 'data.name'),
+                ],
             ];
 
             $t1 = microtime(true);
@@ -166,7 +186,7 @@ readonly class ApiEpisodeNameCheck
                 break;
             }
         }
-        $this->seriesRepository->flush();
+        /*$this->seriesRepository->flush();*/
 
         return ($this->json)([
             'ok' => true,
@@ -180,10 +200,7 @@ readonly class ApiEpisodeNameCheck
     {
         $settings = $this->settingsRepository->findOneBy(['user' => $user, 'name' => 'tv time episode name check']);
         if (!$settings) {
-            $settings = new Settings();
-            $settings->setUser($user);
-            $settings->setName('tv time episode name check');
-            $settings->setData([]);
+            $settings = new Settings($user, 'tv time episode name check', ["last_checks" => []]);
             $this->settingsRepository->save($settings, true);
         }
         return $settings->getData();

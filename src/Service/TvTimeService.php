@@ -86,7 +86,15 @@ readonly class TvTimeService
 
         if ($settings['tab'] === 0) { // series
             $seriesAvailable = $this->userSeriesRepository->findAvailableSeries($userId, $locale);
-            $episodesAvailable = array_map(fn ($series) => ['id'=>$series['tmdb_id'],'episodeNumber'=>$series['episode_number'], 'seasonNumber'=>$series['season_number']], $seriesAvailable);
+            $episodesAvailable = array_map(fn($series) => [
+                'id' => $series['tmdb_id'],
+                'name' => $series['name'],
+                'poster_path' => $series['poster_path'],
+                'episodeId' => $series['episode_id'],
+                'esn'=> $series['esn_name'],
+                'episodeNumber' => $series['episode_number'],
+                'seasonNumber' => $series['season_number']
+            ], $seriesAvailable);
             $seriesUpToDate = $this->userSeriesRepository->findUpToDateSeries($userId, $settings['sort'], $locale);
             $seriesUpToDateInAWhile = $this->userSeriesRepository->findUpToDateSeriesInAWhile($userId, $settings['sort'], $locale);
             $seriesUpToDateInAWhileCount = $this->userSeriesRepository->countUpToDateSeriesInAWhile($userId);

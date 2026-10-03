@@ -86,6 +86,9 @@ export class TvTime {
         });
 
         this.initComponents();
+        if (this.tab === 0) {
+            this.getEpisodeNames();
+        }
 
         document.addEventListener("visibilitychange", () => {
             if (document.visibilityState === 'visible') {
@@ -263,6 +266,47 @@ export class TvTime {
                 }
                 self.initComponents();
                 self.toolsTips.init(document.querySelector('.series-tv-time .wrapper'));
+                self.getEpisodeNames();
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+            });
+    }
+
+    getEpisodeNames() {
+        fetch('/api/tv/time/episode/check', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            body: JSON.stringify({
+                episodeData: this.episodesAvailable
+            })
+        })
+            .then(response => response.json())
+            .then(data => {
+                const updates = data.updates;
+                console.log(updates);
+                let updatesCount = 0;
+                updates.forEach(update => {
+                    if (update.content.status !== 'success') {
+                        return;
+                    }
+                    updatesCount++;
+                    const episodeCard = document.querySelector(`.series-tv-time .card[data-episode-id="${update.episode_id}"]`);
+                    if (episodeCard) {
+                        const esnNameDiv = episodeCard.querySelector('.esn-name');
+                        if (esnNameDiv) {
+                            esnNameDiv.innerText = update.content.name;
+                            esnNameDiv.setAttribute('data-title', update.content.name);
+                        }
+                    }
+                });
+                if (updatesCount > 0) {
+                    // Juste le premier bloc 'content'
+                    self.toolsTips.init(document.querySelector('.series-tv-time .wrapper .content'));
+                }
             })
             .catch((error) => {
                 console.error('Error:', error);
