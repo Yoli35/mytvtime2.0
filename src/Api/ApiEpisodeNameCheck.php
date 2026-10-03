@@ -4,11 +4,8 @@ namespace App\Api;
 
 use App\Entity\Settings;
 use App\Entity\User;
-use App\Repository\SeriesRepository;
 use App\Repository\SettingsRepository;
 use App\Service\DateService;
-use App\Service\KeywordService;
-use App\Service\SeriesService;
 use App\Service\TMDBService;
 use Closure;
 use DateTimeImmutable;
@@ -27,7 +24,6 @@ readonly class ApiEpisodeNameCheck
         #[AutowireMethodOf(ControllerHelper::class)]
         private Closure            $json,
         private DateService        $dateService,
-        private SeriesRepository   $seriesRepository,
         private SettingsRepository $settingsRepository,
         private TMDBService        $tmdbService,
     )
