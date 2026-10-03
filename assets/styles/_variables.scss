@@ -175,7 +175,10 @@
             left: 0;
             position: absolute;
             top: 0;
-            transition: left 0.25s ease-in-out, width 0.25s ease-in-out;
+            /*transition: left 0.25s ease-in-out, width 0.25s ease-in-out;*/
+            transition-property: left, width;
+            transition-duration: 0;
+            transition-timing-function: ease-in-out;
             z-index: 0;
         }
     }

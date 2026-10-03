@@ -1,19 +1,20 @@
 <menu class="tab-menu" id="{{ menuId }}">
     {% for item in list %}
-    <li id="{{ menuId }}-{{ item.id }}" class="sort-by" data-title="{{ item.title }}">{{ item.icon|raw }}</li>
+    <li id="{{ menuId }}-{{ item.id }}" data-index="{{ loop.index0 }}" class="sort-by" data-title="{{ item.title }}">{{ item.icon|raw }}</li>
     {% endfor %}
     <li class="active-menu"></li>
 </menu>
 <script>
     document.addEventListener('DOMContentLoaded', () => {
         const menu = document.querySelector('menu#{{ menuId }}');
-        const firstLi = menu.querySelector('li');
+        const activeLi = menu.querySelector('li[data-index="' + {{ sort }} + '"]');
         const menuItems = menu.querySelectorAll('li');
         const activeMenu = menu.querySelector('.active-menu');
 
-        setActiveMenu(firstLi);
+        setActiveMenu(activeLi);
+        activeMenu.style.transitionDuration = '0.25s';
 
-        menuItems.forEach((item, index) => {
+        menuItems.forEach((item) => {
             item.addEventListener('click', () => {
                 setActiveMenu(item);
             });
