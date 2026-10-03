@@ -147,24 +147,25 @@
                             <div class="fact-label">{{ 'Status'|trans }}</div>
                             <div class="fact-content">{{ tv.status|trans }}</div>
                         </div>
-                        {% if tv.networks|length %}
-                            <div class="fact">
-                                <div class="fact-label">{{ (tv.networks|length>1?'Networks':'Network')|trans }}</div>
-                                <div class="networks">
-                                    {% for network in tv.networks %}
-                                        <div class="network-detail">
-                                            <div class="frame">
-                                                {% if network.logo_path %}
-                                                    <img src="{{ network.logo_path }}" alt="{{ network.name }}" loading="lazy">
-                                                {% else %}
-                                                    {{ network.name }}
-                                                {% endif %}
-                                            </div>
+                        <div class="fact">
+                            <div class="fact-label">{{ (tv.networks|length>1?'Networks':'Network')|trans }}</div>
+                            <div class="networks">
+                                {% if tv.homepage %}
+                                    <a href="{{ tv.homepage }}" target="_blank" rel="noopener noreferrer" class="homepage-link">{{ 'Homepage'|trans }}</a>
+                                {% endif %}
+                                {% for network in tv.networks %}
+                                    <div class="network-detail">
+                                        <div class="frame">
+                                            {% if network.logo_path %}
+                                                <img src="{{ network.logo_path }}" alt="{{ network.name }}" loading="lazy">
+                                            {% else %}
+                                                {{ network.name }}
+                                            {% endif %}
                                         </div>
-                                    {% endfor %}
-                                </div>
+                                    </div>
+                                {% endfor %}
                             </div>
-                        {% endif %}
+                        </div>
                         {% if tv.keywords.results|length %}
                             <div class="fact">
                                 <div class="keywords">
