@@ -84,6 +84,16 @@ readonly class ApiTvTime
         return new JsonResponse(['layout' => $layout]);
     }
 
+    #[Route('/specials', name: 'specials', methods: ['POST'])]
+    public function specials(#[CurrentUser] User $user, Request $request): JsonResponse
+    {
+        $inputBag = $request->getPayload();
+        $specials = $inputBag->getInt('specials');
+        $this->tvTimeService->setTvTimeSpecials($user, $specials);
+
+        return new JsonResponse(['specials' => $specials]);
+    }
+
     #[Route('/tab', name: 'tab', methods: ['POST'])]
     public function tab(#[CurrentUser] User $user, Request $request): JsonResponse
     {

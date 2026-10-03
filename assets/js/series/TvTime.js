@@ -69,6 +69,14 @@ export class TvTime {
             sortA.classList.add('active');
         });
 
+        const specialsInput = document.querySelector("#filter-series-specials");
+        specialsInput.addEventListener('click', () => {
+            self.saveSpecials(specialsInput.checked ? 1:0);
+            if (self.tab === 0) {
+                self.getEpisodes();
+            }
+        });
+
         const displayList = document.querySelector('.series-tv-time header .display-list');
         const displayGrid = document.querySelector('.series-tv-time header .display-grid');
 
@@ -266,6 +274,7 @@ export class TvTime {
                 }
                 self.initComponents();
                 self.toolsTips.init(document.querySelector('.series-tv-time .wrapper'));
+                self.episodesAvailable = data['data']['series']['episodesAvailable'];
                 self.getEpisodeNames();
             })
             .catch((error) => {
@@ -299,6 +308,7 @@ export class TvTime {
                         const esnNameDiv = episodeCard.querySelector('.esn-name');
                         if (esnNameDiv) {
                             esnNameDiv.innerText = update.content.name;
+                            esnNameDiv.classList.add('updated');
                             esnNameDiv.setAttribute('data-title', update.content.name);
                         }
                     }
@@ -435,6 +445,26 @@ export class TvTime {
             },
             body: JSON.stringify({
                 layout: layout
+            })
+        })
+            .then((response) => response.json())
+            .then((data) => {
+                console.log(data);
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+            });
+    }
+
+    saveSpecials(specials) {
+        console.log(specials);
+        fetch('/api/tv/time/specials', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                specials: specials
             })
         })
             .then((response) => response.json())

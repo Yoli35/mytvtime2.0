@@ -908,8 +908,9 @@ class UserSeriesRepository extends ServiceEntityRepository
         return $this->getAll($sql, $params, $types);
     }
 
-    public function findAvailableSeries(int $userId, string  $locale): array
+    public function findAvailableSeries(int $userId, bool $specials, string  $locale): array
     {
+        $seasonLimit = $specials ? -1 : 0;
         $sql = <<<SQL
                 -- Derniers épisodes disponibles comme sur TV Time
                 SELECT DISTINCT
@@ -949,7 +950,7 @@ class UserSeriesRepository extends ServiceEntityRepository
                     LEFT JOIN `episode_substitute_name` esn ON esn.`episode_id`=ue.`episode_id`
                     LEFT JOIN `user_episode` next ON next.`user_series_id`=us.`id` AND next.`season_number`=ue.`season_number` AND next.`episode_number`=ue.`episode_number`+1
                 WHERE ue.`user_id`=:id
-                    AND ue.`season_number`>0
+                    AND ue.`season_number`>:seasonLimit
                 --  AND us.`progress`>0
                     AND ue.`watch_at` IS NULL
                 --  AND IF(sbd.id, DATE(sbd.`date`), ue.`air_date`) <= CURDATE()
@@ -958,7 +959,7 @@ class UserSeriesRepository extends ServiceEntityRepository
                 ORDER BY us.`last_watch_at` DESC;
             SQL;
 
-        return $this->getAll($sql, ['id' => $userId, 'locale' => $locale], ['id' => Types::INTEGER, 'locale' => Types::STRING]);
+        return $this->getAll($sql, ['id' => $userId, 'seasonLimit' => $seasonLimit, 'locale' => $locale], ['id' => Types::INTEGER, 'seasonLimit' => Types::INTEGER, 'locale' => Types::STRING]);
     }
 
     public function availableSeriesWatchLinks(array $ids): array

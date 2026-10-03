@@ -636,6 +636,22 @@ special.episode: '스페셜 에피소드'
 special.episodes: '특별 에피소드'
 star: 별
 stars: 별
+tv-time.air-date: 방송 날짜
+tv-time.coming.actors: 배우
+tv-time.coming.my-list: 내 목록
+tv-time.coming: 곧
+tv-time.last-episodes-seen: 최근 본 에피소드
+tv-time.layout.grid: 그릴
+tv-time.layout.list: 목록
+tv-time.movies.seen: 버스
+tv-time.movies.to-see: 볼거리
+tv-time.movies: 영화
+tv-time.my-list: 내 목록
+tv-time.remaining-days: 남은 일수
+tv-time.series.ended: 완료
+tv-time.series.in-progress: 진행 중
+tv-time.series: 시리즈
+tv-time.specials: 특집 에피소드 보기 / 숨기기
 visit: 방문
 visits: 방문
 vote: 투표

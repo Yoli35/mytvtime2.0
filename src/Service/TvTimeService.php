@@ -35,6 +35,13 @@ readonly class TvTimeService
         $this->setSettings($user, $data);
     }
 
+    public function setTvTimeSpecials(User $user, int $specials): void
+    {
+        $data = $this->getSettings($user);
+        $data['specials'] = $specials;
+        $this->setSettings($user, $data);
+    }
+
     public function setTvTimeTab(User $user, int $tabIndex): void
     {
         $data = $this->getSettings($user);
@@ -53,7 +60,16 @@ readonly class TvTimeService
     {
         $s = $this->settingsRepository->findOneBy(['user' => $user, 'name' => 'tv time']);
         if ($s === null) {
-            return ['count' => 0, 'list' => 0, 'tab' => 0, 'sub' => 0, 'sort' => 0];
+            $data = [
+                'count' => 0,           // Nombre d'appel à l'API
+                'list' => 0,            // Affichage en mode liste ou grille
+                'sort' => 0,            // Affichage par jours restants / derniers vus / date de diffusion
+                'specials' => 0,        // Affichage des épisodes spéciaux
+                'sub' => 0,             // Onglet Séries, Films et séries et films à venir
+                'tab' => 0,             // Sous-onglet
+            ];
+            $se = new Settings($user, 'tv time', $data);
+            $this->settingsRepository->save($se, true);
         }
         return $s->getData();
     }
@@ -85,7 +101,7 @@ readonly class TvTimeService
         $coming = [];
 
         if ($settings['tab'] === 0) { // series
-            $seriesAvailable = $this->userSeriesRepository->findAvailableSeries($userId, $locale);
+            $seriesAvailable = $this->userSeriesRepository->findAvailableSeries($userId, $settings['specials'], $locale);
             $episodesAvailable = array_map(fn($series) => [
                 'id' => $series['tmdb_id'],
                 'name' => $series['name'],
@@ -164,6 +180,7 @@ readonly class TvTimeService
             'sub_2' => $settings['sub-2'],
             'list' => $settings['list'],
             'sort' => $settings['sort'],
+            'specials' => $settings['specials'],
         ];
     }
 }

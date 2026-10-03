@@ -34,9 +34,15 @@
                             {{ 'Filter'|trans }}
                             <input type="search" id="filter-series-input" placeholder="{{ 'Start typing…'|trans }}">
                         </label>
+                        <label for="filter-series-specials" data-title="{{ 'tv-time.specials'|trans }}">
+                            <input type="checkbox" switch id="filter-series-specials"{% if specials %} checked{% endif %}>
+                            {{ 'Specials'|trans }}
+                        </label>
                     </div>
                     {{ include('_blocks/tv_time/_tab_menu.html.twig', {
-                        menuId: 'series-sort-menu', list: [
+                        menuId: 'series-sort-menu',
+                        sort: sort,
+                        list: [
                             {id: 'remaining-days', title: 'tv-time.remaining-days'|trans, icon: ux_icon('mdi:calendar')},
                             {id: 'last-watch-at', title: 'tv-time.last-episodes-seen'|trans, icon: ux_icon('mdi:eye-outline')},
                             {id: 'air-date', title: 'tv-time.air-date'|trans, icon: ux_icon('mdi:wifi')}

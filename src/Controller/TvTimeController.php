@@ -38,6 +38,7 @@ final class TvTimeController extends AbstractController
             'noVoteArr' => $data['noVoteArr'],
             'loadCount' => $data['loadCount'],
             'list' => $data['list'],
+            'specials' => $data['specials'],
             'episodesAvailable' => $data['series']['episodesAvailable'],
         ]);
     }
