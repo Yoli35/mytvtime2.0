@@ -11,6 +11,7 @@ use App\Repository\UserSeriesRepository;
 readonly class TvTimeService
 {
     public function __construct(
+        private DateService          $dateService,
         private UserMovieRepository  $userMovieRepository,
         private UserSeriesRepository $userSeriesRepository,
         private ImageConfiguration   $imageConfiguration,
@@ -100,6 +101,11 @@ readonly class TvTimeService
         $movies = [];
         $coming = [];
 
+        // Reload page at midnight plus 1 to 60 secondes
+        $now = $this->dateService->getNow($user->getTimezone() ?? 'Europe/Paris');
+        $reloadAt = $this->dateService->newDate('tomorrow 00:00:00', $user->getTimezone() ?? 'Europe/Paris');
+        $remainingSecondes = rand(1, 60) + $reloadAt->getTimestamp() - $now->getTimestamp();
+
         if ($settings['tab'] === 0) { // series
             $seriesAvailable = $this->userSeriesRepository->findAvailableSeries($userId, $settings['specials'], $locale);
             $episodesAvailable = array_map(fn($series) => [
@@ -107,11 +113,19 @@ readonly class TvTimeService
                 'name' => $series['name'],
                 'poster_path' => $series['poster_path'],
                 'episodeId' => $series['episode_id'],
-                'esn'=> $series['esn_name'],
+                'esn' => $series['esn_name'],
                 'episodeNumber' => $series['episode_number'],
                 'seasonNumber' => $series['season_number']
             ], $seriesAvailable);
             $seriesUpToDate = $this->userSeriesRepository->findUpToDateSeries($userId, $settings['sort'], $locale);
+            $todaySeries = array_filter($seriesUpToDate, fn($series) => $series['remainingDays'] == 0);
+            $airAtArr = array_unique(array_column($todaySeries, 'nextEpisodeAirAtDate'));
+            sort($airAtArr);
+            $reloadAt = array_first($airAtArr);
+            if ($reloadAt) {
+                $reloadAt = $this->dateService->newDate($reloadAt, $user->getTimezone() ?? 'Europe/Paris');
+                $remainingSecondes = rand(1, 60) + $reloadAt->getTimestamp() - $now->getTimestamp();
+            }
             $seriesUpToDateInAWhile = $this->userSeriesRepository->findUpToDateSeriesInAWhile($userId, $settings['sort'], $locale);
             $seriesUpToDateInAWhileCount = $this->userSeriesRepository->countUpToDateSeriesInAWhile($userId);
             $providerUrl = $this->imageConfiguration->getUrl('logo_sizes', 3);
@@ -181,6 +195,7 @@ readonly class TvTimeService
             'list' => $settings['list'],
             'sort' => $settings['sort'],
             'specials' => $settings['specials'],
+            'remainingSecondes' => $remainingSecondes,
         ];
     }
 }

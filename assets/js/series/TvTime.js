@@ -9,6 +9,8 @@ export class TvTime {
         this.tab = globs.tab;
         this.sub = globs.sub;
         this.episodesAvailable = globs.episodesAvailable;
+        this.remainingSecondes = globs.remainingSecondes;
+        this.intervalId = -1;
         this.toolsTips = toolsTips;
 
         this.getEpisodes = this.getEpisodes.bind(this);
@@ -71,7 +73,7 @@ export class TvTime {
 
         const specialsInput = document.querySelector("#filter-series-specials");
         specialsInput.addEventListener('click', () => {
-            self.saveSpecials(specialsInput.checked ? 1:0);
+            self.saveSpecials(specialsInput.checked ? 1 : 0);
             if (self.tab === 0) {
                 self.getEpisodes();
             }
@@ -103,6 +105,12 @@ export class TvTime {
                 self.getEpisodes();
             }
         });
+
+        this.intervalId = setInterval(() => {
+            self.getEpisodes();
+        }, this.remainingSecondes * 1000);
+        this.startingTimestamp = Date.now();
+        this.displayRemainingTime();
     }
 
     initComponents() {
@@ -276,10 +284,39 @@ export class TvTime {
                 self.toolsTips.init(document.querySelector('.series-tv-time .wrapper'));
                 self.episodesAvailable = data['data']['series']['episodesAvailable'];
                 self.getEpisodeNames();
+                self.resetReload(data['remainingSecondes']);
             })
             .catch((error) => {
                 console.error('Error:', error);
             });
+    }
+
+    resetReload(remainingSecondes) {
+        this.remainingSecondes = remainingSecondes;
+        this.startingTimestamp = Date.now();
+        clearInterval(this.intervalId);
+        this.intervalId = setInterval(() => {
+            this.getEpisodes();
+        }, this.remainingSecondes * 1000);
+    }
+
+    displayRemainingTime() {
+        const remainingTimeElement = document.querySelector('.series-tv-time .remaining-time');
+        let n = 0;
+        setInterval(() => {
+            const currentTimestamp = Date.now();
+            const elapsedTime = currentTimestamp - this.startingTimestamp;
+            // Display format : hh:mm::ss
+            const remainingSeconds = this.remainingSecondes - Math.floor(elapsedTime / 1000);
+            const hours = Math.floor(remainingSeconds / 3600);
+            const minutes = Math.floor((remainingSeconds % 3600) / 60);
+            const seconds = remainingSeconds % 60;
+            if (n % 2)
+                remainingTimeElement.textContent = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            else
+                remainingTimeElement.textContent = `${hours.toString().padStart(2, '0')} ${minutes.toString().padStart(2, '0')} ${seconds.toString().padStart(2, '0')}`;
+            n++;
+        }, 1000);
     }
 
     getEpisodeNames() {

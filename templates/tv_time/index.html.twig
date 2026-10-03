@@ -29,6 +29,7 @@
                 <!-- Series tab header-->
                 <div class="tab-header series-tab-header{% if tab == 0 %} active{% endif %}" data-tab-index="0">
                     <div class="tab-name">{{ 'tv-time.my-list'|trans }}</div>
+                    <div class="remaining-time" data-title="{{ 'tv-time.remaining-time'|trans }}"></div>
                     <div class="tab-filter">
                         <label for="filter-series-input">
                             {{ 'Filter'|trans }}
@@ -121,7 +122,8 @@
                 "sub_2": {{ sub_2 }},
                 "tmdbIds": {{ series.tmdbIds|json_encode|raw }},
                 "episodesAvailable": {{ episodesAvailable|json_encode|raw }},
-                "api_series_tmdb_check": "{{ path('api_series_tmdb_check') }}"
+                "api_series_tmdb_check": "{{ path('api_series_tmdb_check') }}",
+                "remainingSecondes": {{ remainingSecondes }}
             }
         </div>
         <div id="svgs" style="display: none">

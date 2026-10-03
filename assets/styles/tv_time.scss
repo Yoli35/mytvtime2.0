@@ -129,6 +129,18 @@
                     padding-inline: 0
                 }
 
+                .remaining-time {
+                    background-color: var(--yellow);
+                    border-radius: 5rem;
+                    color: var(--orange-10);
+                    font-Family: "JetBrains Mono", monospace;
+                    font-size: .875rem;
+                    font-weight: 400;
+                    line-height: 1.25;
+                    margin-inline: auto;
+                    padding: .25rem 1rem;
+                }
+
                 .tab-filter {
                     align-items: center;
                     background-color: hsl(from var(--orange) h s l /.1);

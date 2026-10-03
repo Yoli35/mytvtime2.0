@@ -1006,6 +1006,7 @@ class UserSeriesRepository extends ServiceEntityRepository
                     ue.`episode_number`,
                     esn.`name` AS esn_name,
                     DATEDIFF(IFNULL(sbd.date, ue.air_date), NOW()) AS remainingDays,
+                    IFNULL(sbd.date, CONCAT(ue.air_date, ' ', IFNULL(sbs.air_at, '00:00:00'))) AS nextEpisodeAirAtDate,
                     prev.`id`             AS prev_episode_id,
                     prev.`vote`           AS prev_episode_vote,
                     prev.`season_number`  AS prev_episode_season,
