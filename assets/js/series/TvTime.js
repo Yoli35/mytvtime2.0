@@ -284,7 +284,7 @@ export class TvTime {
                 self.toolsTips.init(document.querySelector('.series-tv-time .wrapper'));
                 self.episodesAvailable = data['data']['series']['episodesAvailable'];
                 self.getEpisodeNames();
-                self.resetReload(data['remainingSecondes']);
+                self.resetReload(data['data']['remainingSecondes']);
             })
             .catch((error) => {
                 console.error('Error:', error);
