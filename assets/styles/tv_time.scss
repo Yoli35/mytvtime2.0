@@ -163,6 +163,10 @@
                             padding-block: 0.25rem;
                             padding-inline: 1rem;
                         }
+
+                        input[type="number"] {
+                            width: 8ch;
+                        }
                     }
                 }
 
@@ -296,6 +300,10 @@
                         padding-block: .5rem;
                         padding-inline: 2.5rem;
                     }
+                }
+
+                .divider + .content:not(:has(.card)) {
+                    display: none;
                 }
 
                 .content {

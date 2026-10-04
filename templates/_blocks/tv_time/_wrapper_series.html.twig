@@ -4,8 +4,16 @@
             {{ include('_blocks/tv_time/_card_series.html.twig', {next: true, while: false}) }}
         {% endfor %}
     </div>
+    {% if specialEpisodes|length %}
+        <div class="divider" data-content="specials"><span>{{ 'Specials'|trans }} ({{ specialEpisodes|length }})</span></div>
+        <div class="content">
+            {% for series in specialEpisodes %}
+                {{ include('_blocks/tv_time/_card_series.html.twig', {next: true, while: false}) }}
+            {% endfor %}
+        </div>
+    {% endif %}
     {% if seriesUpToDate|length %}
-        <div class="divider"><span>{{ 'Up to date'|trans }} ({{ seriesUpToDate|length }})</span></div>
+        <div class="divider" data-content="up-to-date"><span>{{ 'Up to date'|trans }} ({{ seriesUpToDate|length }})</span></div>
         <div class="content">
             {% for series in seriesUpToDate %}
                 {{ include('_blocks/tv_time/_card_series.html.twig', {next: false, while: false}) }}
@@ -13,7 +21,7 @@
         </div>
     {% endif %}
     {% if upToDateInAWhileCount %}
-        <div class="divider"><span>{{ 'Not watched in a while'|trans }} ({{ upToDateInAWhile|length }}/{{ upToDateInAWhileCount }})</span></div>
+        <div class="divider" data-content="not-watched-in-a-while"><span>{{ 'Not watched in a while'|trans }} ({{ upToDateInAWhile|length }}/{{ upToDateInAWhileCount }})</span></div>
         <div class="content">
             {% for series in upToDateInAWhile %}
                 {{ include('_blocks/tv_time/_card_series.html.twig', {next: false, while: true}) }}

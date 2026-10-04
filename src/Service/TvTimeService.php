@@ -10,6 +10,9 @@ use App\Repository\UserSeriesRepository;
 
 readonly class TvTimeService
 {
+
+    private array $specialEpisodes;
+
     public function __construct(
         private DateService          $dateService,
         private UserMovieRepository  $userMovieRepository,
@@ -19,6 +22,11 @@ readonly class TvTimeService
         private SettingsRepository   $settingsRepository,
     )
     {
+        $this->specialEpisodes = [
+            'fr' => 'Épisode spécial #',
+            'en' => 'Special episode #',
+            'ko' => '특별편 #'
+        ];
     }
 
     public function getTvTimeData(User $user): array
@@ -68,6 +76,7 @@ readonly class TvTimeService
                 'specials' => 0,        // Affichage des épisodes spéciaux
                 'sub' => 0,             // Onglet Séries, Films et séries et films à venir
                 'tab' => 0,             // Sous-onglet
+                'week' => 52,           // Nombre de semaines avant de considérer un épisode spécial comme ancien
             ];
             $se = new Settings($user, 'tv time', $data);
             $this->settingsRepository->save($se, true);
@@ -107,7 +116,7 @@ readonly class TvTimeService
         $remainingSecondes = rand(1, 60) + $reloadAt->getTimestamp() - $now->getTimestamp();
 
         if ($settings['tab'] === 0) { // series
-            $seriesAvailable = $this->userSeriesRepository->findAvailableSeries($userId, $settings['specials'], $locale);
+            $seriesAvailable = $this->userSeriesRepository->findAvailableSeries($userId, $locale);
             $episodesAvailable = array_map(fn($series) => [
                 'id' => $series['tmdb_id'],
                 'name' => $series['name'],
@@ -117,6 +126,12 @@ readonly class TvTimeService
                 'episodeNumber' => $series['episode_number'],
                 'seasonNumber' => $series['season_number']
             ], $seriesAvailable);
+
+            if ($settings['specials']) {
+                $specialEpisodes = $this->userSeriesRepository->findSpecialEpisodes($userId, $settings['week'], $this->specialEpisodes[$locale], $locale);
+            } else {
+                $specialEpisodes = [];
+            }
             $seriesUpToDate = $this->userSeriesRepository->findUpToDateSeries($userId, $settings['sort'], $locale);
             $todaySeries = array_filter($seriesUpToDate, fn($series) => $series['remainingDays'] == 0);
             $airAtArr = array_unique(array_column($todaySeries, 'nextEpisodeAirAtDate'));
@@ -132,10 +147,15 @@ readonly class TvTimeService
             $watchLinks = array_map(function ($wp) use ($providerUrl) {
                 $wp['providerLogoPath'] = $this->providerService->getProviderLogoFullPath($wp['providerLogoPath'], $providerUrl);
                 return $wp;
-            }, array_merge(
-                $this->userSeriesRepository->availableSeriesWatchLinks(array_column($seriesAvailable, 'id')),
-                $this->userSeriesRepository->availableSeriesWatchLinks(array_column($seriesUpToDate, 'id')),
-                $this->userSeriesRepository->availableSeriesWatchLinks(array_column($seriesUpToDateInAWhile, 'id')),
+            }, $this->userSeriesRepository->availableSeriesWatchLinks(
+                array_unique(
+                    array_merge(
+                        array_column($seriesAvailable, 'id'),
+                        array_column($seriesUpToDate, 'id'),
+                        array_column($seriesUpToDateInAWhile, 'id'),
+                        array_column($specialEpisodes, 'id')
+                    ),
+                )
             ));
             $seriesUpToDateIds = array_unique(array_column($seriesUpToDate, 'userEpisodeId'));
             $lastEpisodeWithNoVoteArr = $this->userSeriesRepository->findUpToDateSeriesWithNoVote($seriesUpToDateIds, $locale);
@@ -143,6 +163,7 @@ readonly class TvTimeService
             $lastWatchedSeriesId = $this->userSeriesRepository->getLastWatchedSeries($user);
             $series = [
                 'available' => $seriesAvailable,
+                'specialEpisodes' => $specialEpisodes,
                 'upToDate' => $seriesUpToDate,
                 'upToDateInAWhile' => $seriesUpToDateInAWhile,
                 'upToDateInAWhileCount' => $seriesUpToDateInAWhileCount,
@@ -195,6 +216,7 @@ readonly class TvTimeService
             'list' => $settings['list'],
             'sort' => $settings['sort'],
             'specials' => $settings['specials'],
+            'week' => $settings['week'],
             'remainingSecondes' => $remainingSecondes,
         ];
     }

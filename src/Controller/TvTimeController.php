@@ -39,6 +39,7 @@ final class TvTimeController extends AbstractController
             'loadCount' => $data['loadCount'],
             'list' => $data['list'],
             'specials' => $data['specials'],
+            'week' => $data['week'],
             'episodesAvailable' => $data['series']['episodesAvailable'],
             'remainingSecondes' => $data['remainingSecondes'],
         ]);

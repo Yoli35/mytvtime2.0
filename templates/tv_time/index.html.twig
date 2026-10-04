@@ -39,6 +39,10 @@
                             <input type="checkbox" switch id="filter-series-specials"{% if specials %} checked{% endif %}>
                             {{ 'Specials'|trans }}
                         </label>
+                        <label for="filter-series-specials-week" data-title="{{ 'tv-time.specials'|trans }}">
+                            <input type="number" id="filter-series-specials-week" value="{{ week }}">
+                            {{ 'Week'|trans }}
+                        </label>
                     </div>
                     {{ include('_blocks/tv_time/_tab_menu.html.twig', {
                         menuId: 'series-sort-menu',
@@ -96,6 +100,7 @@
                 {% if tab==0 %}
                     {{ include('_blocks/tv_time/_wrapper_series.html.twig', {
                         seriesAvailable: series.available,
+                        specialEpisodes: series.specialEpisodes,
                         seriesUpToDate: series.upToDate,
                         upToDateInAWhile: series.upToDateInAWhile,
                         upToDateInAWhileCount: series.upToDateInAWhileCount,

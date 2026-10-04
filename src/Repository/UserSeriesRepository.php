@@ -908,9 +908,8 @@ class UserSeriesRepository extends ServiceEntityRepository
         return $this->getAll($sql, $params, $types);
     }
 
-    public function findAvailableSeries(int $userId, bool $specials, string  $locale): array
+    public function findAvailableSeries(int $userId, string  $locale): array
     {
-        $seasonLimit = $specials ? -1 : 0;
         $sql = <<<SQL
                 -- Derniers épisodes disponibles comme sur TV Time
                 SELECT DISTINCT
@@ -918,7 +917,7 @@ class UserSeriesRepository extends ServiceEntityRepository
                     s.`tmdb_id`,
                     us.`last_watch_at`,
                     IF(sln.`id`, sln.`name` , s.name) AS name,
-                    CONCAT('S', LPAD(ue.`season_number`, 2, '0'), 'E', LPAD(ue.`episode_number`, 2, '0')) AS `number`,
+                    CONCAT('S', LPAD(ue.`season_number`, 2, '0'), 'E', LPAD(ue.`episode_number`, 2, '0')) AS number,
                     s.`poster_path`,
                     ue.`id` AS userEpisodeId,
                     ue.`episode_id`,
@@ -950,7 +949,7 @@ class UserSeriesRepository extends ServiceEntityRepository
                     LEFT JOIN `episode_substitute_name` esn ON esn.`episode_id`=ue.`episode_id`
                     LEFT JOIN `user_episode` next ON next.`user_series_id`=us.`id` AND next.`season_number`=ue.`season_number` AND next.`episode_number`=ue.`episode_number`+1
                 WHERE ue.`user_id`=:id
-                    AND ue.`season_number`>:seasonLimit
+                    AND ue.`season_number` > 0
                 --  AND us.`progress`>0
                     AND ue.`watch_at` IS NULL
                 --  AND IF(sbd.id, DATE(sbd.`date`), ue.`air_date`) <= CURDATE()
@@ -959,7 +958,60 @@ class UserSeriesRepository extends ServiceEntityRepository
                 ORDER BY us.`last_watch_at` DESC;
             SQL;
 
-        return $this->getAll($sql, ['id' => $userId, 'seasonLimit' => $seasonLimit, 'locale' => $locale], ['id' => Types::INTEGER, 'seasonLimit' => Types::INTEGER, 'locale' => Types::STRING]);
+        return $this->getAll($sql, ['id' => $userId, 'locale' => $locale], ['id' => Types::INTEGER, 'locale' => Types::STRING]);
+    }
+
+    public function findSpecialEpisodes(int $userId, int $week, string $label, string  $locale): array
+    {
+        $sql = <<<SQL
+                -- Derniers épisodes disponibles comme sur TV Time
+                SELECT DISTINCT
+                    s.`id`,
+                    s.`tmdb_id`,
+                    us.`last_watch_at`,
+                    IF(sln.`id`, sln.`name` , s.name) AS name,
+                    CONCAT(:label, ue.`episode_number`) AS number,
+                    s.`poster_path`,
+                    ue.`id` AS userEpisodeId,
+                    ue.`episode_id`,
+                    ue.`episode_number`,
+                    ue.season_number,
+                    esn.`name` AS esn_name,
+                    DATEDIFF(IFNULL(sbd.date, ue.air_date), NOW()) * -1 AS sinceDays,
+                    (SELECT COUNT(remain.`id`)
+                     FROM user_episode remain
+                     WHERE remain.`user_series_id`=us.`id`  AND remain.`season_number`=ue.`season_number`  AND remain.`episode_number`>=ue.`episode_number`) AS remainingEpisodeCount,
+                    (SELECT COUNT(*)
+                    FROM `user_episode` ue3
+                    WHERE ue3.`user_season_id`=usa.`id` AND ue3.`watch_at` IS NOT NULL) AS viewedCount,
+                    (SELECT COUNT(*)
+                    FROM `user_episode` ue4
+                    LEFT JOIN `series_broadcast_date` sbd4 ON sbd4.`episode_id`=ue4.`episode_id`
+                    WHERE ue4.`user_season_id`=usa.`id` AND IFNULL(sbd4.date, ue4.air_date) <= NOW()) AS airedCount,
+                    (SELECT COUNT(*)
+                    FROM `user_episode` ue3
+                    WHERE ue3.`user_season_id`=usa.`id`) AS episodeCount
+                FROM `user_episode` ue
+                    INNER JOIN `user_series` us ON us.`next_user_episode_id`=ue.`id`
+                    LEFT JOIN `user_season` usa ON usa.`user_series_id`=us.`id` AND usa.`season_number`=ue.`season_number`
+                    LEFT JOIN `user_season_series_broadcast_schedule` usa_sbs ON usa_sbs.`user_season_id`=usa.`id`
+                    LEFT JOIN `series_broadcast_schedule` sbs ON sbs.id=usa_sbs.`series_broadcast_schedule_id`
+                    LEFT JOIN `series` s ON s.`id`=us.`series_id`
+                    LEFT JOIN `series_broadcast_date` sbd ON sbd.`episode_id`=ue.`episode_id`
+                    LEFT JOIN `series_localized_name` sln ON sln.`series_id`=s.`id` AND sln.`locale`=:locale
+                    LEFT JOIN `episode_substitute_name` esn ON esn.`episode_id`=ue.`episode_id`
+                    LEFT JOIN `user_episode` next ON next.`user_series_id`=us.`id` AND next.`season_number`=ue.`season_number` AND next.`episode_number`=ue.`episode_number`+1
+                WHERE ue.`user_id`=:id
+                    AND ue.`season_number` = 0
+                --  AND us.`progress`>0
+                    AND ue.`watch_at` IS NULL
+                --  AND IF(sbd.id, DATE(sbd.`date`), ue.`air_date`) <= CURDATE()
+                    AND CONCAT(IFNULL(DATE(sbd.`date`), ue.`air_date`), IF(sbs.`air_at`, CONCAT(' ', sbs.`air_at`), '')) <= NOW()
+                    AND (us.`last_watch_at` >= SUBDATE(CURDATE(), INTERVAL :week WEEK) or (IFNULL(DATE(sbd.`date`), ue.`air_date`) >= SUBDATE(CURDATE(), INTERVAL :week WEEK) AND ue.`episode_number`=1))
+                ORDER BY us.`last_watch_at` DESC;
+            SQL;
+
+        return $this->getAll($sql, ['id' => $userId, 'week' => $week, 'label' => $label, 'locale' => $locale], ['id' => Types::INTEGER, 'week' => Types::INTEGER, 'label' => Types::STRING, 'locale' => Types::STRING]);
     }
 
     public function availableSeriesWatchLinks(array $ids): array

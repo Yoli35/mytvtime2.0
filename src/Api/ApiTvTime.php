@@ -33,7 +33,7 @@ readonly class ApiTvTime
         $sort = $inputBag->get('sort');
 
         $view = 'No data yet ;p';
-        $noVoteView = '';
+        $noVoteView = null;
         $locale = $user->getPreferredLanguage() ?? $request->getLocale();
 
         if ($sort != null) {
@@ -45,6 +45,9 @@ readonly class ApiTvTime
             $noVoteView = ($this->renderView)('_blocks/tv_time/_card_series_vote.html.twig', ['seriesArr' => $data['noVoteArr']]);
             $view = ($this->renderView)('_blocks/tv_time/_wrapper_series.html.twig', [
                 'seriesAvailable' => $data['series']['available'],
+                'specialEpisodes' => $data['series']['specialEpisodes'],
+                'specials' => $data['specials'],
+                'week' => $data['week'],
                 'seriesUpToDate' => $data['series']['upToDate'],
                 'upToDateInAWhile' => $data['series']['upToDateInAWhile'],
                 'upToDateInAWhileCount' => $data['series']['upToDateInAWhileCount'],
