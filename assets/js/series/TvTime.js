@@ -12,6 +12,8 @@ export class TvTime {
         this.remainingSecondes = globs.remainingSecondes;
         this.intervalId = -1;
         this.toolsTips = toolsTips;
+        this.dividerStates = new Map();
+        this.initializedDividers = new WeakSet();
 
         this.getEpisodes = this.getEpisodes.bind(this);
         this.initComponents = this.initComponents.bind(this);
@@ -86,13 +88,13 @@ export class TvTime {
             const wrapper = document.querySelector('.series-tv-time .active .wrapper');
             wrapper.classList.add('list');
             self.saveLayout(1);
-            self.resetDividers();
+            /*self.resetDividers();*/
         });
         displayGrid?.addEventListener('click', () => {
             const wrapper = document.querySelector('.series-tv-time .active .wrapper');
             wrapper.classList.remove('list');
             self.saveLayout(0);
-            self.resetDividers();
+            /*self.resetDividers();*/
         });
 
         this.initComponents();
@@ -123,34 +125,60 @@ export class TvTime {
     initDividers() {
         const dividerDivs = document.querySelectorAll('.series-tv-time main .content-tab .wrapper .divider');
         dividerDivs.forEach(dividerDiv => {
+            const contentDiv = dividerDiv.nextElementSibling;
+            if (!contentDiv?.classList.contains('content') || this.initializedDividers.has(dividerDiv)) return;
+
+            const tab = dividerDiv.closest('.content-tab').dataset.tabIndex;
+            const storageKey = dividerDiv.dataset.content
+                ? `mytvtime_2_divider_${tab}_${dividerDiv.dataset.content}`
+                : null;
+            if (storageKey && !this.dividerStates.has(storageKey)) {
+                try {
+                    this.dividerStates.set(storageKey, localStorage.getItem(storageKey) === 'folded');
+                } catch {
+                    // Le stockage peut être indisponible : conserver l'état en mémoire.
+                    this.dividerStates.set(storageKey, contentDiv.classList.contains('folded'));
+                }
+            }
+            if (storageKey) {
+                contentDiv.classList.toggle('folded', this.dividerStates.get(storageKey));
+            }
+            this.initializedDividers.add(dividerDiv);
+
             dividerDiv.addEventListener('click', () => {
-                // Élément suivant
-                const contentDiv = dividerDiv.nextElementSibling;
-                const bounds = contentDiv.getBoundingClientRect();
-                console.log(bounds);
-                if (contentDiv) {
-                    if (!contentDiv.classList.contains('folded')) {
-                        contentDiv.style.height = `${bounds.height}px`;
-                        setTimeout(() => {
-                            contentDiv.classList.add('folded');
-                        }, 10);
-                    } else {
-                        contentDiv.classList.remove('folded');
-                        setTimeout(() => {
+                const folded = !contentDiv.classList.contains('folded');
+                if (folded) {
+                    contentDiv.style.height = `${contentDiv.getBoundingClientRect().height}px`;
+                    // Appliquer la hauteur avant de démarrer la transition vers zéro.
+                    void contentDiv.offsetHeight;
+                    contentDiv.classList.add('folded');
+                } else {
+                    contentDiv.classList.remove('folded');
+                    contentDiv.style.removeProperty('height');
+                    setTimeout(() => {
+                        if (contentDiv.isConnected && !contentDiv.classList.contains('folded')) {
                             contentDiv.scrollIntoView({behavior: 'smooth'});
-                        }, 500);
+                        }
+                    }, 500);
+                }
+                if (storageKey) {
+                    this.dividerStates.set(storageKey, folded);
+                    try {
+                        localStorage.setItem(storageKey, folded ? 'folded' : 'expanded');
+                    } catch {
+                        // L'état en mémoire reste disponible lors des rafraîchissements AJAX.
                     }
                 }
             });
         });
     }
 
-    resetDividers() {
+    /*resetDividers() {
         const dividerDivs = document.querySelectorAll('.series-tv-time .active .divider');
         dividerDivs.forEach(dividerDiv => {
             dividerDiv.removeAttribute('style');
         });
-    }
+    }*/
 
     changeTab(index, sub = 0, save = true) {
         if (save) self.saveTab(index);
@@ -332,6 +360,7 @@ export class TvTime {
         })
             .then(response => response.json())
             .then(data => {
+                /** @type {Array<{episode_id: number, content: {status: string, name?: string, runtime?: number|null}}>} */
                 const updates = data.updates;
                 console.log(updates);
                 let updatesCount = 0;
