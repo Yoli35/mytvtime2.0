@@ -5,6 +5,7 @@
     flex-direction: column;
     justify-content: flex-end;
     margin-block-end: 1rem;
+    outline: 8px solid hsl(from var(--ardoise-10) h s l / .25);
     overflow: hidden;
     position: relative;
 
@@ -322,6 +323,7 @@
     flex-direction: column;
     justify-content: flex-end;
     overflow: hidden;
+    padding: 8px;
 
     &:has(h1) {
         margin-block-start: 4rem;
