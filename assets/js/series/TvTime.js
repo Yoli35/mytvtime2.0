@@ -152,11 +152,18 @@ export class TvTime {
                     // Appliquer la hauteur avant de démarrer la transition vers zéro.
                     void contentDiv.offsetHeight;
                     contentDiv.classList.add('folded');
+                    setTimeout(() => {
+                        if (contentDiv.isConnected && contentDiv.classList.contains('folded')) {
+                            contentDiv.removeAttribute('style');
+                        }
+                    }, 500);
+
                 } else {
+                    contentDiv.style.setProperty('height', `${contentDiv.scrollHeight}px`);
                     contentDiv.classList.remove('folded');
-                    contentDiv.style.removeProperty('height');
                     setTimeout(() => {
                         if (contentDiv.isConnected && !contentDiv.classList.contains('folded')) {
+                            contentDiv.removeAttribute('style');
                             contentDiv.scrollIntoView({behavior: 'smooth'});
                         }
                     }, 500);
