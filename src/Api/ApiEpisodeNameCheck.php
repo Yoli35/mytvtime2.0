@@ -96,67 +96,6 @@ readonly class ApiEpisodeNameCheck
                 ];
                 continue;
             }
-            // {
-            //  "air_date": "2026-10-01",
-            //  "crew": [],
-            //  "episode_number": 6,
-            //  "episode_type": "standard",
-            //  "guest_stars": [],
-            //  "name": "Episode 6",
-            //  "overview": "",
-            //  "id": 7787987,
-            //  "production_code": "",
-            //  "runtime": null,
-            //  "season_number": 1,
-            //  "still_path": null,
-            //  "vote_average": 0,
-            //  "vote_count": 0,
-            //  "translations": {
-            //    "translations": [
-            //      {
-            //        "iso_3166_1": "CN",
-            //        "iso_639_1": "zh",
-            //        "name": "普通话",
-            //        "english_name": "Mandarin",
-            //        "data": {
-            //          "name": "",
-            //          "overview": ""
-            //        }
-            //      },
-            //      {
-            //        "iso_3166_1": "US",
-            //        "iso_639_1": "en",
-            //        "name": "English",
-            //        "english_name": "English",
-            //        "data": {
-            //          "name": "",
-            //          "overview": ""
-            //        }
-            //      },
-            //      {
-            //        "iso_3166_1": "BR",
-            //        "iso_639_1": "pt",
-            //        "name": "Português",
-            //        "english_name": "Portuguese",
-            //        "data": {
-            //          "name": "",
-            //          "overview": ""
-            //        }
-            //      },
-            //      {
-            //        "iso_3166_1": "TH",
-            //        "iso_639_1": "th",
-            //        "name": "ภาษาไทย",
-            //        "english_name": "Thai",
-            //        "data": {
-            //          "name": "ตอนที่ 6",
-            //          "overview": ""
-            //        }
-            //      }
-            //    ]
-            //  }
-            //}
-            // TODO: Retourner l'identifiant TMDB de l'épisode pour retrouver la carte correspondante (data-episode-id)
 
             $translations = $episode['translations']['translations'];
 //            $translations = array_filter($translations, function ($translation) {
