@@ -1,6 +1,8 @@
 <div class="card{% if series.episode_number==1 %} premiere{% endif %}"
      {% if next==0 %}data-prev-id="{{ series.prev_episode_id }}"{% endif %}
-     data-episode-id="{{ series.episode_id }}">
+     data-episode-id="{{ series.episode_id }}"
+     data-ref="{{ series.id }}-{{ series.episode_id }}-{{ series.season_number }}-{{ series.episode_number }}-{{ series.esn_name }}"
+>
     <a href="{{ path('app_tv_episode', { 'id': series.id, slug: series.name|slug, seasonNumber: series.season_number, episodeNumber: series.episode_number }) }}">
         <div class="poster">
             {% if series.poster_path is defined and series.poster_path %}
@@ -59,9 +61,15 @@
                     {% endif %}
                 </div>
                 {% if series.esn_name %}
-                    <div class="esn-name" data-title="{{ series.esn_name }}">{{ series.esn_name }}</div>
+                    <div class="esn-name" data-title="{{ series.esn_name }}">
+                        <div class="name">{{ series.esn_name }}</div>
+                        <div class="duration"></div>
+                    </div>
                 {% else %}
-                    <div class="esn-name" data-title=""></div>
+                    <div class="esn-name" data-title="">
+                        <div class="name"></div>
+                        <div class="duration"></div>
+                    </div>
                 {% endif %}
             </div>
 

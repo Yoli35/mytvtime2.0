@@ -46,7 +46,26 @@ readonly class ApiEpisodeNameCheck
         }
 
         $data = json_decode($request->getContent(), true);
-        $episodeData = $data['episodeData'];
+        $episodeRefs = $data['episodeRefs'];
+//        dump($episodeRefs);
+        if (!is_array($episodeRefs))
+            return ($this->json)([
+                'ok' => false,
+                'updates' => [],
+                'messages' => ['Invalid episode data'],
+                'count' => 0,
+            ]);
+        $episodeData = array_map(function ($ep) {
+            $data = explode('-', $ep);
+            return [
+                'id' => $data[0],
+                'episodeId' => $data[1],
+                'seasonNumber' => $data[2],
+                'episodeNumber' => $data[3],
+                'esn' => $data[4] ?? null,
+            ];
+        }, $episodeRefs);
+//        dump($episodeData);
 
         $data = $this->getSettings($user);
         $lastUpdates = $data['last_checks'] ?? [];
@@ -76,9 +95,9 @@ readonly class ApiEpisodeNameCheck
             if ($skip) {
                 $updates[] = [
                     'episode_id' => $episodeId,
-                    'name' => sprintf('%s S%02dE%02d', $ep['name'], $seasonNumber, $episodeNumber),
-                    'still' => null,
-                    'poster' => $ep['poster_path'],
+//                    'name' => sprintf('%s S%02dE%02d', $ep['name'], $seasonNumber, $episodeNumber),
+//                    'still' => null,
+//                    'poster' => $ep['poster_path'],
                     'content' => ['status' => 'skip', 'reason' => '*** Updated less than 24 hours ago ***'],
                 ];
                 continue;
@@ -89,9 +108,9 @@ readonly class ApiEpisodeNameCheck
             if ($episode == null || isset($episode['error'])) {
                 $updates[] = [
                     'episode_id' => $episodeId,
-                    'name' => sprintf('%s S%02dE%02d', $ep['name'], $seasonNumber, $episodeNumber),
-                    'still' => null,
-                    'poster' => $ep['poster_path'],
+//                    'name' => sprintf('%s S%02dE%02d', $ep['name'], $seasonNumber, $episodeNumber),
+//                    'still' => null,
+//                    'poster' => $ep['poster_path'],
                     'content' => ['status' => 'error', 'reason' => '*** Episode not found ***'],
                 ];
                 continue;
@@ -104,9 +123,9 @@ readonly class ApiEpisodeNameCheck
 
             $updates[] = [
                 'episode_id' => $episodeId,
-                'name' => sprintf('%s S%02dE%02d', $ep['name'], $seasonNumber, $episodeNumber),
-                'still' => $episode['still_path'],
-                'poster' => $ep['poster_path'],
+//                'name' => sprintf('%s S%02dE%02d', $ep['name'], $seasonNumber, $episodeNumber),
+//                'still' => $episode['still_path'],
+//                'poster' => $ep['poster_path'],
                 'content' => [
                     'status' => 'success',
                     'name' => $episode['name'] . ($ep['esn'] ? ' - ' . $ep['esn'] : ''),

@@ -119,14 +119,13 @@
                 {% endif %}
             </div>
         </main>
-        <div id="global-data" class="hidden">
+        <div id="global-data" class="hidden">{# "episodesAvailable": {{ episodesAvailable|json_encode|raw }}, #}
             {
                 "tab": {{ tab }},
                 "sub_0": {{ sub_0 }},
                 "sub_1": {{ sub_1 }},
                 "sub_2": {{ sub_2 }},
                 "tmdbIds": {{ series.tmdbIds|json_encode|raw }},
-                "episodesAvailable": {{ episodesAvailable|json_encode|raw }},
                 "api_series_tmdb_check": "{{ path('api_series_tmdb_check') }}",
                 "remainingSecondes": {{ remainingSecondes }}
             }

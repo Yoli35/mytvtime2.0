@@ -551,12 +551,29 @@
                                         }
 
                                         .esn-name {
-                                            display: block;
+                                            align-items: center;
+                                            display: flex;
+                                            gap: 0.5rem;
                                             height: 26px;
                                             opacity: 0;
                                             padding-inline: 0.5rem;
                                             transition: opacity 0.25s ease-in-out;
                                             width: fit-content;
+
+                                            .name {
+                                                text-wrap: nowrap;
+                                                white-space: nowrap;
+                                                overflow: hidden;
+                                                text-overflow: ellipsis;
+                                            }
+
+                                            .duration {
+                                                flex-shrink: 0;
+                                            }
+
+                                            .duration:empty {
+                                                display: none;
+                                            }
 
                                             &.updated {
                                                 background-color: hsl(from var(--green) h s l /.75);
@@ -747,6 +764,7 @@
 
 .last-episode-votes {
     backdrop-filter: blur(1rem);
+    background-color: hsl(from var(--yellow) h s l / 0.25);
     border-radius: 2.5rem;
     border: 4px solid hsl(from var(--ardoise-10) h s l / .25);
     bottom: 8rem;
@@ -780,6 +798,7 @@
     .last-episode-vote {
         border: 4px solid hsl(from var(--ardoise-10) h s l / .25);
         border-radius: 1.25rem;
+        box-shadow: 0 0 1rem hsl(from var(--orange-10) h s l / 0.5);
         transition: opacity 0.3s ease;
 
         &.closing {

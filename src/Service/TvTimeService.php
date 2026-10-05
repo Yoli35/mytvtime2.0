@@ -124,7 +124,7 @@ readonly class TvTimeService
 
         if ($settings['tab'] === 0) { // series
             $seriesAvailable = $this->userSeriesRepository->findAvailableSeries($userId, $locale);
-            $episodesAvailable = array_map(fn($series) => [
+            /*$episodesAvailable = array_map(fn($series) => [
                 'id' => $series['tmdb_id'],
                 'name' => $series['name'],
                 'poster_path' => $series['poster_path'],
@@ -132,7 +132,7 @@ readonly class TvTimeService
                 'esn' => $series['esn_name'],
                 'episodeNumber' => $series['episode_number'],
                 'seasonNumber' => $series['season_number']
-            ], $seriesAvailable);
+            ], $seriesAvailable);*/
 
             if ($settings['specials']) {
                 $specialEpisodes = $this->userSeriesRepository->findSpecialEpisodes($userId, $settings['week'], $this->specialEpisodes[$locale], $locale);
@@ -176,7 +176,7 @@ readonly class TvTimeService
                 'upToDateInAWhileCount' => $seriesUpToDateInAWhileCount,
                 'watchLinks' => $watchLinks,
                 'tmdbIds' => $tmdbIds,
-                'episodesAvailable' => $episodesAvailable,
+                /*'episodesAvailable' => $episodesAvailable,*/
                 'lastWatchedSeriesId' => $lastWatchedSeriesId,
             ];
             $noVoteArr = $lastEpisodeWithNoVoteArr;

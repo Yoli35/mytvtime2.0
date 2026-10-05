@@ -8,7 +8,7 @@ export class TvTime {
         const globs = JSON.parse(document.querySelector("#global-data").textContent);
         this.tab = globs.tab;
         this.sub = globs.sub;
-        this.episodesAvailable = globs.episodesAvailable;
+        /*this.episodesAvailable = globs.episodesAvailable;*/
         this.remainingSecondes = globs.remainingSecondes;
         this.intervalId = -1;
         this.toolsTips = toolsTips;
@@ -18,7 +18,7 @@ export class TvTime {
         this.getEpisodes = this.getEpisodes.bind(this);
         this.initComponents = this.initComponents.bind(this);
 
-        console.log(this.episodesAvailable);
+        /*console.log(this.episodesAvailable);*/
 
         this.init();
     }
@@ -39,6 +39,7 @@ export class TvTime {
 
         this.initComponents();
         if (this.tab === 0) {
+            self.fixDetailsDivs(document.querySelector('main .series-tab .wrapper'));
             this.getEpisodeNames();
         }
 
@@ -84,7 +85,7 @@ export class TvTime {
         });
     }
 
-    initNameFilter() {}
+    /*initNameFilter() {}*/
 
     initLayoutSwitch() {
         const displayList = document.querySelector('.series-tv-time header .display-list');
@@ -328,6 +329,7 @@ export class TvTime {
                 const div = document.createElement('div');
                 div.innerHTML = data['view'];
                 const newWrapper = div.querySelector('.wrapper');
+                self.fixDetailsDivs(newWrapper);
                 wrapper.replaceWith(newWrapper);
                 if (data['noVoteView']) {
                     const tvTimeDiv = document.querySelector('.series-tv-time');
@@ -343,13 +345,26 @@ export class TvTime {
                 }
                 self.initComponents();
                 self.toolsTips.init(document.querySelector('.series-tv-time .wrapper'));
-                self.episodesAvailable = data['data']['series']['episodesAvailable'];
+                /*self.episodesAvailable = data['data']['series']['episodesAvailable'];*/
                 self.getEpisodeNames();
                 self.resetReload(data['data']['remainingSecondes']);
             })
             .catch((error) => {
                 console.error('Error:', error);
             });
+    }
+
+    fixDetailsDivs(wrapper) {
+        const infosDivs = wrapper.querySelectorAll('.infos');
+        infosDivs.forEach(infosDiv => {
+            const watchLinksDid = infosDiv.querySelector('.watch-links');
+            if (watchLinksDid) {
+                const voteDiv = infosDiv.querySelector('.vote');
+                const extraWidth = watchLinksDid.getBoundingClientRect().width + 72 + (voteDiv ? 72 : 0);
+                const detailsDiv = infosDiv.querySelector('.details');
+                detailsDiv.style.width = 'calc(100% - ' + extraWidth + 'px)';
+            }
+        });
     }
 
     resetReload(remainingSecondes) {
@@ -381,6 +396,13 @@ export class TvTime {
     }
 
     getEpisodeNames() {
+        const firstContentDiv = document.querySelector('.content');
+        if (!firstContentDiv)
+            return;
+        const cards = firstContentDiv.querySelectorAll('.card');
+        if (!cards)
+            return;
+        const refArray = Array.from(cards).map(card => card.getAttribute('data-ref'));
         fetch('/api/tv/time/episode/check', {
             method: 'POST',
             headers: {
@@ -388,7 +410,7 @@ export class TvTime {
                 'X-Requested-With': 'XMLHttpRequest'
             },
             body: JSON.stringify({
-                episodeData: this.episodesAvailable
+                episodeRefs: refArray
             })
         })
             .then(response => response.json())
@@ -406,7 +428,10 @@ export class TvTime {
                     if (episodeCard) {
                         const esnNameDiv = episodeCard.querySelector('.esn-name');
                         if (esnNameDiv) {
-                            esnNameDiv.innerText = update.content.name + (update.content.runtime ? ' (' + update.content.runtime + ' minutes)' : '');
+                            const nameDiv = esnNameDiv.querySelector('.name');
+                            const durationDiv = esnNameDiv.querySelector('.duration');
+                            nameDiv.innerText = update.content.name;
+                            durationDiv.innerText = update.content.runtime ? '(' + update.content.runtime + ' minutes)' : '';
                             esnNameDiv.classList.add('updated');
                             esnNameDiv.setAttribute('data-title', update.content.name);
                         }
