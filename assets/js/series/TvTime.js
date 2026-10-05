@@ -24,6 +24,49 @@ export class TvTime {
     }
 
     init() {
+        const filterSeriesInput = document.querySelector('#filter-series-input');
+        filterSeriesInput?.addEventListener('input', () => {
+            this.filterSeries(filterSeriesInput.value.toLowerCase());
+        });
+
+        const specialsInput = document.querySelector("#filter-series-specials");
+        specialsInput.addEventListener('click', () => {
+            self.saveSpecials(specialsInput.checked ? 1 : 0);
+            if (self.tab === 0) {
+                self.getEpisodes();
+            }
+        });
+
+        this.initComponents();
+        if (this.tab === 0) {
+            this.getEpisodeNames();
+        }
+
+        document.addEventListener("visibilitychange", () => {
+            if (document.visibilityState === 'visible') {
+                self.getEpisodes();
+            }
+        });
+
+        this.intervalId = setInterval(() => {
+            self.getEpisodes();
+        }, this.remainingSecondes * 1000);
+        this.startingTimestamp = Date.now();
+        this.displayRemainingTime();
+    }
+
+    initComponents() {
+        this.initTab();
+        this.initWeekCount();
+        this.initSortSwitch();
+        this.initLayoutSwitch();
+        this.initAddEpisodes();
+        this.initVotes();
+        this.initCopyWatchLinks();
+        this.initDividers();
+    }
+
+    initTab() {
         this.changeTab(this.tab, this.sub, false);
 
         const seriesTabNameDiv = document.querySelector('.series-tv-time header .series-tab-name');
@@ -39,11 +82,29 @@ export class TvTime {
         comingTabNameDiv?.addEventListener('click', () => {
             this.changeTab(2);
         });
+    }
 
-        const filterSeriesInput = document.querySelector('#filter-series-input');
-        filterSeriesInput?.addEventListener('input', () => {
-            this.filterSeries(filterSeriesInput.value.toLowerCase());
+    initNameFilter() {}
+
+    initLayoutSwitch() {
+        const displayList = document.querySelector('.series-tv-time header .display-list');
+        const displayGrid = document.querySelector('.series-tv-time header .display-grid');
+
+        displayList?.addEventListener('click', () => {
+            const wrapper = document.querySelector('.series-tv-time .active .wrapper');
+            wrapper.classList.add('list');
+            self.saveLayout(1);
+            /*self.resetDividers();*/
         });
+        displayGrid?.addEventListener('click', () => {
+            const wrapper = document.querySelector('.series-tv-time .active .wrapper');
+            wrapper.classList.remove('list');
+            self.saveLayout(0);
+            /*self.resetDividers();*/
+        });
+    }
+
+    initSortSwitch() {
         const sortDivs = document.querySelectorAll('.series-tv-time header .sort-by');
         const sortR = document.querySelector("#series-sort-menu-remaining-days");
         sortR.addEventListener('click', () => {
@@ -72,54 +133,18 @@ export class TvTime {
             });
             sortA.classList.add('active');
         });
-
-        const specialsInput = document.querySelector("#filter-series-specials");
-        specialsInput.addEventListener('click', () => {
-            self.saveSpecials(specialsInput.checked ? 1 : 0);
-            if (self.tab === 0) {
-                self.getEpisodes();
-            }
-        });
-
-        const displayList = document.querySelector('.series-tv-time header .display-list');
-        const displayGrid = document.querySelector('.series-tv-time header .display-grid');
-
-        displayList?.addEventListener('click', () => {
-            const wrapper = document.querySelector('.series-tv-time .active .wrapper');
-            wrapper.classList.add('list');
-            self.saveLayout(1);
-            /*self.resetDividers();*/
-        });
-        displayGrid?.addEventListener('click', () => {
-            const wrapper = document.querySelector('.series-tv-time .active .wrapper');
-            wrapper.classList.remove('list');
-            self.saveLayout(0);
-            /*self.resetDividers();*/
-        });
-
-        this.initComponents();
-        if (this.tab === 0) {
-            this.getEpisodeNames();
-        }
-
-        document.addEventListener("visibilitychange", () => {
-            if (document.visibilityState === 'visible') {
-                self.getEpisodes();
-            }
-        });
-
-        this.intervalId = setInterval(() => {
-            self.getEpisodes();
-        }, this.remainingSecondes * 1000);
-        this.startingTimestamp = Date.now();
-        this.displayRemainingTime();
     }
 
-    initComponents() {
-        this.initAddEpisodes();
-        this.initVotes();
-        this.initCopyWatchLinks();
-        this.initDividers();
+    initWeekCount() {
+        const weekInput = document.querySelector("#filter-series-specials-week");
+        weekInput.addEventListener('keyup', (e) => {
+            if (e.key === 'Enter') {
+                self.saveWeek(weekInput.value);
+                if (self.tab === 0) {
+                    self.getEpisodes();
+                }
+            }
+        });
     }
 
     initDividers() {
@@ -342,7 +367,7 @@ export class TvTime {
         setInterval(() => {
             const currentTimestamp = Date.now();
             const elapsedTime = currentTimestamp - this.startingTimestamp;
-            // Display format : hh:mm::ss
+            // Display format: hh:mm::ss
             const remainingSeconds = this.remainingSecondes - Math.floor(elapsedTime / 1000);
             const hours = Math.floor(remainingSeconds / 3600);
             const minutes = Math.floor((remainingSeconds % 3600) / 60);
@@ -539,6 +564,26 @@ export class TvTime {
             },
             body: JSON.stringify({
                 specials: specials
+            })
+        })
+            .then((response) => response.json())
+            .then((data) => {
+                console.log(data);
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+            });
+    }
+
+    saveWeek(week) {
+        console.log(week);
+        fetch('/api/tv/time/week', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                week: week
             })
         })
             .then((response) => response.json())

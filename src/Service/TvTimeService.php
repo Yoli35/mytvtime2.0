@@ -51,6 +51,13 @@ readonly class TvTimeService
         $this->setSettings($user, $data);
     }
 
+    public function setTvTimeWeek(User $user, int $week): void
+    {
+        $data = $this->getSettings($user);
+        $data['week'] = $week;
+        $this->setSettings($user, $data);
+    }
+
     public function setTvTimeTab(User $user, int $tabIndex): void
     {
         $data = $this->getSettings($user);

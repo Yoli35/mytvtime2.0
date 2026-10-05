@@ -97,6 +97,16 @@ readonly class ApiTvTime
         return new JsonResponse(['specials' => $specials]);
     }
 
+    #[Route('/week', name: 'week', methods: ['POST'])]
+    public function week(#[CurrentUser] User $user, Request $request): JsonResponse
+    {
+        $inputBag = $request->getPayload();
+        $week = $inputBag->getInt('week');
+        $this->tvTimeService->setTvTimeWeek($user, $week);
+
+        return new JsonResponse(['week' => $week]);
+    }
+
     #[Route('/tab', name: 'tab', methods: ['POST'])]
     public function tab(#[CurrentUser] User $user, Request $request): JsonResponse
     {
