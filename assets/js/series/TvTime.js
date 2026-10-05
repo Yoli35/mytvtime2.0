@@ -150,6 +150,7 @@ export class TvTime {
                 if (folded) {
                     contentDiv.style.height = `${contentDiv.getBoundingClientRect().height}px`;
                     // Appliquer la hauteur avant de démarrer la transition vers zéro.
+                    // Force le navigateur à recalculer immédiatement la mise en page du bloc avant de poursuivre
                     void contentDiv.offsetHeight;
                     contentDiv.classList.add('folded');
                     setTimeout(() => {
