@@ -77,6 +77,9 @@
                         {% if movie.overview|length %}
                             <div class="movie-overview">{{ movie.overview|nl2br }}</div>
                         {% endif %}
+                        {% if movie.original_language != app.locale and movie.translations.data.overview ?? 0 %}
+                            <div class="movie-overview">{{ movie.translations.data.overview|nl2br }}</div>
+                        {% endif %}
                         <div class="localized overviews">
                             <h4 class="localized-h4">{{ 'Localized overviews'|trans }}</h4>
                             {% if movie.localized_overviews|length %}
