@@ -13,7 +13,7 @@
         </div>
         <div class="infos">
             <div class="details">
-                <div class="name">{{ series.name }}</div>
+                <div class="name">{{ series.name }} <span>{{ series.year }}</span></div>
                 {% if next and  series.viewedCount>0 %}
                     <div class="progress-wrapper" data-title="{{ series.viewedCount }} {{ 'ep.Viewed'|trans }}<br>{{ series.airedCount }} {{ 'ep.Aired'|trans }}<br>{{ series.episodeCount }} {{ 'ep.Total'|trans }}">
                         <div class="progress-content"></div>

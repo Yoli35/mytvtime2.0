@@ -917,6 +917,7 @@ class UserSeriesRepository extends ServiceEntityRepository
                     s.`tmdb_id`,
                     us.`last_watch_at`,
                     IF(sln.`id`, sln.`name` , s.name) AS name,
+                    YEAR(s.first_air_date) AS year,
                     CONCAT('S', LPAD(ue.`season_number`, 2, '0'), 'E', LPAD(ue.`episode_number`, 2, '0')) AS number,
                     s.`poster_path`,
                     ue.`id` AS userEpisodeId,
@@ -970,6 +971,7 @@ class UserSeriesRepository extends ServiceEntityRepository
                     s.`tmdb_id`,
                     us.`last_watch_at`,
                     IF(sln.`id`, sln.`name` , s.name) AS name,
+                    YEAR(s.first_air_date) AS year,
                     CONCAT(:label, ue.`episode_number`) AS number,
                     s.`poster_path`,
                     ue.`id` AS userEpisodeId,
@@ -1049,6 +1051,7 @@ class UserSeriesRepository extends ServiceEntityRepository
                             FROM `series_localized_name` sln
                             WHERE sln.`series_id`=s.`id` AND sln.`locale`=:locale
                             ORDER BY sln.`id` LIMIT 1), s.`name`) AS name,
+                    YEAR(s.first_air_date) AS year,
                     CONCAT('S', LPAD(ue.`season_number`, 2, '0'), 'E', LPAD(ue.`episode_number`, 2, '0')) AS `number`,
                     us.`last_watch_at`,
                     s.`poster_path`,
@@ -1107,6 +1110,7 @@ class UserSeriesRepository extends ServiceEntityRepository
                             FROM `series_localized_name` sln
                             WHERE sln.`series_id`=s.`id` AND sln.`locale`=:locale
                             ORDER BY sln.`id` LIMIT 1), s.`name`) AS name,
+                    YEAR(s.first_air_date) AS year,
                     CONCAT('S', LPAD(ue.`season_number`, 2, '0'), 'E', LPAD(ue.`episode_number`, 2, '0')) AS `number`,
                     us.`last_watch_at`,
                     s.`poster_path`,
@@ -1176,6 +1180,7 @@ class UserSeriesRepository extends ServiceEntityRepository
                  SELECT
                     s.id                         AS id,
                     IFNULL(sln.`name`, s.`name`) AS name,
+                    YEAR(s.first_air_date)       AS year,
                     s.`poster_path`              AS poster_path,
                     ue.`id`                      AS episode_id,
                     ue.`vote`                    AS episode_vote,

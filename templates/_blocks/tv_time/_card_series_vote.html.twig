@@ -12,12 +12,12 @@
                 </div>
                 <div class="infos">
                     <div class="name">
-                        {{ series.name }}
-                        <span class="episode-number">{{ 'S%02dE%02d'|format(series.episode_season, series.episode_number) }}</span>
-                        {% if series.isLastEpisode > 0 %}
-                            <span class="last-episode">{{ 'Last episode!'|trans }}</span>
-                        {% endif %}
+                        {{ series.name }}<span class="year">{{ series.year }}</span>
                     </div>
+                        <div class="episode-number">{{ 'S%02dE%02d'|format(series.episode_season, series.episode_number) }}</div>
+                        {% if series.isLastEpisode > 0 %}
+                            <div class="last-episode">{{ 'Last episode!'|trans }}</div>
+                        {% endif %}
                     {% if series.esn_name %}
                         <div class="esn-name" data-title="{{ series.esn_name }}">{{ series.esn_name }}</div>
                     {% endif %}

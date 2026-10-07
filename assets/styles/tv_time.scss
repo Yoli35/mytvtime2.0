@@ -386,6 +386,11 @@
                                         all: unset;
                                         line-height: 1.1;
                                         text-wrap: balance;
+
+                                        span {
+                                            color: hsl(from var(--green) h 0% l);
+                                            padding-inline-start: .5rem;
+                                        }
                                     }
 
                                     .date {
@@ -860,22 +865,27 @@
                 width: 20rem;
 
                 .name {
-                    display: flex;
+                    /*display: flex;
                     flex-wrap: wrap;
-                    gap: .25rem 1rem;
+                    gap: .25rem 1rem;*/
 
-                    span.episode-number {
-                        color: var(--yellow);
+                    span.year {
+                        color: hsl(from var(--green) h 0% l);
+                        padding-inline-start: .5rem;
                     }
+                }
 
-                    span.last-episode {
-                        background-color: hsl(from var(--green) h s l / .5);
-                        border-radius: 5rem;
-                        color: var(--orange-90);
-                        font-weight: 300;
-                        margin-inline-start: .5rem;
-                        padding: .25rem 1rem;
-                    }
+                .episode-number {
+                    color: var(--yellow);
+                }
+
+                .last-episode {
+                    background-color: hsl(from var(--green) h s l / .5);
+                    border-radius: 5rem;
+                    color: var(--orange-90);
+                    font-weight: 300;
+                    margin-inline-start: .5rem;
+                    padding: .25rem 1rem;
                 }
 
                 .esn-name {
