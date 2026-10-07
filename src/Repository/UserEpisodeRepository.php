@@ -984,6 +984,32 @@ class UserEpisodeRepository extends ServiceEntityRepository
         return $this->getAll($sql, $params, $types);
     }
 
+    public function setNextUserEpisode(UserSeries $userSeries): bool
+    {
+        $uerSerieId = $userSeries->getId();
+        $sql = <<<SQL
+            UPDATE user_series us
+            SET us.next_user_episode_id = (
+                SELECT ue.id
+                FROM user_episode ue
+                WHERE ue.user_series_id = :userSeriesId
+                  AND ue.season_number > 0
+                  AND ue.watch_at IS NULL
+                ORDER BY ue.season_number, ue.episode_number
+                LIMIT 1
+            )
+            WHERE us.id = :userSeriesId;
+        SQL;
+
+        try {
+            $this->em->getConnection()->executeStatement($sql, ['userSeriesId' => $uerSerieId], ['userSeriesId' => ParameterType::INTEGER]);
+        } catch (Exception $e) {
+            $this->logger->error('Error: ' . $e->getMessage());
+            return false;
+        }
+        return true;
+    }
+
     public function getAll($sql, array $params = [], array $types = []): array
     {
         try {

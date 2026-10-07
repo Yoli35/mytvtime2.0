@@ -155,11 +155,13 @@ class EpisodeAirDateCommand
             $firstUnseenEpisode = $this->findFirstNotWatchedEpisode($userEpisodes);
             $startingSeason = $firstUnseenEpisode ? $firstUnseenEpisode->getSeasonNumber() : 1;
             $writeln = false;
+            $newSeasonCount = 0;
             foreach ($tv['seasons'] as $season) {
                 $userSeason = $this->userSeasonRepository->findOneBy(['userSeries' => $userSeries, 'seasonNumber' => $season['season_number']]);
                 if (!$userSeason) {
                     $userSeason = new UserSeason($userSeries, $season['season_number']);
                     $this->userSeasonRepository->save($userSeason, true);
+                    $newSeasonCount++;
                 }
                 if (!$force && $season['season_number'] > 0 && $season['season_number'] < $startingSeason) {
                     continue;
@@ -178,19 +180,21 @@ class EpisodeAirDateCommand
                     $writeln = true;
                     continue;
                 }
+                $seasonNewEpisodeCount = 0;
                 foreach ($episodes as $episode) {
                     $episodeId = $episode['id'];
                     $episodeNumber = $episode['episode_number'];
                     /** @var DateTimeImmutable|null $airDate */
                     $airDate = $episode['air_date'] ? $this->dateService->newDateImmutable($episode['air_date'], 'UTC') : null;
 
-                    $userEpisode = $this->getUserEpisodeById($userEpisodes, $episodeId);
+                    $userEpisode = array_find($userEpisodes, fn($userEpisode) => $userEpisode->getEpisodeId() == $episodeId);//$this->getUserEpisodeById($userEpisodes, $episodeId);
 
                     if (!$userEpisode) {
                         $userEpisode = new UserEpisode($userSeries, $episodeId, $seasonNumber, $episodeNumber, null);
                         $userEpisode->setUserSeason($userSeason);
                         $this->userEpisodeRepository->save($userEpisode);
                         $seriesNewEpisodeCount++;
+                        $seasonNewEpisodeCount++;
 
                         $notifications[] = $this->newNotification(self::EPISODE_NEW, $userSeries, $userEpisode, $localizedName, $airDate);
                     }
@@ -203,6 +207,15 @@ class EpisodeAirDateCommand
                         $episodeUpdates++;
                     }
                     $episodeCount++;
+                }
+                if ($seasonNewEpisodeCount > 0) {
+                    $this->userEpisodeRepository->flush();
+                    $this->io->writeln('🟡 🟡 ' . $seasonNewEpisodeCount . ' new episodes in season ' . $season['season_number']);
+                    $writeln = true;
+                }
+                if (!$userSeries->getNextUserEpisode() && $newSeasonCount == 1 && $seasonNewEpisodeCount > 0) {
+                    $this->io->writeln('🟢 🟢 🟢 Next episode updated for user ' . $user->getUsername() . ' (' . $user->getId() . ')');
+                    $this->userEpisodeRepository->setNextUserEpisode($userSeries);
                 }
             }
             if ($writeln) {
@@ -285,15 +298,12 @@ class EpisodeAirDateCommand
 
     public function getUserEpisodeById($userEpisodes, $episodeId): mixed
     {
-        /*array_filter($userEpisodes, function ($userEpisode) use ($episodeId) {
-            return $userEpisode->getEpisodeId() == $episodeId;
-        });*/
         return array_find($userEpisodes, fn($userEpisode) => $userEpisode->getEpisodeId() == $episodeId);
     }
 
     public function findFirstNotWatchedEpisode($userEpisodes): mixed
     {
-        return array_find($userEpisodes, fn($userEpisode) => $userEpisode->getWatchAt() === null);
+        return array_find($userEpisodes, fn($userEpisode) => $userEpisode->getSeasonNumber() && $userEpisode->getWatchAt() === null);
     }
 
     /**
@@ -305,7 +315,7 @@ class EpisodeAirDateCommand
     {
         if ($userSeries->getNextUserEpisode() === null) {
             $userEpisodes = array_filter($userEpisodes, function ($ue) {
-                return $ue->getSeasonNumber() && $ue->getWatchAt() === null && $ue->getPreviousOccurrence() === null;
+                return $ue->getSeasonNumber() && $ue->getWatchAt() === null/* && $ue->getPreviousOccurrence() === null*/;
             });
             usort($userEpisodes, function ($a, $b) {
                 if ($a->getSeasonNumber() == $b->getSeasonNumber()) {

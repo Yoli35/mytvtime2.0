@@ -63,6 +63,7 @@ class Series
     private Collection $seriesBroadcastSchedules;
 
     private array $updates;
+    private bool $newSeason = false;
 
     #[ORM\Column(nullable: true)]
     private ?\DateTimeImmutable $nextEpisodeAirDate = null;
@@ -144,21 +145,21 @@ class Series
 
     public function __construct()
     {
+        $this->episodeComments = new ArrayCollection();
+        $this->keywords = new ArrayCollection();
         $this->networks = new ArrayCollection();
         $this->seasonLocalizedOverviews = new ArrayCollection();
         $this->seriesAdditionalOverviews = new ArrayCollection();
         $this->seriesBroadcastSchedules = new ArrayCollection();
+        $this->seriesCasts = new ArrayCollection();
         $this->seriesImages = new ArrayCollection();
         $this->seriesLocalizedNames = new ArrayCollection();
         $this->seriesLocalizedOverviews = new ArrayCollection();
+        $this->seriesVideos = new ArrayCollection();
         $this->seriesWatchLinks = new ArrayCollection();
         $this->updates = [];
-        $this->seriesVideos = new ArrayCollection();
-        $this->watchProviders = new ArrayCollection();
-        $this->seriesCasts = new ArrayCollection();
         $this->userLists = new ArrayCollection();
-        $this->episodeComments = new ArrayCollection();
-        $this->keywords = new ArrayCollection();
+        $this->watchProviders = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -443,6 +444,16 @@ class Series
     public function setUpdates(array $updates): void
     {
         $this->updates = $updates;
+    }
+
+    public function isNewSeason(): bool
+    {
+        return $this->newSeason;
+    }
+
+    public function setNewSeason(bool $newSeason): void
+    {
+        $this->newSeason = $newSeason;
     }
 
     /**

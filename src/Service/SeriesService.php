@@ -291,9 +291,14 @@ readonly class SeriesService
             $series->setBackdropPath($tv['backdrop_path']);
             $series->addUpdate($this->translator->trans('Backdrop updated'));
         }
-        if (!$series->getNumberOfEpisode() || $tv['number_of_episodes'] != $series->getNumberOfEpisode()) {
-            $series->setNumberOfEpisode($tv['number_of_episodes']);
+        if ($series->getNumberOfSeason() != $tv['number_of_seasons']) {
             $series->setNumberOfSeason($tv['number_of_seasons']);
+            $series->setNewSeason(true);
+            $series->addUpdate($this->translator->trans('Number of seasons updated'));
+        }
+        if ($series->getNumberOfEpisode() != $tv['number_of_episodes']) {
+            $series->setNumberOfEpisode($tv['number_of_episodes']);
+            $series->addUpdate($this->translator->trans('Number of episodes updated'));
         }
 
         $series->setVisitNumber($series->getVisitNumber() + 1);

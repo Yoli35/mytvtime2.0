@@ -252,6 +252,12 @@ final class SeriesShowController extends AbstractController
             $this->addFlash('info', $this->translator->trans('Your episodes have been updated according to the series information.'));
             $this->reloadUserEpisodes = false;
         }
+        if ($series->isNewSeason()) {
+            // Mettre à jour $userSeries→getNextUserEpisode() lorsqu'une nouvelle saison est disponible
+            $this->userEpisodeRepository->setNextUserEpisode($userSeries);
+            $this->addFlash('success', 'New season! Next episode updated');
+            $series->setNewSeason(false);
+        }
 
         $schedules = $this->seriesSchedulesV2($userSeries, $tv);
         $alternateSchedules = $this->seriesService->alternateSchedules($tv['seasons'], $series, $userEpisodes);
@@ -1431,7 +1437,7 @@ final class SeriesShowController extends AbstractController
                 $userEpisodes = $this->userEpisodeRepository->findBy(['userSeries' => $userSeries, 'watchAt' => null, 'previousOccurrence' => null], ['seasonNumber' => 'ASC', 'episodeNumber' => 'ASC']);
             } else {
                 $userEpisodes = array_filter($userEpisodes, function ($ue) {
-                    return $ue->getWatchAt() === null && $ue->getPreviousOccurrence() === null;
+                    return $ue->getWatchAt() === null && $ue->getSeasonNumber();
                 });
                 usort($userEpisodes, function ($a, $b) {
                     if ($a->getSeasonNumber() == $b->getSeasonNumber()) {
