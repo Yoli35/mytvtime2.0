@@ -329,8 +329,8 @@ export class TvTime {
                 const div = document.createElement('div');
                 div.innerHTML = data['view'];
                 const newWrapper = div.querySelector('.wrapper');
-                self.fixDetailsDivs(newWrapper);
                 wrapper.replaceWith(newWrapper);
+                self.fixDetailsDivs(document.querySelector('.series-tv-time .series-tab .wrapper'));
                 if (data['noVoteView']) {
                     const tvTimeDiv = document.querySelector('.series-tv-time');
                     const lastEpisodeVotesDiv = tvTimeDiv.querySelector('.last-episode-votes');
