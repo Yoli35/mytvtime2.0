@@ -1186,6 +1186,8 @@ class UserSeriesRepository extends ServiceEntityRepository
                     ue.`vote`                    AS episode_vote,
                     ue.`season_number`           AS episode_season,
                     ue.`episode_number`          AS episode_number,
+                    wp.provider_name             AS provider_name,
+                    wp.logo_path                 AS provider_logo_path,
                     esn.`name` AS esn_name,
                     (SELECT COUNT(remain.id)
                      FROM user_episode remain
@@ -1197,6 +1199,7 @@ class UserSeriesRepository extends ServiceEntityRepository
                     LEFT JOIN `series` s ON s.`id` = us.`series_id`
                     LEFT JOIN `series_localized_name` sln ON sln.`series_id`=s.`id` AND sln.`locale`=:locale
                     LEFT JOIN `episode_substitute_name` esn ON esn.`episode_id`=ue.`episode_id`
+                    LEFT JOIN `watch_provider` wp ON wp.provider_id=ue.provider_id
                 WHERE ue.vote IS NULL
                   AND (
                           (

@@ -165,7 +165,10 @@ readonly class TvTimeService
                 )
             ));
             $seriesUpToDateIds = array_unique(array_column($seriesUpToDate, 'userEpisodeId'));
-            $lastEpisodeWithNoVoteArr = $this->userSeriesRepository->findUpToDateSeriesWithNoVote($seriesUpToDateIds, $locale);
+            $lastEpisodeWithNoVoteArr = array_map(function ($wp) use ($providerUrl) {
+                $wp['provider_logo_path'] = $this->providerService->getProviderLogoFullPath($wp['provider_logo_path'], $providerUrl);
+                return $wp;
+            }, $this->userSeriesRepository->findUpToDateSeriesWithNoVote($seriesUpToDateIds, $locale));
             $tmdbIds = array_unique(array_merge(array_column($seriesAvailable, 'tmdb_id'), array_column($seriesUpToDate, 'tmdb_id'), array_column($seriesUpToDateInAWhile, 'tmdb_id')));
             $lastWatchedSeriesId = $this->userSeriesRepository->getLastWatchedSeries($user);
             $series = [

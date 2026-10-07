@@ -833,22 +833,39 @@
                     object-fit: cover;
                 }
 
-                .your-vote {
-                    align-items: center;
-                    background-color: var(--green);
-                    border-radius: 50%;
+                .your-infos {
                     bottom: 1rem;
-                    color: var(--green-10);
                     display: flex;
-                    font-size: 1.5rem;
-                    font-weight: 300;
-                    height: 3rem;
+                    gap: 1rem;
                     left: 50%;
-                    justify-content: center;
                     position: absolute;
                     transform: translateX(-50%);
-                    width: 3rem;
+                    width: fit-content;
                     z-index: 1;
+
+                    .your-provider, .your-vote {
+                        align-items: center;
+                        background-color: var(--green);
+                        border-radius: 50%;
+                        color: var(--green-10);
+                        display: flex;
+                        font-size: 1.5rem;
+                        font-weight: 300;
+                        height: 3rem;
+                        justify-content: center;
+                        width: 3rem;
+                    }
+
+                    .your-provider {
+                        border: 2px solid;
+
+                        img {
+                            border-radius: 50%;
+                            height: 100%;
+                            object-fit: cover;
+                            width: 100%;
+                        }
+                    }
                 }
             }
 
