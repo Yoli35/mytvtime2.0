@@ -51,7 +51,8 @@ export class WatchLinkCrud {
             {needle: 'www.hbo.com', providerId: 1899},
             {needle: 'play.hbomax.com', providerId: 1899},
             {needle: 'www.m6.fr', providerId: 10006},
-            {needle: 'heavenly.tv', providerId: 3269}
+            {needle: 'heavenly.tv', providerId: 3269},
+            {needle: 'ch3plus.com', providerId: 3270}
         ];
 
         this.init();
