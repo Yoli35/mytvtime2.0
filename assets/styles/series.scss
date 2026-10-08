@@ -3580,9 +3580,11 @@ h2 {
             .season__overview {
                 font-size: 1rem;
                 border-radius: 1rem;
-                box-shadow: 0 0 1rem rgba(0, 0, 0, .25) inset;
+                /*box-shadow: 0 0 1rem rgba(0, 0, 0, .25) inset;*/
                 font-weight: 300;
-                padding: 1rem;
+                max-width: 75ch;
+                padding: 1rem 0;
+                text-wrap: pretty;
             }
 
             .season__air-date, .season__episodes, .season__runtime {
