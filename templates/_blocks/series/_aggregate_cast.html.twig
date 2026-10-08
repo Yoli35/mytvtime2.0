@@ -1,7 +1,7 @@
 {# <a href="{{ path('app_people_show', {id: people.id, slug: people.slug}) }}"> #}
 <div class="people-card" data-id="{{ people.id }}">
     <div class="people" id="cast-{{ people.id }}">
-        <div class="photo" data-title="{{ people.name }}">
+        <div class="photo" data-title="{{ people.name }}{% if people.preferred_name ?? '' %} - {{ people.preferred_name }}{% endif %}">
             {% if people.profile_path %}
                 <img src="{{ profileUrl ~ people.profile_path }}" alt="{{ people.name }}">
             {% else %}
@@ -9,6 +9,9 @@
             {% endif %}
         </div>
         <div class="infos{% if people.order == -1 %} added{% endif %}">
+            {% if people.preferred_name ?? '' %}
+                <div class="preferred-name">{{ people.preferred_name }}</div>
+            {% endif %}
             <div class="name">{{ people.name }}</div>
             <div>
                 {% for role in people.roles %}

@@ -137,6 +137,7 @@ final class SeriesShowController extends AbstractController
         $tv['blurredPosterPath'] = $this->imageService->blurPoster($tv['poster_path'], 'series', 8);
 
         $tv['credits'] = $this->castAndCrew($tv, $series);
+        $tv['aggregate_credits'] = $this->castAndCrew($tv, $series, 'aggregate_credits');
         $tv['networks'] = $this->seriesService->networks($tv);
         $tv['seasons'] = $this->seriesService->seasonsPosterPath($tv['seasons']);
         $tv['watch/providers'] = $this->watchProviders($tv, 'FR');
@@ -235,6 +236,9 @@ final class SeriesShowController extends AbstractController
 //        $tv['seasons'] = $this->seriesService->seriesInfos($tv['id'], $tv['seasons']);
 
         $tv['credits'] = $this->castAndCrew($tv, $series);
+        dump($tv['aggregate_credits']);
+        $tv['aggregate_credits'] = $this->castAndCrew($tv, $series, 'aggregate_credits');
+        dump($tv['aggregate_credits']);
         $tv['watch/providers'] = $this->watchProviders($tv, $country);
         $tv['status_css'] = $this->statusCss($tv);
 
@@ -1478,10 +1482,13 @@ final class SeriesShowController extends AbstractController
         ];
     }
 
-    private function castAndCrew(?array $tv, ?Series $series): array
+    private function castAndCrew(?array $tv, ?Series $series, string $key = 'credits'): array
     {
         if (!$tv) {
             return ['cast' => [], 'crew' => [], 'guest_stars' => []];
+        }
+        if ($key == 'aggregate_credits' && $tv['number_of_seasons']<2) {
+            return $tv['aggregate_credits'];
         }
         if ($series) {
             $seriesCastArr = array_map(function ($sc) {
@@ -1492,11 +1499,11 @@ final class SeriesShowController extends AbstractController
                 $sc['order'] = -1;
                 return $sc;
             }, $this->seriesCastRepository->getSeriesCatsBySeriesId($series->getId()));
-            $tv['credits']['cast'] = array_merge($tv['credits']['cast'] ?? [], $seriesCastArr);
+            $tv[$key]['cast'] = array_merge($tv[$key]['cast'] ?? [], $seriesCastArr);
         }
-        $peopleIds = array_column($tv['credits']['cast'], 'id');
-        $peopleIds = array_merge($peopleIds, array_column($tv['credits']['guest_stars'] ?? [], 'id'));
-        $peopleIds = array_merge($peopleIds, array_column($tv['credits']['crew'] ?? [], 'id'));
+        $peopleIds = array_column($tv[$key]['cast'], 'id');
+        if ($key === 'credits') $peopleIds = array_merge($peopleIds, array_column($tv[$key]['guest_stars'] ?? [], 'id'));
+        $peopleIds = array_merge($peopleIds, array_column($tv[$key]['crew'] ?? [], 'id'));
         $peopleIds = array_unique($peopleIds);
         $arr = $this->peopleUserPreferredNameRepository->getPreferredNames($peopleIds);
         $preferredNames = [];
@@ -1510,7 +1517,7 @@ final class SeriesShowController extends AbstractController
 
         $slugger = new AsciiSlugger();
         $profileUrl = $this->imageConfiguration->getUrl('profile_sizes', 2);
-        $tv['credits']['cast'] = array_map(function ($cast) use ($slugger, $profileUrl, $preferredNames) {
+        $tv[$key]['cast'] = array_map(function ($cast) use ($slugger, $profileUrl, $preferredNames) {
             $cast['profile_path'] = $cast['profile_path'] ? $profileUrl . $cast['profile_path'] : null; // w185
             $cast['preferred_name'] = null;
             if (key_exists($cast['id'], $preferredNames)) {
@@ -1523,29 +1530,33 @@ final class SeriesShowController extends AbstractController
                 $cast['slug'] = 'person-' . $cast['id'];
             }
             return $cast;
-        }, $tv['credits']['cast']);
-        $tv['credits']['guest_stars'] = array_map(function ($cast) use ($slugger, $profileUrl, $preferredNames) {
-            $cast['profile_path'] = $cast['profile_path'] ? $profileUrl . $cast['profile_path'] : null; // w185
-            $cast['preferred_name'] = null;
-            if (key_exists($cast['id'], $preferredNames)) {
-                $cast['preferred_name'] = $preferredNames[$cast['id']];
-                $cast['slug'] = $slugger->slug($cast['preferred_name'])->lower()->toString();
-            } else {
-                $cast['slug'] = $slugger->slug($cast['name'])->lower()->toString();
+        }, $tv[$key]['cast']);
+        if ($key === 'credits') {
+            $tv['credits']['guest_stars'] = array_map(function ($cast) use ($slugger, $profileUrl, $preferredNames) {
+                $cast['profile_path'] = $cast['profile_path'] ? $profileUrl . $cast['profile_path'] : null; // w185
+                $cast['preferred_name'] = null;
+                if (key_exists($cast['id'], $preferredNames)) {
+                    $cast['preferred_name'] = $preferredNames[$cast['id']];
+                    $cast['slug'] = $slugger->slug($cast['preferred_name'])->lower()->toString();
+                } else {
+                    $cast['slug'] = $slugger->slug($cast['name'])->lower()->toString();
+                }
+                return $cast;
+            }, $tv['credits']['guest_stars'] ?? []);
+            $crew = [];
+            foreach ($tv['credits']['crew'] as $c) {
+                $id = $c['id'];
+                if (!key_exists($id, $crew)) {
+                    $crew[$id] = $c;
+                    $crew[$id]['jobs'] = [];
+                }
+                $crew[$id]['jobs'][] = $this->translator->trans($c['job']) . ' - ' . $this->translator->trans($c['department']);
             }
-            return $cast;
-        }, $tv['credits']['guest_stars'] ?? []);
-        $crew = [];
-        foreach ($tv['credits']['crew'] as $c) {
-            $id = $c['id'];
-            if (!key_exists($id, $crew)) {
-                $crew[$id] = $c;
-                $crew[$id]['jobs'] = [];
-            }
-            $crew[$id]['jobs'][] = $this->translator->trans($c['job']) . ' - ' . $this->translator->trans($c['department']);
+            $crew = array_values($crew);
+        } else {
+            $crew = $tv[$key]['crew'];
         }
-        $crew = array_values($crew);
-        $tv['credits']['crew'] = array_map(function ($c) use ($slugger, $profileUrl, $preferredNames) {
+        $tv[$key]['crew'] = array_map(function ($c) use ($slugger, $profileUrl, $preferredNames) {
             $c['profile_path'] = $c['profile_path'] ? $profileUrl . $c['profile_path'] : null; // w185
             $c['preferred_name'] = null;
             if (key_exists($c['id'], $preferredNames)) {
@@ -1560,16 +1571,16 @@ final class SeriesShowController extends AbstractController
             return $c;
         }, $crew);
 
-        usort($tv['credits']['cast'], function ($a, $b) {
-            return !$a['profile_path'] <=> !$b['profile_path'];
-        });
-        usort($tv['credits']['guest_stars'], function ($a, $b) {
-            return !$a['profile_path'] <=> !$b['profile_path'];
-        });
-        usort($tv['credits']['crew'], function ($a, $b) {
-            return !$a['profile_path'] <=> !$b['profile_path'];
-        });
-        return $tv['credits'];
+//        usort($tv['credits']['cast'], function ($a, $b) {
+//            return !$a['profile_path'] <=> !$b['profile_path'];
+//        });
+//        usort($tv['credits']['guest_stars'], function ($a, $b) {
+//            return !$a['profile_path'] <=> !$b['profile_path'];
+//        });
+//        usort($tv['credits']['crew'], function ($a, $b) {
+//            return !$a['profile_path'] <=> !$b['profile_path'];
+//        });
+        return $tv[$key];
     }
 
     private function watchProviders(array $tv, string $country): array
