@@ -3,7 +3,7 @@
      data-episode-id="{{ series.episode_id }}"
      data-ref="{{ series.id }}-{{ series.episode_id }}-{{ series.season_number }}-{{ series.episode_number }}-{{ series.esn_name }}"
 >
-    <a href="{{ path('app_tv_episode', { 'id': series.id, slug: series.name|slug, seasonNumber: series.season_number, episodeNumber: series.episode_number }) }}">
+    <a href="{{ path('app_tv_series', { 'id': series.id, slug: series.name|slug}) }}" target="_blank">
         <div class="poster">
             {% if series.poster_path is defined and series.poster_path %}
                 <img src="/series/posters{{ series.poster_path }}" alt="{{ series.name }}">
@@ -11,6 +11,8 @@
                 <div>{{ 'No poster'|trans }}</div>
             {% endif %}
         </div>
+    </a>
+    <a href="{{ path('app_tv_episode', { 'id': series.id, slug: series.name|slug, seasonNumber: series.season_number, episodeNumber: series.episode_number}) }}" target="_blank">
         <div class="infos">
             <div class="details">
                 <div class="name">{{ series.name }} <span>{{ series.year }}</span></div>
