@@ -95,12 +95,14 @@ export class TvTime {
             const wrapper = document.querySelector('.series-tv-time .active .wrapper');
             wrapper.classList.add('list');
             self.saveLayout(1);
+            self.fixDetailsDivs(wrapper);
             /*self.resetDividers();*/
         });
         displayGrid?.addEventListener('click', () => {
             const wrapper = document.querySelector('.series-tv-time .active .wrapper');
             wrapper.classList.remove('list');
             self.saveLayout(0);
+            self.fixDetailsDivs(wrapper);
             /*self.resetDividers();*/
         });
     }
@@ -356,15 +358,23 @@ export class TvTime {
 
     fixDetailsDivs(wrapper) {
         const infosDivs = wrapper.querySelectorAll('.infos');
-        infosDivs.forEach(infosDiv => {
-            const watchLinksDid = infosDiv.querySelector('.watch-links');
-            if (watchLinksDid) {
-                const voteDiv = infosDiv.querySelector('.vote');
-                const extraWidth = watchLinksDid.getBoundingClientRect().width + 72 + (voteDiv ? 72 : 0);
+        const isListLayout = wrapper.classList.contains('list');
+        if (isListLayout) {
+            infosDivs.forEach(infosDiv => {
+                const watchLinksDid = infosDiv.querySelector('.watch-links');
+                if (watchLinksDid) {
+                    const voteDiv = infosDiv.querySelector('.vote');
+                    const extraWidth = watchLinksDid.getBoundingClientRect().width + 72 + (voteDiv ? 72 : 0);
+                    const detailsDiv = infosDiv.querySelector('.details');
+                    detailsDiv.style.width = 'calc(100% - ' + extraWidth + 'px)';
+                }
+            });
+        } else {
+            infosDivs.forEach(infosDiv => {
                 const detailsDiv = infosDiv.querySelector('.details');
-                detailsDiv.style.width = 'calc(100% - ' + extraWidth + 'px)';
-            }
-        });
+                detailsDiv.style.width = '100%';
+            });
+        }
     }
 
     resetReload(remainingSecondes) {
