@@ -234,6 +234,12 @@
     function ToggleScheduleForm(id) {
         const form = document.getElementById('schedule-form-' + id);
         const formBlock = form.parentElement;
-        formBlock.classList.toggle("show");
+        if (formBlock.classList.contains("show")) {
+            formBlock.style.height = '0';
+            formBlock.classList.remove("show");
+        } else {
+            formBlock.style.height = 32 + formBlock.scrollHeight + 'px';
+            formBlock.classList.add("show");
+        }
     }
 </script>

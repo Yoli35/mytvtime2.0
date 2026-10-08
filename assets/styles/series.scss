@@ -1877,7 +1877,7 @@ h2 {
             width: calc(100% + 2rem);
 
             &.show {
-                height: fit-content;
+                /*height: fit-content;*/
                 margin-block-end: 1rem;
                 padding: 1rem;
             }
