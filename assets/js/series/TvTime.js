@@ -425,7 +425,7 @@ export class TvTime {
         })
             .then(response => response.json())
             .then(data => {
-                /** @type {Array<{episode_id: number, content: {status: string, name?: string, runtime?: number|null}}>} */
+                /** @type {Array<{episode_id: number, content: {status: string, name?: string, overview?: string, runtime?: number|null}}>} */
                 const updates = data.updates;
                 console.log(updates);
                 let updatesCount = 0;
@@ -444,6 +444,10 @@ export class TvTime {
                             durationDiv.innerText = update.content.runtime ? '(' + update.content.runtime + ' minutes)' : '';
                             esnNameDiv.classList.add('updated');
                             esnNameDiv.setAttribute('data-title', update.content.name);
+                        }
+                        if (update.content.overview.length) {
+                            episodeCard.dataset.title = update.content.overview;
+                            episodeCard.dataset.titleWidth = "40ch";
                         }
                     }
                 });

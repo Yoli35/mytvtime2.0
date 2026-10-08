@@ -102,35 +102,23 @@ readonly class ApiEpisodeNameCheck
                 ];
                 continue;
             }
-            $episode = json_decode($this->tmdbService->getTvEpisode($seriesId, $seasonNumber, $episodeNumber, $locale, ['translations']), true);
+            $episode = json_decode($this->tmdbService->getTvEpisode($seriesId, $seasonNumber, $episodeNumber, $locale/*, ['translations']*/), true);
             $tmdbCalls++;
 
             if ($episode == null || isset($episode['error'])) {
                 $updates[] = [
                     'episode_id' => $episodeId,
-//                    'name' => sprintf('%s S%02dE%02d', $ep['name'], $seasonNumber, $episodeNumber),
-//                    'still' => null,
-//                    'poster' => $ep['poster_path'],
                     'content' => ['status' => 'error', 'reason' => '*** Episode not found ***'],
                 ];
                 continue;
             }
 
-            $translations = $episode['translations']['translations'];
-//            $translations = array_filter($translations, function ($translation) {
-//                return ($translation['iso_639_1'] == 'en' || $translation['iso_639_1'] == 'fr') && strlen($translation['data']['name']) > 0;
-//            });
-
             $updates[] = [
                 'episode_id' => $episodeId,
-//                'name' => sprintf('%s S%02dE%02d', $ep['name'], $seasonNumber, $episodeNumber),
-//                'still' => $episode['still_path'],
-//                'poster' => $ep['poster_path'],
                 'content' => [
                     'status' => 'success',
                     'name' => $episode['name'] . ($ep['esn'] ? ' - ' . $ep['esn'] : ''),
-                    'languages' => array_column($translations, 'iso_639_1'),
-                    'translations' => array_column($translations, 'data.name'),
+                    'overview' => $episode['overview'],
                     'runtime' => $episode['runtime'],
                 ],
             ];
@@ -141,7 +129,6 @@ readonly class ApiEpisodeNameCheck
                 break;
             }
         }
-        /*$this->seriesRepository->flush();*/
 
         return ($this->json)([
             'ok' => true,
