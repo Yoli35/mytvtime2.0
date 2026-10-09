@@ -20,6 +20,7 @@ readonly class TvTimeService
         private ImageConfiguration   $imageConfiguration,
         private ProviderService      $providerService,
         private SettingsRepository   $settingsRepository,
+        private TMDBService          $tmdbService
     )
     {
         $this->specialEpisodes = [
@@ -229,5 +230,11 @@ readonly class TvTimeService
             'week' => $settings['week'],
             'remainingSecondes' => $remainingSecondes,
         ];
+    }
+
+    public function setTvTimeShowCast(int $tmdbId, int $seasonNumber): array
+    {
+        $credits = json_decode($this->tmdbService->getTvSeasonCredits($tmdbId, $seasonNumber, 'en-US'), true);
+        return $credits['cast'];
     }
 }

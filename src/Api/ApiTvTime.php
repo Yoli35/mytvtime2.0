@@ -3,9 +3,7 @@
 namespace App\Api;
 
 use App\Entity\User;
-use App\Repository\UserSeriesRepository;
 use App\Service\ImageConfiguration;
-use App\Service\ProviderService;
 use App\Service\TvTimeService;
 use Closure;
 use Symfony\Bundle\FrameworkBundle\Controller\ControllerHelper;
@@ -14,6 +12,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\CurrentUser;
+use Symfony\Component\String\Slugger\AsciiSlugger;
 
 #[Route('/api/tv/time', name: 'api_tv_time_')]
 readonly class ApiTvTime
@@ -21,6 +20,7 @@ readonly class ApiTvTime
     public function __construct(
         #[AutowireMethodOf(ControllerHelper::class)]
         private Closure              $renderView,
+        private ImageConfiguration   $imageConfiguration,
         private TvTimeService        $tvTimeService,
     )
     {
@@ -85,6 +85,31 @@ readonly class ApiTvTime
         $this->tvTimeService->setTvTimeLayout($user, $layout);
 
         return new JsonResponse(['layout' => $layout]);
+    }
+
+    #[Route('/cast', name: 'cast', methods: ['POST'])]
+    public function cast(Request $request): JsonResponse
+    {
+        $inputBag = $request->getPayload();
+        $tmdbId = $inputBag->getInt('tmdbId');
+        $seasonNumber = $inputBag->getInt('seasonNumber');
+        $cast = $this->tvTimeService->setTvTimeShowCast($tmdbId, $seasonNumber);
+
+        $slugger = new AsciiSlugger();
+        $profileUrl = $this->imageConfiguration->getUrl('profile_sizes', 2);
+        $cast = array_map(function ($cast) use ($slugger, $profileUrl) {
+            $cast['profile_path'] = $cast['profile_path'] ? $profileUrl . $cast['profile_path'] : null; // w185
+            $cast['preferred_name'] = null;
+                $cast['slug'] = $slugger->slug($cast['name'])->lower()->toString();
+            if ($cast['slug'] == '') {
+                $cast['slug'] = 'person-' . $cast['id'];
+            }
+            return $cast;
+        }, $cast);
+        dump($cast);
+        $view = ($this->renderView)('_blocks/tv_time/_cast.html.twig', ['cast' => $cast]);
+        dump($view);
+        return new JsonResponse(['block' => $view]);
     }
 
     #[Route('/specials', name: 'specials', methods: ['POST'])]

@@ -817,6 +817,40 @@
     }
 }
 
+.series-tv-time:has(.tv-time-cast) {
+    .last-episode-votes {
+        bottom: 41.5rem;
+    }
+}
+
+.tv-time-cast {
+    backdrop-filter: blur(1rem);
+    background-color: hsl(from var(--yellow) h s l / 0.25);
+    border-radius: 2.5rem;
+    border: 4px solid hsl(from var(--ardoise-10) h s l / .25);
+    bottom: 8rem;
+    height: 0;
+    max-width: calc(100vw - 4rem);
+    opacity: 0;
+    overflow: hidden;
+    padding: 1rem;
+    position: fixed;
+    right: 2rem;
+    transition: height .5s ease-in-out, opacity .5s ease-in-out;
+
+    &.tv-time-cast-loaded {
+        height: 32.5rem;
+        opacity: 1;
+    }
+
+    .cast {
+        .wrapper {
+            padding-block-end: 0;
+            padding-inline: 0;
+        }
+    }
+}
+
 .last-episode-votes {
     backdrop-filter: blur(1rem);
     background-color: hsl(from var(--yellow) h s l / 0.25);
@@ -835,10 +869,11 @@
     transition: height .5s ease-in-out,
     border-width .5s ease-in-out 1.5s,
     border-radius .25s ease-in-out,
+    bottom .5s ease-in-out,
     padding .25s ease-in-out,
     width 1s ease-in-out .5s;
     transition-behavior: allow-discrete;
-    width: 31rem;
+    width: 35rem;
     z-index: 100;
 
     &:not(:has(.last-episode-vote)) {
@@ -862,7 +897,7 @@
 
         .content {
             display: flex;
-            width: 28rem;
+            width: 32rem;
 
             .poster {
                 aspect-ratio: 2 / 3;
@@ -929,7 +964,7 @@
                 gap: .25rem;
                 justify-content: center;
                 padding: 1rem;
-                width: 20rem;
+                width: 24rem;
 
                 .name {
                     /*display: flex;
@@ -1018,6 +1053,11 @@
                         border-radius: 5rem;
                         cursor: pointer;
                         padding: 0.25rem 1rem;
+                    }
+
+                    svg {
+                        height: 1.5rem;
+                        width: 1.5rem;
                     }
                 }
             }

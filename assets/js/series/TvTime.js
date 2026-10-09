@@ -193,7 +193,7 @@ export class TvTime {
                     setTimeout(() => {
                         if (contentDiv.isConnected && !contentDiv.classList.contains('folded')) {
                             contentDiv.removeAttribute('style');
-                            contentDiv.scrollIntoView({behavior: 'smooth'});
+                            contentDiv.scrollIntoView({behavior: 'smooth', block: 'center'});
                         }
                     }, 500);
                 }
@@ -492,6 +492,13 @@ export class TvTime {
     initVotes() {
         const lastEpisodeVoteDivs = document.querySelectorAll('.series-tv-time .last-episode-vote');
         lastEpisodeVoteDivs.forEach(div => {
+            const castButton = div.querySelector('.submit-vote button.button-cast');
+            castButton.addEventListener('click', (e) => {
+                e.preventDefault();
+                const id = castButton.dataset.id;
+                const season = castButton.dataset.season;
+                this.showCast(id, season);
+            });
             const yourVoteDiv = div.querySelector('.your-vote');
             const voteDiv = div.querySelector('.vote');
             const stars = voteDiv.querySelectorAll('.vote-star');
@@ -511,7 +518,7 @@ export class TvTime {
                     yourVoteDiv.textContent = voteValue.toString();
                 });
             });
-            const button = div.querySelector('.submit-vote button');
+            const button = div.querySelector('.submit-vote button.button-vote');
             button.addEventListener('click', (e) => {
                 e.preventDefault();
                 if (voteDiv.dataset.vote) {
@@ -519,6 +526,42 @@ export class TvTime {
                 }
             });
         });
+    }
+
+    showCast(id, seasonNumber) {
+        const tvTimeCastDiv = document.querySelector('.tv-time-cast');
+        if (tvTimeCastDiv) {
+            tvTimeCastDiv.style.opacity = 0;
+            tvTimeCastDiv.style.height = '0';
+            setTimeout(() => {
+                tvTimeCastDiv.remove();
+            }, 500);
+            return;
+        }
+        fetch('/api/tv/time/cast', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                tmdbId: id,
+                seasonNumber: seasonNumber,
+            })
+        })
+            .then((response) => response.json())
+            .then((data) => {
+                console.log(data);
+                const tempDiv = document.createElement('div');
+                tempDiv.innerHTML = data.block;
+                const tvTimeCastDiv = tempDiv.querySelector('.tv-time-cast');
+                const tvTimeContainer = document.querySelector('.series-tv-time');
+                const homeFooter = document.querySelector('.home-footer');
+                tvTimeContainer.insertBefore(tvTimeCastDiv, homeFooter);
+                tvTimeCastDiv.classList.add('tv-time-cast-loaded');
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+            });
     }
 
     addVote(id, vote, isLastEpisode) {

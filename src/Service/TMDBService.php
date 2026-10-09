@@ -118,6 +118,12 @@ readonly class TMDBService
         return $this->getResults($request);
     }
 
+    public function getTvSeasonCredits(int $tvId, int $seasonNumber, string $locale): ?string
+    {
+        $request = "https://api.themoviedb.org/3/tv/$tvId/season/$seasonNumber/credits?language=$locale";
+        return $this->getResults($request);
+    }
+
     public function getTvSeasonChanges(int $seasonId, string $endDate, string $startDate): ?string
     {
         $request = "https://api.themoviedb.org/3/tv/season/$seasonId/changes?end_date=$endDate&page=1&start_date=$startDate";

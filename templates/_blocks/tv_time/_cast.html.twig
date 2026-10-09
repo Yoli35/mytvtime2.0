@@ -1,0 +1,9 @@
+<div class="tv-time-cast">
+    <div class="cast">
+        <div class="wrapper">
+            {% for people in cast %}
+                {{ include('_blocks/series/_cast.html.twig', {people: people, role: people.character}) }}
+            {% endfor %}
+        </div>
+    </div>
+</div>
