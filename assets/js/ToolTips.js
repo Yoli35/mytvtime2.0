@@ -80,13 +80,19 @@ export class ToolTips {
             self.hide();
             return;
         }
-        const text = currentTarget.getAttribute("data-title");
-        const titleBg = currentTarget.getAttribute("data-title-bg");
-        const titleWidth = currentTarget.getAttribute("data-title-width");
+        const text = currentTarget.dataset.title;
+        const titleBg = currentTarget.dataset.titleBg;
+        const titleWidth = currentTarget.dataset.titleWidth;
         const img = currentTarget.querySelector("img");
         const body = this.bodyElement;
         const tail = this.tailElement;
-        body.style.width = titleWidth ? titleWidth : '';
+        if (titleWidth) {
+            body.style.width = titleWidth;
+            body.style.textAlign = "left";
+        } else {
+            body.style.width = "fit-content";
+            body.style.textAlign = "center";
+        }
         if (!img || !previewImage) {
             body.innerHTML = text;
         } else {
