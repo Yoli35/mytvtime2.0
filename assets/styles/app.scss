@@ -2881,11 +2881,11 @@ section:has(.pages) {
         border-radius: .25em;
         color: var(--ardoise-10);
         font-size: clamp(1rem, 1.5dvw, 2rem);
-        line-height: 1.1em;
+        line-height: 1.2;
         max-width: 100dvw;
         overflow-y: auto;
         text-align: center;
-        text-wrap: balance;
+        text-wrap: pretty;
         padding: .5em 1em;
         width: fit-content;
         z-index: 2;

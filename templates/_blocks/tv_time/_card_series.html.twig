@@ -56,9 +56,9 @@
                         {% if series.remainingDays>1 %}
                             <span>{{ 'In'|trans }} {{ series.remainingDays }} {{ 'days'|trans }}</span>
                         {% elseif series.remainingDays == 1 %}
-                            <span class="green">{{ 'Tomorrow'|trans }}</span>
+                            <span class="green">{{ 'Tomorrow'|trans }}</span>{% if series.air_at %} - {{ series.air_at|date('H:i') }}{% endif %}
                         {% else %}
-                            <span class="green">{{ 'Today'|trans }}</span>
+                            <span class="green">{{ 'Today'|trans }}</span>{% if series.air_at %} - {{ series.air_at|date('H:i') }}{% endif %}
                         {% endif %}
                     {% endif %}
                 </div>
