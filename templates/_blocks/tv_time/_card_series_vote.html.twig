@@ -37,7 +37,7 @@
                         {% endfor %}
                     </div>
                     <div class="submit-vote">
-                        <button type="button" class="button-cast btn" data-id="{{ series.tmdb_id }}" data-season="{{ series.episode_season }}" data-title="{{ 'tv-time.show-cast'|trans }}">{{ ux_icon('mdi:user-outline') }}</button>
+                        <button type="button" class="button-cast btn" data-id="{{ series.tmdb_id }}" data-season="{{ series.episode_season }}" data-title="{{ 'tv-time.show-cast'|trans }}">{{ ux_icon('mdi:people-outline') }}</button>
                         <a class="btn"
                            href="{{ path('app_tv_episode', {'id': series.id, slug: series.name|slug, seasonNumber: series.episode_season, episodeNumber: series.episode_number}) }}"
                            target="_blank"

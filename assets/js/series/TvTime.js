@@ -497,7 +497,8 @@ export class TvTime {
                 e.preventDefault();
                 const id = castButton.dataset.id;
                 const season = castButton.dataset.season;
-                this.showCast(id, season);
+                const episodeId = div.dataset.id;
+                this.showCast(id, season, episodeId);
             });
             const yourVoteDiv = div.querySelector('.your-vote');
             const voteDiv = div.querySelector('.vote');
@@ -528,9 +529,9 @@ export class TvTime {
         });
     }
 
-    showCast(id, seasonNumber) {
+    showCast(id, seasonNumber, episodeId) {
         const tvTimeCastDiv = document.querySelector('.tv-time-cast');
-        if (tvTimeCastDiv) {
+        if (tvTimeCastDiv && tvTimeCastDiv.dataset.episodeId === episodeId) {
             tvTimeCastDiv.style.opacity = 0;
             tvTimeCastDiv.style.height = '0';
             setTimeout(() => {
@@ -546,6 +547,7 @@ export class TvTime {
             body: JSON.stringify({
                 tmdbId: id,
                 seasonNumber: seasonNumber,
+                episodeId: episodeId
             })
         })
             .then((response) => response.json())
@@ -606,6 +608,7 @@ export class TvTime {
                         console.log('Vote for a finale!')
                     });
                 }
+                self.dismissCast(id);
                 const voteDiv = document.querySelector('.last-episode-vote[data-id="' + id + '"]');
                 voteDiv.classList.add('closing');
                 setTimeout(() => {
@@ -615,6 +618,17 @@ export class TvTime {
             .catch((error) => {
                 console.error('Error:', error);
             });
+    }
+
+    dismissCast(episodeId) {
+        const tvTimeCastDiv = document.querySelector('.tv-time-cast[data-episode-id="' + episodeId + '"]');
+        if (tvTimeCastDiv) {
+            tvTimeCastDiv.style.opacity = 0;
+            tvTimeCastDiv.style.height = '0';
+            setTimeout(() => {
+                tvTimeCastDiv.remove();
+            }, 500);
+        }
     }
 
     saveLayout(layout) {

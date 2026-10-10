@@ -93,6 +93,7 @@ readonly class ApiTvTime
         $inputBag = $request->getPayload();
         $tmdbId = $inputBag->getInt('tmdbId');
         $seasonNumber = $inputBag->getInt('seasonNumber');
+        $episodeId = $inputBag->getInt('episodeId');
         $cast = $this->tvTimeService->setTvTimeShowCast($tmdbId, $seasonNumber);
 
         $slugger = new AsciiSlugger();
@@ -106,9 +107,7 @@ readonly class ApiTvTime
             }
             return $cast;
         }, $cast);
-        dump($cast);
-        $view = ($this->renderView)('_blocks/tv_time/_cast.html.twig', ['cast' => $cast]);
-        dump($view);
+        $view = ($this->renderView)('_blocks/tv_time/_cast.html.twig', ['cast' => $cast, 'episodeId' => $episodeId]);
         return new JsonResponse(['block' => $view]);
     }
 
