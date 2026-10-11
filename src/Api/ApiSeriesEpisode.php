@@ -197,22 +197,33 @@ readonly class ApiSeriesEpisode
         }
         $this->userEpisodeRepository->save($userEpisode, true);
 
-        if ($seasonNumber) {
-            $userSeries->setLastWatchAt($now);
-            $userSeries->setLastEpisode($episodeNumber);
-            $userSeries->setLastSeason($seasonNumber);
-            $userSeries->setLastUserEpisode($userEpisode);
+        $userSeries->setLastWatchAt($now);
+        $userSeries->setLastEpisode($episodeNumber);
+        $userSeries->setLastSeason($seasonNumber);
+        $userSeries->setLastUserEpisode($userEpisode);
+
+        if ($seasonNumber > 0) {
             $nextUserEpisode = array_find($userSeriesEpisodes, function ($ue) use ($seasonNumber) {
                 return ($ue->getSeasonNumber() >= $seasonNumber && $ue->getWatchAt() == null);
             });
+            // Si tous les épisodes ont été vus, on passe aux épisodes spéciaux
+            if ($nextUserEpisode == null) {
+               $nextUserEpisode = array_find($userSeriesEpisodes, function ($ue) use ($seasonNumber) {
+                   return ($ue->getSeasonNumber() == 0 && $ue->getWatchAt() == null);
+               });
+            }
             $userSeries->setNextUserEpisode($nextUserEpisode);
 
             if (!$new) {
                 $userSeries->setViewedEpisodes($userSeries->getViewedEpisodes() + 1);
                 $userSeries->setProgress(round(100 * $userSeries->getViewedEpisodes() / $series->getNumberOfEpisode(), 2));
             }
-            $this->userSeriesRepository->save($userSeries, true);
+        } else {
+            $userSeries->setNextUserEpisode(array_find($userSeriesEpisodes, function ($ue) use ($seasonNumber) {
+                return ($ue->getSeasonNumber() == 0 && $ue->getWatchAt() == null);
+            }));
         }
+        $this->userSeriesRepository->save($userSeries, true);
 
         if ($isTvTimePage) {
             return ($this->json)([
