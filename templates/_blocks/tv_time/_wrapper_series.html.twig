@@ -20,6 +20,14 @@
             {% endfor %}
         </div>
     {% endif %}
+    {% if seriesEnded|length %}
+        <div class="divider" data-content="ended"><span>{{ 'Ended'|trans }} ({{ seriesEnded|length }}/{{ seriesEndedCount }})</span></div>
+        <div class="content">
+            {% for series in seriesEnded %}
+                {{ include('_blocks/tv_time/_card_series_ended.html.twig') }}
+            {% endfor %}
+        </div>
+    {% endif %}
     {% if upToDateInAWhileCount %}
         <div class="divider" data-content="not-watched-in-a-while"><span>{{ 'Not watched in a while'|trans }} ({{ upToDateInAWhile|length }}/{{ upToDateInAWhileCount }})</span></div>
         <div class="content">

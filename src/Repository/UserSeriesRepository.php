@@ -1264,6 +1264,44 @@ class UserSeriesRepository extends ServiceEntityRepository
         return $this->getAll($sql, ['locale' => $locale], ['locale' => ParameterType::STRING]);
     }
 
+    public function seriesEnded(int $userId, string  $locale, int $offset = 0, int $limit = 20): array
+    {
+        $sql = <<<SQL
+              -- Séries terminées
+              SELECT
+                    s.id                         AS id,
+                    IFNULL(sln.`name`, s.`name`) AS name,
+                    s.`poster_path`              AS poster_path,
+                    YEAR(s.first_air_date)       AS year,
+                    ue.episode_number            AS special_number
+              FROM user_series us
+                    LEFT JOIN user_episode ue ON ue.id=us.next_user_episode_id
+                    LEFT JOIN `series` s ON s.`id` = us.`series_id`
+                    LEFT JOIN `series_localized_name` sln ON sln.`series_id`=s.`id` AND sln.`locale`=:locale
+                WHERE us.user_id=:userId
+                    AND (us.next_user_episode_id IS NULL OR ue.season_number=0)
+                ORDER BY us.last_watch_at DESC
+                LIMIT :offset, :limit;
+            SQL;
+
+        return $this->getAll($sql,
+            ['userId' => $userId, 'locale' => $locale, 'offset' => $offset, 'limit' => $limit],
+            ['userId' => ParameterType::INTEGER, 'locale' => ParameterType::STRING, 'offset' => ParameterType::INTEGER, 'limit' => ParameterType::INTEGER]);
+    }
+
+    public function countSeriesEnded(int $userId): int
+    {
+        $sql = <<<SQL
+              -- Décompte des séries terminées
+              SELECT COUNT(us.id)
+              FROM user_series us
+                    LEFT JOIN user_episode ue ON ue.id=us.next_user_episode_id
+                WHERE us.user_id=:userId
+                    AND (us.next_user_episode_id IS NULL OR ue.season_number=0);
+            SQL;
+        return $this->getOne($sql, ['userId' => $userId], ['userId' => Types::INTEGER]);
+    }
+
     /**********************************************************************************/
     /* Nombre de minutes avant (t<0) ou après (t>0) la diffusion des épisodes du jour */
     /**********************************************************************************/

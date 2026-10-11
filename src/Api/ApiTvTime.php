@@ -51,6 +51,8 @@ readonly class ApiTvTime
                 'seriesUpToDate' => $data['series']['upToDate'],
                 'upToDateInAWhile' => $data['series']['upToDateInAWhile'],
                 'upToDateInAWhileCount' => $data['series']['upToDateInAWhileCount'],
+                'seriesEnded' => $data['series']['seriesEnded'],
+                'seriesEndedCount' => $data['series']['seriesEndedCount'],
                 'watchLinks' => $data['series']['watchLinks'],
                 'list' => $data['list'],
                 'loadCount' => $data['loadCount'],

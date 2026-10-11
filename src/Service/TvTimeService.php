@@ -172,12 +172,18 @@ readonly class TvTimeService
             }, $this->userSeriesRepository->findUpToDateSeriesWithNoVote($seriesUpToDateIds, $locale));
             $tmdbIds = array_unique(array_merge(array_column($seriesAvailable, 'tmdb_id'), array_column($seriesUpToDate, 'tmdb_id'), array_column($seriesUpToDateInAWhile, 'tmdb_id')));
             $lastWatchedSeriesId = $this->userSeriesRepository->getLastWatchedSeries($user);
+
+            $seriesEnded = $this->userSeriesRepository->seriesEnded($user->getId(), $locale);
+            $seriesEndedCount = $this->userSeriesRepository->countSeriesEnded($user->getId());
+
             $series = [
                 'available' => $seriesAvailable,
                 'specialEpisodes' => $specialEpisodes,
                 'upToDate' => $seriesUpToDate,
                 'upToDateInAWhile' => $seriesUpToDateInAWhile,
                 'upToDateInAWhileCount' => $seriesUpToDateInAWhileCount,
+                'seriesEnded' => $seriesEnded,
+                'seriesEndedCount' => $seriesEndedCount,
                 'watchLinks' => $watchLinks,
                 'tmdbIds' => $tmdbIds,
                 /*'episodesAvailable' => $episodesAvailable,*/

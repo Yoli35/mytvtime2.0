@@ -1,0 +1,36 @@
+<div class="card{% if series.special_number==1 %} premiere{% endif %}">
+    <a href="{{ path('app_tv_series', { 'id': series.id, slug: series.name|slug}) }}" target="_blank">
+        <div class="poster">
+            {% if series.poster_path %}
+                <img src="/series/posters{{ series.poster_path }}" alt="{{ series.name }}">
+            {% else %}
+                <div>{{ 'No poster'|trans }}</div>
+            {% endif %}
+        </div>
+    </a>
+    {% if series.special_number %}
+        {% set url = path('app_tv_episode', { 'id': series.id, slug: series.name|slug, seasonNumber: 0, episodeNumber: series.special_number}) %}
+    {% else %}
+        {% set url = path('app_tv_series', { 'id': series.id, slug: series.name|slug}) %}
+    {% endif %}
+    <a href="{{ url }}" target="_blank">
+        <div class="infos">
+            <div class="details">
+                <div class="name">{{ series.name }} <span>{{ series.year }}</span></div>
+                {% if series.special_number %}
+                    <div class="number">
+                        {{ 'Special'|trans }} #{{ series.special_number }}
+                    </div>
+                {% endif %}
+            </div>
+            {% set wps = watchLinks|filter((wp) => wp.seriesId == series.id and (wp.seasonNumber == -1 or wp.seasonNumber == series.season_number)) %}
+            <div class="watch-links">
+                {% for wp in wps %}
+                    <div class="watch-link" data-title="{{ wp.dataTitle }}" data-link="{{ wp.link }}">
+                        <img src="{{ wp.providerLogoPath }}" alt="{{ wp.providerName }}">
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </a>
+</div>
