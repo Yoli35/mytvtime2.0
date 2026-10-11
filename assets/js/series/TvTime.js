@@ -532,11 +532,7 @@ export class TvTime {
     showCast(id, seasonNumber, episodeId) {
         const tvTimeCastDiv = document.querySelector('.tv-time-cast');
         if (tvTimeCastDiv && tvTimeCastDiv.dataset.episodeId === episodeId) {
-            tvTimeCastDiv.style.opacity = 0;
-            tvTimeCastDiv.style.height = '0';
-            setTimeout(() => {
-                tvTimeCastDiv.remove();
-            }, 500);
+            self.dismissCast(episodeId);
             return;
         }
         fetch('/api/tv/time/cast', {
@@ -559,7 +555,7 @@ export class TvTime {
                 const tvTimeContainer = document.querySelector('.series-tv-time');
                 const homeFooter = document.querySelector('.home-footer');
                 tvTimeContainer.insertBefore(tvTimeCastDiv, homeFooter);
-                tvTimeCastDiv.classList.add('tv-time-cast-loaded');
+                setTimeout(()=>tvTimeCastDiv.classList.add('tv-time-cast-loaded'), 0);
             })
             .catch((error) => {
                 console.error('Error:', error);
@@ -623,8 +619,9 @@ export class TvTime {
     dismissCast(episodeId) {
         const tvTimeCastDiv = document.querySelector('.tv-time-cast[data-episode-id="' + episodeId + '"]');
         if (tvTimeCastDiv) {
-            tvTimeCastDiv.style.opacity = 0;
-            tvTimeCastDiv.style.height = '0';
+            /*tvTimeCastDiv.style.opacity = 0;
+            tvTimeCastDiv.style.height = '0';*/
+            tvTimeCastDiv.classList.remove('tv-time-cast-loaded');
             setTimeout(() => {
                 tvTimeCastDiv.remove();
             }, 500);
