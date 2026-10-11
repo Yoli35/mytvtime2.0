@@ -8,5 +8,13 @@
                 <div>{{ 'No picture'|trans }}</div>
             {% endif %}
         </div>
+        <div class="infos{% if isCrew %} crew{% endif %}">
+            {% if cast.name %}
+                <div>{{ cast.name }}</div>
+            {% endif %}
+            {% if job %}
+                <div>{{ job }}</div>
+            {% endif %}
+        </div>
     </a>
 </div>

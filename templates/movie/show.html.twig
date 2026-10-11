@@ -231,7 +231,7 @@
                                 <div class="label">{{ 'Cast'|trans }}</div>
                                 <div class="wrapper">
                                     {% for cast in movie.credits.cast %}
-                                        {{ include('_blocks/movie/_cast.html.twig', {cast: cast, job: cast.character}) }}
+                                        {{ include('_blocks/movie/_cast.html.twig', {cast: cast, job: cast.character, isCrew: 0}) }}
                                     {% endfor %}
                                 </div>
                             </div>
@@ -241,7 +241,7 @@
                                 <div class="label">{{ 'Crew'|trans }}</div>
                                 <div class="wrapper">
                                     {% for crew in movie.credits.crew %}
-                                        {{ include('_blocks/movie/_cast.html.twig', {cast: crew, job: crew.job}) }}
+                                        {{ include('_blocks/movie/_cast.html.twig', {cast: crew, job: crew.job, isCrew: 1}) }}
                                     {% endfor %}
                                 </div>
                             </div>
@@ -270,7 +270,7 @@
                                     <div class="notes">
                                         <div class="label">{{ 'Note'|trans }}</div>
                                         <div class="content">
-                                            <div class="note">{{ 'Average'|trans }} {{ movie.vote_average }}</div>
+                                            <div class="note">{{ 'Average'|trans }} {{ movie.vote_average|round(1) }}</div>
                                             <div class="note">{{ 'Count'|trans }} {{ movie.vote_count }}</div>
                                         </div>
                                     </div>

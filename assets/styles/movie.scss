@@ -612,19 +612,23 @@
                     width: 100%;
 
                     .item {
+                        border: .25rem solid hsl(from var(--ardoise-20) h s l / .25);
+                        border-radius: .75rem;
+
                         .poster {
-                            align-items: center;
                             aspect-ratio: 2 / 3;
                             background-color: hsla(from var(--green-70) h s l / .5);
-                            border: .25rem solid hsl(from var(--ardoise-20) h s l / .25);
-                            border-radius: .75rem;
-                            display: flex;
-                            height: 21rem;
                             justify-content: center;
                             position: relative;
-                            transition: transform .25s ease-in-out, border-color .25s ease-in-out;
-                            transition-behavior: allow-discrete;
-                            z-index: 1;
+                            transition: height .25s ease-in-out, width .25s ease-in-out;
+                            width: 18rem;
+
+                            &:not(:has(img)) {
+                                align-items: center;
+                                background-color: hsla(from var(--ardoise-70) h s l / .5);
+                                border-radius: .5rem;
+                                display: flex;
+                            }
 
                             img {
                                 border-radius: .5rem;
@@ -633,30 +637,28 @@
                                 width: 100%;
                             }
                         }
-                    }
 
-                    .item:hover {
-                        .poster {
-                            border-color: hsl(from var(--orange) h s l / .5);
-                            transform: scale(1.1);
-                            z-index: 3;
+                        .infos {
+                            align-items: center;
+                            background-color: hsla(from var(--ardoise-70) h s l / .5);
+                            display: flex;
+                            flex-direction: column;
+                            font-size: 1.5rem;
+                            gap: .5rem;
+                            height: 6rem;
+                            justify-content: center;
+                            line-height: 1.1;
+                            text-align: center;
+                            transition: height .25s ease-in-out, width .25s ease-in-out;
+                            width: 18rem;
 
-                            @starting-style {
-                                z-index: 2;
+                            &.crew {
+                                height: 8rem;
                             }
                         }
-                    }
 
-                    .item:has(+ .item:hover),
-                    .item:hover + .item {
-                        .poster {
-                            border-color: hsl(from var(--ardoise-20) h s l / .5);
-                            transform: scale(1.04);
-                            z-index: 2;
-
-                            @starting-style {
-                                z-index: 1;
-                            }
+                        &:hover {
+                            border-color: hsl(from var(--orange) h s l / .5);
                         }
                     }
                 }
@@ -1098,16 +1100,12 @@
 
             label {
                 select {
-                    appearance: none;
+                    /*appearance: none;*/
                     background-color: var(--orange-40);
                     border: 1px solid var(--orange-70);
                     border-radius: 25rem;
                     color: var(--ardoise-10);
                     padding-block: 0.5rem;
-                }
-
-                &:has(select)::after {
-                    top: 32%;
                 }
             }
         }
@@ -1335,24 +1333,87 @@
     .movie-show {
         main {
             .details {
+            }
 
-                .movie-details {
-                    align-items: flex-start;
-                    flex-direction: column;
-                    justify-content: center;
+            .movie-details {
+                align-items: flex-start;
+                flex-direction: column;
+                justify-content: center;
 
-                    .left, .right {
-                        width: 100%;
+                .left, .right {
+                    width: 100%;
+                }
+
+                .recommendations, .cast, .crew {
+                    .wrapper {
+                        .item {
+                            .poster {
+                                width: 12rem;
+                            }
+
+                            .infos {
+                                font-size: 1.25rem;
+                                gap: .25rem;
+                                height: 4rem;
+                                width: 12rem;
+
+                                &.crew {
+                                    height: 6rem;
+                                }
+                            }
+                        }
                     }
                 }
             }
+
         }
     }
 }
 
-@media (width < 1024px) {
+@media (width <= 64rem) {
+    .movie-index {
+        main {
+            .card {
+                .poster {
+                    .viewed {
+                        font-size: .875rem;
+                        height: 1.75rem;
+                    }
+                }
+
+                .infos {
+                    font-size: .875rem;
+                    width: 100%;
+                }
+            }
+        }
+    }
+
     .movie-show {
         main {
+            .movie-details {
+                .recommendations, .cast, .crew {
+                    .wrapper {
+                        .item {
+                            .poster {
+                                width: 8rem;
+                            }
+
+                            .infos {
+                                font-size: 1rem;
+                                gap: 0;
+                                height: 3rem;
+                                width: 8rem;
+
+                                &.crew {
+                                    height: 4rem;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
             .movie-collection {
                 .collection {
                     align-items: center;
@@ -1393,26 +1454,6 @@
                             width: unset;
                         }
                     }
-                }
-            }
-        }
-    }
-}
-
-@media (width <= 64rem) {
-    .movie-index {
-        main {
-            .card {
-                .poster {
-                    .viewed {
-                        font-size: .875rem;
-                        height: 1.75rem;
-                    }
-                }
-
-                .infos {
-                    font-size: .875rem;
-                    width: 100%;
                 }
             }
         }
