@@ -1,0 +1,21 @@
+{% if inProgress.ok %}
+    <div class="separation" id="menu-main-series-in-progress">{{ 'Series in progress'|trans }} - {% if inProgress.nextEpisode %}{{ 'Next episode'|trans }}{% else %}🎉 {{ 'That\'s all!'|trans }} 🎉{% endif %}</div>
+    <div class="a-preview">
+        <a href="{{ path('app_tv_season', {id: inProgress.id, slug: inProgress.name|slug, seasonNumber: inProgress.seasonNumber}) }}"
+           id="sip-menu-item-{{ inProgress.id }}"
+           data-episode-count="{{ inProgress.episodeCount }}"
+           data-first-episode-number="1">
+            <div class="episode-progress" style="right: {{ 100 - inProgress.progress }}%;"></div>
+            {{ inProgress.name }}{% if inProgress.nextEpisode %} {{ 'S%02dE%02d'|format(inProgress.seasonNumber, inProgress.nextEpisode) }}{% endif %}
+        </a>
+        <div id="sip-preview-{{ inProgress.id }}" class="episode-of-the-day-preview">
+            <a href="{{ path('app_tv_season', {id: inProgress.id, slug: inProgress.name|slug, seasonNumber: inProgress.seasonNumber}) }}">
+                {% if inProgress.posterPath %}
+                    <img src="{{ inProgress.posterPath }}" alt="{{ inProgress.name }}">
+                {% else %}
+                    {{ inProgress.name }}
+                {% endif %}
+            </a>
+        </div>
+    </div>
+{% endif %}

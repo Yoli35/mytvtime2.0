@@ -445,7 +445,7 @@ export class Menu {
         const seriesInProgress = document.querySelector("a[id^='sip-menu-item-']");
         // On ajoute seriesInProgress aux pinnedMenuItems dans un nouveau tableau
         const arr = Array.from(pinnedMenuItems);
-        arr.push(seriesInProgress);
+        if (seriesInProgress) arr.push(seriesInProgress);
 
         arr.forEach((item) => {
             const id = item.id.split("-")[3];
@@ -533,6 +533,8 @@ export class Menu {
         const seriesId = episodePage?.getAttribute("data-series-id") || seasonPage?.getAttribute("data-series-id") || "-1";
         const episodeId = episodePage?.getAttribute("data-episode-id") || "-1";
         const apiUrl = '/api/main/menu/update';
+        const pinnedSeriesBlockExists = document.querySelector("#menu-main-pinned-series");
+        const seriesInProgressBlockExists = document.querySelector("#menu-main-series-in-progress");
         const options = {
             method: 'POST',
             headers: {
@@ -542,7 +544,9 @@ export class Menu {
                 locale: locale,
                 lastViewedEpisodeId: localStorage.getItem("schedule_range_updated") ? -1 : lastEpisodeId,
                 seriesId: seriesId,
-                episodeId: episodeId
+                episodeId: episodeId,
+                pinnedSeriesBlockExists: pinnedSeriesBlockExists ? 1 : 0,
+                seriesInProgressBlockExists: seriesInProgressBlockExists ? 1 : 0,
             }),
         };
 
@@ -551,13 +555,34 @@ export class Menu {
             .then(res => {
                 localStorage.removeItem("schedule_range_updated");
                 if (res['update'] === false) return;
-                const scheduleMenuDiv = document.querySelector(".schedule-menu");
-                const block = res['block'];
+                const mainMenu = document.querySelector("nav .main.menu");
+                const scheduleMenuDiv = document.querySelector("nav .schedule-menu");
+                const block = res['blockInterval'];
                 const blockDiv = document.createElement('div');
                 blockDiv.innerHTML = block;
                 const newScheduleMenuDiv = blockDiv.querySelector(".schedule-menu");
                 scheduleMenuDiv.replaceWith(newScheduleMenuDiv);
-                self.tooltips.init(document.querySelector(".schedule-menu"));
+                if (!seriesInProgressBlockExists) {
+                    const blockInProgress = res['blockInProgress'];
+                    const blockDiv = document.createElement('div');
+                    blockDiv.innerHTML = blockInProgress;
+                    const separatorDiv = blockDiv.querySelector(".separation");
+                    const newBlock = blockDiv.querySelector(".a-preview");
+                    mainMenu.appendChild(separatorDiv);
+                    mainMenu.appendChild(newBlock);
+                }
+                if (!pinnedSeriesBlockExists) {
+                    const blockPinned = res['blockPinned'];
+                    const blockDiv = document.createElement('div');
+                    blockDiv.innerHTML = blockPinned;
+                    const separatorDiv = blockDiv.querySelector(".separation");
+                    const newBlocks = blockDiv.querySelectorAll(".a-preview");
+                    mainMenu.appendChild(separatorDiv);
+                    newBlocks.forEach(newBlock => {
+                        mainMenu.appendChild(newBlock);
+                    });
+                }
+                self.tooltips.init(document.querySelector(".main-menu"));
                 self.posterPreview();
             })
             .catch(err => {

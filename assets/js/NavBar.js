@@ -15,25 +15,6 @@ export class NavBar {
 
     init() {
         const navbar = document.querySelector(".navbar");
-        // const navBarBounds = navbar.getBoundingClientRect();
-        // const body = document.querySelector("body");
-        // this.debugDiv = document.createElement("div");
-        // this.debugDiv.classList.add("debug");
-        // body.appendChild(this.debugDiv);
-
-        // this.setOpacity();
-        // window.addEventListener("scroll", this.setOpacity);
-        // window.addEventListener("resize", this.setOpacity);
-        /*window.addEventListener("mousemove", (e) => {
-            const distance = e.clientY - (navBarBounds.top + navBarBounds.height);
-            // Si distance > 200 → opacity = 0
-            if (distance > 200) {
-                this.root.style.setProperty("--navbar-opacity", "0");
-            } else {
-                const opacity = 1 - distance / 200;
-                this.root.style.setProperty("--navbar-opacity", opacity.toString());
-            }
-        });*/
         const multiSearchDiv = navbar.querySelector('.multi-search.dev');
         if (multiSearchDiv) {
             const labels = {

@@ -1,8 +1,3 @@
-{% set interval = data.interval %}
-{% set startDay = data.startDay %}
-{% set endDay = data.endDay %}
-{% set seriesId = data.seriesId %}
-{% set episodeId = data.episodeId %}
 {% set current = 0 %}
 <div class="schedule-menu" data-id="{{ interval.lastViewedEpisodeId }}">
     {% for relativeDay in  startDay..endDay %}
@@ -10,7 +5,7 @@
         {% set l = eotdList.totalEpisodeCount %}
         {% if l %}
             <div class="separation  {% if relativeDay == 0 %} today{% endif %}">
-                <div class="relative-date">{{ relativeDayStrings(relativeDay) }} ({{ l }} {{ (l > 1 ? 'episodes':'episode')|trans }})</div>
+                <div class="relative-date">{{ relativeDays[relativeDay] }} ({{ l }} {{ (l > 1 ? 'episodes':'episode')|trans }})</div>
                 {% if relativeDay <= 0 %}
                     <div class="complete-list">
                         {% for eotd in eotdList.results %}
