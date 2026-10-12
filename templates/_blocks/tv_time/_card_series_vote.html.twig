@@ -30,7 +30,7 @@
                     {% endif %}
                     <div class="vote">
                         {% for vote in 1..12 %}
-                            <div class="vote-star" data-vote="{{ vote }}" data-title="{{ vote }}">
+                            <div class="vote-star" data-vote="{{ vote }}" data-title="{{ vote }}" style="--vote-star-transition-delay: {{ 100 * loop.index0 }}ms;">
                                 {{ ux_icon('mdi:star-outline', {'data-status': 'off'}) }}
                                 {{ ux_icon('mdi:star', {'data-status': 'on'}) }}
                             </div>

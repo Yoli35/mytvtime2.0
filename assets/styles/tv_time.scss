@@ -1005,7 +1005,17 @@
                     width: 100%;
 
                     .vote-star {
+                        --vote-star-transition-delay: 0ms;
+
+                        color: var(--orange-90);
                         cursor: pointer;
+                        transition: color 300ms ease-in-out var(--vote-star-transition-delay), transform 300ms ease-in-out var(--vote-star-transition-delay);
+
+                        &.rotated {
+                            color: var(--green) !important;
+                            transform: rotate(180deg);
+                            transition: color 300ms ease-in-out var(--vote-star-transition-delay), transform 300ms ease-in-out var(--vote-star-transition-delay);
+                        }
 
                         svg[data-status="off"] {
                             display: block;

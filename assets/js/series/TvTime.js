@@ -40,7 +40,7 @@ export class TvTime {
         this.initComponents();
         if (this.tab === 0) {
             self.fixDetailsDivs(document.querySelector('main .series-tab .wrapper'));
-            this.getEpisodeNames();
+            /*this.getEpisodeNames();*/
         }
 
         document.addEventListener("visibilitychange", () => {
@@ -524,6 +524,15 @@ export class TvTime {
                 e.preventDefault();
                 if (voteDiv.dataset.vote) {
                     this.addVote(button.dataset.id, parseInt(voteDiv.dataset.vote), parseInt(button.dataset.isLastEpisode));
+                } else {
+                    stars.forEach((starDiv) => {
+                        starDiv.classList.add('rotated');
+                    });
+                    setTimeout(() => {
+                        stars.forEach((starDiv) => {
+                            starDiv.classList.remove('rotated');
+                        });
+                    }, 1400);
                 }
             });
         });
