@@ -89,16 +89,19 @@
         }
 
         .infos {
-            background-color: hsl(from var(--orange-10) h s l / .5);
             border-radius: 2rem;
             display: flex;
             flex-direction: column;
             gap: 1rem;
-            height: 24dvh;
             justify-content: center;
             margin-inline: auto;
             padding: 1rem;
             z-index: 1;
+
+            &:hover {
+                backdrop-filter: blur(4rem);
+                background-color: hsl(from var(--orange-10) h s l / .5);
+            }
 
             .details {
                 display: flex;
