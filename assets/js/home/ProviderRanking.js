@@ -1,4 +1,5 @@
 let self;
+const THROTTLE_DELAY = 500;
 
 export class ProviderRanking {
     constructor() {
@@ -11,53 +12,59 @@ export class ProviderRanking {
 
     init() {
         this.initDoubleRange();
-        this.sliderMonth.addEventListener('input', this.handleSliderChangeMonth.bind(this));
-        this.sliderEvo.addEventListener('input', this.handleSliderChangeEvo.bind(this));
-        this.updateFill(this.sliderMonth);
-        this.updateFill(this.sliderEvo);
+        this.initSlider(this.sliderMonth, 'month');
+        this.initSlider(this.sliderEvo, 'evo');
     }
 
-    handleSliderChangeEvo() {
-        this.updateFill(this.sliderEvo);
-        console.log('Slider Evo value changed:', this.sliderEvo.value);
+    initSlider(slider, type) {
+        // Pendant le déplacement du curseur : au plus un appel à l'API toutes les THROTTLE_DELAY ms,
+        // puis un dernier appel immédiat au relâchement ('change') avec la valeur finale.
+        const state = {timer: null, lastValue: slider.value, controller: null};
+
+        slider.addEventListener('input', () => {
+            this.updateFill(slider);
+            if (state.timer) return;
+            state.timer = setTimeout(() => {
+                state.timer = null;
+                this.fetchRanking(slider, type, state);
+            }, THROTTLE_DELAY);
+        });
+        slider.addEventListener('change', () => {
+            clearTimeout(state.timer);
+            state.timer = null;
+            this.fetchRanking(slider, type, state);
+        });
+        this.updateFill(slider);
+    }
+
+    fetchRanking(slider, type, state) {
+        if (slider.value === state.lastValue) return;
+        state.lastValue = slider.value;
+
+        // Une réponse plus ancienne ne doit pas écraser une plus récente
+        state.controller?.abort();
+        state.controller = new AbortController();
+
         fetch('/api/provider/ranking/get', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-                type: 'evo',
-                percent: this.sliderEvo.value,
+                type: type,
+                percent: slider.value,
             }),
+            signal: state.controller.signal,
         })
-            .then(response => response.json())
+            .then(response => response.status === 204 ? null : response.json())
             .then(data => {
-                console.log('API response:', data);
-                const chartContent = this.sliderEvo.closest('.provider-ranking').querySelector('.ranking-content');
+                if (!data?.block) return;
+                const chartContent = slider.closest('.provider-ranking').querySelector('.ranking-content');
+                // data['block'] contient le nouveau HTML de l'élément chartContent
                 chartContent.outerHTML = data.block;
-            });
-    }
-
-    handleSliderChangeMonth() {
-        this.updateFill(this.sliderMonth);
-        console.log('Slider Month value changed:', this.sliderMonth.value);
-
-        fetch('/api/provider/ranking/get', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                type: 'month',
-                percent: this.sliderMonth.value,
-            }),
-        })
-            .then(response => response.json())
-            .then(data => {
-                console.log('API response:', data);
-                const chartContent = self.sliderMonth.closest('.provider-ranking').querySelector('.ranking-content');
-                // data['block'] contient le nouveau HTML de l'élément charContent
-                chartContent.outerHTML = data.block;
+            })
+            .catch(error => {
+                if (error.name !== 'AbortError') console.error(error);
             });
     }
 

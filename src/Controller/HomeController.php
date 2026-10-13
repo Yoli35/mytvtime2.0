@@ -145,6 +145,7 @@ class HomeController extends AbstractController
                 $provider['logo_path'] = $this->providerService->getProviderLogoFullPath($provider['logo_path'], $logoUrl);
                 return $provider;
             }, $this->userSeriesRepository->getUserAllEpisodeByProvider($user));
+            $providerFirstDate = $this->userSeriesRepository->getFirstDate($user);
 
             $lastViewedMovies = $this->userMovieRepository->lastViewedMovies($user->getId());
         } else {
@@ -159,6 +160,7 @@ class HomeController extends AbstractController
             $statusArray = [];
             $providerMonthArray = [];
             $providerAllArray = [];
+            $providerFirstDate = null;
         }
 
         /*
@@ -213,6 +215,7 @@ class HomeController extends AbstractController
             'statusArray' => $statusArray,
             'providerMonthArray' => $providerMonthArray,
             'providerAllArray' => $providerAllArray,
+            'providerFirstDate' => $providerFirstDate,
             'userSeries' => $userSeries,
             'episodesOfTheDay' => $episodesOfTheDay,
             'episodesToWatch' => $episodesToWatch,

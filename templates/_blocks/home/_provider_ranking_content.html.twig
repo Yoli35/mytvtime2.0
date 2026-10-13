@@ -1,4 +1,7 @@
 <div class="ranking-content">
+    {% if periodStart is defined and periodEnd is defined and periodStart and periodEnd %}
+        <div class="ranking-period">{{ 'From %start% to %end%'|trans({'%start%': periodStart|format_date('medium'), '%end%': periodEnd|format_date('medium')}) }}</div>
+    {% endif %}
     <div class="ranking-total">
         <div class="name">{{ 'Total'|trans }}</div>
         <div class="count">{{ total }}</div>

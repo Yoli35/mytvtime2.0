@@ -767,6 +767,15 @@
                 position: relative;
                 width: 100%;
 
+                .ranking-period {
+                    font-size: .875rem;
+                    left: 2rem;
+                    opacity: .8;
+                    position: absolute;
+                    top: 1rem;
+                    z-index: 1;
+                }
+
                 .ranking-total {
                     align-items: center;
                     display: flex;

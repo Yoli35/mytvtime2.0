@@ -97,6 +97,8 @@ readonly class ApiProviderRanking
         $block = ($this->renderView)('_blocks/home/_provider_ranking_content.html.twig', [
             'providerArray' => $arr,
             'total' => array_reduce($arr, fn($carry, $item) => $carry + $item['count'], 0),
+            'periodStart' => $rankingStartString,
+            'periodEnd' => $rankingEndString,
         ]);
 
         return new JsonResponse([
