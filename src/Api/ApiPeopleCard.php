@@ -224,7 +224,7 @@ readonly class ApiPeopleCard
                 "translations" => [
                     "Add" => $this->translator->trans('Add', [], 'messages'),
                     "Edit" => $this->translator->trans('Edit', [], 'messages'),
-                    "biography error" => $this->translator->trans('biography error', [], 'messages'),
+                    "biography error" => $this->translator->trans('Biography must be at least 20 characters long.', [], 'messages'),
                 ]
             ]
         ]);

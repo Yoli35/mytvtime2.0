@@ -3,7 +3,7 @@
     <header>
         <div class="poster">
             {% if movie.poster_path %}
-                <img src="{{ posterUrl ~ movie.poster_path }}" alt="{{ 'Mmovie poster'|trans }}">
+                <img src="{{ posterUrl ~ movie.poster_path }}" alt="{{ 'Movie poster'|trans }}">
             {% else %}
                 {{ 'No poster'|trans }}
             {% endif %}

@@ -5,7 +5,7 @@
         <div class="details">
             <div class="logo">
                 {% if provider.logo_path %}
-                    <img src="{{ provider.logo_path }}" alt="{{ provider.provider_name }}{{ 'logo'|trans }}">
+                    <img src="{{ provider.logo_path }}" alt="{{ provider.provider_name }} {{ 'logo'|trans }}">
                 {% else %}
                     {{ 'No logo'|trans }}
                 {% endif %}
@@ -26,7 +26,7 @@
             <div class="details">
                 <div class="logo">
                     {% if tvProvider.logo_path %}
-                        <img src="{{ tvProvider.logo_path }}" alt="{{ tvProvider.provider_name }}{{ 'logo'|trans }}">
+                        <img src="{{ tvProvider.logo_path }}" alt="{{ tvProvider.provider_name }} {{ 'logo'|trans }}">
                     {% else %}
                         {{ 'No logo'|trans }}
                     {% endif %}
