@@ -33,8 +33,8 @@ Users: 사용자
 # Blog
 Abort: '변경 사항 취소'
 'Apply changes': '변경 사항 적용'
-'Are you sure you want to delete this article? ': '이 글을 삭제하시겠습니까?'
-'Are you sure you want to dismiss modifications? ': '변경 사항을 취소하시겠습니까?'
+'Are you sure you want to delete this article?': '이 글을 삭제하시겠습니까?'
+'Are you sure you want to dismiss modifications?': '변경 사항을 취소하시겠습니까?'
 Author: 작성자
 'Back to article': '기사로 돌아가기'
 'Back to blog': '블로그로 돌아가기'
@@ -99,8 +99,8 @@ English: 영어
 'Episode history (%h)': '지난 %h 시간 동안의 에피소드 기록'
 'Episodes detail': '에피소드 상세'
 'Episodes to watch': '볼 에피소드'
-'Episodes watched in the last %dayCount% hours (%count%)': '지난 %일 동안 시청한 에피소드 %일수%시간(%카운트%)'
-'Episodes watched in the last %dayCount% days (%count%)': '지난 %일동안 시청한 에피소드 수(%일수%) (%카운트%)'
+'Episodes watched in the last %dayCount% hours (%count%)': '최근 %dayCount%시간 동안 시청한 에피소드 (%count%)'
+'Episodes watched in the last %dayCount% days (%count%)': '최근 %dayCount%일 동안 시청한 에피소드 (%count%)'
 French: 프랑스어
 Guest: 게스트
 'Hide preview': '미리보기 숨기기'
@@ -132,6 +132,8 @@ Password: 비밀번호
 'Paste your image here (green)': '여기에 이미지 붙여넣기(녹색)'
 'Pinned series': '고정된 시리즈'
 'Preferred language': '선호하는 언어'
+'Providers (episode count)': '플랫폼 (에피소드 수)'
+'Providers this month (episode count)': '이번 달 플랫폼 (에피소드 수)'
 Rating: 평가
 'Re-type your password': '비밀번호 다시 입력'
 'Recent movies': '최근 영화'
@@ -149,6 +151,7 @@ Register: 등록
 Series.favorites: '즐겨 찾는 시리즈'
 'Series.not seen in a while': '오랫동안 본 시리즈 없음'
 'Series.to start': '시작할 시리즈'
+'Series.tv time': 'TV Time Like'
 'Series.up coming series': '다가오는 시리즈'
 Series.week: '이번 주의 에피소드'
 Settings: 설정
@@ -219,6 +222,7 @@ Id: ID
 Images: 이미지
 'Last air date': '마지막 방송일'
 'Last episode': '지난 에피소드'
+'Last episode!': '마지막 에피소드!'
 'Last series watched': '마지막으로 본 시리즈'
 Latest: 마지막
 'Localized Names': '지역화된 이름'
@@ -263,7 +267,7 @@ french: 프랑스어
 english: 영어
 korean: 한국어
 'Include image language': '이미지 언어 포함'
-Get: Get
+Get: 가져오기
 'Agregate credits': '총 세출 예산'
 'End date': '종료 날짜'
 'Start date': '시작 날짜'
@@ -299,10 +303,10 @@ Share: 공유
 Years: 년
 
 # Episode schedule
-'starting at %airAt%': '%airAt%부터'
-'%N% episode%s% this %day%': '%N% episode%s% this %day%'
-'%N% episode%s% every %day%': '%N% episode%s% every %day%'
-'%N% first episode%s% on %day%, then one episode every week': '%N% first episode%s% on %day%, then one episode every week'
+'starting at': 부터
+'%N% episode%s% this %day%': '이번 %day%에 에피소드 %N%편'
+'%N% episode%s% every %day%': '매주 %day%마다 에피소드 %N%편'
+'%N% first episode%s% on %day%, then one episode every week': '%day%에 첫 에피소드 %N%편, 이후 매주 한 편'
 day_of_week_0: 일요일
 day_of_week_1: 월요일
 day_of_week_2: 화요일
@@ -316,13 +320,13 @@ Appearance: 외관
 General: 일반
 
 # Series Show
-"'%cast% has been added to the season cast'": '시즌 출연진에 %캐스트%가 추가되었습니다.'
-"'%cast% has been added to the series cast'": '캐스트%가 시리즈 출연진에 추가되었습니다.'
-"'%cast% is already in the season cast'": '캐스트%는 이미 시즌 출연진의 일부입니다.'
-"'%cast% is already in the series cast'": 'cast%는 이미 시리즈의 출연진에 포함되어 있습니다.'
-"'%count% episodes have been removed from the series (%list%)'": '카운트% 에피소드가 시리즈에서 제거되었습니다(%목록%).'
-"'An episode has been removed from the series (%id%)'": '시리즈에서 에피소드가 삭제되었습니다(%id%).'
-"'Episode %number% has been updated'": '번호% 에피소드가 업데이트되었습니다.'
+'%cast% has been added to the season cast': '%cast%이(가) 시즌 출연진에 추가되었습니다'
+'%cast% has been added to the series cast': '%cast%이(가) 시리즈 출연진에 추가되었습니다'
+'%cast% is already in the season cast': '%cast%은(는) 이미 시즌 출연진에 포함되어 있습니다'
+'%cast% is already in the series cast': '%cast%은(는) 이미 시리즈 출연진에 포함되어 있습니다'
+'%count% episodes have been removed from the series (%list%)': '시리즈에서 에피소드 %count%개가 삭제되었습니다 (%list%)'
+'An episode has been removed from the series (%id%)': '시리즈에서 에피소드가 삭제되었습니다 (%id%)'
+'Episode %number% has been updated': '%number%화가 업데이트되었습니다'
 
 '1 episode seen': '1 에피소드 본'
 'A real binger!': '진정한 중독자!'
@@ -345,9 +349,7 @@ General: 일반
 Add: 추가
 'Additional image': '추가 이미지'
 'Additional images': '추가 이미지'
-'Thumbnail and images': '썸네일 및 이미지'
 'Additional overviews for the series': '시리즈에 대한 추가 개요'
-'No images currently selected for upload': '전송할 이미지가 선택되지 않았습니다.'
 'Additional overviews': '추가 개요'
 'Adjust search': '검색 조정'
 'After tomorrow': '모레 이후'
@@ -369,8 +371,7 @@ Available: '사용 가능'
 'Backdrop count': '배경 개수'
 'Backdrop updated': '배경 업데이트됨'
 'Binge watcher badge unlocked': '연속 시청자 배지 잠금 해제'
-'Bookmarks': '북마크'
-'Select timezone': '시간대 선택'
+Bookmarks: 북마크
 'Broadcast delay': '방송 지연'
 'Cancel rating': '평가 취소'
 Canceled: 취소됨
@@ -381,11 +382,14 @@ Cast: 캐스트
 'Click to select images': '클릭하여 이미지 선택'
 'Click to select, then paste your overview.': '선택하려면 클릭한 다음 개요를 붙여넣으세요.'
 'Collapse all videos': '모든 동영상 줄이기'
+'Complete cast': '전체 출연진'
+'Complete crew': '전체 제작진'
 Continuing: '계속 중'
 'Copy all': '모두 복사'
 'Copy watch link': '링크 주소 복사'
 Copy: 복사
 Crew: 스텝
+'Current series': '방영 중인 시리즈'
 'Custom schedule': '개인화된 시간표'
 'Dailies Manager': '데일리 담당'
 'Date added ascending': '오름차순으로 추가된 날짜'
@@ -395,30 +399,34 @@ Delay: 지연
 'Delete watch link': '링크 삭제'
 Delete: 삭제
 Desktop: 데스크탑
+'Discover TV': '시리즈 둘러보기'
 'Drag and drop a file or click to browse': '파일을 끌어다 놓거나 클릭하여 찾아보세요'
-'Drop your images files here': '이미지 파일을 여기에 놓으세요'
 'Drop your file here': '파일을 여기에 놓으세요'
 'Drop your image file here': '여기에서 이미지 제출하기'
+'Drop your images files here': '이미지 파일을 여기에 놓으세요'
+'Edit Schedule': '일정 수정'
+'Edit all episodes name and overview': '모든 에피소드의 이름 및 미리보기 변경하기'
 'Edit episode name': '에피소드 이름 수정하기'
 'Edit episode overview': '에피소드 미리보기 수정하기'
-'Edit all episodes name and overview': '모든 에피소드의 이름 및 미리보기 변경하기'
 'Edit location': '위치 변경'
 'Edit watch link': '링크 수정'
 Edit: 편집
+'End of season': '시즌 종료'
 Ended: 종료됨
 'Episode name': '에피소드 이름'
 'Episode number': '에피소드 번호'
 'Episode of the day': '오늘의 에피소드'
 'Episode overview': '에피소드 미리 보기'
+'Episode page': '에피소드 페이지'
 Episode: 에피소드
 'Episodes of the day': '오늘의 에피소드'
+'Episodes watched as they come out': '방영되는 대로 시청한 시리즈'
 Episodes: 에피소드
 'Error → votes and episodes do not match': '오류 → 투표와 에피소드가 일치하지 않습니다.'
 'Expand all videos': '모든 동영상 확장'
 'External sources': '외부 소스'
 'Filming locations map': '촬영 장소 지도'
 'First air date updated': '첫 방송일 업데이트됨'
-"First day of the week → %day%'": "요일 → %요일%'"
 'Five days ago': '5일 전'
 'Fly to the location': '위치로 이동'
 'Four days ago': '4일 전'
@@ -434,6 +442,7 @@ Freq.: 빈도
 'In six days': '6일 후'
 'In three days': '3일 후'
 'In two days': '이틀 후'
+In: 후
 'Key facts': '주요 사실'
 Laptop: 노트북
 'Last episode to air': '마지막 방송 에피소드'
@@ -442,6 +451,8 @@ Laptop: 노트북
 'Last to air': '마지막 방송'
 'Last to watch': '마지막으로 볼'
 'Last watched series': '마지막으로 본 시리즈'
+'Latest LGBT & bl Series': '최신 LGBT 및 BL 시리즈'
+'Links to': 링크
 'Loading filming locations…': '촬영 위치 로드 중...'
 'Local files': '로컬 파일'
 'Localized name': '지역화된 이름'
@@ -452,16 +463,21 @@ Laptop: 노트북
 'Marathoner badge unlocked': '마라토너 배지 잠금 해제'
 'Mark this episode as seen': '이 에피소드를 본 것으로 표시'
 Mobile: 모바일
+'More episodes to come': '앞으로 더 많은 에피소드'
+'My list': '내 목록'
 'Name updated': '이름 업데이트됨'
 Network: 네트워크
 Networks: 네트워크
 'New schedule': '새로운 시간표'
+'New season': '새 시즌'
+'New series': '새 시리즈'
 'New status': '새로운 상태'
 'Next episode air date updated': '다음 에피소드 방송일 업데이트됨'
 'Next episode to air': '다음 방송 에피소드'
 'Next episode to watch is %episode%': '다음 시청할 에피소드는 %episode%입니다.'
 'Next episode to watch': '다음으로 볼 에피소드'
 'Next image': '다음 이미지'
+'Next season coming soon': '다음 시즌 곧 공개'
 'Next series': '다음 시리즈'
 'No additional images currently selected for upload': '현재 업로드할 추가 이미지 없음'
 'No date yet': '아직 날짜 없음'
@@ -469,6 +485,7 @@ Networks: 네트워크
 'No episode seen': '에피소드 없음'
 'No image currently selected for upload': '현재 업로드할 이미지 없음'
 'No image': '이미지 없음'
+'No images currently selected for upload': '전송할 이미지가 선택되지 않았습니다.'
 'No logo': '로고 없음'
 'No overview': '개요 없음'
 'No picture': '사진 없음'
@@ -477,6 +494,7 @@ Networks: 네트워크
 'No still': '비네트 없음'
 'No votes': '투표 없음'
 'Not a valid file type. Update your selection': '유효한 파일 유형이 아닙니다. 선택을 업데이트하세요'
+'Not watched in a while': '한동안 시청하지 않음'
 'Not watched yet': '아직 보지 않음'
 'Nothing to show here': '여기에 표시할 항목이 없습니다.'
 Now: 지금
@@ -512,6 +530,7 @@ Purchase: 구매
 'Remove from a list': '목록에 추가 또는 목록에서 제거'
 'Remove from favorites': '즐겨찾기에서 제거'
 'Remove this series from your watchlist': '이 시리즈를 시청 목록에서 제거'
+'Remove this series': '이 시리즈 제거'
 Remove: 제거
 Rental: 렌탈
 'Returning Series': '돌아오는 시리즈'
@@ -523,25 +542,32 @@ Schedules: 일정
 'Season finale': '시즌 종료'
 'Season localized overview': '시즌 현지 개요'
 'Season number': '시즌 번호'
+'Season page': '시즌 페이지'
 'Season poster': '시즌 포스터'
 'Season x': 'x 시즌'
 Season: 시즌
 Seasons: 시즌
 'See all': '모두 보기'
+'See later list not found': '나중에 볼 목록을 찾을 수 없습니다.'
 'See on Google': 'Google에서 보기'
 'Select a provider': '제공자 선택'
 'Select a source': '소스 선택'
-"Selected days of the week → %days%'": "선택한 요일 → %일%'"
+'Select timezone': '시간대 선택'
 'Send your comment': '댓글 보내기'
 'Series added to your watchlist': '시리즈가 시청 목록에 추가되었습니다'
 'Series airing this week': '이번 주 방영되는 시리즈'
 'Series already in your watchlist': '이미 시청 목록에 있는 시리즈'
+'Series credits': '시리즈 크레딧'
+'Series currently airing': '방영 중인 시리즈'
 'Series finale': '시리즈 종영'
 'Series in progress': '진행 중인 시리즈'
 'Series not found on The Movie Database': '무비 데이터베이스에서 시리즈를 찾을 수 없습니다'
+'Series not found': '시리즈를 찾을 수 없음'
 'Series not seen in a while': '오랫동안 본 시리즈 없음'
 'Series of the day': '오늘의 시리즈'
 'Series of the next 7 days': '다음 7일의 시리즈'
+'Series page': '시리즈 페이지'
+'Series removed from watch later list': '나중에 보기 위해 목록에서 삭제된 시리즈'
 'Series schedule menu range': '시리즈 일정 메뉴의 범위'
 Series: 시리즈
 'Seven days ago': '7일 전'
@@ -552,6 +578,7 @@ Since: 이후
 Source: 소스
 'Special episodes': '특별 에피소드'
 Specials: '특별 에피소드'
+'Start typing…': '입력을 시작하세요…'
 Status: 상태
 Still: 비네트
 Streaming: 스트리밍
@@ -569,12 +596,14 @@ Television: 텔레비전
 'This field is required': '이 필드는 필수입니다'
 'This series belongs to your watch later list!': '이 시리즈는 나중에 관심 목록에 추가됩니다!'
 'Three days ago': '3일 전'
+'Thumbnail and images': '썸네일 및 이미지'
 'Thumbnail, additional images': '썸네일, 추가 이미지'
 Thumbnail: 비네트
 Time: 시간
 'To be continued': '계속될 예정'
 'To start': '시작할 예정'
 Today: 오늘
+'Toggle blur under overview': '개요 아래 흐림 효과 전환'
 'Toggle image preview': '이미지 미리보기'
 'Toggle text color': '텍스트 색상 변경'
 Tomorrow: 내일
@@ -583,6 +612,7 @@ Translate: 번역
 URL: URL
 'Up to date!': '최신 상태!'
 'Up to date': '최신 상태'
+'Upcoming Series': '방영 예정 시리즈'
 Updates: 업데이트
 'Upload it!': 업로드하세요!
 Url: URL
@@ -597,11 +627,11 @@ Vote: 투표
 'Watch season': '시즌 보기'
 'Watch specials': '특별 에피소드 보기'
 Watch: 시계
-'Watched %time% times': '조회 횟수 %시간 %회'
+'Watched %time% times': '%time%회 시청'
 'Watched again': '다시 본'
 'What else to watch?': '또 어떤 볼거리가 있나요?'
 'What to watch next?': '다음에 무엇을 볼까요?'
-'Where was "%name%" filmed?': '"%이름%"이 촬영된 곳은 어디인가요?'
+'Where was "%name%" filmed?': '"%name%"은(는) 어디에서 촬영되었나요?'
 'With watched episodes without provider': '플랫폼 없이 시청하는 에피소드'
 'Write your overview here': '여기에 요약을 작성하세요.'
 Yesterday: 어제
@@ -609,8 +639,12 @@ Yesterday: 어제
 and: 그리고
 available: '사용 가능'
 backdrops: 배경
+'count new episodes are now available in season number': '시즌 번호에 새 에피소드 수 포함'
 day: 일
 days: 일
+ep.Aired: '방영된 에피소드'
+ep.Total: '전체 에피소드'
+ep.Viewed: '시청한 에피소드'
 episode: 에피소드
 'episodes seen': '에피소드 본'
 episodes: 에피소드
@@ -623,6 +657,8 @@ locations: 위치
 logos: 로고
 minute: 분
 minutes: 분
+month: 개월
+months: 개월
 network.not_found: '네트워크를 찾을 수 없음'
 'new episodes have been added to the series': '시리즈에 새로운 에피소드가 추가되었습니다.'
 'on': 'on'
@@ -636,63 +672,60 @@ special.episode: '스페셜 에피소드'
 special.episodes: '특별 에피소드'
 star: 별
 stars: 별
-tv-time.air-date: 방송 날짜
+tv-time.air-date: '방송 날짜'
 tv-time.coming.actors: 배우
-tv-time.coming.my-list: 내 목록
+tv-time.coming.my-list: '내 목록'
 tv-time.coming: 곧
-tv-time.last-episodes-seen: 최근 본 에피소드
+tv-time.last-episodes-seen: '최근 본 에피소드'
 tv-time.layout.grid: 그릴
 tv-time.layout.list: 목록
 tv-time.movies.seen: 버스
 tv-time.movies.to-see: 볼거리
 tv-time.movies: 영화
-tv-time.my-list: 내 목록
-tv-time.remaining-days: 남은 일수
-tv-time.remaining-time: 페이지 업데이트까지 남은 시간
+tv-time.my-list: '내 목록'
+tv-time.remaining-days: '남은 일수'
+tv-time.remaining-time: '페이지 업데이트까지 남은 시간'
 tv-time.series.ended: 완료
-tv-time.series.in-progress: 진행 중
+tv-time.series.in-progress: '진행 중'
 tv-time.series: 시리즈
-tv-time.show-cast: 시즌 출연진 보기 / 숨기기
-tv-time.specials: 특집 에피소드 보기 / 숨기기
-tv-time.week-number: 특별 에피소드 주차
+tv-time.show-cast: '시즌 출연진 보기 / 숨기기'
+tv-time.show-more: '더 보기'
+tv-time.special: '스페셜 에피소드'
+tv-time.specials: '특집 에피소드 보기 / 숨기기'
+tv-time.weeks: 주
+tv-time.week-number: '특별 에피소드 주차'
 visit: 방문
 visits: 방문
 vote: 투표
 votes: 투표
 'x star': 'x 별'
 'x stars': 'x 별'
-'Remove this series': '이 시리즈 제거'
-'See later list not found': '나중에 볼 목록을 찾을 수 없습니다.'
-'Series not found': '시리즈를 찾을 수 없음'
-'Series removed from watch later list': '나중에 보기 위해 목록에서 삭제된 시리즈'
-'Links to': 링크
-'Series page': '시리즈 페이지'
-'Season page': '시즌 페이지'
-'Episode page': '에피소드 페이지'
-'More episodes to come': '앞으로 더 많은 에피소드'
-'count new episodes are now available in season number': '시즌 번호에 새 에피소드 수 포함'
+year: 년
+years: 년
 
 #Schedule form
-'Override the Movie Database schedule': '무비 데이터베이스 일정 재정의'
-'Override TMDB': 'TMDB 재정의'
-Frequency: 빈도
-'Multi part': 다자간
-'This season will be broadcast in several parts': '이 시즌은 여러 부분으로 방송됩니다'
-Part: 부분
-'First episode': '첫 에피소드'
-'Episode count': '에피소드 수'
 'All at once': 한꺼번에
 Daily: 매일
+Ep.: 화
+'Episode count': '에피소드 수'
+'First episode': '첫 에피소드'
+Frequency: 빈도
+'Multi part': 다자간
+'Override TMDB': 'TMDB 재정의'
+'Override the Movie Database schedule': '무비 데이터베이스 일정 재정의'
+Part: 부분
 'Selected days, then weekly, one at a time': '선택한 날짜, 그리고 매주, 한 번에 하나씩'
-'Weekly, one at a time': '주간, 한 번에 하나'
-'Weekly, two at a time': '주간, 두 번에 하나'
-'Weekly, three at a time': '주간, 세 번에 하나'
+'This season will be broadcast in several parts': '이 시즌은 여러 부분으로 방송됩니다'
 'Weekly, four at a time': '매주, 한 번에 4개씩'
-'Weekly, two, then one': '주간, 두 번, 그리고 하나'
-'Weekly, three, then one': '주간, 세 번, 그리고 하나'
 'Weekly, four, then one': '주간, 네 번, 그리고 하나'
 'Weekly, four, then two': '주간, 네 번, 그리고 두 번'
+'Weekly, one at a time': '주간, 한 번에 하나'
 'Weekly, selected days': '주간, 선택된 날'
+'Weekly, three at a time': '주간, 세 번에 하나'
+'Weekly, three, then one': '주간, 세 번, 그리고 하나'
+'Weekly, three, then two': '매주, 세 편, 그다음 두 편'
+'Weekly, two at a time': '주간, 두 번에 하나'
+'Weekly, two, then one': '주간, 두 번, 그리고 하나'
 
 January: 1월
 February: 2월
@@ -708,6 +741,8 @@ November: 11월
 December: 12월
 
 #Search
+'Add this movie': '이 영화 추가'
+'Add this tv show': '이 TV 시리즈 추가'
 Ads: 광고
 'Advanced search': '고급 검색'
 After: 이후
@@ -791,6 +826,7 @@ Male: 남성
 Movie: 영화
 'No proposals': '제안 없음'
 'No rating yet': '아직 메모 없음'
+'Number of new people added: %newPeople%': '새로 추가된 인물 수: %newPeople%'
 People: 사람
 'Personal Informations': '개인 정보'
 'Place of birth': 출생지
@@ -883,16 +919,16 @@ job.Writer.he: 작성자
 job.Writer.she: 작성자
 
 # Jobs
-'"First Assistant \"A\" Camera"': ''
-'"First Assistant \"B\" Camera"': ''
-'"First Assistant \"C\" Camera"': ''
-'"Second Assistant \"A\" Camera"': ''
-'"Second Assistant \"B\" Camera"': ''
-'"Second Assistant \"C\" Camera"': ''
-'"\"A\" Camera Operator"': ''
-'"\"B\" Camera Operator"': ''
-'"\"C\" Camera Operator"': ''
-'"\"D\" Camera Operator"': ''
+'First Assistant "A" Camera': 'A 카메라 퍼스트 어시스턴트'
+'First Assistant "B" Camera': 'B 카메라 퍼스트 어시스턴트'
+'First Assistant "C" Camera': 'C 카메라 퍼스트 어시스턴트'
+'Second Assistant "A" Camera': 'A 카메라 세컨드 어시스턴트'
+'Second Assistant "B" Camera': 'B 카메라 세컨드 어시스턴트'
+'Second Assistant "C" Camera': 'C 카메라 세컨드 어시스턴트'
+'"A" Camera Operator': 'A 카메라 오퍼레이터'
+'"B" Camera Operator': 'B 카메라 오퍼레이터'
+'"C" Camera Operator': 'C 카메라 오퍼레이터'
+'"D" Camera Operator': 'D 카메라 오퍼레이터'
 
 '24 Frame Playback': '24개 이미지 재생'
 '3D Artist': '3D 아티스트'
@@ -929,6 +965,7 @@ Administration: 관리
 'Animation Manager': '이벤트 책임자'
 'Animation Supervisor': '애니메이션 감독자'
 Animation: 애니메이션
+Animator: 애니메이터
 'Apprentice Sound Editor': '견습 사운드 편집자'
 Armorer: 아머러
 'Art Department Assistant': '예술 부서 보조'
@@ -989,7 +1026,7 @@ Casting: 캐스팅
 Catering: 케이터링
 'Character Designer': '캐릭터 디자이너'
 Characters: 문자
-Chef: Head
+Chef: 셰프
 'Chief Lighting Technician': '수석 조명 기술자'
 'Child Wrangler': '어린이 트레이너'
 Choreographer: 안무가
@@ -1076,6 +1113,7 @@ Electrician: '전기 기술자'
 'Epk Camera Operator': 'EPK 카메라 오퍼레이터'
 'Epk Producer': '프로듀서 EPK'
 'Executive Assistant': '경영 비서'
+'Executive Co-Producer': '공동 총괄 프로듀서'
 'Executive Consultant': '경영진 컨설턴트'
 'Executive In Charge Of Production': '생산 담당 임원'
 'Executive Music Producer': '총괄 음악 프로듀서'
@@ -1136,6 +1174,7 @@ Idea: 아이디어
 'Key Production Assistant': '시니어 프로덕션 어시스턴트'
 'Key Rigging Grip': '메인 리깅 그립'
 'Key Scenic Artist': '메인 세트 아티스트'
+'Key Set Costumer': '수석 현장 의상 담당'
 'Key Set Production Assistant': '시니어 무대 제작 보조'
 'Layout Supervisor': '레이아웃 관리자'
 'Lead Animator': '주요 발표자'
@@ -1194,7 +1233,7 @@ Modeling: 모델링
 Music: 음악
 'Musical Casting': '뮤지컬 캐스팅'
 Musician: 뮤지션
-Novel: Roman
+Novel: 소설
 'On Set Computer Graphics': '세트의 컴퓨터 그래픽'
 'On Set Dresser': '세트 데코레이터'
 'Online Editor': '라인 피터'
@@ -1367,7 +1406,7 @@ Stunts: 캐스케이드
 'Supervising Sound Editor': '사운드 감독자'
 'Supervising Sound Effects Editor': '사운드 편집자 감독'
 'Systems Administrators & Support': '시스템 및 지원 관리자'
-Tailor: suit
+Tailor: 재단사
 'Technical Advisor': '기술 고문'
 'Technical Supervisor': '기술 감독자'
 'Techno Crane Operator': '테크노 크레인 운영자'
@@ -1469,16 +1508,17 @@ Profile: 프로필
 'Targeted Languages': '대상 언어'
 'Translation Settings': '번역 매개변수'
 'Unlink Apple': 'Apple 풀기'
-'Unlink GitHub': GitHub
+'Unlink GitHub': 'GitHub 연결 해제'
 'Unlink Google': 'Google 연결 해제'
 Connexions: 연결
 Update: 업데이트
 'You can change the translations of the application here.': '여기에서 애플리케이션의 번역을 변경할 수 있습니다.'
 
 # Movies
-"'%minutes% minutes'": '분% 분'
+'%minutes% minutes': '%minutes%분'
 '1 minute': 1분
 2015: 2015
+'Add a genre': '장르 추가'
 'Add this movie to your watchlist': '이 영화를 시청 목록에 추가'
 Average: 평균
 Backdrops: 배경
@@ -1487,6 +1527,7 @@ Collection: 컬렉션
 Count: 수
 'Delete this movie from your watchlist': '이 영화를 시청 목록에서 삭제'
 Digital: 디지털
+Discover: 둘러보기
 Genres: 장르
 Logos: 로고
 Logo: 로고
@@ -1500,21 +1541,28 @@ Movies: 영화
 'Next video': '다음 비디오'
 'Not found': '찾을 수 없음'
 Note: 노트
+'Origin language': 원어
 Physical: 물리적
 Posters: 포스터
 Poster: 포스터
 Premiere: 프리미어
 'Previous video': '이전 비디오'
+'Primary release year': '최초 개봉 연도'
 'Production companies': 제작사
 'Production countries': '제작 국가'
 Recommendations: 추천
+Region: 지역
 'Release date year': '출시 연도'
 'Release date': 개봉일
+'Released before': '이전 개봉'
+'Released after': '이후 개봉'
 Released: 출시됨
 Runtime: 런타임
 'Search a movie': '영화 검색'
 'Search for a movie…': '영화 검색...'
 'Search on TMDB': 'TMDB에서 검색'
+'Select a cast member': '출연진 선택'
+'Select a crew member': '제작진 선택'
 'Select a language': '언어 선택'
 TV: TV
 'Theatrical (limited)': '극장 (한정)'
@@ -1524,10 +1572,22 @@ Title: 제목
 'Where to buy': '어디서 구매할까요'
 'Where to flatrate': '스트리밍 시청 위치'
 'Where to rent': '어디서 대여할까요'
+'Your country': 국가
 'Your list does not contain any movies': '목록에 영화가 없습니다.'
 backdrop: 배경
 movies: 영화
 poster: 포스터
+'Title (ascending)': '제목 (오름차순)'
+'Title (descending)': '제목 (내림차순)'
+'Original title (ascending)': '원제 (오름차순)'
+'Original title (descending)': '원제 (내림차순)'
+Popularity: 인기도
+'Popularity (reverse)': '인기도 (내림차순)'
+'Release date (reverse)': '개봉일 (내림차순)'
+'Vote average': '평균 평점'
+'Vote average (reverse)': '평균 평점 (내림차순)'
+'Vote count': '투표 수'
+'Vote count (reverse)': '투표 수 (내림차순)'
 
 # Map
 'Add a shooting location': '촬영 장소 추가'
@@ -1730,3 +1790,38 @@ Photo: 사진
 'Last days': '마지막 날'
 photo: 사진
 photos: 사진
+
+#Missing keys
+'Add this series': '이 시리즈 추가'
+'Article deleted successfully.': '글이 삭제되었습니다.'
+'Article saved successfully.': '글이 저장되었습니다.'
+Deathday: 사망일
+'Drop your additional images files here': '추가 이미지 파일을 여기에 놓으세요'
+'Failed to remove season %number% from user series': '내 시리즈에서 시즌 %number%을(를) 삭제하지 못했습니다'
+'First day of the week → %day%': '한 주의 첫째 날 → %day%'
+'Movie poster': '영화 포스터'
+'Movie backdrop': '영화 배경 이미지'
+'Movie collection': '영화 컬렉션'
+'No date range': '기간 없음'
+'No lists found.': '목록을 찾을 수 없습니다.'
+'No photo': '사진 없음'
+'No profile': '프로필 사진 없음'
+'No rating': '평점 없음'
+'No series found in this list.': '이 목록에 시리즈가 없습니다.'
+'Number of episodes updated': '에피소드 수 업데이트됨'
+'Number of seasons updated': '시즌 수 업데이트됨'
+'Original title': 원제
+'Removed from blocked list': '차단 목록에서 삭제됨'
+'Selected days of the week → %days%': '선택한 요일 → %days%'
+'Series already added to your watchlist': '이미 시청 목록에 추가된 시리즈입니다'
+'Shooting locations for your %d series': '내 시리즈 %d편의 촬영지'
+'Still in blocked list': '아직 차단 목록에 있음'
+'The episode could not be loaded': '에피소드를 불러올 수 없습니다'
+'The season could not be loaded': '시즌을 불러올 수 없습니다'
+'Time machine': 타임머신
+'From %start% to %end%': '%start% ~ %end%'
+'Where to watch': '시청 가능한 곳'
+'Invalid request': '잘못된 요청'
+logo: 로고
+'Point of interest added successfully': '관심 지점이 추가되었습니다'
+'No data received': '받은 데이터가 없습니다'

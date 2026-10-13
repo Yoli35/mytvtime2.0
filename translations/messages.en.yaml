@@ -1,288 +1,652 @@
 #Admin
-Users: Users
-Providers: Providers
+Api: API
+'Base url': 'Base url'
+'Catalog - API to enumerate datasets': 'Catalog - API to enumerate datasets'
 Dashboard: Dashboard
-more notifications: more notifications
+'Dataset - API to work on records': 'Dataset - API to work on records'
+Endpoints: Endpoints
+Execute: Execute
+'Export a catalog in RDF/XML (DCAT)': 'Export a catalog in RDF/XML (DCAT)'
+'Export a dataset in CSV format': 'Export a dataset in CSV format'
+'Export a dataset in GPX format': 'Export a dataset in GPX format'
+'Export a dataset in Parquet': 'Export a dataset in Parquet'
+'Export a dataset': 'Export a dataset'
+'Export catalog in CSV format': 'Export catalog in CSV format'
+'Export catalog in specified format': 'Export catalog in specified format'
+'List dataset attachments': 'List dataset attachments'
+'List export formats for a dataset': 'List export formats for a dataset'
+'List export formats': 'List export formats'
+'List facet values for a dataset': 'List facet values for a dataset'
+'List facet values': 'List facet values'
+Modules: Modules
+'Next message': 'Next message'
+'No next message': 'No next message'
+'No previous message': 'No previous message'
+'Previous message': 'Previous message'
+Providers: Providers
+'Query catalog datasets': 'Query catalog datasets'
+'Query dataset records': 'Query dataset records'
+'Read a dataset record': 'Read a dataset record'
+'Show dataset information': 'Show dataset information'
+Users: Users
+'more notifications': 'more notifications'
+# Blog
+Abort: 'Discard changes'
+'Apply changes': 'Apply changes'
+'Are you sure you want to delete this article?': 'Are you sure you want to delete this article?'
+'Are you sure you want to dismiss modifications?': 'Are you sure you want to dismiss modifications?'
+Author: Author
+'Back to article': 'Back to article'
+'Back to blog': 'Back to blog'
+Blog: Blog
+Content: Content
+'Delete article': 'Delete article'
+Dismiss: Dismiss
+'Edit article': 'Edit article'
+'My blog': 'My blog'
+'Save article': 'Save article'
+# Menu
+'All locations': 'All locations'
+Apply: Apply
+'Change your avatar on your account page': 'Change your avatar on your account page'
+'Contact me': 'Contact me'
+'Display the poster': 'Display the poster'
+'Final air date': 'Final air date'
+'In my movie list': 'In my movie list'
+'In my series list': 'In my series list'
+'Last adds': 'Last adds'
+'Last watched': 'Last watched series'
+Limit: Limit
+'Link to': 'Link to'
+'Menu people': People
+'Movies, series, actors…': 'Movies, series, actors…'
+'My browsing history': 'My browsing history'
+'My media': 'My media'
+'My viewing history': 'My viewing history'
+'No history': 'No history'
+'Open in a new tab': 'Open in a new tab'
+'Order by': 'Order by'
+'Please log in to see more options': 'Please log in to see more options'
+'Search options': 'Search options'
+'What next to watch': 'What next to watch'
 
 # Home
-A series by name/year: A series by name/year
-A series: A series
-Add to pinned series: Add to pinned series
+'A series by name/year': 'A series by name/year'
+'A series': 'A series'
+'Accent color': 'Accent color'
+'Add to pinned series': 'Add to pinned series'
 Admin: Admin
-All my series: All my series
-Among your series: Among your series
+'Advanced among your series': 'Advanced among your series'
+'Among your series': 'Among your series'
+'Any questions or comments?': 'Any questions or comments?'
 Automatic: Automatic
-Choose a username: Choose a username
-Coming soon: Coming soon
-Confirm password: Confirm password
+'Average episode runtime': 'Average episode runtime'
+'Choose a username': 'Choose a username'
+'Click here to add an image': 'Click here to add an image'
+'Close menu': 'Close menu'
+'Coming soon': 'Coming soon'
+'Confirm password': 'Confirm password'
 Connect: Connect
 Country: Country
 Dark: Dark
-Day count: Day count
+'Day count': 'Day count'
 Device: Device
 Disconnect: Disconnect
-Email address: Email address
+'Email address': 'Email address'
 Email: Email
 English: English
-Episode history (%d): Episode history (%d)
-Episode history (%h): Episode history (%h)
-Episodes detail: Episodes detail
-Episodes of the week: Episodes of the week
-Episodes to watch: Episodes to watch
+'Episode history (%d)': 'Episode history (%d)'
+'Episode history (%h)': 'Episode history (%h)'
+'Episodes detail': 'Episodes detail'
+'Episodes to watch': 'Episodes to watch'
+'Episodes watched in the last %dayCount% hours (%count%)': 'Episodes watched in the last %dayCount% hours (%count%)'
+'Episodes watched in the last %dayCount% days (%count%)': 'Episodes watched in the last %dayCount% days (%count%)'
 French: French
-Hide preview: Hide preview
+Guest: Guest
+'Hide preview': 'Hide preview'
 Home: Home
-I agree to the terms and conditions: I agree to the terms and conditions
-In production: In production
-In The Movie Database: In The Movie Database
+'I agree to the terms and conditions': 'I agree to the terms and conditions'
+'In The Movie Database': 'In The Movie Database'
+'In production': 'In production'
 Korean: Korean
-Last 14 days: Last 14 days
-Last 24 hours: Last 24 hours
-Last 30 days: Last 30 days
-Last 7 days: Last 7 days
-Last added series: Last added series
-Latest series added: Latest series added
+'Last 14 days': 'Last 14 days'
+'Last 24 hours': 'Last 24 hours'
+'Last 30 days': 'Last 30 days'
+'Last 7 days': 'Last 7 days'
+'Last added series': 'Last added series'
+'Last viewed movies': 'Last viewed movies'
+'Latest series added': 'Latest series added'
 Light: Light
 'in %count% day': 'in %count% day'
 'in %count% days': 'in %count% days'
-My account: My account
-My networks: My networks
-My providers: My providers
-New episode date: New episode date
-New episode: New episode
-New series date: New series date
-No backdrop: No backdrop
+'My account': 'My account'
+'My networks': 'My networks'
+'My providers': 'My providers'
+'New episode date': 'New episode date'
+'New episode': 'New episode'
+'New series date': 'New series date'
+'No backdrop': 'No backdrop'
+'Open menu': 'Open menu'
 Options: Options
 Password: Password
-Pinned series: Pinned series
-Preferred language: Preferred language
+'Paste your image here (green)': 'Paste your image here (green)'
+'Pinned series': 'Pinned series'
+'Preferred language': 'Preferred language'
+'Providers (episode count)': 'Providers (episode count)'
+'Providers this month (episode count)': 'Providers this month (episode count)'
 Rating: Rating
-Re-type your password: Re-type your password
-Recent movies: Recent movies
-Recent series: Recent series
+'Re-type your password': 'Re-type your password'
+'Recent movies': 'Recent movies'
+'Recent series': 'Recent series'
 Register: Register
-Remember me: Remember me
-Remove from pinned series: Remove from pinned series
-Search among your series: Search among your series
-Series history: Series history
-Show preview: Show preview
-Sign in: Sign in
-Similar series: Similar series
+'Remember me': 'Remember me'
+'Remove from pinned series': 'Remove from pinned series'
+'Search among your series': 'Search among your series'
+'Series by country': 'Series by country'
+'Series history': 'Series history'
+'Series.by country': 'By country'
+'Series.by provider': 'By provider'
+'Series.by ranking vote': 'Ranking by vote'
+'Series.in progress': 'In progress'
+Series.favorites: 'Favorite series'
+'Series.not seen in a while': 'Not seen in a while'
+'Series.to start': 'To start'
+'Series.tv time': 'TV Time Like'
+'Series.up coming series': Upcoming
+Series.week: 'Episodes of the week'
+Settings: Settings
+'Show preview': 'Show preview'
+'Sign in': 'Sign in'
+'Similar series': 'Similar series'
 Theme: Theme
 Timezone: Timezone
+Total: Total
 Unknown: Unknown
-User networks: User networks
-User providers: User providers
+'User networks': 'User networks'
+'User providers': 'User providers'
 User: User
 Username: Username
-Your country will be used to determine the correct time for TV shows and movies.: Your country will be used to determine the correct time for TV shows and movies.
-Your preferred language for series descriptions and reviews. You can change this later.: Your preferred language for series descriptions and reviews. You can change this later.
-Your series: Your series
-Your timezone will be used to determine the correct time for TV shows and movies.: Your timezone will be used to determine the correct time for TV shows and movies.
+'Your country will be used to determine the correct time for TV shows and movies.': 'Your country will be used to determine the correct time for TV shows and movies.'
+'Your preferred language for series descriptions and reviews. You can change this later.': 'Your preferred language for series descriptions and reviews. You can change this later.'
+'Your series': 'Your series'
+'Your timezone will be used to determine the correct time for TV shows and movies.': 'Your timezone will be used to determine the correct time for TV shows and movies.'
 '%count% day ago': '%count% day ago'
 '%count% days ago': '%count% days ago'
-remaining episode to see: remaining episode to see
-remaining episodes to see: remaining episodes to see
+'history entries': 'history entries'
+network.added: 'Provider added'
+network.updated: 'Provider updated'
+'remaining episode to see': 'remaining episode to see'
+'remaining episodes to see': 'remaining episodes to see'
 series: series
 seriess: seriess
 
-Days of the week: Days of the week
+'Days of the week': 'Days of the week'
+Sunday: Sunday
 Monday: Monday
 Tuesday: Tuesday
 Wednesday: Wednesday
 Thursday: Thursday
 Friday: Friday
 Saturday: Saturday
-Sunday: Sunday
+sunday: Sunday
+monday: Monday
+tuesday: Tuesday
+wednesday: Wednesday
+thursday: Thursday
+friday: Friday
+saturday: Saturday
 
 # All my series
-Filters: Filters
-Show / hide filter options: Show / hide filter options
-Pages: Pages
-Show / hide pages: Show / hide pages
-My series: My series
-Number of elements per page: Number of elements per page
-Series started: Series started
-Watched series: Watched series
-Yes: Yes
-No: No
+'Added on': 'Added on'
+'Additional Overviews': 'Additional Overviews'
+'Additional information': 'Additional information'
 All: All
-Sort: Sort
-Order: Order
-Descending: Descending
+'Alternative Titles': 'Alternative Titles'
 Ascending: Ascending
-Number of element per page: Number of element per page
+Changes: Changes
+'Choose an option': 'Choose an option'
+Close: Close
+Credits: 'Credits (cast, crew, ...)'
+'Date added': 'Date added'
 Default: Default
-First air date: First air date
-Last series watched: Last series watched
-Date added: Date added
-Episode air date: Episode air date
-Next episode: Next episode
-remaining episode: remaining episode
-remaining episodes: remaining episodes
-Series to start: Series to start
+Descending: Descending
+'Display priorities': 'Display priorities'
+'Display priority': 'Display priority'
+'Episode air date': 'Episode air date'
+'Episode air date updated': 'Episode air date updated'
+'Episodes of the week': 'Episodes of the week'
+'External IDs': 'External IDs'
+Filters: Filters
+'First air date': 'First air date'
+Id: ID
+Images: Images
+'Last air date': 'Last air date'
+'Last episode': 'Last episode'
+'Last episode!': 'Last episode!'
+'Last series watched': 'Last series watched'
+Latest: Latest
+'Localized Names': 'Localized Names'
+'Localized Overviews': 'Localized Overviews'
+'My series': 'My series'
+'Next episode': 'Next episode'
+'Next page': 'Next page'
+'Newer first': 'Newer first'
+'No': 'No'
+'Number of elements per page': 'Number of elements per page'
+'Older first': 'Older first'
+Order: Order
+Pages: Pages
+'Previous episode': 'Previous episode'
+'Previous page': 'Previous page'
+'Release Dates': 'Release Dates'
+Release: Release
+Reviews: Reviews
+'See the movie description': 'See the movie description'
+'See the provider description': 'See the provider description'
+'See the series description': 'See the series description'
+'Series by ID': 'Series by ID'
+'Series by name': 'Series by name'
+'Series started': 'Series started'
+'Series to start': 'Series to start'
+'Show / hide filter options': 'Show / hide filter options'
+'Show / hide pages': 'Show / hide pages'
+Similar: Similar
+Sort: Sort
+Synopsis: Synopsis
+'TMDB Id': 'TMDB ID'
+'The Movie DB ID': 'The Movie DB ID'
+'The Movie DB search': 'The Movie DB search'
+Translations: Translations
+'Watch Providers': 'Watch Providers'
+'Watched series': 'Watched series'
+'Yes': 'Yes'
+providers: providers
+'remaining episode': 'remaining episode'
+'remaining episodes': 'remaining episodes'
+french: French
+english: English
+korean: Korean
+'Include image language': 'Include image language'
+Get: Get
+'Agregate credits': 'Aggregate credits'
+'End date': 'End date'
+'Start date': 'Start date'
+
+# Add a series
+'Search for a series…': 'Search for a series…'
+'Addition of older series': 'Addition of older series'
+'No, thanks': 'No, thanks'
+'Episodes are considered viewed on the day of broadcast': 'Episodes are considered viewed on the day of broadcast'
+'Start watching the series now!': 'Start watching the series now!'
+'The series has been added to your watchlist': 'The series has been added to your watchlist'
+'This series is more than 2 years old': 'This series is more than 2 years old'
+'Have you already watched it and want to mark all episodes as viewed?': 'Have you already watched it and want to mark all episodes as viewed?'
+
+# Series tools
+'Add this series to the list public': 'Add this series to the list public'
+'Add to a list': 'Add to a list'
+'Add to new list': 'Add to new list'
+'Description of the list': 'Description of the list'
+'List name': 'List name'
+'Make the list public': 'Make the list public'
+'Mark as favorite': 'Mark as favorite'
+'Name of the list': 'Name of the list'
+'New list': 'New list'
+'Public list': 'Public list'
+'Required field': 'Required field'
+Share: Share
+'This series has been added to one or more lists': 'This series has been added to one or more lists'
+
+# User lists
+'My lists': 'My lists'
+'Show/hide lists': 'Show/hide lists'
+Years: Years
+
+# Episode schedule
+'starting at': 'starting at'
+'%N% episode%s% this %day%': '%N% episode%s% this %day%'
+'%N% episode%s% every %day%': '%N% episode%s% every %day%'
+'%N% first episode%s% on %day%, then one episode every week': '%N% first episode%s% on %day%, then one episode every week'
+day_of_week_0: Sunday
+day_of_week_1: Monday
+day_of_week_2: Tuesday
+day_of_week_3: Wednesday
+day_of_week_4: Thursday
+day_of_week_5: Friday
+day_of_week_6: Saturday
+
+# Settings
+Appearance: Appearance
+General: General
 
 # Series Show
-1 episode seen: 1 episode seen
-A real binger!: A real binger!
-A real marathoner!: A real marathoner!
-Add a localized overview: Add a localized overview
-Add a watch link: Add a watch link
-Add an additional overview: Add an additional overview
-Add this series to your watchlist: Add this series to your watchlist
-Add to favorites: Add to favorites
+'%cast% has been added to the season cast': '%cast% has been added to the season cast'
+'%cast% has been added to the series cast': '%cast% has been added to the series cast'
+'%cast% is already in the season cast': '%cast% is already in the season cast'
+'%cast% is already in the series cast': '%cast% is already in the series cast'
+'%count% episodes have been removed from the series (%list%)': '%count% episodes have been removed from the series (%list%)'
+'An episode has been removed from the series (%id%)': 'An episode has been removed from the series (%id%)'
+'Episode %number% has been updated': 'Episode %number% has been updated'
+
+'1 episode seen': '1 episode seen'
+'A real binger!': 'A real binger!'
+'A real marathoner!': 'A real marathoner!'
+'Add a backdrop': 'Add a backdrop'
+'Add a comment or reply to it for the episode': 'Add a comment or reply to it for the episode'
+'Add a comment': 'Add a comment'
+'Add a localized overview': 'Add a localized overview'
+'Add a re-edited version to this season': 'Add a re-edited version to this season'
+'Add a video': 'Add a video'
+'Add a watch link': 'Add a watch link'
+'Add all available backdrops from TMDB': 'Add all available backdrops from TMDB'
+'Add all available images': 'Add all available images'
+'Add an additional overview': 'Add an additional overview'
+'Add answer': 'Add answer'
+'Add images': 'Add images'
+'Add someone to the cast': 'Add someone to the cast'
+'Add this series to your watchlist': 'Add this series to your watchlist'
+'Add to favorites': 'Add to favorites'
 Add: Add
-Additional image: Additional image
-Additional overviews for the series: Additional overviews for the series
-Additional overviews: Additional overviews
-After tomorrow: After tomorrow
-Air date: Air date
-All episodes seen: All episodes seen
-All seasons: All seasons
-Are you sure you want to delete this overview?: Are you sure you want to delete this overview?
+'Additional image': 'Additional image'
+'Additional images': 'Additional images'
+'Additional overviews for the series': 'Additional overviews for the series'
+'Additional overviews': 'Additional overviews'
+'Adjust search': 'Adjust search'
+'After tomorrow': 'After tomorrow'
+'Air date': 'Air date'
+'All episodes seen': 'All episodes seen'
+'All languages': 'All languages'
+'All seasons': 'All seasons'
+'Alternate schedules': 'Alternate schedules'
+'Are you sure you want to delete this overview?': 'Are you sure you want to delete this overview?'
+'Assistant Foley Artist': 'Assistant Foley Artist'
+'Assistant Picture Car Coordinator': 'Assistant Picture Car Coordinator'
 Available: Available
-Back to series: Back to series
-Back to the series page: Back to the series page
-Back to top: Back to top
-Backdrop added: Backdrop added
-Backdrop updated: Backdrop updated
-Broadcast delay: Broadcast delay
-Cancel rating: Cancel rating
+'Back to season': 'Back to season'
+'Back to series': 'Back to series'
+'Back to the season': 'Back to the season'
+'Back to the series page': 'Back to the series page'
+'Back to top': 'Back to top'
+'Backdrop added': 'Backdrop added'
+'Backdrop count': 'Backdrop count'
+'Backdrop updated': 'Backdrop updated'
+'Binge watcher badge unlocked': 'Binge watcher badge unlocked'
+Bookmarks: Bookmarks
+'Broadcast delay': 'Broadcast delay'
+'Cancel rating': 'Cancel rating'
 Canceled: Canceled
 Cast: Cast
-Choose a device: Choose a device
-Choose a provider: Choose a provider
-Click to select, then paste your overview.: Click to select, then paste your overview.
+'Character‘s name': "Character's name"
+'Choose a device': 'Choose a device'
+'Choose a provider': 'Choose a provider'
+'Click to select images': 'Click to select images'
+'Click to select, then paste your overview.': 'Click to select, then paste your overview.'
+'Collapse all videos': 'Collapse all videos'
+'Complete cast': 'Complete cast'
+'Complete crew': 'Complete crew'
 Continuing: Continuing
-Copy this watch link: Copy this watch link
+'Copy all': 'Copy all'
+'Copy watch link': 'Copy watch link'
+Copy: Copy
 Crew: Crew
-Delay in days: Delay in days
+'Current series': 'Current series'
+'Custom schedule': 'Custom schedule'
+'Dailies Manager': 'Dailies Manager'
+'Date added ascending': 'Date added ascending'
+'Date added descending': 'Date added descending'
+'Delay in days': 'Delay in days'
 Delay: Delay
-Delete this watch link: Delete this watch link
+'Delete watch link': 'Delete watch link'
 Delete: Delete
 Desktop: Desktop
-Drag and drop a file or click to browse: Drag and drop a file or click to browse
-Drop your file here: Drop your file here
-Drop your images files here: Drop your images files here
-Edit this watch link: Edit this watch link
+'Discover TV': 'Discover TV'
+'Drag and drop a file or click to browse': 'Drag and drop a file or click to browse'
+'Drop your file here': 'Drop your file here'
+'Drop your image file here': 'Drop your image file here'
+'Drop your images files here': 'Drop your images files here'
+'Edit Schedule': 'Edit Schedule'
+'Edit all episodes name and overview': 'Edit all episodes name and overview'
+'Edit episode name': 'Edit episode name'
+'Edit episode overview': 'Edit episode overview'
+'Edit location': 'Edit location'
+'Edit watch link': 'Edit watch link'
 Edit: Edit
+'End of season': 'End of season'
 Ended: Ended
+'Episode name': 'Episode name'
+'Episode number': 'Episode number'
+'Episode of the day': 'Episode of the day'
+'Episode overview': 'Episode overview'
+'Episode page': 'Episode page'
 Episode: Episode
-Episode of the day: Episode of the day
-Episodes of the day: Episodes of the day
+'Episodes of the day': 'Episodes of the day'
+'Episodes watched as they come out': 'Episodes watched as they come out'
 Episodes: Episodes
-External sources: External sources
-First air date updated: First air date updated
-Give a rating: Give a rating
-In Production: In Production
-In progress: In progress
-Key facts: Key facts
+'Error → votes and episodes do not match': 'Error → votes and episodes do not match'
+'Expand all videos': 'Expand all videos'
+'External sources': 'External sources'
+'Filming locations map': 'Filming locations map'
+'First air date updated': 'First air date updated'
+'Five days ago': 'Five days ago'
+'Fly to the location': 'Fly to the location'
+'Four days ago': 'Four days ago'
+Freq.: Freq.
+'Give a rating': 'Give a rating'
+'Go to episode': 'Go to episode'
+'Guest stars': 'Guest stars'
+'In Production': 'In Production'
+'In five days': 'In five days'
+'In four days': 'In four days'
+'In progress': 'In progress'
+'In seven days': 'In seven days'
+'In six days': 'In six days'
+'In three days': 'In three days'
+'In two days': 'In two days'
+In: In
+'Key facts': 'Key facts'
 Laptop: Laptop
-Last episode to air: Last episode to air
-Last episode watched: Last episode watched
-Last seen: Last seen
-Last to air: Last to air
-Last to watch: Last to watch
-Last watched series: Last watched series
-Localized name: Localized name
-Localized overviews for the series: Localized overviews for the series
-Localized overviews: Localized overviews
-Logo added: Logo added
-Mark this episode as seen: Mark this episode as seen
+'Last episode to air': 'Last episode to air'
+'Last episode watched': 'Last episode watched'
+'Last seen': 'Last seen'
+'Last to air': 'Last to air'
+'Last to watch': 'Last to watch'
+'Last watched series': 'Last watched series'
+'Latest LGBT & bl Series': 'Latest LGBT & boys love series'
+'Links to': 'Links to'
+'Loading filming locations…': 'Loading filming locations…'
+'Local files': 'Files from your computer'
+'Localized name': 'Localized name'
+'Localized overviews for the series': 'Localized overviews for the series'
+'Localized overviews': 'Localized overviews'
+'Location marker': 'Location marker'
+'Logo added': 'Logo added'
+'Marathoner badge unlocked': 'Marathoner badge unlocked'
+'Mark this episode as seen': 'Mark this episode as seen'
 Mobile: Mobile
-Name updated: Name updated
+'More episodes to come': 'More episodes to come'
+'My list': 'My list'
+'Name updated': 'Name updated'
 Network: Network
 Networks: Networks
-New status: New status
-Next episode air date updated: Next episode air date updated
-Next episode to air: Next episode to air
-Next episode to watch: Next episode to watch
-No date: No date
-No date yet: No date yet
-No episode seen: No episode seen
-No picture: No picture
-No poster: No poster
-Not watched yet: Not watched yet
+'New schedule': 'New schedule'
+'New season': 'New season'
+'New series': 'New series'
+'New status': 'New status'
+'Next episode air date updated': 'Next episode air date updated'
+'Next episode to air': 'Next episode to air'
+'Next episode to watch is %episode%': 'Next episode to watch is %episode%'
+'Next episode to watch': 'Next episode to watch'
+'Next image': 'Next image'
+'Next season coming soon': 'Next season coming soon'
+'Next series': 'Next series'
+'No additional images currently selected for upload': 'No additional images currently selected for upload'
+'No date yet': 'No date yet'
+'No date': 'No date'
+'No episode seen': 'No episode seen'
+'No image currently selected for upload': 'No image currently selected for upload'
+'No image': 'No image'
+'No images currently selected for upload': 'No images currently selected for upload'
+'No logo': 'No logo'
+'No overview': 'No overview'
+'No picture': 'No picture'
+'No poster': 'No poster'
+'No selected days of week.': 'No selected days of week.'
+'No still': 'No still'
+'No votes': 'No votes'
+'Not a valid file type. Update your selection': 'Not a valid file type. Update your selection'
+'Not watched in a while': 'Not watched in a while'
+'Not watched yet': 'Not watched yet'
+'Nothing to show here': 'Nothing to show here'
 Now: Now
-Number of episodes has changed: Number of episodes has changed
-Original Country: Original Country
-Original language: Original language
-Original name updated: Original name updated
-Original name: Original name
-Overview for the series: Overview for the series
-Overview updated: Overview updated
+'Number of days after': 'Number of days after'
+'Number of days before': 'Number of days before'
+'Number of episodes has changed': 'Number of episodes has changed'
+'On Set Key Props': 'On Set Key Props'
+'One backdrop': 'One backdrop'
+'One logo': 'One logo'
+'One poster': 'One poster'
+'Original Country': 'Original Country'
+'Original language': 'Original language'
+'Original name updated': 'Original name updated'
+'Original name': 'Original name'
+'Overview for the season': 'Overview for the season'
+'Overview for the series': 'Overview for the series'
+'Overview updated': 'Overview updated'
 Overview: Overview
-Paste your translation here: Paste your translation here
+'Paste your translation here': 'Paste your translation here'
 Pilot: Pilot
 Planned: Planned
-Poster added: Poster added
-Poster updated: Poster updated
+'Poster added': 'Poster added'
+'Poster count': 'Poster count'
+'Poster of the next series': 'Poster of the next series'
+'Poster of the previous series': 'Poster of the previous series'
+'Poster updated': 'Poster updated'
+'Previous image': 'Previous image'
+'Previous series': 'Previous series'
 Provider: Provider
-Remove from favorites: Remove from favorites
-Remove this series from your watchlist: Remove this series from your watchlist
+Purchase: Purchase
+'Quick day watch badge unlocked': 'Quick day watch badge unlocked'
+'Quick week watch badge unlocked': 'Quick week watch badge unlocked'
+'Remove from a list': 'Add to or remove from a list'
+'Remove from favorites': 'Remove from favorites'
+'Remove this series from your watchlist': 'Remove this series from your watchlist'
+'Remove this series': 'Remove this series'
 Remove: Remove
-Returning Series: Returning Series
+Rental: Rental
+'Returning Series': 'Returning Series'
 Save: Save
 Schedules: Schedules
+'Scroll down to submit': 'Scroll down to submit'
+'Search for a person…': 'Search for a person…'
+'Season completed': 'Season completed'
+'Season finale': 'Season finale'
+'Season localized overview': 'Season localized overview'
+'Season number': 'Season number'
+'Season page': 'Season page'
+'Season poster': 'Season poster'
+'Season x': 'Season x'
 Season: Season
-Season x: Season x
 Seasons: Seasons
-See all: See all
-See on Google: See on Google
-Select a provider: Select a provider
-Select a source: Select a source
-Series added to your watchlist: Series added to your watchlist
-Series airing this week: Series airing this week
-Series already in your watchlist: Series already in your watchlist
-Series by country: Series by country
-Series finale: Series finale
-Series in progress: Series in progress
-Series not found on The Movie Database: Series not found on The Movie Database
-Series of the day: Series of the day
-Series of the next 7 days: Series of the next 7 days
+'See all': 'See all'
+'See later list not found': 'See later list not found'
+'See on Google': 'See on Google'
+'Select a provider': 'Select a provider'
+'Select a source': 'Select a source'
+'Select timezone': 'Select timezone'
+'Send your comment': 'Send your comment'
+'Series added to your watchlist': 'Series added to your watchlist'
+'Series airing this week': 'Series airing this week'
+'Series already in your watchlist': 'Series already in your watchlist'
+'Series credits': 'Series credits'
+'Series currently airing': 'Series currently airing'
+'Series finale': 'Series finale'
+'Series in progress': 'Series in progress'
+'Series not found on The Movie Database': 'Series not found on The Movie Database'
+'Series not found': 'Series not found'
+'Series not seen in a while': 'Series not seen in a while'
+'Series of the day': 'Series of the day'
+'Series of the next 7 days': 'Series of the next 7 days'
+'Series page': 'Series page'
+'Series removed from watch later list': 'Series removed from watch later list'
+'Series schedule menu range': 'Series schedule menu range'
 Series: Series
+'Seven days ago': 'Seven days ago'
+'Show all': 'Show all'
 Since: Since
-Slug updated: Slug updated
+'Six days ago': 'Six days ago'
+'Slug updated': 'Slug updated'
 Source: Source
-Special episodes: Special episodes
+'Special episodes': 'Special episodes'
+Specials: Specials
+'Start typing…': 'Start typing…'
 Status: Status
-Suggest a localized name: Suggest a localized name
-Suggest a name: Suggest a name
-Suggest a title: Suggest a title
+Still: Still
+Streaming: Streaming
+'Suggest a localized name': 'Suggest a localized name'
+'Suggest a name': 'Suggest a name'
+'Suggest a title': 'Suggest a title'
+'Suggest an overview': 'Suggest an overview'
 TBA: TBA
 Tablet: Tablet
 Television: Television
-That's all!: That's all!
-That's all, Folks!: That's all, Folks!
-The link has been copied to your clipboard: The link has been copied to your clipboard
-This field is required: This field is required
+"That's all!": "That's all!"
+"That's all, Folks!": "That's all, Folks!"
+'The first day of the week must be in the selected days of the week.': 'The first day of the week must be in the selected days of the week.'
+'The link has been copied to your clipboard': 'The link has been copied to your clipboard'
+'This field is required': 'This field is required'
+'This series belongs to your watch later list!': 'This series belongs to your watch later list!'
+'Three days ago': 'Three days ago'
+'Thumbnail and images': 'Thumbnail and images'
+'Thumbnail, additional images': 'Thumbnail, additional images'
+Thumbnail: Thumbnail
 Time: Time
-To be continued: To be continued
-To start: To start
+'To be continued': 'To be continued'
+'To start': 'To start'
 Today: Today
+'Toggle blur under overview': 'Toggle blur under overview'
+'Toggle image preview': 'Toggle image preview'
+'Toggle text color': 'Toggle text color'
 Tomorrow: Tomorrow
 Translate: Translate
-Two days ago: Two days ago
+'Two days ago': 'Two days ago'
 URL: URL
-Up to date!: Up to date!
+'Up to date!': 'Up to date!'
+'Up to date': 'Up to date'
+'Upcoming Series': 'Upcoming Series'
 Updates: Updates
-Upload it!: Upload it!
-Up to date: Up to date
-User actions: User actions
+'Upload it!': 'Upload it!'
+Url: URL
+Urls: URLs
+'User actions': 'User actions'
+'Utility Stunts': 'Utility Stunts'
+'Video Identifier (11 characters - i.e. 5KHgFEiPD4g)': 'Video Identifier (11 characters - i.e. 5KHgFEiPD4g)'
+Videos: Videos
+'View date': 'View date'
 Vote: Vote
-Watch links: Watch links
-Watch on: Watch on
-Watched %time% times: Watched %time% times
-Watched again: Watched again
-Where to buy: Where to buy
-Where to rent: Where to rent
-Where to watch: Where to watch
+'Watch on': 'Watch on'
+'Watch season': 'Watch season'
+'Watch specials': 'Watch specials'
+Watch: Watch
+'Watched %time% times': 'Watched %time% times'
+'Watched again': 'Watched again'
+'What else to watch?': 'What else to watch?'
+'What to watch next?': 'What to watch next?'
+'Where was "%name%" filmed?': 'Where was "%name%" filmed?'
+'With watched episodes without provider': 'With watched episodes without provider'
+'Write your overview here': 'Write your overview here'
 Yesterday: Yesterday
+'Your episodes have been updated according to the series information.': 'Your episodes have been updated according to the series information.'
+and: and
 available: available
+backdrops: backdrops
+'count new episodes are now available in season number': 'count new episodes are now available in season number'
 day: day
 days: days
+ep.Aired: 'episodes aired'
+ep.Total: 'episodes in total'
+ep.Viewed: 'episodes watched'
 episode: episode
-episodes seen: episodes seen
+'episodes seen': 'episodes seen'
 episodes: episodes
 hour: hour
 hours: hours
@@ -290,181 +654,822 @@ image: image
 images: images
 in: in
 locations: locations
+logos: logos
 minute: minute
 minutes: minutes
+month: month
+months: months
+network.not_found: 'Network not found'
+'new episodes have been added to the series': 'new episodes have been added to the series'
+'on': 'on'
+posters: posters
+season.number: 'the season'
 season: season
 second: second
 seconds: seconds
 since: since
+special.episode: 'the special episode'
+special.episodes: 'the special episodes'
 star: star
 stars: stars
-tv-time.air-date: Date de diffusion
-tv-time.coming.actors: Acteurs
-tv-time.coming.my-list: Ma liste
-tv-time.coming: À venir
-tv-time.last-episodes-seen: Derniers épisodes vus
-tv-time.layout.grid: Grille
-tv-time.layout.list: Liste
-tv-time.movies.seen: Vus
-tv-time.movies.to-see: À voir
-tv-time.movies: Films
-tv-time.my-list: Ma liste
-tv-time.remaining-days: Jours restants
-tv-time.remaining-time: Time remaining until page update
-tv-time.series.ended: Terminées
-tv-time.series.in-progress: En cours
-tv-time.series: Séries
-tv-time.show-cast: Show / Hide season cast
-tv-time.show-more: Show more
-tv-time.special: Special episode
-tv-time.specials: Show / Hide special episodes
-tv-time.week-number: Number of weeks for special episodes
+tv-time.air-date: 'Air date'
+tv-time.coming.actors: Actors
+tv-time.coming.my-list: 'My list'
+tv-time.coming: 'Coming soon'
+tv-time.last-episodes-seen: 'Last episodes watched'
+tv-time.layout.grid: Grid
+tv-time.layout.list: List
+tv-time.movies.seen: Watched
+tv-time.movies.to-see: 'To watch'
+tv-time.movies: Movies
+tv-time.my-list: 'My list'
+tv-time.remaining-days: 'Remaining days'
+tv-time.remaining-time: 'Time remaining until page update'
+tv-time.series.ended: Ended
+tv-time.series.in-progress: 'In progress'
+tv-time.series: Series
+tv-time.show-cast: 'Show / Hide season cast'
+tv-time.show-more: 'Show more'
+tv-time.special: 'Special episode'
+tv-time.specials: 'Show / Hide special episodes'
+tv-time.weeks: weeks
+tv-time.week-number: 'Number of weeks for special episodes'
 visit: visit
 visits: visits
-x star: x star
-x stars: x stars
+vote: vote
+votes: votes
+'x star': 'x star'
+'x stars': 'x stars'
+year: year
+years: years
+
+#Schedule form
+'All at once': 'All at once'
+Daily: Daily
+Ep.: Ep.
+'Episode count': 'Episode count'
+'First episode': 'First episode'
+Frequency: Frequency
+'Multi part': 'Multi part'
+'Override TMDB': 'Override TMDB'
+'Override the Movie Database schedule': 'Override the Movie Database schedule'
+Part: Part
+'Selected days, then weekly, one at a time': 'Selected days, then weekly, one at a time'
+'This season will be broadcast in several parts': 'This season will be broadcast in several parts'
+'Weekly, four at a time': 'Weekly, four at a time'
+'Weekly, four, then one': 'Weekly, four, then one'
+'Weekly, four, then two': 'Weekly, four, then two'
+'Weekly, one at a time': 'Weekly, one at a time'
+'Weekly, selected days': 'Weekly, selected days'
+'Weekly, three at a time': 'Weekly, three at a time'
+'Weekly, three, then one': 'Weekly, three, then one'
+'Weekly, three, then two': 'Weekly, three, then two'
+'Weekly, two at a time': 'Weekly, two at a time'
+'Weekly, two, then one': 'Weekly, two, then one'
+
+January: January
+February: February
+March: March
+April: April
+May: May
+June: June
+July: July
+August: August
+September: September
+October: October
+November: November
+December: December
 
 #Search
-Search: Search
-Search a series: Search a series
-Advanced search: Advanced search
-Page: Page
-Language: Language
-First air date year: First air date year
-Name of the series: Name of the series
-Search results: Search results
-No results: No results
-results: results
-Go to page: Go to page
-After: After
-Before: Before
-Origin country: Origin country
-Monetization type: Monetization type
-Flatrate: Flatrate
-Watch providers: Watch providers
-Keywords: Keywords
-Start typing to search: Start typing to search
-And: And
-Or: Or
-All keywords: All keywords
-Any keywords: Any keywords
-Runtime less than: Runtime less than
-Runtime greater than: Runtime greater than
-Free: Free
-Rent: Rent
-Buy: Buy
+'Add this movie': 'Add this movie'
+'Add this tv show': 'Add this tv show'
 Ads: Ads
+'Advanced search': 'Advanced search'
+After: After
+'All keywords': 'All keywords'
+And: And
+'Any keywords': 'Any keywords'
+Before: Before
+Buy: Buy
+Dates: Dates
 Documentary: Documentary
-News: News
+'First air date ascending': 'First air date ascending'
+'First air date descending': 'First air date descending'
+'First air date year': 'First air date year'
+Flatrate: Flatrate
+Free: Free
+'Go to page': 'Go to page'
+Hide: Hide
+Keywords: Keywords
+Language: Language
 Miniseries: Miniseries
+'Monetization type': 'Monetization type'
+'Name ascending': 'Name ascending'
+'Name descending': 'Name descending'
+'Name of the series': 'Name of the series'
+News: News
+'No results': 'No results'
+'Open in new tab': 'Open in new tab'
+Or: Or
+'Origin country': 'Origin country'
+Origin: Origin
+'Original name ascending': 'Original name ascending'
+'Original name descending': 'Original name descending'
+Page: Page
+'Popularity ascending': 'Popularity ascending'
+'Popularity descending': 'Popularity descending'
 Reality: Reality
+'Refine your search': 'Refine your search'
+Rent: Rent
+Reset: Reset
+'Runtime greater than': 'Runtime greater than'
+'Runtime less than': 'Runtime less than'
 Scripted: Scripted
-Talk Show: Talk Show
-Video: Video
+'Search a series': 'Search a series'
+'Search results': 'Search results'
+Search: Search
+'Series name': 'Series name'
+Show: Show
+'Sort by': 'Sort by'
+'Start typing to search': 'Start typing to search'
+'Status and type': 'Status and type'
+'Talk Show': 'Talk Show'
 Type: Type
-Sort by: Sort by
-Popularity descending: Popularity descending
-Popularity ascending: Popularity ascending
-Vote average descending: Vote average descending
-Vote average ascending: Vote average ascending
-First air date descending: First air date descending
-First air date ascending: First air date ascending
-Original name descending: Original name descending
-Original name ascending: Original name ascending
-Name descending: Name descending
-Name ascending: Name ascending
-Vote count descending: Vote count descending
-Vote count ascending: Vote count ascending
+Video: Video
+'Viewer place': 'Viewer place'
+'Vote average ascending': 'Vote average ascending'
+'Vote average descending': 'Vote average descending'
+'Vote count ascending': 'Vote count ascending'
+'Vote count descending': 'Vote count descending'
+'Watch providers': 'Watch providers'
+Year: Year
+results: results
 
 # People
-People: People
-Personal Informations: Personal Informations
-Known for Department: Known for Department
 Acting: Acting
-Known appearances: Known appearances
-Gender: Gender
-Female: Female
-Male: Male
+'Add a new name': 'Add a new name'
+'Also known as': 'Also known as'
+'Average rating': 'Average rating'
 Birthday: Birthday
-old: old
-Place of Birth: Place of Birth
-Also known as: Also known as
-Known for: Known for
-Movie: Movie
-Serie: Serie
-tv: tv
-movie: movie
-Self: Self
-Himself: Himself
-Herself: Herself
-Homepage: Homepage
-as.job: as.job
 Directing: Directing
-Production: Production
-Writing: Writing
+Female: Female
+Gender: Gender
 Go: Go
+Herself: Herself
+Himself: Himself
+Homepage: Homepage
+'Known appearances': 'Known appearances'
+'Known for Department': 'Known for Department'
+'Known for': 'Known for'
 Lists: Lists
+Male: Male
+Movie: Movie
+'No proposals': 'No proposals'
+'No rating yet': 'No rating yet'
+'Number of new people added: %newPeople%': 'Number of new people added: %newPeople%'
+People: People
+'Personal Informations': 'Personal Informations'
+'Place of birth': 'Place of birth'
+Production: Production
+Self: Self
+Serie: Serie
+'Set as preferred name': 'Set as preferred name'
+'Star people': 'Star people'
+Writing: Writing
+'Your rating': 'Your rating'
+'Your stars': 'Your stars'
+'Copy to clipboard': 'Copy to clipboard'
+'Add a localized biography': 'Add a localized biography'
+Biography: Biography
+'Biography must be at least 20 characters long.': 'Biography must be at least 20 characters long.'
+as.job: as.job
 items: items
+movie: movie
+old: old
+tv: tv
+"job.Actor's Assistant.he": "job.Actor's Assistant.he"
 job.Adaptation.he: job.Adaptation.he
 job.Animation.she: job.Animation.she
-job.Assistant Director.he: job.Assistant Director.he
-job.Associate Producer.he: job.Associate Producer.he
-job.Associate Producer.she: job.Associate Producer.she
+'job.Assistant Director.he': 'job.Assistant Director.he'
+'job.Associate Producer.he': 'job.Associate Producer.he'
+'job.Associate Producer.she': 'job.Associate Producer.she'
 job.Author.he: job.Author.he
 job.Book.he: job.Book.he
 job.Characters.he: job.Characters.he
 job.Cinematography.he: job.Cinematography.he
-job.Co-Executive Producer.he: job.Co-Executive Producer.he
+'job.Co-Executive Producer.he': 'job.Co-Executive Producer.he'
+'job.Co-Executive Producer.she': 'job.Co-Executive Producer.she'
 job.Co-Producer.he: job.Co-Producer.he
 job.Co-Producer.she: job.Co-Producer.she
 job.Co-Writer.he: job.Co-Writer.he
-job.Comic Book.he: job.Comic Book.he
+job.Co-Writer.she: job.Co-Writer.she
+'job.Comic Book.he': 'job.Comic Book.he'
 job.Conductor.he: job.Conductor.he
-job.Creative Producer.he: job.Creative Producer.he
+'job.Consulting Producer.he': 'job.Consulting Producer.he'
+'job.Consulting Producer.she': 'job.Consulting Producer.she'
+'job.Creative Consultant.he': 'job.Creative Consultant.he'
+'job.Creative Consultant.she': 'job.Creative Consultant.she'
+'job.Creative Producer.he': 'job.Creative Producer.he'
 job.Creator.he: job.Creator.he
 job.Creator.she: job.Creator.she
-job.Development Producer.he: job.Development Producer.he
-job.Development Producer.she: job.Development Producer.she
+'job.Development Producer.he': 'job.Development Producer.he'
+'job.Development Producer.she': 'job.Development Producer.she'
 job.Dialogue.he: job.Dialogue.he
-job.Director of Photography.he: job.Director of Photography.he
+'job.Director of Photography.he': 'job.Director of Photography.he'
 job.Director.he: job.Director.he
 job.Director.she: job.Director.she
-job.Documentation & Support.he: job.Documentation & Support.he
-job.Documentation & Support.she: job.Documentation & Support.she
+'job.Documentation & Support.he': 'job.Documentation & Support.he'
+'job.Documentation & Support.she': 'job.Documentation & Support.she'
 job.Editor.he: job.Editor.he
-job.Executive Co-Producer.he: job.Executive Co-Producer.he
-job.Executive Co-Producer.she: job.Executive Co-Producer.she
-job.Executive Producer.he: job.Executive Producer.he
-job.Executive Producer.she: job.Executive Producer.she
+'job.Executive Co-Producer.he': 'job.Executive Co-Producer.he'
+'job.Executive Co-Producer.she': 'job.Executive Co-Producer.she'
+'job.Executive Producer.he': 'job.Executive Producer.he'
+'job.Executive Producer.she': 'job.Executive Producer.she'
 job.Idea.he: job.Idea.he
 job.Idea.she: job.Idea.she
-job.Lighting Technician.he: job.Lighting Technician.he
-job.Music Director.he: job.Music Director.he
-job.Music Supervisor.he: job.Music Supervisor.he
+'job.Lighting Technician.he': 'job.Lighting Technician.he'
+'job.Music Director.he': 'job.Music Director.he'
+'job.Music Supervisor.he': 'job.Music Supervisor.he'
 job.Music.he: job.Music.he
 job.Novel.he: job.Novel.he
-job.Original Music Composer.he: job.Original Music Composer.he
-job.Original Story.he: job.Original Story.he
+'job.Original Music Composer.he': 'job.Original Music Composer.he'
+'job.Original Story.he': 'job.Original Story.he'
 job.Presenter.he: job.Presenter.he
 job.Producer.he: job.Producer.he
 job.Producer.she: job.Producer.she
-job.Production Assistant.he: job.Production Assistant.he
-job.Production Design.he: job.Production Design.he
-job.Production Executive.he: job.Production Executive.he
-job.Production Sound Mixer.he: job.Production Sound Mixer.he
+'job.Production Assistant.he': 'job.Production Assistant.he'
+'job.Production Design.he': 'job.Production Design.he'
+'job.Production Executive.he': 'job.Production Executive.he'
+'job.Production Sound Mixer.he': 'job.Production Sound Mixer.he'
 job.Screenplay.he: job.Screenplay.he
 job.Screenstory.he: job.Screenstory.he
 job.Script.he: job.Script.he
 job.Songs.he: job.Songs.he
 job.Songs.she: job.Songs.she
-job.Sound Mixer.he: job.Sound Mixer.he
+'job.Sound Mixer.he': 'job.Sound Mixer.he'
 job.Story.he: job.Story.he
+'job.Stunt Double.he': 'job.Stunt Double.he'
+'job.Stunt Double.she': 'job.Stunt Double.she'
 job.Stunts.he: job.Stunts.he
 job.Teleplay.he: job.Teleplay.he
 job.Thanks.he: job.Thanks.he
 job.Thanks.she: job.Thanks.she
+'job.Theme Song Performance.he': 'job.Theme Song Performance.he'
 job.Writer.he: job.Writer.he
 job.Writer.she: job.Writer.she
+
+# Jobs
+'First Assistant "A" Camera': 'First Assistant "A" Camera'
+'First Assistant "B" Camera': 'First Assistant "B" Camera'
+'First Assistant "C" Camera': 'First Assistant "C" Camera'
+'Second Assistant "A" Camera': 'Second Assistant "A" Camera'
+'Second Assistant "B" Camera': 'Second Assistant "B" Camera'
+'Second Assistant "C" Camera': 'Second Assistant "C" Camera'
+'"A" Camera Operator': '"A" Camera Operator'
+'"B" Camera Operator': '"B" Camera Operator'
+'"C" Camera Operator': '"C" Camera Operator'
+'"D" Camera Operator': '"D" Camera Operator'
+
+'24 Frame Playback': '24 Frame Playback'
+'3D Artist': '3D Artist'
+'3D Supervisor': '3D Supervisor'
+'ADR & Dubbing': 'ADR & Dubbing'
+'ADR Coordinator': 'ADR Coordinator'
+'ADR Editor': 'ADR Editor'
+'ADR Mixer': 'ADR Mixer'
+'ADR Recordist': 'ADR Recordist'
+'ADR Supervisor': 'ADR Supervisor'
+'ADR Voice Casting': 'ADR Voice Casting'
+Accountant: Accountant
+'Acting Double': 'Acting Double'
+'Action Director': 'Action Director'
+"Actor's Assistant": "Actor's Assistant"
+Adaptation: Adaptation
+'Additional Casting': 'Additional Casting'
+'Additional Colorist': 'Additional Colorist'
+'Additional Editor': 'Additional Editor'
+'Additional Music': 'Additional Music'
+'Additional Photography': 'Additional Photography'
+'Additional Script Supervisor': 'Additional Script Supervisor'
+'Additional Second Assistant Director': 'Additional Second Assistant Director'
+'Additional Sound Re-Recording Mixer': 'Additional Sound Re-Recording Mixer'
+'Additional Soundtrack': 'Additional Soundtrack'
+'Additional Wardrobe Assistant': 'Additional Wardrobe Assistant'
+Administration: Administration
+'Administrative Assistant': 'Administrative Assistant'
+'Aerial Coordinator': 'Aerial Coordinator'
+'Aerial Director of Photography': 'Aerial Director of Photography'
+'Animal Coordinator': 'Animal Coordinator'
+'Animal Wrangler': 'Animal Wrangler'
+'Animation Director': 'Animation Director'
+'Animation Manager': 'Animation Manager'
+'Animation Supervisor': 'Animation Supervisor'
+Animation: Animation
+Animator: Animator
+'Apprentice Sound Editor': 'Apprentice Sound Editor'
+Armorer: Armorer
+'Art Department Assistant': 'Art Department Assistant'
+'Art Department Coordinator': 'Art Department Coordinator'
+'Art Department Manager': 'Art Department Manager'
+'Art Department Production Assistant': 'Art Department Production Assistant'
+'Art Department Trainee': 'Art Department Trainee'
+'Art Designer': 'Art Designer'
+'Art Direction': 'Art Direction'
+Art: Art
+'Assistant Accountant': 'Assistant Accountant'
+'Assistant Art Director': 'Assistant Art Director'
+'Assistant Camera': 'Assistant Camera'
+'Assistant Chef': 'Assistant Chef'
+'Assistant Chief Lighting Technician': 'Assistant Chief Lighting Technician'
+'Assistant Costume Designer': 'Assistant Costume Designer'
+'Assistant Director Trainee': 'Assistant Director Trainee'
+'Assistant Director of Photography': 'Assistant Director of Photography'
+'Assistant Director': 'Assistant Director'
+'Assistant Editor': 'Assistant Editor'
+'Assistant Electrician': 'Assistant Electrician'
+'Assistant Grip': 'Assistant Grip'
+'Assistant Hairstylist': 'Assistant Hairstylist'
+'Assistant Location Manager': 'Assistant Location Manager'
+'Assistant Makeup Artist': 'Assistant Makeup Artist'
+'Assistant Production Coordinator': 'Assistant Production Coordinator'
+'Assistant Production Design': 'Assistant Production Design'
+'Assistant Production Manager': 'Assistant Production Manager'
+'Assistant Property Master': 'Assistant Property Master'
+'Assistant Script': 'Assistant Script'
+'Assistant Set Decoration': 'Assistant Set Decoration'
+'Assistant Sound Editor': 'Assistant Sound Editor'
+'Assistant Unit Manager': 'Assistant Unit Manager'
+'Associate Editor': 'Associate Editor'
+'Associate Producer': 'Associate Producer'
+'Background Casting Director': 'Background Casting Director'
+'Base Camp Operator': 'Base Camp Operator'
+'Best Boy Electric': 'Best Boy Electric'
+'Best Boy Grip': 'Best Boy Grip'
+'Best Boy Lighting Technician': 'Best Boy Lighting Technician'
+Book: Book
+'Boom Operator': 'Boom Operator'
+'Business Affairs Coordinator': 'Business Affairs Coordinator'
+'CG Supervisor': 'CG Supervisor'
+'Camera Loader': 'Camera Loader'
+'Camera Operator': 'Camera Operator'
+'Camera Supervisor': 'Camera Supervisor'
+'Camera Technician': 'Camera Technician'
+'Camera Trainee': 'Camera Trainee'
+Camera: Camera
+Carpenter: Carpenter
+'Casting Assistant': 'Casting Assistant'
+'Casting Associate': 'Casting Associate'
+'Casting Consultant': 'Casting Consultant'
+'Casting Coordinator': 'Casting Coordinator'
+'Casting Director': 'Casting Director'
+Casting: Casting
+Catering: Catering
+'Character Designer': 'Character Designer'
+Characters: Characters
+Chef: Chef
+'Chief Lighting Technician': 'Chief Lighting Technician'
+'Child Wrangler': 'Child Wrangler'
+Choreographer: Choreographer
+Cinematography: Cinematography
+'Clapper Loader': 'Clapper Loader'
+'Clearances Coordinator': 'Clearances Coordinator'
+Co-Director: Co-Director
+'Co-Executive Producer': 'Co-Executive Producer'
+Co-Producer: Co-Producer
+'Color Assistant': 'Color Assistant'
+'Color Grading': 'Color Grading'
+Colorist: Colorist
+'Comic Book': 'Comic Book'
+'Commissioning Editor': 'Commissioning Editor'
+'Compositing Artist': 'Compositing Artist'
+'Compositing Lead': 'Compositing Lead'
+'Compositing Supervisor': 'Compositing Supervisor'
+Compositor: Compositor
+Compositors: Compositors
+'Concept Artist': 'Concept Artist'
+'Conceptual Design': 'Conceptual Design'
+'Conceptual Illustrator': 'Conceptual Illustrator'
+Conductor: Conductor
+'Construction Buyer': 'Construction Buyer'
+'Construction Coordinator': 'Construction Coordinator'
+'Construction Foreman': 'Construction Foreman'
+'Construction Grip': 'Construction Grip'
+'Construction Manager': 'Construction Manager'
+'Consulting Producer': 'Consulting Producer'
+'Contact Lens Technician': 'Contact Lens Technician'
+Continuity: Continuity
+Controller: Controller
+'Coordinating Producer': 'Coordinating Producer'
+'Costume & Make-Up': 'Costume & Make-Up'
+'Costume Assistant': 'Costume Assistant'
+'Costume Consultant': 'Costume Consultant'
+'Costume Coordinator': 'Costume Coordinator'
+'Costume Design': 'Costume Design'
+'Costume Designer': 'Costume Designer'
+'Costume Illustrator': 'Costume Illustrator'
+'Costume Mistress': 'Costume Mistress'
+'Costume Set Supervisor': 'Costume Set Supervisor'
+'Costume Standby': 'Costume Standby'
+'Costume Supervisor': 'Costume Supervisor'
+Costumer: Costumer
+'Craft Service': 'Craft Service'
+'Creative Consultant': 'Creative Consultant'
+'Creative Director': 'Creative Director'
+'Creative Producer': 'Creative Producer'
+Creator: Creator
+'Creature Effects Technical Director': 'Creature Effects Technical Director'
+'Dailies Operator': 'Dailies Operator'
+'Data Wrangler': 'Data Wrangler'
+'Delegated Producer': 'Delegated Producer'
+'Development Manager': 'Development Manager'
+'Development Producer': 'Development Producer'
+'Dialect Coach': 'Dialect Coach'
+'Dialogue Coach': 'Dialogue Coach'
+'Dialogue Editor': 'Dialogue Editor'
+'Digital Colorist': 'Digital Colorist'
+'Digital Compositor': 'Digital Compositor'
+'Digital Effects Supervisor': 'Digital Effects Supervisor'
+'Digital Imaging Technician': 'Digital Imaging Technician'
+'Digital Intermediate Assistant': 'Digital Intermediate Assistant'
+'Digital Intermediate Colorist': 'Digital Intermediate Colorist'
+'Digital Intermediate Editor': 'Digital Intermediate Editor'
+'Digital Intermediate Producer': 'Digital Intermediate Producer'
+'Digital Intermediate': 'Digital Intermediate'
+'Director of Photography': 'Director of Photography'
+Director: Director
+'Dolly Grip': 'Dolly Grip'
+Draughtsman: Draughtsman
+'Dressing Prop': 'Dressing Prop'
+Driver: Driver
+'Drone Operator': 'Drone Operator'
+'Drone Pilot': 'Drone Pilot'
+Editing: Editing
+Editor: Editor
+'Editorial Manager': 'Editorial Manager'
+'Editorial Production Assistant': 'Editorial Production Assistant'
+'Editorial Staff': 'Editorial Staff'
+'Effects Supervisor': 'Effects Supervisor'
+Electrician: Electrician
+'Epk Camera Operator': 'Epk Camera Operator'
+'Epk Producer': 'Epk Producer'
+'Executive Assistant': 'Executive Assistant'
+'Executive Co-Producer': 'Executive Co-Producer'
+'Executive Consultant': 'Executive Consultant'
+'Executive In Charge Of Production': 'Executive In Charge Of Production'
+'Executive Music Producer': 'Executive Music Producer'
+"Executive Producer's Assistant": "Executive Producer's Assistant"
+'Executive Producer': 'Executive Producer'
+'Executive Story Editor': 'Executive Story Editor'
+'Executive Visual Effects Producer': 'Executive Visual Effects Producer'
+'Extras Casting Assistant': 'Extras Casting Assistant'
+'Extras Casting': 'Extras Casting'
+'Fight Choreographer': 'Fight Choreographer'
+Finance: Finance
+'Finishing Producer': 'Finishing Producer'
+'First Assistant "D" Camera': 'First Assistant "D" Camera'
+'First Assistant Accountant': 'First Assistant Accountant'
+'First Assistant Art Direction': 'First Assistant Art Direction'
+'First Assistant Camera': 'First Assistant Camera'
+'First Assistant Director': 'First Assistant Director'
+'First Assistant Editor': 'First Assistant Editor'
+'First Assistant Hairstylist': 'First Assistant Hairstylist'
+'First Assistant Makeup Artist': 'First Assistant Makeup Artist'
+'First Assistant Production Coordinator': 'First Assistant Production Coordinator'
+'First Assistant Sound Editor': 'First Assistant Sound Editor'
+'Floor Runner': 'Floor Runner'
+'Focus Puller': 'Focus Puller'
+'Foley Artist': 'Foley Artist'
+'Foley Editor': 'Foley Editor'
+'Foley Mixer': 'Foley Mixer'
+'Foley Recordist': 'Foley Recordist'
+'Foley Supervisor': 'Foley Supervisor'
+Foley: Foley
+Gaffer: Gaffer
+'Graphic Designer': 'Graphic Designer'
+'Graphic Novel': 'Graphic Novel'
+Greensman: Greensman
+Grip: Grip
+'Hair Assistant': 'Hair Assistant'
+'Hair Department Head': 'Hair Department Head'
+'Hair Designer': 'Hair Designer'
+'Hair Supervisor': 'Hair Supervisor'
+Hairdresser: Hairdresser
+Hairstylist: Hairstylist
+'Head Greensman': 'Head Greensman'
+'Head of Animation': 'Head of Animation'
+'Head of Production': 'Head of Production'
+'Head of Story': 'Head of Story'
+'Health and Safety': 'Health and Safety'
+'Hide all facts': 'Hide all facts'
+'Hide all providers': 'Hide all providers'
+Idea: Idea
+'In Memory Of': 'In Memory Of'
+'Interior Designer': 'Interior Designer'
+'Key Carpenter': 'Key Carpenter'
+'Key Construction Grip': 'Key Construction Grip'
+'Key Costumer': 'Key Costumer'
+'Key Grip': 'Key Grip'
+'Key Hair Stylist': 'Key Hair Stylist'
+'Key Makeup Artist': 'Key Makeup Artist'
+'Key Production Assistant': 'Key Production Assistant'
+'Key Rigging Grip': 'Key Rigging Grip'
+'Key Scenic Artist': 'Key Scenic Artist'
+'Key Set Costumer': 'Key Set Costumer'
+'Key Set Production Assistant': 'Key Set Production Assistant'
+'Layout Supervisor': 'Layout Supervisor'
+'Lead Animator': 'Lead Animator'
+'Lead Painter': 'Lead Painter'
+'Lead Set Dresser': 'Lead Set Dresser'
+Leadman: Leadman
+'Legal Services': 'Legal Services'
+'Libra Head Technician': 'Libra Head Technician'
+'Lighting Artist': 'Lighting Artist'
+'Lighting Design': 'Lighting Design'
+'Lighting Director': 'Lighting Director'
+'Lighting Programmer': 'Lighting Programmer'
+'Lighting Supervisor': 'Lighting Supervisor'
+'Lighting Technician': 'Lighting Technician'
+Lighting: Lighting
+'Line Producer': 'Line Producer'
+Loader: Loader
+'Local Casting': 'Local Casting'
+'Location Assistant': 'Location Assistant'
+'Location Casting': 'Location Casting'
+'Location Coordinator': 'Location Coordinator'
+'Location Manager': 'Location Manager'
+'Location Production Assistant': 'Location Production Assistant'
+'Location Scout': 'Location Scout'
+Lyricist: Lyricist
+'Main Title Designer': 'Main Title Designer'
+'Main Title Theme Composer': 'Main Title Theme Composer'
+'Makeup & Hair Assistant': 'Makeup & Hair Assistant'
+'Makeup & Hair': 'Makeup & Hair'
+'Makeup Artist': 'Makeup Artist'
+'Makeup Department Head': 'Makeup Department Head'
+'Makeup Designer': 'Makeup Designer'
+'Makeup Effects Designer': 'Makeup Effects Designer'
+'Makeup Effects': 'Makeup Effects'
+'Makeup Supervisor': 'Makeup Supervisor'
+'Makeup Trainee': 'Makeup Trainee'
+'Marine Coordinator': 'Marine Coordinator'
+'Martial Arts Choreographer': 'Martial Arts Choreographer'
+'Master Lighting Artist': 'Master Lighting Artist'
+'Matte Painter': 'Matte Painter'
+'Medical Consultant': 'Medical Consultant'
+'Military Consultant': 'Military Consultant'
+'Mix Technician': 'Mix Technician'
+'Mixing Engineer': 'Mixing Engineer'
+Modeling: Modeling
+'Motion Capture Artist': 'Motion Capture Artist'
+'Music Arranger': 'Music Arranger'
+'Music Co-Supervisor': 'Music Co-Supervisor'
+'Music Consultant': 'Music Consultant'
+'Music Coordinator': 'Music Coordinator'
+'Music Director': 'Music Director'
+'Music Editor': 'Music Editor'
+'Music Producer': 'Music Producer'
+'Music Score Producer': 'Music Score Producer'
+'Music Supervisor': 'Music Supervisor'
+Music: Music
+'Musical Casting': 'Musical Casting'
+Musician: Musician
+Novel: Novel
+'On Set Computer Graphics': 'On Set Computer Graphics'
+'On Set Dresser': 'On Set Dresser'
+'Online Editor': 'Online Editor'
+'Opening/Ending Animation': 'Opening/Ending Animation'
+Orchestrator: Orchestrator
+'Original Casting': 'Original Casting'
+'Original Concept': 'Original Concept'
+'Original Film Writer': 'Original Film Writer'
+'Original Music Composer': 'Original Music Composer'
+'Original Series Creator': 'Original Series Creator'
+'Original Story': 'Original Story'
+Other: Other
+'Paint Coordinator': 'Paint Coordinator'
+'Payroll Accountant': 'Payroll Accountant'
+'Petty Cash Buyer': 'Petty Cash Buyer'
+'Picture Car Coordinator': 'Picture Car Coordinator'
+'Pipeline Technical Director': 'Pipeline Technical Director'
+'Playback Coordinator': 'Playback Coordinator'
+'Post Producer': 'Post Producer'
+'Post Production': 'Post Production'
+'Post Production Accountant': 'Post Production Accountant'
+'Post Production Assistant': 'Post Production Assistant'
+'Post Production Consulting': 'Post Production Consulting'
+'Post Production Coordinator': 'Post Production Coordinator'
+'Post Production Producer': 'Post Production Producer'
+'Post Production Supervisor': 'Post Production Supervisor'
+'Post-Production Manager': 'Post-Production Manager'
+'Pre-Visualization Supervisor': 'Pre-Visualization Supervisor'
+Presenter: Presenter
+'Principal Costumer': 'Principal Costumer'
+"Producer's Assistant": "Producer's Assistant"
+Producer: Producer
+'Production Accountant': 'Production Accountant'
+'Production Assistant': 'Production Assistant'
+'Production Consultant': 'Production Consultant'
+'Production Controller': 'Production Controller'
+'Production Coordinator': 'Production Coordinator'
+'Production Design': 'Production Design'
+'Production Designer': 'Production Designer'
+'Production Director': 'Production Director'
+'Production Driver': 'Production Driver'
+'Production Executive': 'Production Executive'
+'Production Manager': 'Production Manager'
+'Production Office Assistant': 'Production Office Assistant'
+'Production Office Coordinator': 'Production Office Coordinator'
+'Production Runner': 'Production Runner'
+'Production Secretary': 'Production Secretary'
+'Production Sound Mixer': 'Production Sound Mixer'
+'Production Supervisor': 'Production Supervisor'
+'Project Manager': 'Project Manager'
+'Prop Designer': 'Prop Designer'
+'Prop Maker': 'Prop Maker'
+'Property Builder': 'Property Builder'
+'Property Buyer': 'Property Buyer'
+'Property Master': 'Property Master'
+Propmaker: Propmaker
+Props: Props
+'Prosthetic Designer': 'Prosthetic Designer'
+'Prosthetic Makeup Artist': 'Prosthetic Makeup Artist'
+'Prosthetic Supervisor': 'Prosthetic Supervisor'
+Prosthetics: Prosthetics
+Publicist: Publicist
+'Pyrotechnic Supervisor': 'Pyrotechnic Supervisor'
+'Recording Supervision': 'Recording Supervision'
+Researcher: Researcher
+'Rigging Gaffer': 'Rigging Gaffer'
+'Rigging Grip': 'Rigging Grip'
+'Rigging Supervisor': 'Rigging Supervisor'
+'Rotoscoping Artist': 'Rotoscoping Artist'
+'Russian Arm Operator': 'Russian Arm Operator'
+'Scenario Writer': 'Scenario Writer'
+'Scenic Artist': 'Scenic Artist'
+'Scientific Consultant': 'Scientific Consultant'
+'Score Engineer': 'Score Engineer'
+'Scoring Mixer': 'Scoring Mixer'
+Screenplay: Screenplay
+Screenstory: Screenstory
+'Script Consultant': 'Script Consultant'
+'Script Coordinator': 'Script Coordinator'
+'Script Editor': 'Script Editor'
+'Script Supervisor': 'Script Supervisor'
+Script: Script
+Sculptor: Sculptor
+Seamstress: Seamstress
+'Second Assistant "D" Camera': 'Second Assistant "D" Camera'
+'Second Assistant Accountant': 'Second Assistant Accountant'
+'Second Assistant Camera': 'Second Assistant Camera'
+'Second Assistant Director': 'Second Assistant Director'
+'Second Assistant Production Coordinator': 'Second Assistant Production Coordinator'
+'Second Company Grip': 'Second Company Grip'
+'Second Second Assistant Director': 'Second Second Assistant Director'
+'Second Unit Director of Photography': 'Second Unit Director of Photography'
+'Second Unit Director': 'Second Unit Director'
+'Second Unit First Assistant Director': 'Second Unit First Assistant Director'
+'Second Unit': 'Second Unit'
+Security: Security
+'Senior Colorist': 'Senior Colorist'
+'Senior Visual Effects Supervisor': 'Senior Visual Effects Supervisor'
+'Series Composition': 'Series Composition'
+'Series Director': 'Series Director'
+'Set Buyer': 'Set Buyer'
+'Set Costumer': 'Set Costumer'
+'Set Decorating Coordinator': 'Set Decorating Coordinator'
+'Set Decoration Buyer': 'Set Decoration Buyer'
+'Set Decoration': 'Set Decoration'
+'Set Designer': 'Set Designer'
+'Set Dresser': 'Set Dresser'
+'Set Dressing Production Assistant': 'Set Dressing Production Assistant'
+'Set Medic': 'Set Medic'
+'Set Photographer': 'Set Photographer'
+'Set Production Assistant': 'Set Production Assistant'
+'Set Supervisor': 'Set Supervisor'
+Shading: Shading
+'Short Story': 'Short Story'
+'Show all facts': 'Show all facts'
+'Show all providers': 'Show all providers'
+Songs: Songs
+'Sound Assistant': 'Sound Assistant'
+'Sound Designer': 'Sound Designer'
+'Sound Director': 'Sound Director'
+'Sound Editor': 'Sound Editor'
+'Sound Effects Designer': 'Sound Effects Designer'
+'Sound Effects Editor': 'Sound Effects Editor'
+'Sound Engineer': 'Sound Engineer'
+'Sound Mix Technician': 'Sound Mix Technician'
+'Sound Mixer': 'Sound Mixer'
+'Sound Post Production Coordinator': 'Sound Post Production Coordinator'
+'Sound Post Supervisor': 'Sound Post Supervisor'
+'Sound Re-Recording Assistant': 'Sound Re-Recording Assistant'
+'Sound Re-Recording Mixer': 'Sound Re-Recording Mixer'
+'Sound Recordist': 'Sound Recordist'
+'Sound Supervisor': 'Sound Supervisor'
+Sound: Sound
+'Special Effects Assistant': 'Special Effects Assistant'
+'Special Effects Best Boy': 'Special Effects Best Boy'
+'Special Effects Coordinator': 'Special Effects Coordinator'
+'Special Effects Key Makeup Artist': 'Special Effects Key Makeup Artist'
+'Special Effects Makeup Artist': 'Special Effects Makeup Artist'
+'Special Effects Manager': 'Special Effects Manager'
+'Special Effects Supervisor': 'Special Effects Supervisor'
+'Special Effects Technician': 'Special Effects Technician'
+'Special Effects': 'Special Effects'
+'Special Props': 'Special Props'
+'Specialized Driver': 'Specialized Driver'
+'Staff Writer': 'Staff Writer'
+'Stand In': 'Stand In'
+'Standby Art Director': 'Standby Art Director'
+'Standby Carpenter': 'Standby Carpenter'
+'Standby Painter': 'Standby Painter'
+'Standby Property Master': 'Standby Property Master'
+'Steadicam Operator': 'Steadicam Operator'
+'Stereoscopic Supervisor': 'Stereoscopic Supervisor'
+'Still Photographer': 'Still Photographer'
+'Story Editor': 'Story Editor'
+'Story Supervisor': 'Story Supervisor'
+Story: Story
+'Storyboard Artist': 'Storyboard Artist'
+Storyboard: Storyboard
+'Studio Teacher': 'Studio Teacher'
+'Stunt Coordinator': 'Stunt Coordinator'
+'Stunt Double': 'Stunt Double'
+'Stunt Driver': 'Stunt Driver'
+Stunts: Stunts
+'Supervising ADR Editor': 'Supervising ADR Editor'
+'Supervising Armorer': 'Supervising Armorer'
+'Supervising Art Director': 'Supervising Art Director'
+'Supervising Dialogue Editor': 'Supervising Dialogue Editor'
+'Supervising Music Editor': 'Supervising Music Editor'
+'Supervising Producer': 'Supervising Producer'
+'Supervising Sound Editor': 'Supervising Sound Editor'
+'Supervising Sound Effects Editor': 'Supervising Sound Effects Editor'
+'Systems Administrators & Support': 'Systems Administrators & Support'
+Tailor: Tailor
+'Technical Advisor': 'Technical Advisor'
+'Technical Supervisor': 'Technical Supervisor'
+'Techno Crane Operator': 'Techno Crane Operator'
+Teleplay: Teleplay
+Thanks: Thanks
+'Theme Song Performance': 'Theme Song Performance'
+'Third Assistant Camera': 'Third Assistant Camera'
+'Third Assistant Director': 'Third Assistant Director'
+'Title Designer': 'Title Designer'
+'Trainee Production Coordinator': 'Trainee Production Coordinator'
+Transcriptions: Transcriptions
+Translator: Translator
+'Transportation Captain': 'Transportation Captain'
+'Transportation Co-Captain': 'Transportation Co-Captain'
+'Transportation Coordinator': 'Transportation Coordinator'
+'Travel Coordinator': 'Travel Coordinator'
+'Truck Costumer': 'Truck Costumer'
+'Truck Supervisor': 'Truck Supervisor'
+'Unit Manager': 'Unit Manager'
+'Unit Production Manager': 'Unit Production Manager'
+'Unit Publicist': 'Unit Publicist'
+'Utility Sound': 'Utility Sound'
+'VFX Artist': 'VFX Artist'
+'VFX Editor': 'VFX Editor'
+'VFX Production Coordinator': 'VFX Production Coordinator'
+'VFX Supervisor': 'VFX Supervisor'
+'Video Assist Operator': 'Video Assist Operator'
+'Visual Development': 'Visual Development'
+'Visual Effects Art Director': 'Visual Effects Art Director'
+'Visual Effects Assistant Editor': 'Visual Effects Assistant Editor'
+'Visual Effects Compositor': 'Visual Effects Compositor'
+'Visual Effects Coordinator': 'Visual Effects Coordinator'
+'Visual Effects Director': 'Visual Effects Director'
+'Visual Effects Editor': 'Visual Effects Editor'
+'Visual Effects Producer': 'Visual Effects Producer'
+'Visual Effects Production Assistant': 'Visual Effects Production Assistant'
+'Visual Effects Production Manager': 'Visual Effects Production Manager'
+'Visual Effects Supervisor': 'Visual Effects Supervisor'
+'Visual Effects': 'Visual Effects'
+'Vocal Coach': 'Vocal Coach'
+Vocals: Vocals
+'Wardrobe Assistant': 'Wardrobe Assistant'
+'Wardrobe Designer': 'Wardrobe Designer'
+'Wardrobe Supervisor': 'Wardrobe Supervisor'
+'Where to watch, rent or buy': 'Where to watch, rent or buy'
+Wigmaker: Wigmaker
+Writer: Writer
+"Writers' Assistant": "Writers' Assistant"
+"Writers' Production": "Writers' Production"
+'Runner Art Department': 'Runner Art Department'
+'Lighting Manager': 'Lighting Manager'
+
+'Additional Grip': 'Additional Grip'
+Ager/Dyer: Ager/Dyer
+'Charge Scenic Artist': 'Charge Scenic Artist'
+Painter: Painter
+'Best Boy Electrician': 'Best Boy Electrician'
+'Assistant Gaffer': 'Assistant Gaffer'
+'Assistant Decorator': 'Assistant Decorator'
+'Extras Makeup Artist': 'Extras Makeup Artist'
+'Drone Cinematographer': 'Drone Cinematographer'
+'Quality Control Supervisor': 'Quality Control Supervisor'
+'Sound Effects': 'Sound Effects'
 
 # Contact
 Contact: Contact
@@ -473,64 +1478,350 @@ Subject: Subject
 Message: Message
 Cancel: Cancel
 Send: Send
-Contact form: Contact form
-Contact message: Contact message
+'Contact form': 'Contact form'
+'Contact message': 'Contact message'
 From: From
-Your message has been sent: Your message has been sent
-An error occurred, please try again later: An error occurred, please try again later
+'Your message has been sent': 'Your message has been sent'
+'An error occurred, please try again later': 'An error occurred, please try again later'
 
 # User / Profile
-Profile: Profile
-Preferred Language: Preferred Language
 Avatar: Avatar
+'Back to my account': 'Back to my account'
 Banner: Banner
-Update: Update
-Drop your file here or click to upload: Drop your file here or click to upload
+'Choose a color': 'Choose a color'
+'Confirm deletion of Apple link?': 'Confirm deletion of Apple link?'
+'Confirm deletion of Github link?': 'Confirm deletion of Github link?'
+'Confirm deletion of Google link?': 'Confirm deletion of Google link?'
+'Drop your file here or click to upload': 'Drop your file here or click to upload'
 Filter: Filter
-Start taping...: Start taping...
-See selected: See selected
+'Link Apple': 'Link Apple'
+'Link GitHub': 'Link GitHub'
+'Link Google': 'Link Google'
+'Link or unlink external accounts (Google, GitHub, Apple)': 'Link or unlink external accounts (Google, GitHub, Apple)'
+'Manage connections': 'Manage connections'
+'Preferred Language': 'Preferred Language'
+'Preferred Languages': 'Preferred Languages'
+Profile: Profile
+'See selected': 'See selected'
+'Select Language': 'Select Language'
+'Start taping...': 'Start taping...'
+'Targeted Languages': 'Targeted Languages'
+'Translation Settings': 'Translation Settings'
+'Unlink Apple': 'Unlink Apple'
+'Unlink GitHub': 'Unlink GitHub'
+'Unlink Google': 'Unlink Google'
+Connexions: Connections
+Update: Update
+'You can change the translations of the application here.': 'You can change the translations of the application here.'
 
 # Movies
-Movies: Movies
-movies: movies
-Title: Title
-My movies: My movies
-poster: poster
-backdrop: backdrop
-Genres: Genres
-Collection: Collection
-Runtime: Runtime
-Note: Note
+'%minutes% minutes': '%minutes% minutes'
+'1 minute': '1 minute'
+2015: '2015'
+'Add a genre': 'Add a genre'
+'Add this movie to your watchlist': 'Add this movie to your watchlist'
 Average: Average
+Backdrops: Backdrops
+Backdrop: Backdrop
+Collection: Collection
 Count: Count
-Release date: Release date
-Recommendations: Recommendations
-Add this movie to your watchlist: Add this movie to your watchlist
-Premiere: Premiere
-Theatrical (limited): Theatrical (limited)
-Theatrical: Theatrical
+'Delete this movie from your watchlist': 'Delete this movie from your watchlist'
 Digital: Digital
+Discover: Discover
+Genres: Genres
+Logos: Logos
+Logo: Logo
+'Mark as viewed': 'Mark as viewed'
+'Movie not found on TMDB': 'Movie not found on TMDB'
+Movies: Movies
+'Movies by ID': 'Movies by ID'
+'My favorite movies': 'My favorite movies'
+'My movies': 'My movies'
+'Name of the movie': 'Name of the movie'
+'Next video': 'Next video'
+'Not found': 'Not found'
+Note: Note
+'Origin language': 'Origin language'
 Physical: Physical
-TV: TV
+Posters: Posters
+Poster: Poster
+Premiere: Premiere
+'Previous video': 'Previous video'
+'Primary release year': 'Primary release year'
+'Production companies': 'Production companies'
+'Production countries': 'Production countries'
+Recommendations: Recommendations
+Region: Region
+'Release date year': 'Release date year'
+'Release date': 'Release date'
+'Released before': 'Released before'
+'Released after': 'Released after'
 Released: Released
-Production companies: Production companies
-Production countries: Production countries
-Mark as viewed: Mark as viewed
-Not found: Not found
-Movie not found on TMDB: Movie not found on TMDB
-Search on TMDB: Search on TMDB
-Delete this movie from your watchlist: Delete this movie from your watchlist
-Added to blocked list: Added to blocked list
-Already in blocked list: Already in blocked list
-
+Runtime: Runtime
+'Search a movie': 'Search a movie'
+'Search for a movie…': 'Search for a movie…'
+'Search on TMDB': 'Search on TMDB'
+'Select a cast member': 'Select a cast member'
+'Select a crew member': 'Select a crew member'
+'Select a language': 'Select a language'
+TV: TV
+'Theatrical (limited)': 'Theatrical (limited)'
+Theatrical: Theatrical
+Title: Title
+'Where to buy or rent': 'Where to buy or rent'
+'Where to buy': 'Where to buy'
+'Where to flatrate': 'Where to flatrate'
+'Where to rent': 'Where to rent'
+'Your country': 'Your country'
+'Your list does not contain any movies': 'Your list does not contain any movies'
+backdrop: backdrop
+movies: movies
+poster: poster
+'Title (ascending)': 'Title (ascending)'
+'Title (descending)': 'Title (descending)'
+'Original title (ascending)': 'Original title (ascending)'
+'Original title (descending)': 'Original title (descending)'
+Popularity: Popularity
+'Popularity (reverse)': 'Popularity (reverse)'
+'Release date (reverse)': 'Release date (reverse)'
+'Vote average': 'Vote average'
+'Vote average (reverse)': 'Vote average (reverse)'
+'Vote count': 'Vote count'
+'Vote count (reverse)': 'Vote count (reverse)'
 
 # Map
-Shooting locations for your %d series: Shooting locations for your %d series
-Shooting locations: Shooting locations
-Add a shooting location: Add a shooting location
-Location: Location
-Latitude: Latitude
-Longitude: Longitude
+'Add a shooting location': 'Add a shooting location'
+'All countries': 'All countries'
+'All series': 'All series'
+'Arrow keys': 'Arrow keys'
+'Center the map on this location': 'Center the map on this location'
+'Click the map to copy the latitude and longitude to the clipboard': 'Click the map to copy the latitude and longitude to the clipboard'
+Countries: Countries
+'Decrease the pitch by 10 degrees': 'Decrease the pitch by 10 degrees'
+'Decrease the rotation by 15 degrees': 'Decrease the rotation by 15 degrees'
+'Decrease the zoom level by 1': 'Decrease the zoom level by 1'
+'Decrease the zoom level by 2': 'Decrease the zoom level by 2'
 Description: Description
+'Go to': 'Go to'
 Image: Image
-Paste Google maps url here to obtain latitude and longitude: Paste Google maps url here to obtain latitude and longitude
+'Increase the pitch by 10 degrees': 'Increase the pitch by 10 degrees'
+'Increase the rotation by 15 degrees': 'Increase the rotation by 15 degrees'
+'Increase the zoom level by 1': 'Increase the zoom level by 1'
+'Increase the zoom level by 2': 'Increase the zoom level by 2'
+Last: Last
+Latitude: Latitude
+Location: Location
+Locations: Locations
+Longitude: Longitude
+'Map styles': 'Map styles'
+'Pan by 100 pixels': 'Pan by 100 pixels'
+'Paste Google maps url here to obtain latitude and longitude': 'Paste Google maps url here to obtain latitude and longitude'
+'Points of Interest toggle display': 'Points of Interest toggle display'
+'Recent additions': 'Recent additions'
+'Recent updates': 'Recent updates'
+'Results per page': 'Results per page'
+'Shooting locations for %d series': 'Shooting locations for your %d series'
+'Shooting locations': 'Shooting locations'
+'Zoom to': 'Zoom to'
+'map additions': 'Latest additions'
+'map updates': 'Latest updates'
+'Zone radius': 'Zone radius'
+Radius: Radius
+
+# Points of interest
+'Points of interest': 'Points of interest'
+
+# Videos
+'Added at': 'Added at'
+Added: Added
+Agriculture: Agriculture
+'Albert Moukheiber': 'Albert Moukheiber'
+'All categories': 'All categories'
+'Animal documentary': 'Animal documentary'
+Arte: Arte
+'Artificial Intelligence': 'Artificial Intelligence'
+'Asma Mhalla': 'Asma Mhalla'
+'Aurélien Barrau': 'Aurélien Barrau'
+'Back to my videos by category': 'Back to my videos by category'
+'Back to my videos': 'Back to my videos'
+'Balade mentale': 'Balade mentale'
+Capitalism: Capitalism
+Cat: Cat
+Categories: Categories
+'Chinese tradition': 'Chinese tradition'
+'Claire Nouvian': 'Claire Nouvian'
+'Climate change': 'Climate change'
+'Clément Viktorovitch': 'Clément Viktorovitch'
+Collapse: Collapse
+Comments: Comments
+Demography: Demography
+'Display less': 'Display less'
+'Display more': 'Display more'
+Economics: Economics
+Environment: Environment
+'Failed to copy video link': 'Failed to copy video link'
+'Gender bias': 'Gender bias'
+Golden: Golden
+"It's important": "It's important"
+'Jean-Luc Mélenchon': 'Jean-Luc Mélenchon'
+'Kawai Yuto': 'Kawai Yuto'
+Link: 'Link or YouTube ID'
+Listen: Listen
+'Lucy Darling': 'Lucy Darling'
+'Manuel Bompart': 'Manuel Bompart'
+'Mass extinction': 'Mass extinction'
+Mercosur: Mercosur
+'My videos': 'My videos'
+Neoliberalism: Neoliberalism
+'New category': 'New category'
+'Nicolas Framont': 'Nicolas Framont'
+'No comments': 'No comments'
+'No video': 'No video'
+'One video': 'One video'
+Pest: Pest
+Politics: Politics
+'Published at': 'Published at'
+Published: Published
+Repression: Repression
+SNCF: SNCF
+'Share this video': 'Share this video'
+Taxation: Taxation
+'The Empire': 'The Empire'
+'The Sound of Silence': 'The Sound of Silence'
+'Time spent watching these count videos': 'Time spent watching these count videos'
+Transition: Transition
+'Video link copied to clipboard': 'Video link copied to clipboard'
+'World of work': 'World of work'
+'You Raise Me Up': 'You Raise Me Up'
+'YouTube Short': 'YouTube Short'
+at: at
+comments: comments
+'count pages': 'count pages'
+'count videos': 'count videos'
+likes: likes
+or: or
+'seconds or': 'seconds or'
+views: views
+
+# Error page
+Oops!: Oops!
+'An error occurred while processing your request.': 'An error occurred while processing your request.'
+'Please try again later or contact support if the issue persists.': 'Please try again later or contact support if the issue persists.'
+'Go to Home': 'Go to Home'
+'Or you will be redirect to the last page': 'Or you will be redirect to the last page'
+secondes: seconds
+
+
+# Admin
+'Add a new point of interest': 'Add a new point of interest'
+Address: Address
+'Adjust starting day': 'Adjust starting day'
+'An error has occurred': 'An error has occurred'
+'Are you sure you want to delete this message?': 'Are you sure you want to delete this message?'
+'Back to messages': 'Back to messages'
+'Block this email': 'Block this email'
+'Block this username': 'Block this username'
+'Unblock this email': 'Unblock this email'
+'Unblock this username': 'Unblock this username'
+'Added to blocked list': 'Added to blocked list'
+'Already in blocked list': 'Already in blocked list'
+Calculate: Calculate
+Channel: Channel
+'Check for updates': 'Check for updates'
+'Check if airing series have a new poster': 'Check if airing series have a new poster'
+Check: Check
+City: City
+Coordinates: Coordinates
+Creation: Creation
+'Delete message': 'Delete message'
+Duration: Duration
+'Edit filming location': 'Edit filming location'
+'Filming locations': 'Filming locations'
+'Force update': 'Force update'
+'Generate find/zip command': 'Generate find/zip command'
+'Go to video page': 'Go to video page'
+'Keywords updated successfully': 'Keywords updated successfully'
+'Last update': 'Last update'
+'Message details': 'Message details'
+Messages: Messages
+'Minutes passed since...': 'Minutes passed since...'
+'No messages': 'No messages'
+'Only one translation left!': 'Only one translation left!'
+'Points of interrest': 'Points of interest'
+Results: Results
+'See the filming location description': 'See the filming location description'
+'See the point of interest description': 'See the point of interest description'
+'Select a country': 'Select a country'
+Start: 'Start day'
+'TMDB ID': 'TMDB ID'
+Tools: Tools
+Translation: Translation
+Update_: Update
+'Video Id': 'Video ID'
+'Work in progress': 'Work in progress'
+'missing translations': 'missing translations'
+'new message': 'new message'
+'new messages': 'new messages'
+'point of interest': 'point of interest'
+'points of interest': 'points of interest'
+videos: videos
+
+# Albums
+'Add a new album cover': 'Add a new album cover'
+'Add photos': 'Add photos'
+Album: Album
+Albums: Albums
+Caption: Caption
+'Create a new album': 'Create a new album'
+Create: Create
+'Created at': 'Created at'
+Date: Date
+'Modify album': 'Modify album'
+Modify: Modify
+'My albums': 'My albums'
+'New album name': 'New album name'
+'Next album': 'Next album'
+'No album': 'No album'
+'Photo thumbnail': 'Photo thumbnail'
+'Previous album': 'Previous album'
+'Updated at': 'Updated at'
+Photos: Photos
+Photo: Photo
+'Last days': 'Last days'
+photo: photo
+photos: photos
+
+#Missing keys
+'Add this series': 'Add this series'
+'Article deleted successfully.': 'Article deleted successfully.'
+'Article saved successfully.': 'Article saved successfully.'
+Deathday: 'Date of death'
+'Drop your additional images files here': 'Drop your additional image files here'
+'Failed to remove season %number% from user series': 'Failed to remove season %number% from your series'
+'First day of the week → %day%': 'First day of the week → %day%'
+'Movie poster': 'Movie poster'
+'Movie backdrop': 'Movie backdrop'
+'Movie collection': 'Movie collection'
+'No date range': 'No date range'
+'No lists found.': 'No lists found.'
+'No photo': 'No photo'
+'No profile': 'No profile picture'
+'No rating': 'No rating'
+'No series found in this list.': 'No series found in this list.'
+'Number of episodes updated': 'Number of episodes updated'
+'Number of seasons updated': 'Number of seasons updated'
+'Original title': 'Original title'
+'Removed from blocked list': 'Removed from blocked list'
+'Selected days of the week → %days%': 'Selected days of the week → %days%'
+'Series already added to your watchlist': 'Series already added to your watchlist'
+'Shooting locations for your %d series': 'Shooting locations for your %d series'
+'Still in blocked list': 'Still in blocked list'
+'The episode could not be loaded': 'The episode could not be loaded'
+'The season could not be loaded': 'The season could not be loaded'
+'Time machine': 'Time machine'
+'From %start% to %end%': 'From %start% to %end%'
+'Where to watch': 'Where to watch'
+'Invalid request': 'Invalid request'
+logo: logo
+'Point of interest added successfully': 'Point of interest added successfully'
+'No data received': 'No data received'
