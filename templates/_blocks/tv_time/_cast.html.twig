@@ -1,9 +1,13 @@
 <div class="tv-time-cast" data-episode-id="{{ episodeId }}">
     <div class="cast">
-        <div class="wrapper">
-            {% for people in cast %}
-                {{ include('_blocks/series/_cast.html.twig', {people: people, role: people.character}) }}
-            {% endfor %}
+        <div class="rounded-wrapper">
+        <div class="scrollable-wrapper">
+            <div class="wrapper">
+                {% for people in cast %}
+                    {{ include('_blocks/series/_cast.html.twig', {people: people, role: people.character}) }}
+                {% endfor %}
+            </div>
+        </div>
         </div>
     </div>
 </div>

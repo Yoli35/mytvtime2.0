@@ -1,4 +1,5 @@
 import JSConfetti from "js-confetti";
+import {PeopleCard} from "PeopleCard";
 
 let self;
 
@@ -12,6 +13,9 @@ export class TvTime {
         this.remainingSecondes = globs.remainingSecondes;
         this.intervalId = -1;
         this.toolsTips = toolsTips;
+        this.peopleCard = new PeopleCard();
+
+
         this.dividerStates = new Map();
         this.initializedDividers = new WeakSet();
 
@@ -564,7 +568,8 @@ export class TvTime {
                 const tvTimeContainer = document.querySelector('.series-tv-time');
                 const homeFooter = document.querySelector('.home-footer');
                 tvTimeContainer.insertBefore(tvTimeCastDiv, homeFooter);
-                setTimeout(()=>tvTimeCastDiv.classList.add('tv-time-cast-loaded'), 0);
+                self.peopleCard.init();
+                setTimeout(() => tvTimeCastDiv.classList.add('tv-time-cast-loaded'), 0);
             })
             .catch((error) => {
                 console.error('Error:', error);

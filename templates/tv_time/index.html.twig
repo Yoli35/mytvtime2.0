@@ -6,6 +6,7 @@
     <link rel="stylesheet" href="{{ asset('styles/home.scss') }}">
     <link rel="stylesheet" href="{{ asset('styles/series.scss') }}">
     <link rel="stylesheet" href="{{ asset('styles/card.scss') }}">
+    <link rel="stylesheet" href="{{ asset('styles/people.scss') }}">
     <link rel="stylesheet" href="{{ asset('styles/tv_time.scss') }}">
 {% endblock %}
 
@@ -136,6 +137,7 @@
             <div id="svg-xmark">{{ ux_icon('mdi:close') }}</div>
             <div id="svg-bookmark">{{ ux_icon('mdi:bookmark') }}</div>
             <div id="svg-bookmark-outline">{{ ux_icon('mdi:bookmark-outline') }}</div>
+            <div>{{ ux_icon('mdi:close', {id: 'cancel'}) }}</div>
         </div>
         {{ include('_blocks/tv_time/_card_series_vote.html.twig', {seriesArr: noVoteArr}) }}
         {% include('_blocks/_footer.html.twig') %}
