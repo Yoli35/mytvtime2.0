@@ -181,8 +181,8 @@ class AdminController extends AbstractController
             throw $this->createAccessDeniedException();
         }
 
-        $blocked = $this->contactBlocklistService->removeNameNeedle($message->getName() ?? '');
-        $this->addFlash('success', $blocked ? $this->translator->trans('Removed from blocked list') : $this->translator->trans('Still in blocked list'));
+        $removed = $this->contactBlocklistService->removeNameNeedle($message->getName() ?? '');
+        $this->addFlash('success', $removed ? $this->translator->trans('Removed from blocked list') : $this->translator->trans('Still in blocked list'));
 
         return $this->redirectToRoute('admin_message_detail', ['id' => $message->getId()]);
     }
@@ -207,8 +207,8 @@ class AdminController extends AbstractController
             throw $this->createAccessDeniedException();
         }
 
-        $blocked = $this->contactBlocklistService->removeEmailNeedle($message->getEmail() ?? '');
-        $this->addFlash('success', $blocked ? $this->translator->trans('Removed from blocked list') : $this->translator->trans('Still in blocked list'));
+        $removed = $this->contactBlocklistService->removeEmailNeedle($message->getEmail() ?? '');
+        $this->addFlash('success', $removed ? $this->translator->trans('Removed from blocked list') : $this->translator->trans('Still in blocked list'));
 
         return $this->redirectToRoute('admin_message_detail', ['id' => $message->getId()]);
     }
@@ -483,7 +483,7 @@ class AdminController extends AbstractController
 
         if ($invalidRequest) {
             return $this->json([
-                'error' => $this->translator->trans("admin.series.append.invalid_request"),
+                'error' => $this->translator->trans("Invalid request"),
                 'status' => 400,
             ]);
         } else {
@@ -1152,7 +1152,7 @@ class AdminController extends AbstractController
         if (empty($inputBag) && empty($files)) {
             return new JsonResponse([
                 'status' => 'success',
-                'message' => $this->translator->trans('point_of_interest.no_data'),
+                'message' => $this->translator->trans('No data received'),
             ]);
         }
 
@@ -1260,7 +1260,7 @@ class AdminController extends AbstractController
             }
         }
 
-        $messages[0] = $this->translator->trans('point_of_interest.add_success');
+        $messages[0] = $this->translator->trans('Point of interest added successfully');
         if ($n > $firstImageIndex) {
             $addedImageCount = $n - $firstImageIndex;
             $messages[] = $addedImageCount . $addedImageCount > 1 ? ' images ajoutées' : ' image ajoutée';
