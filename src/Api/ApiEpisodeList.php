@@ -105,7 +105,7 @@ readonly class ApiEpisodeList
         if (!$watched && $seasonNumber > 1) {
             // on récupère les user épisodes des saisons précédentes
             $previousSeasonEpisodes = array_filter($userEpisodes, function ($episode) use ($firstEpisodeNumber, $seasonNumber) {
-                return $episode->getWatchAt() === null && (($episode->getSeasonNumber() < $seasonNumber) || ($episode->getSeasonNumber() == $seasonNumber && $episode->getEpisodeNumber() < $firstEpisodeNumber));
+                return $episode->getWatchedAt() === null && (($episode->getSeasonNumber() < $seasonNumber) || ($episode->getSeasonNumber() == $seasonNumber && $episode->getEpisodeNumber() < $firstEpisodeNumber));
             });
             $previousSeasonEpisodes = array_map(function ($episode) {
                 return ['episodeId' => $episode->getId(), 'episodeNumber' => $episode->getEpisodeNumber(), 'watched' => false];
@@ -126,14 +126,14 @@ readonly class ApiEpisodeList
             });
             if ($ue) {
                 if ($episode['watched']) {
-                    $ue->setWatchAt(null);
+                    $ue->setWatchedAt(null);
                     $markedAsNotWatched++;
                 } else {
                     if ($isWatchedAsTheyGo) {
                         $lastDate = $ue->getAirDate() ?: $lastDate;
-                        $ue->setWatchAt($lastDate->setTime(18, 0));
+                        $ue->setWatchedAt($lastDate->setTime(18, 0));
                     } else {
-                        $ue->setWatchAt($now);
+                        $ue->setWatchedAt($now);
                     }
                     if ($providerId > 0) {
                         $ue->setProviderId($providerId);
@@ -179,19 +179,19 @@ readonly class ApiEpisodeList
             // L'épisode vient d'être marqué comme non lu.
             $previousUserEpisode = $userSeries->getLastUserEpisode();
             $seasonNumber = $previousUserEpisode->getSeasonNumber();
-            $userSeries->setLastWatchAt($previousUserEpisode->getWatchAt());
+            $userSeries->setLastWatchedAt($previousUserEpisode->getWatchedAt());
             $userSeries->setLastSeason($seasonNumber);
             $userSeries->setLastEpisode($previousUserEpisode->getEpisodeNumber());
             $userSeries->setLastUserEpisode($previousUserEpisode);
-            $userSeries->setNextUserEpisode(array_find($userEpisodes, fn(UserEpisode $ue) => $ue->getSeasonNumber() >= $seasonNumber && !$ue->getWatchAt()));
+            $userSeries->setNextUserEpisode(array_find($userEpisodes, fn(UserEpisode $ue) => $ue->getSeasonNumber() >= $seasonNumber && !$ue->getWatchedAt()));
         } else {
             // L'épisode vient d'être marqué comme lu.
             $seasonNumber = $userEpisode->getSeasonNumber();
-            $userSeries->setLastWatchAt($userEpisode->getWatchAt());
+            $userSeries->setLastWatchedAt($userEpisode->getWatchedAt());
             $userSeries->setLastSeason($seasonNumber);
             $userSeries->setLastEpisode($userEpisode->getEpisodeNumber());
             $userSeries->setLastUserEpisode($userEpisode);
-            $userSeries->setNextUserEpisode(array_find($userEpisodes, fn(UserEpisode $ue) => $ue->getSeasonNumber() >= $seasonNumber && !$ue->getWatchAt()));
+            $userSeries->setNextUserEpisode(array_find($userEpisodes, fn(UserEpisode $ue) => $ue->getSeasonNumber() >= $seasonNumber && !$ue->getWatchedAt()));
         }
         $userSeries->setViewedEpisodes($viewedEpisodeCount);
         $userSeries->setProgress($viewedEpisodeCount / max($episodeCount, 1));

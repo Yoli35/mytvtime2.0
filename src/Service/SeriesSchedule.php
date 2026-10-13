@@ -88,13 +88,13 @@ readonly class SeriesSchedule
                         $item['providerLogoPath'] = '/images/providers' . substr($item['providerLogoPath'], 1);
                     }
                 }
-                $item['episodesWatched'] = $item['watchAt'] === null ? 0 : 1;
+                $item['episodesWatched'] = $item['watchedAt'] === null ? 0 : 1;
                 $seriesArr[$index][$seriesSeasonIndex] = $item;
             } else {
                 if (!$this->episodeInArray($seriesArr[$index], $item)) {
                     $seriesArr[$index][$seriesSeasonIndex]['episodeIds'][] = $item['episodeId'];
                     $seriesArr[$index][$seriesSeasonIndex]['episodes'][] = $item['episodeNumber'];
-                    $seriesArr[$index][$seriesSeasonIndex]['episodesWatched'] += $item['watchAt'] === null ? 0 : 1;
+                    $seriesArr[$index][$seriesSeasonIndex]['episodesWatched'] += $item['watchedAt'] === null ? 0 : 1;
                 }
             }
         }
@@ -162,7 +162,7 @@ readonly class SeriesSchedule
                     $item['providerLogoPath'] = '/images/providers' . substr($item['providerLogoPath'], 1);
                 }
             }
-            $item['episodesWatched'] = $item['watchAt'] === null ? 0 : 1;
+            $item['episodesWatched'] = $item['watchedAt'] === null ? 0 : 1;
             $item['display'] = $item['localizedName'] ?? $item['name'];
             $item['customDate'] = null;
             $item['airAt'] = "00:00:00";
@@ -183,7 +183,7 @@ readonly class SeriesSchedule
             if (!key_exists($index, $seriesArr)) {
                 $seriesArr[$index] = [];
             }
-            $item['upToDate'] = $item['watchAt'] !== null;
+            $item['upToDate'] = $item['watchedAt'] !== null;
             $seriesArr[$index][] = $item;
         }
         ksort($seriesArr);

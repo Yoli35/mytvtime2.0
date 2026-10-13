@@ -55,7 +55,7 @@
                         ] }) }}
                     {#<div class="tab-sort">
                         <div id="sort-by-remaining-days" class="sort-by{% if sort==0 %} active{% endif %}" data-title="{{ 'tv-time.remaining-days'|trans }}">{{ ux_icon('mdi:calendar') }}</div>#}{# remainingDays #}{#
-                        <div id="sort-by-last-watch-at" class="sort-by{% if sort==1 %} active{% endif %}" data-title="{{ 'tv-time.last-episodes-seen'|trans }}">{{ ux_icon('mdi:eye-outline') }}</div> #}{# us.`last_watch_at` DESC #}{#
+                        <div id="sort-by-last-watch-at" class="sort-by{% if sort==1 %} active{% endif %}" data-title="{{ 'tv-time.last-episodes-seen'|trans }}">{{ ux_icon('mdi:eye-outline') }}</div> #}{# us.`last_watched_at` DESC #}{#
                         <div id="sort-by-air-date" class="sort-by{% if sort==2 %} active{% endif %}" data-title="{{ 'tv-time.air-date'|trans }}">{{ ux_icon('mdi:wifi') }}</div> #}{# IFNULL(DATE(sbd.`date`), ue.`air_date`) DESC #}{#
                     </div>#}
                     <div class="tab-content">

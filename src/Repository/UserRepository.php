@@ -88,7 +88,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
                        (SELECT COUNT(*) FROM user_watch_provider up WHERE up.user_id=u.id) AS providerCount,
                        (SELECT COUNT(*) FROM user_network un WHERE un.user_id=u.id)        AS networkCount,
                        (SELECT COUNT(*) FROM user_episode ue WHERE ue.user_id=u.id)        AS episodeCount,
-                       (SELECT COUNT(*) FROM user_episode ue WHERE ue.user_id=u.id AND ue.watch_at IS NOT NULL)  AS watchedEpisodeCount
+                       (SELECT COUNT(*) FROM user_episode ue WHERE ue.user_id=u.id AND ue.watched_at IS NOT NULL)  AS watchedEpisodeCount
                 FROM user u
                 ORDER BY :sort $order LIMIT :limit OFFSET :offset
             SQL;

@@ -803,11 +803,11 @@ class SeriesController extends AbstractController
 
         foreach ($userEpisodes as $userEpisode) {
             if ($userEpisode->getAirDate()) {
-                $userEpisode->setWatchAt($userEpisode->getAirDate());
+                $userEpisode->setWatchedAt($userEpisode->getAirDate());
                 $this->userEpisodeRepository->save($userEpisode);
                 $lastEpisodeNumber = $userEpisode->getEpisodeNumber();
                 $lastSeasonNumber = $userEpisode->getSeasonNumber();
-                $lastWatchedAt = $userEpisode->getWatchAt();
+                $lastWatchedAt = $userEpisode->getWatchedAt();
                 $watchedEpisodeCount++;
             }
         }
@@ -815,7 +815,7 @@ class SeriesController extends AbstractController
 
         $userSeries->setLastEpisode($lastEpisodeNumber);
         $userSeries->setLastSeason($lastSeasonNumber);
-        $userSeries->setLastWatchAt($lastWatchedAt);
+        $userSeries->setLastWatchedAt($lastWatchedAt);
         $userSeries->setViewedEpisodes($watchedEpisodeCount);
         $userSeries->setProgress($watchedEpisodeCount / $episodeCount * 100);
 

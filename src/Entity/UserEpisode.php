@@ -41,7 +41,7 @@ class UserEpisode
     private ?DateTimeImmutable $airDate = null;
 
     #[ORM\Column(nullable: true)]
-    private ?DateTimeImmutable $watchAt;
+    private ?DateTimeImmutable $watchedAt;
 
     #[ORM\Column(nullable: true)]
     private ?int $providerId = null;
@@ -63,14 +63,14 @@ class UserEpisode
 
     private ?DateTimeImmutable $alternativeAirDate = null;
 
-    public function __construct(UserSeries $userSeries, int $episodeId, int $seasonNumber, int $episodeNumber, ?DateTimeImmutable $watchAt)
+    public function __construct(UserSeries $userSeries, int $episodeId, int $seasonNumber, int $episodeNumber, ?DateTimeImmutable $watchedAt)
     {
         $this->user = $userSeries->getUser();
         $this->userSeries = $userSeries;
         $this->episodeId = $episodeId;
         $this->seasonNumber = $seasonNumber;
         $this->episodeNumber = $episodeNumber;
-        $this->watchAt = $watchAt;
+        $this->watchedAt = $watchedAt;
         $this->quickWatchDay = false;
         $this->quickWatchWeek = false;
     }
@@ -140,14 +140,14 @@ class UserEpisode
         return $this;
     }
 
-    public function getWatchAt(): ?DateTimeImmutable
+    public function getWatchedAt(): ?DateTimeImmutable
     {
-        return $this->watchAt;
+        return $this->watchedAt;
     }
 
-    public function setWatchAt(?DateTimeImmutable $watchAt): static
+    public function setWatchedAt(?DateTimeImmutable $watchedAt): static
     {
-        $this->watchAt = $watchAt;
+        $this->watchedAt = $watchedAt;
 
         return $this;
     }

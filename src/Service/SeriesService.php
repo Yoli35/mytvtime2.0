@@ -1486,7 +1486,7 @@ readonly class SeriesService
         /** @var UserEpisode $episode */
         foreach ($episodes as $episode) {
             if ($episode->getSeasonNumber() == $seasonNumber && $episode->getEpisodeNumber() == $episodeNumber) {
-                return $episode->getWatchAt() != null;
+                return $episode->getWatchedAt() != null;
             }
         }
         return false;

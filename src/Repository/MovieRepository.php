@@ -173,7 +173,7 @@ class MovieRepository extends ServiceEntityRepository
                 mln.`name`                              as localizedName,
                 wp.`provider_name`                                as providerName,
                 wp.`logo_path`                           as providerLogoPath,
-                um.last_viewed_at                       as watchAt,
+                um.last_viewed_at                       as watchedAt,
                 IF(mln.name IS NULL, m.title, mln.name) as displayName 
             FROM movie m
                 INNER JOIN `user_movie` um ON um.`movie_id`=m.`id`

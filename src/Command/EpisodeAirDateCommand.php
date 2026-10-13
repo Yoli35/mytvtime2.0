@@ -303,7 +303,7 @@ class EpisodeAirDateCommand
 
     public function findFirstNotWatchedEpisode($userEpisodes): mixed
     {
-        return array_find($userEpisodes, fn($userEpisode) => $userEpisode->getSeasonNumber() && $userEpisode->getWatchAt() === null);
+        return array_find($userEpisodes, fn($userEpisode) => $userEpisode->getSeasonNumber() && $userEpisode->getWatchedAt() === null);
     }
 
     /**
@@ -315,7 +315,7 @@ class EpisodeAirDateCommand
     {
         if ($userSeries->getNextUserEpisode() === null) {
             $userEpisodes = array_filter($userEpisodes, function ($ue) {
-                return $ue->getSeasonNumber() && $ue->getWatchAt() === null/* && $ue->getPreviousOccurrence() === null*/;
+                return $ue->getSeasonNumber() && $ue->getWatchedAt() === null/* && $ue->getPreviousOccurrence() === null*/;
             });
             usort($userEpisodes, function ($a, $b) {
                 if ($a->getSeasonNumber() == $b->getSeasonNumber()) {

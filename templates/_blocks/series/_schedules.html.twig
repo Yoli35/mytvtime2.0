@@ -57,7 +57,7 @@ Mandatory variables:
                                 <div class="episode-info" data-title="{{ 'Last episode watched'|trans }}">{{ ux_icon('mdi:eye-outline') }}</div>
                                 <div class="episode-number">{{ "S%02dE%02d"|format(ule.season_number, ule.episode_number) }}</div>
                                 <div class="episode-air-date" data-title="{{ 'Episode air date'|trans }}">{{ ule.air_date|format_date("relative_short")|capitalize }}</div>
-                                <div class="episode-air-date" data-title="{{ 'View date'|trans }}">{{ ule.watch_at|format_datetime("relative_short", "short")|capitalize }}</div>
+                                <div class="episode-air-date" data-title="{{ 'View date'|trans }}">{{ ule.watched_at|format_datetime("relative_short", "short")|capitalize }}</div>
                             </a>
                         {% endif %}
                         {% if une %}

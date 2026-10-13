@@ -141,7 +141,7 @@ class UserSeriesRepository extends ServiceEntityRepository
                     COUNT(ue.`provider_id`) AS count
                 FROM `user_episode` ue
                     LEFT JOIN `watch_provider` wp ON wp.`provider_id`=ue.`provider_id`
-                WHERE ue.`user_id`=:userId AND ue.`provider_id` IS NOT NULL AND DATE(ue.`watch_at`) > SUBDATE(CURDATE(), INTERVAL 1 MONTH)
+                WHERE ue.`user_id`=:userId AND ue.`provider_id` IS NOT NULL AND DATE(ue.`watched_at`) > SUBDATE(CURDATE(), INTERVAL 1 MONTH)
                 GROUP BY ue.`provider_id`,
                     wp.`provider_name`,
                     wp.`logo_path`
@@ -158,7 +158,7 @@ class UserSeriesRepository extends ServiceEntityRepository
                     COUNT(ue.`provider_id`) AS count
                 FROM `user_episode` ue
                     LEFT JOIN `watch_provider` wp ON wp.`provider_id`=ue.`provider_id`
-                WHERE ue.`user_id`=:userId AND ue.`provider_id` IS NOT NULL AND DATE(ue.`watch_at`) > :startDate AND DATE(ue.`watch_at`) <= :endDate
+                WHERE ue.`user_id`=:userId AND ue.`provider_id` IS NOT NULL AND DATE(ue.`watched_at`) > :startDate AND DATE(ue.`watched_at`) <= :endDate
                 GROUP BY ue.`provider_id`,
                     wp.`provider_name`,
                     wp.`logo_path`
@@ -375,15 +375,15 @@ class UserSeriesRepository extends ServiceEntityRepository
                     s.`poster_path`                                                           AS `poster_path`,
                     us.`last_season`                                                          AS `last_season`,
                     us.`last_episode`                                                         AS `last_episode`,
-                    us.`last_watch_at`                                                        AS `last_viewed_at`
+                    us.`last_watched_at`                                                        AS `last_viewed_at`
                 FROM `user_series` us
                 LEFT JOIN `series` s ON us.`series_id`=s.`id`
                 LEFT JOIN `series_localized_name` sln ON sln.`series_id`=s.`id` AND sln.locale = :locale
                 WHERE us.`user_id` = :userId
                     AND us.`progress` > 0
                     AND us.`progress` < 100
-                    AND us.`last_watch_at` <= :date
-                ORDER BY us.`last_watch_at` DESC
+                    AND us.`last_watched_at` <= :date
+                ORDER BY us.`last_watched_at` DESC
             SQL;
 
         return $this->getAll($sql, $params, $types);
@@ -403,7 +403,7 @@ class UserSeriesRepository extends ServiceEntityRepository
         $network = $filters['network'];
 
         $sort = match ($sort) {
-            'lastWatched' => 'us.`last_watch_at`',
+            'lastWatched' => 'us.`last_watched_at`',
             'episodeAirDate' => 'last_episode_air_date',/*'lue.`air_date`',*/
             'name' => 's.`name`',
             'addedAt' => 'us.`added_at`',
@@ -453,7 +453,7 @@ class UserSeriesRepository extends ServiceEntityRepository
                     us.`added_at`                                    AS added_at,
                     us.`progress`                                    AS progress,
                     us.`favorite`                                    AS favorite, 
-                    us.`last_watch_at`                               AS last_watched_at, 
+                    us.`last_watched_at`                               AS last_watched_at, 
                     sln.`name`                                       AS sln_name,
                     sln.`slug`                                       AS sln_slug,
                     nue.air_date                                     AS next_episode_air_date,
@@ -465,7 +465,7 @@ class UserSeriesRepository extends ServiceEntityRepository
                         FROM user_episode ue2
                         WHERE ue2.user_series_id = us.id
                           AND ue2.season_number > 0
-                          AND ue2.`watch_at` IS NULL)               AS remainingEpisodes,
+                          AND ue2.`watched_at` IS NULL)               AS remainingEpisodes,
                     (SELECT COUNT(*)
                         FROM `user_list_series` uls
                             INNER JOIN `user_list` ul ON ul.`user_id` = :userId AND uls.`user_list_id`=ul.`id`
@@ -587,7 +587,7 @@ class UserSeriesRepository extends ServiceEntityRepository
                     WHERE cue.user_series_id = us.id
                       AND cue.season_number > 0
                       AND IF(sbs.`override`, DATE(sbd.date) <= CURDATE(), cue.air_date <= CURDATE())
-                      AND cue.watch_at IS NOT NULL)                                          AS watched_aired_episode_count,
+                      AND cue.watched_at IS NOT NULL)                                          AS watched_aired_episode_count,
                    (SELECT count(*)
                     FROM user_episode cue
                         LEFT JOIN series_broadcast_schedule sbs ON s.id = sbs.series_id AND sbs.season_number = cue.season_number AND IF(sbs.multi_part, cue.episode_number BETWEEN sbs.season_part_first_episode AND (sbs.season_part_first_episode + sbs.season_part_episode_count - 1), 1)
@@ -601,7 +601,7 @@ class UserSeriesRepository extends ServiceEntityRepository
                         WHERE ue.`user_series_id`=us.id)                                     AS number_of_episode,
                    (SELECT CONCAT(ue.`season_number`, '/',ue.`episode_number`)
                         FROM `user_episode` ue
-                        WHERE ue.`user_series_id`=us.id AND ue.`season_number`>0 AND ue.`watch_at` IS NULL
+                        WHERE ue.`user_series_id`=us.id AND ue.`season_number`>0 AND ue.`watched_at` IS NULL
                         ORDER BY ue.`episode_number` LIMIT 1)                                AS episode,
                    (SELECT COUNT(*)
                           FROM `user_list_series` uls
@@ -739,7 +739,7 @@ class UserSeriesRepository extends ServiceEntityRepository
             SELECT us.id
             FROM `user_series` us
             WHERE us.`user_id` = :userId
-            ORDER BY us.`last_watch_at` DESC LIMIT 1
+            ORDER BY us.`last_watched_at` DESC LIMIT 1
         SQL;
 
         return $this->getOne($sql, ['userId' => $userId], ['userId' => ParameterType::INTEGER]);
@@ -772,7 +772,7 @@ class UserSeriesRepository extends ServiceEntityRepository
                     LEFT JOIN `user_series` us ON us.`id`=ue.`user_series_id`
                     LEFT JOIN `series` s ON s.`id`=us.`series_id`
                     LEFT JOIN `series_localized_name` sln ON sln.`series_id`=s.`id` AND sln.`locale`=:locale
-                WHERE ue.user_id=:id AND ue.`watch_at` IS NOT NULL AND ue.`provider_id` IS NULL
+                WHERE ue.user_id=:id AND ue.`watched_at` IS NOT NULL AND ue.`provider_id` IS NULL
                 ORDER BY s.`first_air_date` DESC 
                 LIMIT :limit OFFSET :offset;
                 SQL;
@@ -794,7 +794,7 @@ class UserSeriesRepository extends ServiceEntityRepository
                 FROM `user_episode` ue
                     LEFT JOIN `user_series` us ON us.`id`=ue.`user_series_id`
                     LEFT JOIN `series` s ON s.`id`=us.`series_id`
-                WHERE ue.user_id=:id AND ue.`watch_at` IS NOT NULL AND ue.`provider_id` IS NULL;
+                WHERE ue.user_id=:id AND ue.`watched_at` IS NOT NULL AND ue.`provider_id` IS NULL;
                 SQL;
 
         return $this->getAll($sql, $params, $types);
@@ -824,13 +824,13 @@ class UserSeriesRepository extends ServiceEntityRepository
                     IF(sln.`id`, CONCAT(sln.`name`, ' - ', s.`name`), s.`name`)  AS display_name,
                     IF(sln.`id`, sln.`slug`, s.`slug`)                           AS slug,
                     s.`poster_path`                                              AS poster_path,
-                    us.`last_watch_at`
+                    us.`last_watched_at`
                 FROM `user_episode` ue
                     LEFT JOIN `user_series` us ON us.`id`=ue.`user_series_id`
                     LEFT JOIN `series` s ON s.`id`=us.`series_id`
                     LEFT JOIN `series_localized_name` sln ON sln.`series_id`=s.`id` AND sln.`locale`=:locale
                 WHERE ue.user_id=:id AND ue.`provider_id`=:provider
-                ORDER BY us.`last_watch_at` DESC
+                ORDER BY us.`last_watched_at` DESC
                 LIMIT :limit OFFSET :offset;
                 SQL;
 
@@ -915,7 +915,7 @@ class UserSeriesRepository extends ServiceEntityRepository
                 SELECT DISTINCT
                     s.`id`,
                     s.`tmdb_id`,
-                    us.`last_watch_at`,
+                    us.`last_watched_at`,
                     IF(sln.`id`, sln.`name` , s.name) AS name,
                     YEAR(s.first_air_date) AS year,
                     CONCAT('S', LPAD(ue.`season_number`, 2, '0'), 'E', LPAD(ue.`episode_number`, 2, '0')) AS number,
@@ -931,7 +931,7 @@ class UserSeriesRepository extends ServiceEntityRepository
                      WHERE remain.`user_series_id`=us.`id`  AND remain.`season_number`=ue.`season_number`  AND remain.`episode_number`>=ue.`episode_number`) AS remainingEpisodeCount,
                     (SELECT COUNT(*)
                     FROM `user_episode` ue3
-                    WHERE ue3.`user_season_id`=usa.`id` AND ue3.`watch_at` IS NOT NULL) AS viewedCount,
+                    WHERE ue3.`user_season_id`=usa.`id` AND ue3.`watched_at` IS NOT NULL) AS viewedCount,
                     (SELECT COUNT(*)
                     FROM `user_episode` ue4
                     LEFT JOIN `series_broadcast_date` sbd4 ON sbd4.`episode_id`=ue4.`episode_id`
@@ -952,11 +952,11 @@ class UserSeriesRepository extends ServiceEntityRepository
                 WHERE ue.`user_id`=:id
                     AND ue.`season_number` > 0
                 --  AND us.`progress`>0
-                    AND ue.`watch_at` IS NULL
+                    AND ue.`watched_at` IS NULL
                 --  AND IF(sbd.id, DATE(sbd.`date`), ue.`air_date`) <= CURDATE()
                     AND CONCAT(IFNULL(DATE(sbd.`date`), ue.`air_date`), IF(sbs.`air_at`, CONCAT(' ', sbs.`air_at`), '')) <= NOW()
-                	AND (us.`last_watch_at` >= SUBDATE(CURDATE(), INTERVAL 3 WEEK) or (IF(sbd.id, DATE(sbd.`date`), ue.`air_date`) >= SUBDATE(CURDATE(), INTERVAL 3 WEEK) AND ue.`episode_number`=1))
-                ORDER BY us.`last_watch_at` DESC;
+                	AND (us.`last_watched_at` >= SUBDATE(CURDATE(), INTERVAL 3 WEEK) or (IF(sbd.id, DATE(sbd.`date`), ue.`air_date`) >= SUBDATE(CURDATE(), INTERVAL 3 WEEK) AND ue.`episode_number`=1))
+                ORDER BY us.`last_watched_at` DESC;
             SQL;
 
         return $this->getAll($sql, ['id' => $userId, 'locale' => $locale], ['id' => Types::INTEGER, 'locale' => Types::STRING]);
@@ -969,7 +969,7 @@ class UserSeriesRepository extends ServiceEntityRepository
                 SELECT DISTINCT
                     s.`id`,
                     s.`tmdb_id`,
-                    us.`last_watch_at`,
+                    us.`last_watched_at`,
                     IF(sln.`id`, sln.`name` , s.name) AS name,
                     YEAR(s.first_air_date) AS year,
                     CONCAT(:label, ue.`episode_number`) AS number,
@@ -985,7 +985,7 @@ class UserSeriesRepository extends ServiceEntityRepository
                      WHERE remain.`user_series_id`=us.`id`  AND remain.`season_number`=ue.`season_number`  AND remain.`episode_number`>=ue.`episode_number`) AS remainingEpisodeCount,
                     (SELECT COUNT(*)
                     FROM `user_episode` ue3
-                    WHERE ue3.`user_season_id`=usa.`id` AND ue3.`watch_at` IS NOT NULL) AS viewedCount,
+                    WHERE ue3.`user_season_id`=usa.`id` AND ue3.`watched_at` IS NOT NULL) AS viewedCount,
                     (SELECT COUNT(*)
                     FROM `user_episode` ue4
                     LEFT JOIN `series_broadcast_date` sbd4 ON sbd4.`episode_id`=ue4.`episode_id`
@@ -1006,11 +1006,11 @@ class UserSeriesRepository extends ServiceEntityRepository
                 WHERE ue.`user_id`=:id
                     AND ue.`season_number` = 0
                 --  AND us.`progress`>0
-                    AND ue.`watch_at` IS NULL
+                    AND ue.`watched_at` IS NULL
                 --  AND IF(sbd.id, DATE(sbd.`date`), ue.`air_date`) <= CURDATE()
                     AND CONCAT(IFNULL(DATE(sbd.`date`), ue.`air_date`), IF(sbs.`air_at`, CONCAT(' ', sbs.`air_at`), '')) <= NOW()
-                    AND (us.`last_watch_at` >= SUBDATE(CURDATE(), INTERVAL :week WEEK) or (IFNULL(DATE(sbd.`date`), ue.`air_date`) >= SUBDATE(CURDATE(), INTERVAL :week WEEK) AND ue.`episode_number`=1))
-                ORDER BY us.`last_watch_at` DESC;
+                    AND (us.`last_watched_at` >= SUBDATE(CURDATE(), INTERVAL :week WEEK) or (IFNULL(DATE(sbd.`date`), ue.`air_date`) >= SUBDATE(CURDATE(), INTERVAL :week WEEK) AND ue.`episode_number`=1))
+                ORDER BY us.`last_watched_at` DESC;
             SQL;
 
         return $this->getAll($sql, ['id' => $userId, 'week' => $week, 'label' => $label, 'locale' => $locale], ['id' => Types::INTEGER, 'week' => Types::INTEGER, 'label' => Types::STRING, 'locale' => Types::STRING]);
@@ -1053,7 +1053,7 @@ class UserSeriesRepository extends ServiceEntityRepository
                             ORDER BY sln.`id` LIMIT 1), s.`name`) AS name,
                     YEAR(s.first_air_date) AS year,
                     CONCAT('S', LPAD(ue.`season_number`, 2, '0'), 'E', LPAD(ue.`episode_number`, 2, '0')) AS `number`,
-                    us.`last_watch_at`,
+                    us.`last_watched_at`,
                     s.`poster_path`,
                     ue.`episode_id`,
                     ue.`id` AS userEpisodeId,
@@ -1087,12 +1087,12 @@ class UserSeriesRepository extends ServiceEntityRepository
                         ORDER BY ue2.`id` DESC LIMIT 1)
                 WHERE us.`user_id`=:id
                     AND (us.`progress`>0 OR IFNULL(DATE(sbs.`first_air_date`), s.`first_air_date`)>=CURDATE())
-                    AND (us.`last_watch_at` >= SUBDATE(CURDATE(), INTERVAL 3 WEEK) OR ue.episode_number=1) -- Nouvelle saison
+                    AND (us.`last_watched_at` >= SUBDATE(CURDATE(), INTERVAL 3 WEEK) OR ue.episode_number=1) -- Nouvelle saison
                     AND ue.`season_number`>0
                     AND CONCAT(IFNULL(DATE(sbd.`date`), ue.`air_date`), IF(sbs.`air_at`, CONCAT(' ', sbs.`air_at`), '')) > NOW()
             SQL;
         match ($sort) {
-            1 => $sql .= " ORDER BY us.`last_watch_at` DESC",
+            1 => $sql .= " ORDER BY us.`last_watched_at` DESC",
             2 => $sql .= " ORDER BY IFNULL(DATE(sbd.`date`), ue.`air_date`) DESC",
             default => $sql .= " ORDER BY remainingDays"
         };
@@ -1113,14 +1113,14 @@ class UserSeriesRepository extends ServiceEntityRepository
                             ORDER BY sln.`id` LIMIT 1), s.`name`) AS name,
                     YEAR(s.first_air_date) AS year,
                     CONCAT('S', LPAD(ue.`season_number`, 2, '0'), 'E', LPAD(ue.`episode_number`, 2, '0')) AS `number`,
-                    us.`last_watch_at`,
+                    us.`last_watched_at`,
                     s.`poster_path`,
                     ue.`id` AS userEpisodeId,
                     ue.`episode_id`,
                     ue.`season_number`,
                     ue.`episode_number`,
                     esn.`name` AS esn_name,
-                    DATEDIFF(NOW(), us.`last_watch_at`) AS sinceDays,
+                    DATEDIFF(NOW(), us.`last_watched_at`) AS sinceDays,
                     prev.`id`             AS prev_episode_id,
                     prev.`vote`           AS prev_episode_vote,
                     prev.`season_number`  AS prev_episode_season,
@@ -1145,9 +1145,9 @@ class UserSeriesRepository extends ServiceEntityRepository
                         ORDER BY ue2.`id` DESC LIMIT 1)
                 WHERE us.`user_id`=:id
                     AND us.`progress`>0
-                    AND us.`last_watch_at` < SUBDATE(CURDATE(), INTERVAL 3 WEEK)
+                    AND us.`last_watched_at` < SUBDATE(CURDATE(), INTERVAL 3 WEEK)
                     AND ue.`season_number`>0
-                ORDER BY us.`last_watch_at` DESC
+                ORDER BY us.`last_watched_at` DESC
                 LIMIT :limit OFFSET :offset;
             SQL;
 
@@ -1168,7 +1168,7 @@ class UserSeriesRepository extends ServiceEntityRepository
                     INNER JOIN `user_episode` ue ON ue.`id`=us.`next_user_episode_id`
                 WHERE us.`user_id`=:id
                     AND us.`progress`>0
-                    AND us.`last_watch_at` < SUBDATE(CURDATE(), INTERVAL 3 WEEK)
+                    AND us.`last_watched_at` < SUBDATE(CURDATE(), INTERVAL 3 WEEK)
                     AND ue.`season_number`>0;
             SQL;
         return $this->getOne($sql, ['id' => $userId], ['id' => Types::INTEGER]);
@@ -1207,21 +1207,21 @@ class UserSeriesRepository extends ServiceEntityRepository
                           (
                               ue.id IN (:ids)
                            AND 
-                              ue.watch_at IS NOT NULL AND IFNULL(sbd.date, ue.air_date) >= SUBDATE(CURDATE(), INTERVAL 3 WEEK)
+                              ue.watched_at IS NOT NULL AND IFNULL(sbd.date, ue.air_date) >= SUBDATE(CURDATE(), INTERVAL 3 WEEK)
                           )
                       OR
                           (
-                              DATE(ue.watch_at) >= SUBDATE(CURDATE(), INTERVAL 3 WEEK)
+                              DATE(ue.watched_at) >= SUBDATE(CURDATE(), INTERVAL 3 WEEK)
                            AND (
                                  (SELECT AVG(ue1.vote)
                                   FROM `user_episode` ue1
-                                  WHERE ue1.user_season_id = ue.user_season_id AND ue1.watch_at IS NOT NULL AND ue1.watch_at <= ue.watch_at) > 0
+                                  WHERE ue1.user_season_id = ue.user_season_id AND ue1.watched_at IS NOT NULL AND ue1.watched_at <= ue.watched_at) > 0
                                OR 
-                                 ue.episode_number=1 AND DATEDIFF(NOW(), ue.watch_at) <= 7
+                                 ue.episode_number=1 AND DATEDIFF(NOW(), ue.watched_at) <= 7
                               )
                           )
                       )
-                ORDER BY ue.`watch_at` DESC;
+                ORDER BY ue.`watched_at` DESC;
             SQL;
 
         return $this->getAll($sql, ['ids' => $ids, 'locale' => $locale], ['ids' => ArrayParameterType::INTEGER, 'locale' => ParameterType::STRING]);
@@ -1251,13 +1251,13 @@ class UserSeriesRepository extends ServiceEntityRepository
                     LEFT JOIN `series_localized_name` sln ON sln.`series_id`=s.`id` AND sln.`locale`=:locale
                     LEFT JOIN `episode_substitute_name` esn ON esn.`episode_id`=ue.`episode_id`
                 WHERE ue.vote IS NULL
-                AND DATE(ue.watch_at) >= SUBDATE(CURDATE(), INTERVAL 3 WEEK)
+                AND DATE(ue.watched_at) >= SUBDATE(CURDATE(), INTERVAL 3 WEEK)
                 AND (
                     (SELECT AVG(ue1.vote)
                     FROM `user_episode` ue1
-                    WHERE ue1.user_season_id = ue.user_season_id AND ue1.watch_at IS NOT NULL AND ue1.watch_at <= ue.watch_at) > 0
+                    WHERE ue1.user_season_id = ue.user_season_id AND ue1.watched_at IS NOT NULL AND ue1.watched_at <= ue.watched_at) > 0
                     OR
-                    ue.episode_number=1 AND DATEDIFF(NOW(), ue.watch_at) <= 7
+                    ue.episode_number=1 AND DATEDIFF(NOW(), ue.watched_at) <= 7
                 );
             SQL;
 
@@ -1281,7 +1281,7 @@ class UserSeriesRepository extends ServiceEntityRepository
                     LEFT JOIN `series_localized_name` sln ON sln.`series_id`=s.`id` AND sln.`locale`=:locale
                 WHERE us.user_id=:userId
                     AND (us.next_user_episode_id IS NULL OR ue.season_number=0)
-                ORDER BY us.last_watch_at DESC
+                ORDER BY us.last_watched_at DESC
                 LIMIT :offset, :limit;
             SQL;
 
@@ -1331,10 +1331,10 @@ class UserSeriesRepository extends ServiceEntityRepository
              -- LEFT JOIN `series_broadcast_schedule` sbs ON sbd.`series_broadcast_schedule_id`=sbs.`id`
             WHERE
                 ue.`user_id`=:userId
-                AND ue.`watch_at` IS NULL
+                AND ue.`watched_at` IS NULL
                 AND IFNULL(DATE(sbd.`date`), ue.`air_date`)<=CURDATE()
-                AND (us.`last_watch_at` >= SUBDATE(CURDATE(), INTERVAL 3 WEEK) or (IFNULL(DATE(sbd.`date`), ue.`air_date`) >= SUBDATE(CURDATE(), INTERVAL 3 WEEK) AND ue.`episode_number`=1))
-            ORDER BY us.`last_watch_at` DESC;
+                AND (us.`last_watched_at` >= SUBDATE(CURDATE(), INTERVAL 3 WEEK) or (IFNULL(DATE(sbd.`date`), ue.`air_date`) >= SUBDATE(CURDATE(), INTERVAL 3 WEEK) AND ue.`episode_number`=1))
+            ORDER BY us.`last_watched_at` DESC;
         SQL;
         return $this->getAll($sql, ['userId' => $userId], ['userId' => Types::INTEGER]);
     }

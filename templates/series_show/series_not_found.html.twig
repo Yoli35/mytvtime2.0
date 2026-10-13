@@ -170,7 +170,7 @@
                                             {% if season.air_date %}
                                                 {{ date(season.air_date)|format_date('relative_long') }}
                                                 {% if userSeries.lastSeason is not null and userSeries.lastSeason == season.season_number %}
-                                                    — {{ 'Last seen'|trans }} {{ date(userSeries.lastWatchAt)|format_date('relative_long') }}
+                                                    — {{ 'Last seen'|trans }} {{ date(userSeries.lastWatchedAt)|format_date('relative_long') }}
                                                 {% endif %}
                                             {% else %}
                                                 {{ 'TBA'|trans }}
@@ -179,7 +179,7 @@
                                         <div class="season__episodes">
                                             {{ season.episode_count }} {{ (season.episode_count>1?'episodes':'episode')|trans }}
                                             <div class="watched"></div>
-                                            {% set viewedEpisodes = userSeries.userEpisodes|filter(ue => ue.seasonNumber == season.season_number and ue.watchAt)|length %}
+                                            {% set viewedEpisodes = userSeries.userEpisodes|filter(ue => ue.seasonNumber == season.season_number and ue.watchedAt)|length %}
                                             {% if viewedEpisodes == 0 %}
                                                 {{ 'No episode seen'|trans }}
                                             {% elseif viewedEpisodes == 1 %}

@@ -9,7 +9,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: UserSeriesRepository::class)]
-#[ORM\Index(name: 'idx_us_user_last_watch_at', columns: ['user_id', 'last_watch_at'])]
+#[ORM\Index(name: 'idx_us_user_last_watched_at', columns: ['user_id', 'last_watched_at'])]
 class UserSeries
 {
     #[ORM\Id]
@@ -29,7 +29,7 @@ class UserSeries
     private ?DateTimeImmutable $addedAt;
 
     #[ORM\Column(nullable: true)]
-    private ?DateTimeImmutable $lastWatchAt = null;
+    private ?DateTimeImmutable $lastWatchedAt = null;
 
     #[ORM\Column(nullable: true)]
     private ?int $lastSeason = null;
@@ -127,14 +127,14 @@ class UserSeries
         return $this;
     }
 
-    public function getLastWatchAt(): ?DateTimeImmutable
+    public function getLastWatchedAt(): ?DateTimeImmutable
     {
-        return $this->lastWatchAt;
+        return $this->lastWatchedAt;
     }
 
-    public function setLastWatchAt(?DateTimeImmutable $lastWatchAt): static
+    public function setLastWatchedAt(?DateTimeImmutable $lastWatchedAt): static
     {
-        $this->lastWatchAt = $lastWatchAt;
+        $this->lastWatchedAt = $lastWatchedAt;
 
         return $this;
     }

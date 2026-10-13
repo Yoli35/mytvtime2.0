@@ -42,9 +42,9 @@
                 <div class="episode-number">
                     {{ 'S%02dE%02d'|format(series.seasonNumber, series.episodeNumber) }}
                 </div>
-                {% if series.watchAt is defined and series.watchAt %}
+                {% if series.watchedAt is defined and series.watchedAt %}
                     <div class="date">
-                        {{ series.watchAt|format_datetime('relative_medium', 'short') }}
+                        {{ series.watchedAt|format_datetime('relative_medium', 'short') }}
                     </div>
                 {% endif %}
             </div>

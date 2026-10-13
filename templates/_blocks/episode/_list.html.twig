@@ -34,8 +34,8 @@
                     </div>
                     <div class="name">{{ episode.name }}</div>
                     {% if episode.airDate %}
-                        <div class="ue{% if episode.ue.watchAt %} watched{% endif %}" data-ue-id="{{ episode.ue.id }}" data-episode-number="{{ episode.episodeNumber }}">
-                            {{ ux_icon(episode.ue.watchAt ? 'mdi:check' : 'mdi:eye-outline') }}
+                        <div class="ue{% if episode.ue.watchedAt %} watched{% endif %}" data-ue-id="{{ episode.ue.id }}" data-episode-number="{{ episode.episodeNumber }}">
+                            {{ ux_icon(episode.ue.watchedAt ? 'mdi:check' : 'mdi:eye-outline') }}
                         </div>
                     {% endif %}
                 </li>

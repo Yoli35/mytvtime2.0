@@ -74,7 +74,7 @@ export class Menu {
     /**
      * @typedef HistoryItem
      * @type {Object}
-     * @property {Date} lastWatchAt
+     * @property {Date} lastWatchedAt
      * @property {number} episodeId
      * @property {number} episodeNumber
      * @property {number} id
@@ -1484,7 +1484,7 @@ export class Menu {
 
                     const date = document.createElement("div");
                     date.classList.add("date");
-                    date.innerHTML = item.lastWatchAt;
+                    date.innerHTML = item.lastWatchedAt;
                     a.appendChild(date);
 
                     const number = document.createElement("div");

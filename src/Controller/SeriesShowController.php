@@ -384,7 +384,7 @@ final class SeriesShowController extends AbstractController
         $devices = $this->deviceRepository->deviceArray();
 
         // Nouvelle saison, premier épisode non vu
-        if ($season['season_number'] > 1 && count($season['episodes']) && $season['episodes'][0]['user_episode']['watch_at'] == null) {
+        if ($season['season_number'] > 1 && count($season['episodes']) && $season['episodes'][0]['user_episode']['watched_at'] == null) {
             $firstEpisode = $this->userEpisodeRepository->findOneBy(['userSeries' => $userSeries, 'seasonNumber' => $season['season_number'], 'episodeNumber' => 1]);
             $previousSeasonNumber = $season['season_number'] - 1;
             $lastEpisode = $this->userEpisodeRepository->findOneBy(['userSeries' => $userSeries, 'seasonNumber' => $previousSeasonNumber], ['episodeNumber' => 'DESC']);
@@ -861,9 +861,9 @@ final class SeriesShowController extends AbstractController
             $episode['air_date'] = $userEpisode['custom_date'];
         }
 
-        $userEpisode['watch_at_db'] = $userEpisode['watch_at'];
-        if ($userEpisode['watch_at']) {
-            $userEpisode['watch_at'] = $this->date($user, $userEpisode['watch_at']);
+        $userEpisode['watched_at_db'] = $userEpisode['watched_at'];
+        if ($userEpisode['watched_at']) {
+            $userEpisode['watched_at'] = $this->date($user, $userEpisode['watched_at']);
         }
         $episode['user_episode'] = $userEpisode;
         $episode['user_episodes'] = $userEpisodeList;
@@ -928,10 +928,10 @@ final class SeriesShowController extends AbstractController
         $ues = [];
         foreach ($episodes as $episode) {
             $episode['provider_logo_path'] = $this->providerService->getProviderLogoFullPath($episode['provider_logo_path'], $logoUrl);
-            if (!key_exists('watch_at_db', $episode)) {
-                $episode['watch_at_db'] = $episode['watch_at'];
-                if ($episode['watch_at']) {
-                    $episode['watch_at'] = $this->dateService->newDateImmutable($episode['watch_at'], 'UTC');
+            if (!key_exists('watched_at_db', $episode)) {
+                $episode['watched_at_db'] = $episode['watched_at'];
+                if ($episode['watched_at']) {
+                    $episode['watched_at'] = $this->dateService->newDateImmutable($episode['watched_at'], 'UTC');
                 }
             }
             $ues[] = $episode;
@@ -954,9 +954,9 @@ final class SeriesShowController extends AbstractController
                     $userEpisode['air_at'] = $this->dateService->newDateImmutable($userEpisode['air_at'], 'Europe/Paris');
                     $userEpisode['air_at'] = $userEpisode['air_at']->format('H:i');
                 }
-                $userEpisode['watch_at_db'] = $userEpisode['watch_at'];
-                /*if ($userEpisode['watch_at']) {
-                    $ue['watch_at'] = $this->dateService->newDateImmutable($userEpisode['watch_at'], 'UTC');
+                $userEpisode['watched_at_db'] = $userEpisode['watched_at'];
+                /*if ($userEpisode['watched_at']) {
+                    $ue['watched_at'] = $this->dateService->newDateImmutable($userEpisode['watched_at'], 'UTC');
                 }*/
                 return $userEpisode;
             }
@@ -1066,7 +1066,7 @@ final class SeriesShowController extends AbstractController
                 $airAt = $link['user_episode']['air_at'] ?? ' 09:00';
                 $airString = $link['air_date'] . " " . $airAt;
                 $class = "quick-link";
-                if ($link['user_episode']['watch_at_db']) {
+                if ($link['user_episode']['watched_at_db']) {
                     $class .= " watched";
                 }
                 if ($airString > $nowString) {
@@ -1080,7 +1080,7 @@ final class SeriesShowController extends AbstractController
                 'name' => $link['name'],
                 'link_number' => $link['episode_number'],
                 'air_date' => $link['air_date'],
-                'watched' => (bool)$link['user_episode']['watch_at_db'],
+                'watched' => (bool)$link['user_episode']['watched_at_db'],
                 'future' => $future,
                 'class' => $class,
             ];
@@ -1438,10 +1438,10 @@ final class SeriesShowController extends AbstractController
     {
         if ($userSeries->getNextUserEpisode() === null) {
             if (!$userEpisodes) {
-                $userEpisodes = $this->userEpisodeRepository->findBy(['userSeries' => $userSeries, 'watchAt' => null, 'previousOccurrence' => null], ['seasonNumber' => 'ASC', 'episodeNumber' => 'ASC']);
+                $userEpisodes = $this->userEpisodeRepository->findBy(['userSeries' => $userSeries, 'watchedAt' => null, 'previousOccurrence' => null], ['seasonNumber' => 'ASC', 'episodeNumber' => 'ASC']);
             } else {
                 $userEpisodes = array_filter($userEpisodes, function ($ue) {
-                    return $ue->getWatchAt() === null && $ue->getSeasonNumber();
+                    return $ue->getWatchedAt() === null && $ue->getSeasonNumber();
                 });
                 usort($userEpisodes, function ($a, $b) {
                     if ($a->getSeasonNumber() == $b->getSeasonNumber()) {

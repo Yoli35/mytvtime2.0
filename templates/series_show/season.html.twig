@@ -246,11 +246,11 @@
                                                 {% endfor %}
                                             </div>
                                             <div class="custom-stills-text">{{ 'Click here to add an image'|trans }}</div>
-                                            <div class="number{% if ue and ue.watch_at %} watched{% endif %}" data-title="{{ 'Watched %time% times'|trans({'%time%': ues|length}) }}">
+                                            <div class="number{% if ue and ue.watched_at %} watched{% endif %}" data-title="{{ 'Watched %time% times'|trans({'%time%': ues|length}) }}">
                                                 {{ episode.episode_number }}<span>/{{ episodeCount }}</span>
                                             </div>
                                             {% if episode.episode_type is defined and episode.episode_type == 'finale' %}
-                                                <div class="finale season-finale{% if ue and ue.watch_at %} watched{% endif %}">{{ 'Season finale'|trans }}</div>
+                                                <div class="finale season-finale{% if ue and ue.watched_at %} watched{% endif %}">{{ 'Season finale'|trans }}</div>
                                             {% endif %}
                                         </div>
                                         <div class="infos">
@@ -258,7 +258,7 @@
                                                 <div class="episode-name">
                                                     <div class="name">{{ episode.name }}</div>
                                                     {% if ue.substitute_name %}
-                                                        <div class="substitute{% if ue and ue.watch_at %} watched{% endif %}">
+                                                        <div class="substitute{% if ue and ue.watched_at %} watched{% endif %}">
                                                             {{ ue.substitute_name }}
                                                         </div>
                                                     {% endif %}
@@ -270,7 +270,7 @@
                                                         {{ ux_icon('mdi:pencil') }}
                                                     </div>
                                                 </div>
-                                                {{ include('_blocks/series/_watch_links.html.twig', {watchLinks: series.seriesWatchLinks, seasonNumber: season.season_number, hidden: (ue.watch_at != null)}) }}
+                                                {{ include('_blocks/series/_watch_links.html.twig', {watchLinks: series.seriesWatchLinks, seasonNumber: season.season_number, hidden: (ue.watched_at != null)}) }}
                                                 {{ include('_blocks/series/_episode_air_date.html.twig', {episode: episode, ue: ue, ues: episode.user_episodes}) }}
                                                 {{ include('_blocks/series/_episode_stats.html.twig', {episode: episode}) }}
                                                 <div class="episode-overview" data-id="{{ episode.id }}">

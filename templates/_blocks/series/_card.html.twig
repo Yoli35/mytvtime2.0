@@ -58,7 +58,7 @@
                     <div class="episode-number watched">{{ 'S%02dE%02d'|format(series.last_season, series.last_episode) }}</div>
                 {% endif %}
                 {% if series.episode_of_the_day is defined %}
-                    <div class="episode-number{% if series.watch_at %} watched{% endif %}">{{ 'S%02dE%02d'|format(series.season_number, series.episode_number) }}</div>
+                    <div class="episode-number{% if series.watched_at %} watched{% endif %}">{{ 'S%02dE%02d'|format(series.season_number, series.episode_number) }}</div>
                 {% endif %}
                 {% if allFiltered is defined %}
                     {% if sort == 'addedAt' %}

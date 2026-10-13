@@ -252,7 +252,7 @@
                         </div>
                         <div class="seasons">
                             {% for season in series.seasons %}
-                                {% set viewedEpisodes = userSeries.userEpisodes|filter(ue => ue.seasonNumber == season.season_number and ue.watchAt)|length %}
+                                {% set viewedEpisodes = userSeries.userEpisodes|filter(ue => ue.seasonNumber == season.season_number and ue.watchedAt)|length %}
                                 <div id="season-{{ season.season_number }}" class="season" data-season-number="{{ season.season_number }}">
                                     <a href="{{ path('app_tv_season', {id: series.id, seasonNumber: season.season_number, slug: (series.localizedName ?? series.name)|slug|lower}) }}"
                                        class="poster" data-title="{{ "Season poster"|trans }}">
@@ -279,7 +279,7 @@
                                                 {% if season.air_date %}
                                                     {{ date(season.air_date)|format_date('relative_long') }}
                                                     {% if userSeries.lastSeason is not null and userSeries.lastSeason == season.season_number %}
-                                                        — {{ 'Last seen'|trans }} {{ date(userSeries.lastWatchAt)|format_date('relative_long') }}
+                                                        — {{ 'Last seen'|trans }} {{ date(userSeries.lastWatchedAt)|format_date('relative_long') }}
                                                     {% endif %}
                                                 {% else %}
                                                     {{ 'TBA'|trans }}

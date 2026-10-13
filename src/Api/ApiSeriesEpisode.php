@@ -102,13 +102,13 @@ readonly class ApiSeriesEpisode
         $userEpisodes = $this->userEpisodeRepository->findBy(['userSeries' => $userSeries, 'episodeId' => $id], ['id' => 'ASC']);
 
         $now = $this->now($user);
-        if ($userEpisode->getWatchAt()) { // Si l'épisode a déjà été vu
+        if ($userEpisode->getWatchedAt()) { // Si l'épisode a déjà été vu
             $userEpisode = new UserEpisode($userSeries, $id, $seasonNumber, $episodeNumber, $now);
             $userEpisode->setUserSeason($userSeason);
             $userEpisode->setPreviousOccurrence($userEpisodes[count($userEpisodes) - 1]);
             $new = true;
         } else {
-            $userEpisode->setWatchAt($now);
+            $userEpisode->setWatchedAt($now);
         }
 
         $firstViewedUserEpisode = $userEpisodes[0];
@@ -169,10 +169,10 @@ readonly class ApiSeriesEpisode
 
             // Si on regarde 3 épisodes en moins d'un jour, on considère que c'est un marathon
             if (!$userSeries->getMarathoner() && $episodeNumber >= 3) {
-                $episodes = $this->userEpisodeRepository->findBy(['userSeries' => $userSeries, 'seasonNumber' => $seasonNumber], ['watchAt' => 'DESC'], 3);
+                $episodes = $this->userEpisodeRepository->findBy(['userSeries' => $userSeries, 'seasonNumber' => $seasonNumber], ['watchedAt' => 'DESC'], 3);
                 if ($episodes[0]->getEpisodeNumber() - $episodes[1]->getEpisodeNumber() == 1 && $episodes[1]->getEpisodeNumber() - $episodes[2]->getEpisodeNumber() == 1) {
-                    $firstViewAt = $episodes[0]->getWatchAt();
-                    $lastViewAt = $episodes[2]->getWatchAt();
+                    $firstViewAt = $episodes[0]->getWatchedAt();
+                    $lastViewAt = $episodes[2]->getWatchedAt();
                     $diff = $lastViewAt->diff($firstViewAt);
                     if ($diff->days < 1) {
                         $userSeries->setMarathoner(true);
@@ -197,19 +197,19 @@ readonly class ApiSeriesEpisode
         }
         $this->userEpisodeRepository->save($userEpisode, true);
 
-        $userSeries->setLastWatchAt($now);
+        $userSeries->setLastWatchedAt($now);
         $userSeries->setLastEpisode($episodeNumber);
         $userSeries->setLastSeason($seasonNumber);
         $userSeries->setLastUserEpisode($userEpisode);
 
         if ($seasonNumber > 0) {
             $nextUserEpisode = array_find($userSeriesEpisodes, function ($ue) use ($seasonNumber) {
-                return ($ue->getSeasonNumber() >= $seasonNumber && $ue->getWatchAt() == null);
+                return ($ue->getSeasonNumber() >= $seasonNumber && $ue->getWatchedAt() == null);
             });
             // Si tous les épisodes ont été vus, on passe aux épisodes spéciaux
             if ($nextUserEpisode == null) {
                $nextUserEpisode = array_find($userSeriesEpisodes, function ($ue) use ($seasonNumber) {
-                   return ($ue->getSeasonNumber() == 0 && $ue->getWatchAt() == null);
+                   return ($ue->getSeasonNumber() == 0 && $ue->getWatchedAt() == null);
                });
             }
             $userSeries->setNextUserEpisode($nextUserEpisode);
@@ -220,7 +220,7 @@ readonly class ApiSeriesEpisode
             }
         } else {
             $userSeries->setNextUserEpisode(array_find($userSeriesEpisodes, function ($ue) use ($seasonNumber) {
-                return ($ue->getSeasonNumber() == 0 && $ue->getWatchAt() == null);
+                return ($ue->getSeasonNumber() == 0 && $ue->getWatchedAt() == null);
             }));
         }
         $this->userSeriesRepository->save($userSeries, true);
@@ -283,7 +283,7 @@ readonly class ApiSeriesEpisode
         $episodeNumber = $userEpisode->getSeasonNumber();
         $userSeries = $userEpisode->getUserSeries();
 
-        $userEpisode->setWatchAt($now);
+        $userEpisode->setWatchedAt($now);
 
         $airDate = $userEpisode->getAirDate();
 
@@ -294,11 +294,11 @@ readonly class ApiSeriesEpisode
         $this->userEpisodeRepository->save($userEpisode, true);
 
         $ue = $this->userEpisodeRepository->getUserEpisodeDB($userEpisode->getId(), $userEpisode->getUserSeries()->getUser()->getPreferredLanguage() ?? $request->getLocale());
-        $ue['watch_at_db'] = $ue['watch_at'];
-        $ue['watch_at'] = $this->dateService->newDateImmutable($ue['watch_at'], 'UTC');
+        $ue['watched_at_db'] = $ue['watched_at'];
+        $ue['watched_at'] = $this->dateService->newDateImmutable($ue['watched_at'], 'UTC');
 
         if ($seasonNumber) {
-            $userSeries->setLastWatchAt($now);
+            $userSeries->setLastWatchedAt($now);
             $userSeries->setLastEpisode($episodeNumber);
             $userSeries->setLastSeason($seasonNumber);
             $this->userSeriesRepository->save($userSeries, true);
@@ -335,14 +335,14 @@ readonly class ApiSeriesEpisode
         $series = $this->seriesRepository->findOneBy(['tmdbId' => $showId]);
         $userSeries = $this->userSeriesRepository->findOneBy(['user' => $user, 'series' => $series]);
 
-        $userEpisode = $this->userEpisodeRepository->findOneBy(['id' => $userEpisodeId], ['watchAt' => 'DESC']);
+        $userEpisode = $this->userEpisodeRepository->findOneBy(['id' => $userEpisodeId], ['watchedAt' => 'DESC']);
         if ($userEpisode) {
             if ($userEpisode->getPreviousOccurrence()) {
                 // on met à jour la "user" séries avec l'épisode précédemment vu
                 $userSeries->setNextUserEpisode($userSeries->getLastUserEpisode());
-                $lastWatchedEpisode = $this->userEpisodeRepository->findOneBy(['userSeries' => $userSeries], ['watchAt' => 'DESC']);
+                $lastWatchedEpisode = $this->userEpisodeRepository->findOneBy(['userSeries' => $userSeries], ['watchedAt' => 'DESC']);
                 $userSeries->setLastUserEpisode($lastWatchedEpisode);
-                $userSeries->setLastWatchAt($lastWatchedEpisode->getWatchAt());
+                $userSeries->setLastWatchedAt($lastWatchedEpisode->getWatchedAt());
                 $userSeries->setLastEpisode($lastWatchedEpisode->getEpisodeNumber());
                 $userSeries->setLastSeason($lastWatchedEpisode->getSeasonNumber());
                 $this->userSeriesRepository->save($userSeries, true);
@@ -353,7 +353,7 @@ readonly class ApiSeriesEpisode
                 ]);
             }
 
-            $userEpisode->setWatchAt(null);
+            $userEpisode->setWatchedAt(null);
             $userEpisode->setProviderId(null);
             $userEpisode->setDeviceId(null);
             $userEpisode->setVote(null);
@@ -368,7 +368,7 @@ readonly class ApiSeriesEpisode
         $userSeries->setLastUserEpisode($ue);
         $userSeries->setLastEpisode($ue->getEpisodeNumber());
         $userSeries->setLastSeason($ue->getSeasonNumber());
-        $userSeries->setLastWatchAt($ue->getWatchAt());
+        $userSeries->setLastWatchedAt($ue->getWatchedAt());
         $viewedEpisodes = $userSeries->getViewedEpisodes() - 1;
         $numberOfEpisode = $series->getNumberOfEpisode();
         $userSeries->setViewedEpisodes($viewedEpisodes);
@@ -379,7 +379,7 @@ readonly class ApiSeriesEpisode
         if ($seasonNumber == 1 && $episodeNumber == 1) {
             $userSeries->setLastEpisode(null);
             $userSeries->setLastSeason(null);
-            $userSeries->setLastWatchAt(null);
+            $userSeries->setLastWatchedAt(null);
             $userSeries->setViewedEpisodes(0);
             $userSeries->setProgress(0);
         }
@@ -638,7 +638,7 @@ readonly class ApiSeriesEpisode
             $logoUrl = $this->imageConfiguration->getUrl('logo_sizes', 3);
             $path = $wp->getLogoPath();
         }
-        $watchedAt = $userEpisode->getWatchAt();
+        $watchedAt = $userEpisode->getWatchedAt();
         $e = [
             'air_date' => ucfirst($this->dateService->formatDateRelativeLong($airDate, 'UTC', $locale)),
             'airing' => true,
@@ -659,7 +659,7 @@ readonly class ApiSeriesEpisode
             'vote' => $userEpisode->getVote(),
             'vote_color' => $wpId ? '#' . $wp->getColor() : '#111111',
             'vote_color_background' => $wpId ? '#' . $wp->getBackgroundColor() : '#eeeeee',
-            'watchedAt' => $watchedAt ? ucfirst($this->dateService->formatDateRelativeLong($userEpisode->getWatchAt()->format("Y-m-d H:i"), null, $locale)) : null,
+            'watchedAt' => $watchedAt ? ucfirst($this->dateService->formatDateRelativeLong($userEpisode->getWatchedAt()->format("Y-m-d H:i"), null, $locale)) : null,
         ];
         return ($this->renderView)('_blocks/series/_season_episode_card.html.twig', [
             'episode' => $e,
@@ -686,25 +686,25 @@ readonly class ApiSeriesEpisode
             $ue['air_at'] = $this->dateService->newDateImmutable($ue['air_at'], null/*'Europe/Paris'*/);
             $ue['air_at'] = $ue['air_at']->format('H:i');
         }
-        $ue['watch_at_db'] = $ue['watch_at'];
-        if ($ue['watch_at']) {
-            $ue['watch_at'] = $this->dateService->newDateImmutable($ue['watch_at'], null/*'UTC'*/);
+        $ue['watched_at_db'] = $ue['watched_at'];
+        if ($ue['watched_at']) {
+            $ue['watched_at'] = $this->dateService->newDateImmutable($ue['watched_at'], null/*'UTC'*/);
         }
         $arr = $this->userEpisodeRepository->getUserEpisodeViews($user->getId(), $id);
         $ues = array_map(function ($ue) {
-            $ue['watch_at_db'] = $ue['watch_at'];
-            if ($ue['watch_at']) {
-                $ue['watch_at'] = $this->dateService->newDateImmutable($ue['watch_at'], 'UTC');
+            $ue['watched_at_db'] = $ue['watched_at'];
+            if ($ue['watched_at']) {
+                $ue['watched_at'] = $this->dateService->newDateImmutable($ue['watched_at'], 'UTC');
             }
             return $ue;
         }, $arr);
 
         $airDateBlock = ($this->renderView)('_blocks/series/_episode_air_date.html.twig', [
             'episode' => ['id' => $id, 'air_date' => $airDate->format('Y-m-d')],
-            'ue' => $ue, //['watch_at' => $userEpisode->getWatchAt()->format('Y-m-d')],
+            'ue' => $ue, //['watched_at' => $userEpisode->getWatchedAt()->format('Y-m-d')],
             'ues' => $ues,
         ]);
-        $d = $ue['custom_date'] ?? $airDate->format('Y-m-d') . $ue['air_at'] ?? (' ' . $ue['watch_at']) ?? null;
+        $d = $ue['custom_date'] ?? $airDate->format('Y-m-d') . $ue['air_at'] ?? (' ' . $ue['watched_at']) ?? null;
         return [
             'block' => $airDateBlock,
             'date' => $d,
@@ -716,10 +716,10 @@ readonly class ApiSeriesEpisode
     {
         $isBinge = false;
 
-        $lastEpisodeDb = $this->userEpisodeRepository->findOneBy(['userSeries' => $userSeries, 'seasonNumber' => $seasonNumber], ['watchAt' => 'DESC']);
-        $lastWatchDate = $lastEpisodeDb->getWatchAt();
+        $lastEpisodeDb = $this->userEpisodeRepository->findOneBy(['userSeries' => $userSeries, 'seasonNumber' => $seasonNumber], ['watchedAt' => 'DESC']);
+        $lastWatchDate = $lastEpisodeDb->getWatchedAt();
         $firstEpisodeDb = $this->userEpisodeRepository->findOneBy(['userSeries' => $userSeries, 'seasonNumber' => $seasonNumber, 'episodeNumber' => 1]);
-        $firstWatchDate = $firstEpisodeDb->getWatchAt();
+        $firstWatchDate = $firstEpisodeDb->getWatchedAt();
         $userSeriesId = $userSeries->getId();
         $userId = $userSeries->getUser()->getId();
         $userEpisodes = $this->userEpisodeRepository->getEpisodeListBetweenDates($userId, $firstWatchDate->format("Y-m-d"), $lastWatchDate->format("Y-m-d"));

@@ -1,5 +1,5 @@
 <div class="user-episode">
-    {% if ue and ue.watch_at %}
+    {% if ue and ue.watched_at %}
         <div class="remove-this-episode"
              data-id="{{ episode.id }}"
              data-ue-id="{{ ue.id }}"
@@ -9,7 +9,7 @@
              data-s-number="{{ episode.season_number }}"
              data-e-number="{{ episode.episode_number }}"
              data-views="{{ episode.user_episodes|length }}"
-             data-title="{{ ue.watch_at|format_datetime('relative_short', 'short')|capitalize }}">
+             data-title="{{ ue.watched_at|format_datetime('relative_short', 'short')|capitalize }}">
             {{ ux_icon('mdi:eye') }}
         </div>
         <div class="comment-badge" data-id="{{ episode.id }}" data-count="0" data-title="{{ 'Add a comment or reply to it for the episode'|trans }} {{ episode.episode_number }}">

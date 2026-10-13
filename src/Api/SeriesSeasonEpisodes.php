@@ -363,7 +363,7 @@ class SeriesSeasonEpisodes extends AbstractController
             ];
         }
 
-        $watchedAt = $userEpisode->getWatchAt();
+        $watchedAt = $userEpisode->getWatchedAt();
         if ($watchedAt && $wpId = $userEpisode->getProviderId()) {
             if (key_exists($wpId, $this->providersInfos)) {
                 $providerPath = $this->providersInfos[$wpId]['path'];
