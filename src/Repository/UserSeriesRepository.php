@@ -1100,7 +1100,7 @@ class UserSeriesRepository extends ServiceEntityRepository
         return $this->getAll($sql, ['id' => $userId, 'sort'=> $sort, 'locale' => $locale], ['id' => Types::INTEGER, 'sort' => Types::STRING, 'locale' => Types::STRING]);
     }
 
-    public function findUpToDateSeriesInAWhile(int $userId, int $sort, string  $locale, int $limit = 20, int $offset = 0): array
+    public function findUpToDateSeriesInAWhile(int $userId, int $sort, string  $locale, int $offset = 0, int $limit = 20): array
     {
         $sql = <<<SQL
                 -- Derniers épisodes à jours pas vu depuis un moment (3 semaines)
@@ -1273,7 +1273,8 @@ class UserSeriesRepository extends ServiceEntityRepository
                     IFNULL(sln.`name`, s.`name`) AS name,
                     s.`poster_path`              AS poster_path,
                     YEAR(s.first_air_date)       AS year,
-                    ue.episode_number            AS special_number
+                    ue.episode_number            AS special_number,
+                    ue.season_number             AS season_number
               FROM user_series us
                     LEFT JOIN user_episode ue ON ue.id=us.next_user_episode_id
                     LEFT JOIN `series` s ON s.`id` = us.`series_id`

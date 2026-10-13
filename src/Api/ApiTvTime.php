@@ -19,9 +19,9 @@ readonly class ApiTvTime
 {
     public function __construct(
         #[AutowireMethodOf(ControllerHelper::class)]
-        private Closure              $renderView,
-        private ImageConfiguration   $imageConfiguration,
-        private TvTimeService        $tvTimeService,
+        private Closure            $renderView,
+        private ImageConfiguration $imageConfiguration,
+        private TvTimeService      $tvTimeService,
     )
     {
     }
@@ -79,6 +79,61 @@ readonly class ApiTvTime
         ]);
     }
 
+    #[Route('/show-more', name: 'show_more', methods: ['POST'])]
+    public function showMore(#[CurrentUser] User $user, Request $request): JsonResponse
+    {
+        $inputBag = $request->getPayload();
+        $content = $inputBag->get('content');
+        $offset = $inputBag->getInt('offset');
+
+        $locale = $user->getPreferredLanguage() ?? $request->getLocale();
+
+        if ($content === 'ended') {
+            $seriesEnded = $this->tvTimeService->seriesEnded($user, $locale, $offset);
+            $watchLinks = $seriesEnded['wp'];
+            $block = array_map(function ($item) use ($watchLinks) {
+                return ($this->renderView)('_blocks/tv_time/_card_series_ended.html.twig', [
+                        'series' => $item,
+                        'watchLinks' => $watchLinks
+                    ]) . "\n";
+            }, $seriesEnded['items']);
+            $block = implode('', $block);
+            return new JsonResponse([
+                'new_episode' => true,
+                'block' => $block,
+                'count' => count($seriesEnded['items']),
+                'total' => $seriesEnded['count']
+            ]);
+        }
+        if ($content === 'not-watched-in-a-while') {
+            $series = $this->tvTimeService->seriesNotSeenInAWhile($user, $locale, $offset);
+            dump($series);
+            $watchLinks = $series['wp'];
+            $block = array_map(function ($item) use ($watchLinks) {
+                return ($this->renderView)('_blocks/tv_time/_card_series.html.twig', [
+                        'series' => $item,
+                        'watchLinks' => $watchLinks,
+                        'next' => false,
+                        'while' => true
+                    ]) . "\n";
+            }, $series['items']);
+            $block = implode('', $block);
+            return new JsonResponse([
+                'new_episode' => true,
+                'block' => $block,
+                'count' => count($series['items']),
+                'total' => $series['count']
+            ]);
+        }
+
+        return new JsonResponse([
+            'new_episode' => false,
+            'block' => [],
+            'count' => 0,
+            'total' => 0
+        ]);
+    }
+
     #[Route('/layout', name: 'layout', methods: ['POST'])]
     public function layout(#[CurrentUser] User $user, Request $request): JsonResponse
     {
@@ -103,7 +158,7 @@ readonly class ApiTvTime
         $cast = array_map(function ($cast) use ($slugger, $profileUrl) {
             $cast['profile_path'] = $cast['profile_path'] ? $profileUrl . $cast['profile_path'] : null; // w185
             $cast['preferred_name'] = null;
-                $cast['slug'] = $slugger->slug($cast['name'])->lower()->toString();
+            $cast['slug'] = $slugger->slug($cast['name'])->lower()->toString();
             if ($cast['slug'] == '') {
                 $cast['slug'] = 'person-' . $cast['id'];
             }

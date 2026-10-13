@@ -69,6 +69,7 @@ export class TvTime {
         this.initVotes();
         this.initCopyWatchLinks();
         this.initDividers();
+        this.initShowMoreButtons();
     }
 
     initTab() {
@@ -213,12 +214,44 @@ export class TvTime {
         });
     }
 
-    /*resetDividers() {
-        const dividerDivs = document.querySelectorAll('.series-tv-time .active .divider');
-        dividerDivs.forEach(dividerDiv => {
-            dividerDiv.removeAttribute('style');
+    initShowMoreButtons() {
+        const showMoreButtons = document.querySelectorAll('.series-tv-time button.show-more');
+        showMoreButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const content = button.dataset.content;
+                const offset = parseInt(button.dataset.offset);
+                this.showMore(button, content, offset);
+            });
         });
-    }*/
+    }
+
+    showMore(button, content, offset) {
+        fetch('/api/tv/time/show-more', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({content, offset}),
+        })
+            .then(response => response.json())
+            .then(data => {
+                console.log(data);
+                if (!data['new_episode']) return;
+                const contentDiv = document.querySelector(`.content[data-content="${content}"]`);
+                const newBlockDiv = document.createElement('div');
+                newBlockDiv.innerHTML = data['block'];
+                const newCards = newBlockDiv.querySelectorAll('.card');
+                newCards.forEach(card => contentDiv.insertBefore(card, button));
+                const dividerDiv = document.querySelector(`.divider[data-content="${content}"]`);
+                const countsSpan = dividerDiv.querySelector('.counts');
+                const newCount = offset + data['count'];
+                button.dataset.offset = newCount;
+                countsSpan.innerHTML = `(${newCount}/${data['total']})`;
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+            });
+    }
 
     changeTab(index, sub = 0, save = true) {
         if (save) self.saveTab(index);

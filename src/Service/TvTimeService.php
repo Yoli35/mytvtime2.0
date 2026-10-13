@@ -66,6 +66,12 @@ readonly class TvTimeService
         $this->setSettings($user, $data);
     }
 
+    public function getTvTimeSort(User $user): string
+    {
+        $data = $this->getSettings($user);
+        return $data['sort'];
+    }
+
     public function setTvTimeSort(User $user, int $sort): void
     {
         $data = $this->getSettings($user);
@@ -236,6 +242,40 @@ readonly class TvTimeService
             'week' => $settings['week'],
             'remainingSecondes' => $remainingSecondes,
         ];
+    }
+
+    public function seriesNotSeenInAWhile(User $user, string $locale, int $offset = 0): array
+    {
+        $userId = $user->getId();
+        $sort = $this->getTvTimeSort($user);
+        $series = $this->userSeriesRepository->findUpToDateSeriesInAWhile($userId, $sort, $locale, $offset);
+        $seriesCount = $this->userSeriesRepository->countUpToDateSeriesInAWhile($userId);
+        $watchLinks = $this->getWatchLinks(array_column($series, 'id'));
+        return [
+            'items' => $series,
+            'count' => $seriesCount,
+            'wp' => $watchLinks
+        ];
+    }
+
+    public function seriesEnded(User $user, string $locale, int $offset = 0): array
+    {
+        $series = $this->userSeriesRepository->seriesEnded($user->getId(), $locale, $offset);
+        $seriesCount = $this->userSeriesRepository->countSeriesEnded($user->getId());
+        $watchLinks = $this->getWatchLinks(array_column($series, 'id'));
+        return [
+            'items' => $series,
+            'count' => $seriesCount,
+            'wp' => $watchLinks
+        ];
+    }
+
+    public function getWatchLinks(array $ids): array{
+        $providerUrl = $this->imageConfiguration->getUrl('logo_sizes', 3);
+        return array_map(function ($wp) use ($providerUrl) {
+            $wp['providerLogoPath'] = $this->providerService->getProviderLogoFullPath($wp['providerLogoPath'], $providerUrl);
+            return $wp;
+        }, $this->userSeriesRepository->availableSeriesWatchLinks(array_unique($ids)));
     }
 
     public function setTvTimeShowCast(int $tmdbId, int $seasonNumber): array
