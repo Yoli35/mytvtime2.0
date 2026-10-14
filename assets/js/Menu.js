@@ -876,6 +876,13 @@ export class Menu {
                 });
                 self.tooltips.init(ul);
                 searchResults.appendChild(ul);
+                // "left" est animé (transition CSS) : on calcule la position qu'aurait la div à left = 0
+                // à partir de la valeur courante (éventuellement en cours de transition)
+                const searchResultsBoundingRect = searchResults.getBoundingClientRect();
+                const currentLeft = parseFloat(getComputedStyle(searchResults).left) || 0;
+                const naturalRight = searchResultsBoundingRect.right - currentLeft;
+                const viewportWidth = document.documentElement.clientWidth;
+                searchResults.style.left = Math.min(0, viewportWidth - naturalRight) + 'px';
             })
             .catch(err => console.error('error:' + err));
     }
