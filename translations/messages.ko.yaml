@@ -1615,6 +1615,8 @@ Locations: 위치
 Longitude: 경도
 'Map styles': '카드 스타일'
 'Pan by 100 pixels': '100 픽셀로 이동'
+'Click on the map to copy latitude and longitude': '지도를 클릭하여 위도와 경도를 복사하세요'
+'or paste them (Ctrl/Cmd + V)': '또는 붙여넣기 (Ctrl/Cmd + V)'
 'Paste Google maps url here to obtain latitude and longitude': '위도와 경도를 얻으려면 Google 지도 URL을 여기에 붙여넣으세요'
 'Points of Interest toggle display': '관심 지점 표시'
 'Recent additions': '최근 추가 사항'

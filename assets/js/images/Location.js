@@ -1,4 +1,5 @@
 import {Map} from "Map";
+import mapboxgl from "mapbox-gl";
 import {ToolTips} from "ToolTips";
 
 let self = null;
@@ -9,6 +10,8 @@ export class Location {
         self = this;
         this.mapDiv = document.querySelector('.map-controller');
         this.map = null;
+        this.pickerMap = null;
+        this.pickerMarker = null;
         this.lang = document.documentElement.lang;
         this.flashMessage = null;
         this.type = type;// 'poi'|'loc'
@@ -139,6 +142,7 @@ export class Location {
             }
             inputLatitude.value = parseFloat(urlParts[0].trim());
             inputLongitude.value = parseFloat(urlParts[1].trim());
+            self.setPickerMarker(inputLatitude.value, inputLongitude.value, true);
         });
         addLocationCancel.addEventListener('click', function () {
             self.closeLocationPanel();
@@ -259,6 +263,24 @@ export class Location {
 
         const imageFiles = addLocationForm.querySelector('input[name="image-files"]');
         imageFiles.addEventListener("change", updateImageDisplay);
+
+        // Les images peuvent aussi être ajoutées par copier-coller, n'importe où dans le panneau
+        addLocationDialog.addEventListener('paste', function (e) {
+            const pastedFiles = Array.from(e.clipboardData?.files || []).filter(file => file.type.startsWith('image/'));
+            if (!pastedFiles.length) return;
+            e.preventDefault();
+
+            const dataTransfer = new DataTransfer();
+            Array.from(imageFiles.files).forEach(file => dataTransfer.items.add(file));
+            pastedFiles.forEach(function (file, index) {
+                // Les images collées s'appellent souvent toutes "image.png" : la vignette est retrouvée par son nom
+                const extension = file.type.split('/')[1].replace('jpeg', 'jpg');
+                const name = 'pasted-' + Date.now() + '-' + index + '.' + extension;
+                dataTransfer.items.add(new File([file], name, {type: file.type}));
+            });
+            imageFiles.files = dataTransfer.files;
+            imageFiles.dispatchEvent(new Event('change'));
+        });
 
         function updateImageDisplay(e) {
             const input = e.target;
@@ -435,6 +457,9 @@ export class Location {
                 input.value = '';
             }
         });
+        // Le champ "image-files" est vidé ci-dessus, il faut aussi retirer la prévisualisation des images
+        const previewImageFiles = addLocationForm.querySelector('.preview-image-files');
+        previewImageFiles.querySelectorAll(':scope > ol, :scope > div:not(.background)').forEach(element => element.remove());
         if (this.type === 'loc') {
             titleInput.value = location.title;
         }
@@ -521,6 +546,79 @@ export class Location {
         addLocationDialog.classList.add('open');
         firstInput.focus();
         firstInput.select();
+        this.openPickerMap(latitudeInput.value, longitudeInput.value);
+    }
+
+    /******************************************************************************
+     * Carte du formulaire : un clic copie "latitude, longitude" dans le          *
+     * presse-papier et remplit les champs latitude et longitude                  *
+     ******************************************************************************/
+    openPickerMap(latitude, longitude) {
+        const pickerDiv = document.querySelector('#location-picker-map');
+        if (!pickerDiv) return;
+
+        if (this.pickerMap) {
+            this.pickerMap.resize();
+            this.centerPickerMap(latitude, longitude);
+            return;
+        }
+
+        fetch('/api/map/access')
+            .then(res => res.json())
+            .then(data => {
+                mapboxgl.accessToken = data.token;
+                this.pickerMap = new mapboxgl.Map({
+                    container: pickerDiv,
+                    bounds: this.getPickerBounds(),
+                    fitBoundsOptions: {padding: 20}
+                });
+                this.pickerMap.addControl(new mapboxgl.NavigationControl());
+                this.pickerMap.on('load', () => {
+                    this.centerPickerMap(latitude, longitude);
+                });
+                this.pickerMap.on('click', (e) => {
+                    const lat = e.lngLat.lat.toFixed(7);
+                    const lng = e.lngLat.lng.toFixed(7);
+                    const form = document.querySelector('#add-location-form');
+                    form.querySelector('input[name="google-map-url"]').value = lat + ', ' + lng;
+                    form.querySelector('input[name="latitude"]').value = lat;
+                    form.querySelector('input[name="longitude"]').value = lng;
+                    this.setPickerMarker(lat, lng, false);
+                    navigator.clipboard?.writeText(lat + ', ' + lng);
+                });
+            });
+    }
+
+    centerPickerMap(latitude, longitude) {
+        if (latitude && longitude) {
+            this.setPickerMarker(latitude, longitude, true);
+        } else {
+            this.pickerMarker?.remove();
+            this.pickerMarker = null;
+            const bounds = this.getPickerBounds();
+            if (bounds) this.pickerMap.fitBounds(bounds, {padding: 20, duration: 0});
+        }
+    }
+
+    getPickerBounds() {
+        // Pays d'origine de la série, à défaut les limites des lieux de tournage existants
+        const pickerDiv = document.querySelector('#location-picker-map');
+        const countryBounds = JSON.parse(pickerDiv.getAttribute('data-bounds') || 'null');
+        if (countryBounds) return countryBounds;
+        const globsMap = document.querySelector('#globs-map');
+        return globsMap ? JSON.parse(globsMap.textContent).bounds || null : null;
+    }
+
+    setPickerMarker(latitude, longitude, center) {
+        if (!this.pickerMap) return;
+        const lngLat = [parseFloat(longitude), parseFloat(latitude)];
+        if (isNaN(lngLat[0]) || isNaN(lngLat[1])) return;
+        if (!this.pickerMarker) {
+            this.pickerMarker = new mapboxgl.Marker({color: "#B46B18FF"}).setLngLat(lngLat).addTo(this.pickerMap);
+        } else {
+            this.pickerMarker.setLngLat(lngLat);
+        }
+        if (center) this.pickerMap.jumpTo({center: lngLat, zoom: 14});
     }
 
     closeLocationPanel() {

@@ -21,6 +21,12 @@
             {% endfor %}
             <div class="form-row">
                 <div class="form-field">
+                    {{ 'Click on the map to copy latitude and longitude'|trans }}
+                    <div class="location-picker-map" id="location-picker-map" data-bounds="{{ mapBounds is defined ? mapBounds|json_encode : 'null' }}"></div>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-field">
                     <label for="google-map-url">{{ 'Paste Google maps url here to obtain latitude and longitude'|trans }}
                         <input type="text" name="google-map-url" id="google-map-url">
                     </label>
@@ -119,7 +125,7 @@
                         {{ 'Local files'|trans }} ({{ 'Thumbnail, additional images'|trans }})
                     </div>
                     <div class="form-field">
-                        <label for="image-files" class="">{{ 'Drop your images files here'|trans }}
+                        <label for="image-files" class="">{{ 'Drop your images files here'|trans }} {{ 'or paste them (Ctrl/Cmd + V)'|trans }}
                             <input type="file" name="image-files" id="image-files" multiple>
                         </label>
                         <div class="preview-image-files">

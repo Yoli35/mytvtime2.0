@@ -1615,6 +1615,8 @@ Locations: Locations
 Longitude: Longitude
 'Map styles': 'Map styles'
 'Pan by 100 pixels': 'Pan by 100 pixels'
+'Click on the map to copy latitude and longitude': 'Click on the map to copy latitude and longitude'
+'or paste them (Ctrl/Cmd + V)': 'or paste them (Ctrl/Cmd + V)'
 'Paste Google maps url here to obtain latitude and longitude': 'Paste Google maps url here to obtain latitude and longitude'
 'Points of Interest toggle display': 'Points of Interest toggle display'
 'Recent additions': 'Recent additions'

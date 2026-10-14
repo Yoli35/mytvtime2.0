@@ -17,6 +17,7 @@ use App\Entity\UserSeason;
 use App\Entity\UserSeries;
 use App\Form\AddBackdropType;
 use App\Form\SeriesVideoType;
+use App\Repository\CountryRepository;
 use App\Repository\FilmingLocationRepository;
 use App\Repository\NetworkRepository;
 use App\Repository\SeriesBroadcastScheduleRepository;
@@ -56,6 +57,7 @@ readonly class SeriesService
         private Closure                           $getParameter,
         #[AutowireMethodOf(ControllerHelper::class)]
         private Closure                           $getUser,
+        private CountryRepository                 $countryRepository,
         private DateService                       $dateService,
         private FilmingLocationRepository         $filmingLocationRepository,
         private ImageConfiguration                $imageConfiguration,
@@ -1595,10 +1597,13 @@ readonly class SeriesService
         return $emptyPoi->toArray();
     }
 
-    public function getLocationFormData(int $tvId, int $seriesId): array
+    public function getLocationFormData(int $tvId, int $seriesId, array $originCountries = []): array
     {
         $list = array_column($this->filmingLocationRepository->getSourceList(), "source_name");
+        // Limites du pays d'origine de la série pour centrer la carte du formulaire
+        $country = $originCountries ? $this->countryRepository->findOneBy(['code' => $originCountries[0]]) : null;
         return [
+            'mapBounds' => $country?->getBounds(),
             'hiddenFields' => [
                 ['item' => 'hidden', 'name' => 'series-id', 'value' => $seriesId],
                 ['item' => 'hidden', 'name' => 'tmdb-id', 'value' => $tvId],

@@ -1615,6 +1615,8 @@ Locations: Lieux
 Longitude: Longitude
 Map styles: Styles de carte
 Pan by 100 pixels: Déplacer de 100 pixels
+Click on the map to copy latitude and longitude: Cliquez sur la carte pour copier la latitude et la longitude
+or paste them (Ctrl/Cmd + V): ou collez-les (Ctrl/Cmd + V)
 Paste Google maps url here to obtain latitude and longitude: Collez l'URL de Google maps ici pour obtenir la latitude et la longitude
 Points of Interest toggle display: Affichage des points d'intérêt
 Recent additions: Ajouts récents

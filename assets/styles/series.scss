@@ -7604,6 +7604,18 @@ dialog, .side-panel {
         flex-grow: 1;
     }
 
+    .location-picker-map {
+        border-radius: .5rem;
+        cursor: crosshair;
+        height: 20rem;
+        margin-top: .5rem;
+        width: 100%;
+
+        .mapboxgl-canvas-container {
+            cursor: crosshair;
+        }
+    }
+
     .form-column {
         background-color: hsla(from var(--ardoise-80) h s l / .5);
         border-radius: .5rem;
