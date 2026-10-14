@@ -131,7 +131,7 @@ readonly class SeriesService
         $tv['keywords']['results'] = $this->keywordService->saveKeywords($tv['keywords']['results'], 'controller');
         $tv['missing_translations'] = $this->keywordService->keywordsTranslation($tv['keywords']['results'], $locale);
         $tv['networks'] = $this->networks($tv);
-        $tv['sources'] = $this->sourceRepository->findBy([], ['name' => 'ASC']);
+        $tv['sources'] = $this->sourceRepository->findAll();
         $tv['last_episode_to_air'] = $this->getEpisodeToAir($tv['last_episode_to_air'], $series);
         $tv['next_episode_to_air'] = $this->getEpisodeToAir($tv['next_episode_to_air'], $series);
         $tv['average_episode_run_time'] = $this->getEpisodeRunTime($tv['episode_run_time']);

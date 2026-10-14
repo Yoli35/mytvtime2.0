@@ -145,7 +145,7 @@ class EpisodeAirDateCommand
                 $this->seriesRepository->save($series, true);
             }
 
-            $userEpisodes = $this->userEpisodeRepository->findBy(['userSeries' => $userSeries], ['seasonNumber' => 'ASC', 'episodeNumber' => 'ASC']);
+            $userEpisodes = $this->userEpisodeRepository->findBy(['userSeries' => $userSeries]);
             if (!in_array($series->getStatus(), $endedSeriesStatus)) {
                 $result = $this->adjustNextEpisodeToWatch($userSeries, $userEpisodes);
                 if ($result) {

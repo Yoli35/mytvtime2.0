@@ -794,7 +794,7 @@ class MovieController extends AbstractController
 
     public function getSources(array &$movie): void
     {
-        $sources = $this->sourceRepository->findBy([], ['name' => 'ASC']);
+        $sources = $this->sourceRepository->findAll();
         $movie['sources'] = $sources;
     }
 

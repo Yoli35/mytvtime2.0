@@ -531,7 +531,7 @@ class SeriesController extends AbstractController
         $tmdbIds = array_column($userSeries, 'tmdbId');
 
         $userNetworks = $user->getNetworks();
-        $networks = $this->networkRepository->findBy([], ['name' => 'ASC']);
+        $networks = $this->networkRepository->findAll();
         $nlpArr = $this->networkRepository->networkLogoPaths();
         $networkLogoPaths = ['all' => null];
         $imageConfiguration = $this->imageConfiguration->getUrl('logo_sizes', 3);
@@ -909,7 +909,7 @@ class SeriesController extends AbstractController
         if ($override) {
             $user = $this->getUser();
             $userSeries = $this->userSeriesRepository->findOneBy(['user' => $user, 'series' => $series]);
-            $userEpisodes = $this->userEpisodeRepository->findBy(['userSeries' => $userSeries, 'seasonNumber' => $seasonNumber, 'previousOccurrence' => null], ['seasonNumber' => 'ASC', 'episodeNumber' => 'ASC']);
+            $userEpisodes = $this->userEpisodeRepository->findBy(['userSeries' => $userSeries, 'seasonNumber' => $seasonNumber, 'previousOccurrence' => null]);
 
             $tv = json_decode($this->tmdbService->getTv($seriesBroadcastSchedule->getSeries()->getTmdbId(), 'fr-FR', ['seasons']), true);
             $as = $this->seriesService->getAlternateSchedule($seriesBroadcastSchedule, $tv['seasons'], $userEpisodes);

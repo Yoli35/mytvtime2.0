@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use App\Repository\CountryRepository;
 use Doctrine\ORM\Mapping as ORM;
+use SortDirection;
 
 #[ORM\Entity(repositoryClass: CountryRepository::class)]
 class Country
@@ -14,6 +15,7 @@ class Country
     private ?int $id = null;
 
     #[ORM\Column(length: 2)]
+    #[ORM\OrderBy(['code' => SortDirection::Ascending])]
     private ?string $code;
 
     #[ORM\Column(length: 32)]

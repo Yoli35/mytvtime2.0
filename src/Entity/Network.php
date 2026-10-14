@@ -5,6 +5,7 @@ namespace App\Entity;
 use App\Repository\NetworkRepository;
 use DateTimeImmutable;
 use Doctrine\ORM\Mapping as ORM;
+use SortDirection;
 
 #[ORM\Entity(repositoryClass: NetworkRepository::class)]
 class Network
@@ -24,6 +25,7 @@ class Network
     private ?string $logoPath;
 
     #[ORM\Column(length: 255)]
+    #[ORM\OrderBy(['name' => SortDirection::Ascending])]
     private ?string $name;
 
     #[ORM\Column]

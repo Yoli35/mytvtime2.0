@@ -135,7 +135,7 @@ readonly class KeywordService
 
     public function getKeywords(): array
     {
-        $keywords = $this->keywordRepository->findby([], ['name' => 'ASC']);
+        $keywords = $this->keywordRepository->findAll();
 
         $keywordArray = [];
         foreach ($keywords as $keyword) {

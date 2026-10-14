@@ -7,6 +7,7 @@ use DateTimeImmutable;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use SortDirection;
 
 #[ORM\Entity(repositoryClass: UserSeriesRepository::class)]
 #[ORM\Index(name: 'idx_us_user_last_watched_at', columns: ['user_id', 'last_watched_at'])]
@@ -56,11 +57,11 @@ class UserSeries
     private ?int $rating;
 
     #[ORM\OneToMany(targetEntity: UserSeason::class, mappedBy: 'userSeries', orphanRemoval: true)]
-    #[ORM\OrderBy(['seasonNumber' => 'ASC'])]
+    #[ORM\OrderBy(['seasonNumber' => SortDirection::Ascending])]
     private Collection $userSeasons;
 
     #[ORM\OneToMany(targetEntity: UserEpisode::class, mappedBy: 'userSeries', fetch: 'EXTRA_LAZY', orphanRemoval: true)]
-    #[ORM\OrderBy(['seasonNumber' => 'ASC', 'episodeNumber' => 'ASC'])]
+    #[ORM\OrderBy(['seasonNumber' => SortDirection::Ascending, 'episodeNumber' => SortDirection::Ascending])]
     private Collection $userEpisodes;
 
     #[ORM\Column(nullable: true)]

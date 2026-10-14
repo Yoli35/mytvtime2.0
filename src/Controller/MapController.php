@@ -63,7 +63,7 @@ class MapController extends AbstractController
         $bb = array_map(function ($c) {
             $c->setDisplayName(Countries::getName($c->getCode()));
             return $c;
-        }, $this->countryRepository->findBy([], ['code' => 'ASC']));
+        }, $this->countryRepository->findAll());
 
         if ($request->getLocale() === 'fr') {
             uasort($countries, function ($a, $b) {

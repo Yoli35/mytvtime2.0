@@ -97,9 +97,9 @@ readonly class ApiSeriesEpisode
         $userSeason = array_find($userSeries->getUserSeasons()->toArray(), function ($season) use ($seasonNumber) {
             return $season->getSeasonNumber() == $seasonNumber;
         });
-        $userSeriesEpisodes = $this->userEpisodeRepository->findBy(['userSeries' => $userSeries], ['seasonNumber' => 'ASC', 'episodeNumber' => 'ASC']);
+        $userSeriesEpisodes = $this->userEpisodeRepository->findBy(['userSeries' => $userSeries]);
         $userEpisode = $this->userEpisodeRepository->findOneBy(['id' => $userEpisodeId]);
-        $userEpisodes = $this->userEpisodeRepository->findBy(['userSeries' => $userSeries, 'episodeId' => $id], ['id' => 'ASC']);
+        $userEpisodes = $this->userEpisodeRepository->findBy(['userSeries' => $userSeries, 'episodeId' => $id]);
 
         $now = $this->now($user);
         if ($userEpisode->getWatchedAt()) { // Si l'épisode a déjà été vu

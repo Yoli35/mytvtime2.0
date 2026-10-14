@@ -100,7 +100,7 @@ readonly class ApiEpisodeList
         $userEpisode = $this->userEpisodeRepository->find($episodeId);
         $firstEpisodeNumber = $userEpisode->getEpisodeNumber();
         $userSeries = $userEpisode->getUserSeries();
-        $userEpisodes = $this->userEpisodeRepository->findBy(['userSeries' => $userSeries, 'previousOccurrence' => null], ['seasonNumber' => 'ASC', 'episodeNumber' => 'ASC']);
+        $userEpisodes = $this->userEpisodeRepository->findBy(['userSeries' => $userSeries, 'previousOccurrence' => null]);
 
         if (!$watched && $seasonNumber > 1) {
             // on récupère les user épisodes des saisons précédentes

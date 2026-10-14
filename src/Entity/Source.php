@@ -6,6 +6,7 @@ use App\Repository\SourceRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use SortDirection;
 
 #[ORM\Entity(repositoryClass: SourceRepository::class)]
 class Source
@@ -16,6 +17,7 @@ class Source
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[ORM\OrderBy(['name' => SortDirection::Ascending])]
     private ?string $name = null;
 
     #[ORM\Column(length: 255)]

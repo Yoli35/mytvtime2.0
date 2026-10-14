@@ -173,7 +173,7 @@ final class SeriesShowController extends AbstractController
         ];
 
         $userSeries = $this->userSeriesRepository->findOneBy(['user' => $user, 'series' => $series]);
-        $userEpisodes = $this->userEpisodeRepository->findBy(['userSeries' => $userSeries, 'previousOccurrence' => null], ['seasonNumber' => 'ASC', 'episodeNumber' => 'ASC']);
+        $userEpisodes = $this->userEpisodeRepository->findBy(['userSeries' => $userSeries, 'previousOccurrence' => null]);
         $this->adjustNextEpisodeToWatch($userSeries, $userEpisodes);
 
         $this->seriesService->checkUserSeasons($userEpisodes);
@@ -220,7 +220,7 @@ final class SeriesShowController extends AbstractController
             $noTv['localized_name'] = $series->getLocalizedName($locale);
             $noTv['localized_overviews'] = $series->getLocalizedOverviews($locale);
             $noTv['seasons'] = $this->getUserSeasons($series, $userEpisodes);
-            $noTv['sources'] = $this->sourceRepository->findBy([], ['name' => 'ASC']);
+            $noTv['sources'] = $this->sourceRepository->findAll();
             $noTv['average_episode_run_time'] = 0;
 
             return $this->render("series_show/series_not_found.html.twig", [
@@ -252,7 +252,7 @@ final class SeriesShowController extends AbstractController
             |> array_first(...)
             |> (fn($x) => $this->checkForMissingFirstAirDate($series, $x));
         if ($this->reloadUserEpisodes) {
-            $userEpisodes = $this->userEpisodeRepository->findBy(['userSeries' => $userSeries, 'previousOccurrence' => null], ['seasonNumber' => 'ASC', 'episodeNumber' => 'ASC']);
+            $userEpisodes = $this->userEpisodeRepository->findBy(['userSeries' => $userSeries, 'previousOccurrence' => null]);
             $this->addFlash('info', $this->translator->trans('Your episodes have been updated according to the series information.'));
             $this->reloadUserEpisodes = false;
         }
@@ -374,7 +374,7 @@ final class SeriesShowController extends AbstractController
         } else {
             $season['is_series_overview'] = false;
         }
-        $season['sources'] = $this->sourceRepository->findBy([], ['name' => 'ASC']);
+        $season['sources'] = $this->sourceRepository->findAll();
         $season['season_localized_overview'] = $this->seasonLocalizedOverviewRepository->getSeasonLocalizedOverview($series->getId(), $seasonNumber, $request->getLocale());
         $season['series_localized_name'] = $series->getLocalizedName($request->getLocale());
         $season['series_localized_overviews'] = $series->getLocalizedOverviews($request->getLocale());
@@ -665,7 +665,7 @@ final class SeriesShowController extends AbstractController
         }
         if ($newEpisodeCount) {
             $series->addUpdate($newEpisodeCount . ' ' . $this->translator->trans('new episodes have been added to the series'));
-            return $this->userEpisodeRepository->findBy(['userSeries' => $userSeries, 'previousOccurrence' => null], ['seasonNumber' => 'ASC', 'episodeNumber' => 'ASC']);
+            return $this->userEpisodeRepository->findBy(['userSeries' => $userSeries, 'previousOccurrence' => null]);
         }
         return $userEpisodes;
     }
@@ -1438,7 +1438,7 @@ final class SeriesShowController extends AbstractController
     {
         if ($userSeries->getNextUserEpisode() === null) {
             if (!$userEpisodes) {
-                $userEpisodes = $this->userEpisodeRepository->findBy(['userSeries' => $userSeries, 'watchedAt' => null, 'previousOccurrence' => null], ['seasonNumber' => 'ASC', 'episodeNumber' => 'ASC']);
+                $userEpisodes = $this->userEpisodeRepository->findBy(['userSeries' => $userSeries, 'watchedAt' => null, 'previousOccurrence' => null]);
             } else {
                 $userEpisodes = array_filter($userEpisodes, function ($ue) {
                     return $ue->getWatchedAt() === null && $ue->getSeasonNumber();

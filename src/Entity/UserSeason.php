@@ -6,6 +6,7 @@ use App\Repository\UserSeasonRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use SortDirection;
 
 #[ORM\Entity(repositoryClass: UserSeasonRepository::class)]
 class UserSeason
@@ -26,7 +27,7 @@ class UserSeason
     private ?int $seasonNumber = null;
 
     #[ORM\OneToMany(targetEntity: UserEpisode::class, mappedBy: 'userSeason', fetch: 'EXTRA_LAZY', orphanRemoval: true)]
-    #[ORM\OrderBy(['seasonNumber' => 'ASC', 'episodeNumber' => 'ASC'])]
+    #[ORM\OrderBy(['seasonNumber' => SortDirection::Ascending, 'episodeNumber' => SortDirection::Ascending])]
     private Collection $userEpisodes;
 
     public function __construct(UserSeries $userSeries, int $seasonNumber)

@@ -6,6 +6,7 @@ use App\Repository\UserEpisodeRepository;
 use DateTimeImmutable;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use SortDirection;
 
 #[ORM\Entity(repositoryClass: UserEpisodeRepository::class)]
 #[ORM\Index(name: 'idx_ue_series_id_season', columns: ['user_series_id', 'id', 'season_number'])]
@@ -41,6 +42,7 @@ class UserEpisode
     private ?DateTimeImmutable $airDate = null;
 
     #[ORM\Column(nullable: true)]
+    #[ORM\OrderBy(['watchedAt' => SortDirection::Ascending])]
     private ?DateTimeImmutable $watchedAt;
 
     #[ORM\Column(nullable: true)]
