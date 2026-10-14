@@ -16,37 +16,37 @@ readonly class TMDBService
 
     // Modifier une fiche sur tmdb : https://www.themoviedb.org/tv/[tv-id]-[slug]/season/1
 
-    public function imageConfiguration(): ?string
+    public function imageConfiguration(): string
     {
         $request = "https://api.themoviedb.org/3/configuration";
         return $this->getResults($request);
     }
 
-    public function searchMulti($page, $query, $locale): ?string
+    public function searchMulti($page, $query, $locale): string
     {
         $request = "https://api.themoviedb.org/3/search/multi?language=$locale&page=$page&query=$query&include_adult=false";
         return $this->getResults($request);
     }
 
-    public function searchMovie(string $searchString): ?string
+    public function searchMovie(string $searchString): string
     {
         $request = "https://api.themoviedb.org/3/search/movie?$searchString";
         return $this->getResults($request);
     }
 
-    public function searchPerson(string $searchString): ?string
+    public function searchPerson(string $searchString): string
     {
         $request = "https://api.themoviedb.org/3/search/person?$searchString";
         return $this->getResults($request);
     }
 
-    public function searchTv(string $searchString): ?string
+    public function searchTv(string $searchString): string
     {
         $request = "https://api.themoviedb.org/3/search/tv?$searchString";
         return $this->getResults($request);
     }
 
-    public function getTv(int $showId, string $locale, ?array $details = null): ?string
+    public function getTv(int $showId, string $locale, ?array $details = null): string
     {
         $request = "https://api.themoviedb.org/3/tv/$showId?language=$locale";
         if ($details) {
@@ -55,37 +55,37 @@ readonly class TMDBService
         return $this->getResults($request);
     }
 
-    public function getAllTvImages(int $showId): ?string
+    public function getAllTvImages(int $showId): string
     {
         $request = "https://api.themoviedb.org/3/tv/$showId/images";
         return $this->getResults($request);
     }
 
-    public function getTvLists(int $showId): ?string
+    public function getTvLists(int $showId): string
     {
         $request = "https://api.themoviedb.org/3/tv/$showId/lists";
         return $this->getResults($request);
     }
 
-    public function getList(int $listId, int $page = 1, string $language = 'fr-FR'): ?string
+    public function getList(int $listId, int $page = 1, string $language = 'fr-FR'): string
     {
         $request = "https://api.themoviedb.org/4/list/$listId?language=$language&page=$page";
         return $this->getResults($request);
     }
 
-    public function getFilterTv(string $filterString): ?string
+    public function getFilterTv(string $filterString): string
     {
         $request = "https://api.themoviedb.org/3/discover/tv?$filterString";
         return $this->getResults($request);
     }
 
-    public function getFilterMovie(string $filterString): ?string
+    public function getFilterMovie(string $filterString): string
     {
         $request = "https://api.themoviedb.org/3/discover/movie?$filterString";
         return $this->getResults($request);
     }
 
-    public function getTvWatchProviderList(string $language = 'fr-FR', ?string $region = null): ?string
+    public function getTvWatchProviderList(string $language = 'fr-FR', ?string $region = null): string
     {
         $request = "https://api.themoviedb.org/3/watch/providers/tv?language=$language";
         if ($region) {
@@ -94,13 +94,13 @@ readonly class TMDBService
         return $this->getResults($request);
     }
 
-    public function getTvSimilar(int $tvId, string $language = 'en-US'): ?string
+    public function getTvSimilar(int $tvId, string $language = 'en-US'): string
     {
         $request = "https://api.themoviedb.org/3/tv/$tvId/similar?language=$language";
         return $this->getResults($request);
     }
 
-    public function getSeries(string $kind, int $page, string $locale, ?string $timezone = null): ?string
+    public function getSeries(string $kind, int $page, string $locale, ?string $timezone = null): string
     {
         $request = "https://api.themoviedb.org/3/tv/$kind?language=$locale&page=$page";
         if ($timezone) {
@@ -109,7 +109,7 @@ readonly class TMDBService
         return $this->getResults($request);
     }
 
-    public function getTvSeason(int $tvId, int $seasonNumber, string $locale, ?array $details = null): ?string
+    public function getTvSeason(int $tvId, int $seasonNumber, string $locale, ?array $details = null): string
     {
         $request = "https://api.themoviedb.org/3/tv/$tvId/season/$seasonNumber?language=$locale";
         if ($details) {
@@ -118,19 +118,19 @@ readonly class TMDBService
         return $this->getResults($request);
     }
 
-    public function getTvSeasonCredits(int $tvId, int $seasonNumber, string $locale): ?string
+    public function getTvSeasonCredits(int $tvId, int $seasonNumber, string $locale): string
     {
         $request = "https://api.themoviedb.org/3/tv/$tvId/season/$seasonNumber/credits?language=$locale";
         return $this->getResults($request);
     }
 
-    public function getTvSeasonChanges(int $seasonId, string $endDate, string $startDate): ?string
+    public function getTvSeasonChanges(int $seasonId, string $endDate, string $startDate): string
     {
         $request = "https://api.themoviedb.org/3/tv/season/$seasonId/changes?end_date=$endDate&page=1&start_date=$startDate";
         return $this->getResults($request);
     }
 
-    public function getTvEpisode(int $tvId, int $seasonNumber, int $episodeNumber, string $locale, ?array $details = null): ?string
+    public function getTvEpisode(int $tvId, int $seasonNumber, int $episodeNumber, string $locale, ?array $details = null): string
     {
         $request = "https://api.themoviedb.org/3/tv/$tvId/season/$seasonNumber/episode/$episodeNumber?language=$locale";
         if ($details) {
@@ -139,32 +139,32 @@ readonly class TMDBService
         return $this->getResults($request);
     }
 
-    public function getTvKeywords(int $tvId): ?string
+    public function getTvKeywords(int $tvId): string
     {
         $request = "https://api.themoviedb.org/3/tv/$tvId/keywords";
         return $this->getResults($request);
     }
 
     // Uncomment if external IDs are needed in season page
-//    public function getTvExternalIds(int $tvId): ?string
+//    public function getTvExternalIds(int $tvId): string
 //    {
 //        $request = "https://api.themoviedb.org/3/tv/$tvId/external_ids";
 //        return $this->getResults($request);
 //    }
 
-    public function getNetworkDetails(int $networkId): ?string
+    public function getNetworkDetails(int $networkId): string
     {
         $request = "https://api.themoviedb.org/3/network/$networkId";
         return $this->getResults($request);
     }
 
-    public function getPopularPeople(string $locale, int $page = 1): ?string
+    public function getPopularPeople(string $locale, int $page = 1): string
     {
         $request = "https://api.themoviedb.org/3/person/popular?language=$locale&page=$page";
         return $this->getResults($request);
     }
 
-    public function getPerson(int $id, string $locale, ?string $append = null): ?string
+    public function getPerson(int $id, string $locale, ?string $append = null): string
     {
         $request = "https://api.themoviedb.org/3/person/$id?language=$locale";
         if ($append) {
@@ -173,7 +173,7 @@ readonly class TMDBService
         return $this->getResults($request);
     }
 
-    public function getMovie(int $movieId, string $locale, ?array $details = null): ?string
+    public function getMovie(int $movieId, string $locale, ?array $details = null): string
     {
         // with_release_type values:
         // 1 = Premiere,
@@ -189,45 +189,45 @@ readonly class TMDBService
         return $this->getResults($request);
     }
 
-    public function getMovieKeywords(int $movieId): ?string
+    public function getMovieKeywords(int $movieId): string
     {
         $request = "https://api.themoviedb.org/3/movie/$movieId/keywords";
         return $this->getResults($request);
     }
 
-    public function getMovieCollection(int $collectionId): ?string
+    public function getMovieCollection(int $collectionId): string
     {
         $request = "https://api.themoviedb.org/3/collection/$collectionId";
         return $this->getResults($request);
     }
 
-    public function getMovieImages(int $movieId, ?string $language = null): ?string
+    public function getMovieImages(int $movieId, ?string $language = null): string
     {
         $request = "https://api.themoviedb.org/3/movie/$movieId/images";
         if ($language) $request .= "?language=$language";
         return $this->getResults($request);
     }
 
-    public function getMovieGenres(?string $language = null): ?string
+    public function getMovieGenres(?string $language = null): string
     {
         $request = "https://api.themoviedb.org/3/genre/movie/list";
         if ($language) $request .= "?language=$language";
         return $this->getResults($request);
     }
 
-    public function getMovieExtras(int $movieID, string $extra, string $params): ?string
+    public function getMovieExtras(int $movieID, string $extra, string $params): string
     {
         $request = "https://api.themoviedb.org/3/movie/$movieID/$extra?$params";
         return $this->getResults($request);
     }
 
-    public function getSeriesExtras(int $seriesID, string $extra, string $params): ?string
+    public function getSeriesExtras(int $seriesID, string $extra, string $params): string
     {
         $request = "https://api.themoviedb.org/3/tv/$seriesID/$extra?$params";
         return $this->getResults($request);
     }
 
-    public function searchKeyword(string $query): ?string
+    public function searchKeyword(string $query): string
     {
         // $query="based on no" → "based%20on%20no"
         $request = "https://api.themoviedb.org/3/search/keyword?query=" . urlencode($query);
