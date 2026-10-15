@@ -34,6 +34,8 @@ export class Index {
             seriesSearchInput.focus();
             seriesSearchInput.addEventListener("input", this.menu.searchFetch);
             seriesSearchInput.addEventListener("keydown", this.menu.searchMenuNavigate);
+            const searchResultsDiv = seriesSearchBlockDiv.querySelector('.search-results');
+            window.addEventListener('resize', () => this.menu.fixSearchResultsWidth(searchResultsDiv));
         }
 
         new UserList(this.flashMessage, this.toolTips, null);

@@ -53,11 +53,21 @@
     }
 
     .series-search-block {
-        margin-block: 2rem 1rem;
+        margin-block: 2rem;
+        margin-inline: auto;
+        width: max(50vw, 25rem);
+
+        label {
+            width: 100%;
+        }
 
         .search-results {
             backdrop-filter: blur(1rem);
             background-color: hsl(from var(--ardoise-80) h s l / .25);
+            left: 0;
+            min-width: 25rem;
+            translate: unset;
+            width: unset;
         }
     }
 

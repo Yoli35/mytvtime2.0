@@ -876,15 +876,29 @@ export class Menu {
                 });
                 self.tooltips.init(ul);
                 searchResults.appendChild(ul);
-                // "left" est animé (transition CSS) : on calcule la position qu'aurait la div à left = 0
-                // à partir de la valeur courante (éventuellement en cours de transition)
-                const searchResultsBoundingRect = searchResults.getBoundingClientRect();
-                const currentLeft = parseFloat(getComputedStyle(searchResults).left) || 0;
-                const naturalRight = searchResultsBoundingRect.right - currentLeft;
-                const viewportWidth = document.documentElement.clientWidth;
-                searchResults.style.left = Math.min(0, viewportWidth - naturalRight) + 'px';
+                self.fixSearchResultsWidth(searchResults);
             })
             .catch(err => console.error('error:' + err));
+    }
+
+    fixSearchResultsWidth(searchResultsDiv) {
+        if (!searchResultsDiv.classList.contains('showing-something')) return;
+        // "left" est animé (transition CSS) : on calcule la position qu'aurait la div à left = 0
+        // à partir de la valeur courante (éventuellement en cours de transition)
+        const searchResultsBoundingRect = searchResultsDiv.getBoundingClientRect();
+        const currentLeft = parseFloat(getComputedStyle(searchResultsDiv).left) || 0;
+        const currentWidth = parseFloat(getComputedStyle(searchResultsDiv).width) || 0;
+        const naturalRight = searchResultsBoundingRect.right - currentLeft;
+        const viewportWidth = document.documentElement.clientWidth;
+        if (currentWidth >= viewportWidth) {
+            const seriesSearchBlockDiv = searchResultsDiv.parentElement;
+            const searchBlockBoundingRect = seriesSearchBlockDiv.getBoundingClientRect();
+            searchResultsDiv.style.left = -searchBlockBoundingRect.left + 'px';
+            searchResultsDiv.style.width = viewportWidth + 'px';
+        } else {
+            searchResultsDiv.style.left = Math.min(0, viewportWidth - naturalRight) + 'px';
+            searchResultsDiv.style.width = 'auto';
+        }
     }
 
     closeMultiSearchMenu(input) {

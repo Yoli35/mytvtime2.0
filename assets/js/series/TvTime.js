@@ -22,8 +22,6 @@ export class TvTime {
         this.getEpisodes = this.getEpisodes.bind(this);
         this.initComponents = this.initComponents.bind(this);
 
-        /*console.log(this.episodesAvailable);*/
-
         this.init();
     }
 
