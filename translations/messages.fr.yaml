@@ -1499,6 +1499,11 @@ Link GitHub: Lier GitHub
 Link Google: Lier Google
 Link or unlink external accounts (Google, GitHub, Apple): Lier ou délier des comptes externes (Google, GitHub, Apple)
 Manage connections: Gérer les connexions
+'Delete my account': 'Supprimer mon compte'
+'All your data (series, movies, episodes, lists, albums, comments, etc.) will be permanently deleted.': 'Toutes vos données (séries, films, épisodes, listes, albums, commentaires, etc.) seront définitivement supprimées.'
+'Are you sure you want to delete your account? This action cannot be undone.': 'Êtes-vous sûr de vouloir supprimer votre compte ? Cette action est irréversible.'
+'Your account has been deleted': 'Votre compte a été supprimé'
+'Invalid token': 'Jeton invalide'
 Preferred Language: Langue préférée
 Preferred Languages: Langues préférées
 Profile: Profil

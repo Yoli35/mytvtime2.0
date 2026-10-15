@@ -1499,6 +1499,11 @@ Filter: Filter
 'Link Google': 'Link Google'
 'Link or unlink external accounts (Google, GitHub, Apple)': 'Link or unlink external accounts (Google, GitHub, Apple)'
 'Manage connections': 'Manage connections'
+'Delete my account': 'Delete my account'
+'All your data (series, movies, episodes, lists, albums, comments, etc.) will be permanently deleted.': 'All your data (series, movies, episodes, lists, albums, comments, etc.) will be permanently deleted.'
+'Are you sure you want to delete your account? This action cannot be undone.': 'Are you sure you want to delete your account? This action cannot be undone.'
+'Your account has been deleted': 'Your account has been deleted'
+'Invalid token': 'Invalid token'
 'Preferred Language': 'Preferred Language'
 'Preferred Languages': 'Preferred Languages'
 Profile: Profile

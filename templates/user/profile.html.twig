@@ -9,16 +9,7 @@
 
 {% block body %}
     {% include('_blocks/_menu.html.twig') %}
-    <div class="container-fluid user-profile-container"> {# ← light #}
-        {#        <div class="toggle-theme">{{ ux_icon('mdi:sun-moon-stars') }}</div> #}
-        {#        <script> #}
-        {#            document.addEventListener('DOMContentLoaded', function () { #}
-        {#                const toggleTheme = document.querySelector('.toggle-theme'); #}
-        {#                toggleTheme.addEventListener('click', function () { #}
-        {#                    document.querySelector(".container-fluid.user-profile-container").classList.toggle('light'); #}
-        {#                }); #}
-        {#            }); #}
-        {#        </script> #}
+    <div class="container-fluid user-profile-container">
         <div class="user-profile glowing-border left">
             {{ form_start(form, {'attr': {'class': 'form'}}) }}
             <div class="form-row">
@@ -116,6 +107,20 @@
                     {{ 'Manage connections'|trans }}
                 </a>
             </div>
+
+            <div class="delete-account">
+                <h2>{{ 'Delete my account'|trans }}</h2>
+                <p>
+                    <small>
+                        {{ 'All your data (series, movies, episodes, lists, albums, comments, etc.) will be permanently deleted.'|trans }}
+                    </small>
+                </p>
+                <form method="post" action="{{ path('app_user_delete', { _locale: app.request.locale }) }}"
+                      onsubmit="return confirm('{{ 'Are you sure you want to delete your account? This action cannot be undone.'|trans|e('js') }}');">
+                    <input type="hidden" name="_token" value="{{ csrf_token('delete_account_' ~ user.id) }}">
+                    <button type="submit">{{ ux_icon('mdi:trash') }}{{ 'Delete my account'|trans }}</button>
+                </form>
+            </div>
         </div>
 
         {% if app.user.id == 1 %}
@@ -146,18 +151,18 @@
                 </div>
             </div>
         {% endif %}
-        <div id="globs" style="display: none">
-            {
-            "translations": {{ translations|json_encode(constant('JSON_PRETTY_PRINT'))|raw }},
-            "targetedLanguages": {{ translationSettings.targeted_languages|json_encode(constant('JSON_PRETTY_PRINT'))|raw }},
-            "preferredLanguages": {{ translationSettings.preferred_languages|json_encode(constant('JSON_PRETTY_PRINT'))|raw }},
-            "languages": {{ languages|json_encode(constant('JSON_PRETTY_PRINT'))|raw }}
-            }
-        </div>
-        <div id="svgs" style="display: none">
-            {{ ux_icon('mdi:hamburger-menu', {id: "burger"}) }}
-            {{ ux_icon('mdi:trash', {id: "trash"}) }}
-        </div>
     </div>
     {% include('_blocks/_footer.html.twig') %}
+    <div id="globs" style="display: none">
+        {
+        "translations": {{ translations|json_encode(constant('JSON_PRETTY_PRINT'))|raw }},
+        "targetedLanguages": {{ translationSettings.targeted_languages|json_encode(constant('JSON_PRETTY_PRINT'))|raw }},
+        "preferredLanguages": {{ translationSettings.preferred_languages|json_encode(constant('JSON_PRETTY_PRINT'))|raw }},
+        "languages": {{ languages|json_encode(constant('JSON_PRETTY_PRINT'))|raw }}
+        }
+    </div>
+    <div id="svgs" style="display: none">
+        {{ ux_icon('mdi:hamburger-menu', {id: "burger"}) }}
+        {{ ux_icon('mdi:trash', {id: "trash"}) }}
+    </div>
 {% endblock %}

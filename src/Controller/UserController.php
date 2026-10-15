@@ -14,7 +14,9 @@ use App\Service\DateService;
 use App\Service\ImageConfiguration;
 use App\Service\ImageService;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -35,6 +37,7 @@ class UserController extends AbstractController
         private readonly ImageConfiguration                $imageConfiguration,
         private readonly ImageService                      $imageService,
         private readonly NetworkRepository                 $networkRepository,
+        private readonly Security                          $security,
         private readonly SettingsRepository                $settingsRepository,
         private readonly TranslatorInterface               $translator,
         private readonly UserEpisodeNotificationRepository $userEpisodeNotificationRepository,
@@ -109,6 +112,40 @@ class UserController extends AbstractController
             'languages' => $languages,
             'translations' => $translations,
         ]);
+    }
+
+    #[Route('/delete', name: 'delete', methods: ['POST'])]
+    public function delete(Request $request): Response
+    {
+        $user = $this->getUser();
+
+        if (!$this->isCsrfTokenValid('delete_account_' . $user->getId(), (string)$request->request->get('_token'))) {
+            $this->addFlash('error', $this->translator->trans('Invalid token'));
+            return $this->redirectToRoute('app_user_profile');
+        }
+
+        $userId = $user->getId();
+        $avatar = $user->getAvatar();
+        $banner = $user->getBanner();
+        $result = $this->userRepository->deleteAccount($userId);
+        if (!$result['success']) {
+            $this->addFlash('error', $result['error']);
+            return $this->redirectToRoute('app_user_profile');
+        }
+        $commentImagePaths = $result['commentImagePaths'];
+        $this->entityManager->clear();
+
+        $publicDir = $this->getParameter('kernel.project_dir') . '/public';
+        $files = array_map(fn($path) => $publicDir . '/images/comments/' . ltrim($path, '/'), $commentImagePaths);
+        if ($avatar) $files[] = $publicDir . '/images/users/avatars/' . $avatar;
+        if ($banner) $files[] = $publicDir . '/images/users/banners/' . $banner;
+        $files[] = $publicDir . '/albums/' . $userId;
+        new Filesystem()->remove($files);
+
+        $this->security->logout(false);
+        $this->addFlash('success', $this->translator->trans('Your account has been deleted'));
+
+        return $this->redirectToRoute('app_home_index');
     }
 
     #[Route('/providers', name: 'providers')]

@@ -11,6 +11,7 @@ use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\PasswordUpgraderInterface;
+use Throwable;
 
 /**
  * @extends ServiceEntityRepository<User>
@@ -129,7 +130,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         return $this->getAll($sql);
     }
 
-    public    function getMoviesLanguages(): array
+    public function getMoviesLanguages(): array
     {
         $sql = <<<SQL
                 SELECT DISTINCT `original_language`
@@ -137,6 +138,72 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
             SQL;
 
         return $this->getAll($sql);
+    }
+
+    /**
+     * Supprime un utilisateur et toutes ses données en SQL direct (les relations « orphanRemoval »
+     * de l'entité User obligeraient Doctrine à charger des dizaines de milliers d'entités).
+     * L'ordre respecte les clés étrangères (NO ACTION) ; user_device, user_network,
+     * user_watch_provider, user_oauth_account, user_list_series, photo_album et
+     * user_season_series_broadcast_schedule sont supprimées par ON DELETE CASCADE.
+     *
+     * Retourne les chemins des images de commentaires pour supprimer les fichiers ensuite.
+     *
+     * @throws Exception
+     */
+    public function deleteAccount(int $userId): array
+    {
+        $connection = $this->em->getConnection();
+        $params = ['userId' => $userId];
+        $types = ['userId' => ParameterType::INTEGER];
+
+        $commentImagePaths = $connection->fetchFirstColumn(
+            'SELECT eci.`path` FROM episode_comment_image eci INNER JOIN episode_comment ec ON ec.id = eci.episode_comment_id WHERE ec.user_id = :userId',
+            $params, $types
+        );
+
+        $statements = [
+            // Références croisées user_series ↔ user_episode
+            'UPDATE user_series SET last_user_episode_id = NULL, next_user_episode_id = NULL WHERE user_id = :userId',
+            'UPDATE user_episode SET previous_occurrence_id = NULL WHERE user_id = :userId',
+            'DELETE FROM user_pinned_series WHERE user_id = :userId',
+            'DELETE FROM user_episode WHERE user_id = :userId',
+            'DELETE us FROM user_season us INNER JOIN user_series s ON s.id = us.user_series_id WHERE s.user_id = :userId',
+            'DELETE FROM user_series WHERE user_id = :userId',
+            'DELETE FROM user_episode_notification WHERE user_id = :userId',
+            'DELETE FROM user_movie WHERE user_id = :userId',
+            'DELETE FROM user_video WHERE user_id = :userId',
+            'DELETE FROM user_list WHERE user_id = :userId',
+            'DELETE FROM history WHERE user_id = :userId',
+            'DELETE FROM settings WHERE user_id = :userId',
+            'DELETE FROM people_user_rating WHERE user_id = :userId',
+            'DELETE FROM people_user_preferred_name WHERE user_id = :userId',
+            // Les réponses (y compris celles des autres utilisateurs) aux commentaires supprimés deviennent des commentaires de premier niveau
+            'UPDATE episode_comment reply INNER JOIN episode_comment parent ON parent.id = reply.reply_to_id SET reply.reply_to_id = NULL WHERE parent.user_id = :userId',
+            'DELETE eci FROM episode_comment_image eci INNER JOIN episode_comment ec ON ec.id = eci.episode_comment_id WHERE ec.user_id = :userId',
+            'DELETE FROM episode_comment WHERE user_id = :userId',
+            'DELETE FROM photo WHERE user_id = :userId',
+            'DELETE FROM album WHERE user_id = :userId',
+            'DELETE FROM `user` WHERE id = :userId',
+        ];
+
+        try {
+            $connection->transactional(function ($connection) use ($statements, $params, $types) {
+                foreach ($statements as $sql) {
+                    $connection->executeStatement($sql, $params, $types);
+                }
+            });
+        } catch (Throwable $e) {
+            return [
+                'success' => false,
+                'error' => $e->getMessage(),
+            ];
+        }
+
+        return [
+            'success' => true,
+            'commentImagePaths' => $commentImagePaths,
+        ];
     }
 
     public function getAll(string $sql, array $params = [], array $types = []): array
