@@ -1274,10 +1274,10 @@ class UserSeriesRepository extends ServiceEntityRepository
                     IFNULL(sln.`name`, s.`name`) AS name,
                     s.`poster_path`              AS poster_path,
                     YEAR(s.first_air_date)       AS year,
-                    nue.episode_number            AS special_number,
-                    lue.`id`                      AS episode_id,
-                    lue.`episode_number`          AS episode_number,
-                    lue.season_number             AS season_number,
+                    nue.episode_number           AS special_number,
+                    lue.`episode_id`             AS episode_id,
+                    lue.`episode_number`         AS episode_number,
+                    lue.season_number            AS season_number,
                     esn.`name`                   AS esn_name                    
               FROM user_series us
                     LEFT JOIN user_episode nue ON nue.id=us.next_user_episode_id

@@ -483,6 +483,14 @@ export class TvTime {
                         if (update.content.overview.length) {
                             episodeCard.dataset.title = update.content.overview;
                             episodeCard.dataset.titleWidth = "40ch";
+
+                            const contentDiv = episodeCard.closest('.content');
+                            if (contentDiv && contentDiv.dataset.content === 'ended') {
+                                const overviewDiv = episodeCard.querySelector('.overview');
+                                if (overviewDiv) {
+                                    overviewDiv.innerText = update.content.overview;
+                                }
+                            }
                         }
                     }
                 });

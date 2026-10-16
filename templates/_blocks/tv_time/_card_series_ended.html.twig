@@ -1,4 +1,5 @@
 <div class="card{% if series.special_number==1 %} premiere{% endif %}"
+     data-episode-id="{{ series.episode_id }}"
      data-ref="{{ series.tmdb_id }}-{{ series.episode_id }}-{{ series.season_number }}-{{ series.episode_number }}-{{ series.esn_name }}">
     <a href="{{ path('app_tv_series', { 'id': series.id, slug: series.name|slug}) }}" target="_blank">
         <div class="poster">
@@ -23,6 +24,18 @@
                         {{ 'tv-time.special'|trans }} #{{ series.special_number }}
                     </div>
                 {% endif %}
+                {% if series.esn_name %}
+                    <div class="esn-name" data-title="{{ series.esn_name }}">
+                        <div class="name">{{ series.esn_name }}</div>
+                        <div class="duration"></div>
+                    </div>
+                {% else %}
+                    <div class="esn-name" data-title="">
+                        <div class="name"></div>
+                        <div class="duration"></div>
+                    </div>
+                {% endif %}
+                <div class="overview"></div>
             </div>
             {% set wps = watchLinks|filter((wp) => wp.seriesId == series.id and (wp.seasonNumber == -1 or wp.seasonNumber == series.season_number)) %}
             <div class="watch-links">

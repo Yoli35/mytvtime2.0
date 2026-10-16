@@ -535,6 +535,7 @@
                                     .overview {
                                         color: hsl(from var(--green) h 0 l);
                                         display: none;
+                                        line-height: 1.1;
                                         max-height: 6rem;
                                         overflow-y: auto;
                                         width: min(100%, 70ch);
@@ -640,6 +641,10 @@
                                         }
 
                                         .status {
+                                            display: block;
+                                        }
+
+                                        .overview {
                                             display: block;
                                         }
 

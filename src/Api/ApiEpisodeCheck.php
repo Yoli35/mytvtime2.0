@@ -3,6 +3,7 @@
 namespace App\Api;
 
 use App\Entity\Series;
+use App\Repository\EpisodeLocalizedOverviewRepository;
 use App\Repository\SeasonRepository;
 use App\Repository\SeriesRepository;
 use App\Service\SeasonService;
@@ -18,12 +19,13 @@ readonly class ApiEpisodeCheck
 {
     public function __construct(
         #[AutowireMethodOf(ControllerHelper::class)]
-        private Closure            $getUser,
+        private Closure                            $getUser,
         #[AutowireMethodOf(ControllerHelper::class)]
-        private Closure            $json,
-        private SeasonRepository   $seasonRepository,
-        private SeasonService      $seasonService,
-        private SeriesRepository   $seriesRepository,
+        private Closure                            $json,
+        private EpisodeLocalizedOverviewRepository $episodeLocalisedOverviewRepository,
+        private SeasonRepository                   $seasonRepository,
+        private SeasonService                      $seasonService,
+        private SeriesRepository                   $seriesRepository,
     )
     {
     }
@@ -83,6 +85,16 @@ readonly class ApiEpisodeCheck
         }
         $seasons = $this->seasonRepository->findWithEpisodes($seasonKeys, $locale);
 
+        // Récupérer les résumés traduits (EpisodeLocalisedOverview)
+        // 1- Récupérer les tmdb ids des episodes
+        $episodeTmdbIds = array_unique(array_column($episodeData, 'episodeId'));
+        // 2- Récupérer les résumés traduits (episodeId → overview)
+        $arr = $this->episodeLocalisedOverviewRepository->findBy(['episodeId' => $episodeTmdbIds, 'locale' => $locale]);
+        $episodeLocalisedOverviews = [];
+        foreach ($arr as $episodeLocalisedOverview) {
+            $episodeLocalisedOverviews[$episodeLocalisedOverview->getEpisodeId()] = $episodeLocalisedOverview->getOverview();
+        }
+
         // Un seul appel TheMovieDB par saison absente ou trop ancienne
         $tmdbCalls = 0;
         $messages = [];
@@ -110,13 +122,15 @@ readonly class ApiEpisodeCheck
             $series = $seriesByTmdbId[$ep['id']] ?? null;
             $season = $series ? $seasons[$series->getId() . '-' . $ep['seasonNumber']] ?? null : null;
             $episode = $season?->getEpisode($episodeId);
-
+            dump($episode);
             if (!$episode) {
                 $reason = match (true) {
                     !$series => '*** Series not found ***',
                     !$season => '*** Season not available ***',
                     default => '*** Episode not found ***',
                 };
+                $reason .= ' -';
+                foreach ($ep as $key => $value) $reason .= ' ' . $key . '→' . $value;
                 $updates[] = [
                     'episode_id' => $episodeId,
                     'content' => ['status' => 'error', 'reason' => $reason],
@@ -124,13 +138,17 @@ readonly class ApiEpisodeCheck
                 continue;
             }
 
+            $ref = 'ref: ';
+            foreach ($ep as $key => $value) $ref .= ' ' . $key . '→' . $value;
+
             $updates[] = [
                 'episode_id' => $episodeId,
                 'content' => [
                     'status' => 'success',
                     'name' => ($episode->getName() ?? '') . ($ep['esn'] ? ' - ' . $ep['esn'] : ''),
-                    'overview' => $episode->getOverview() ?? '',
+                    'overview' => $episode->getOverview() ?? $episodeLocalisedOverviews[$episodeId] ?? '',
                     'runtime' => $episode->getRuntime(),
+                    'ref' => $ref,
                 ],
             ];
         }
