@@ -3351,6 +3351,7 @@ section:has(.pages) {
     display: flex;
     gap: 2rem;
     left: 0;
+    pointer-events: none;
     position: fixed;
     top: 12rem;
     transform: translateX(calc(-100% + 5rem));
@@ -3375,6 +3376,7 @@ section:has(.pages) {
         display: flex;
         height: 4rem;
         justify-content: center;
+        pointer-events: all;
         width: 4rem;
 
         &:hover {
@@ -3402,6 +3404,7 @@ section:has(.pages) {
         max-width: calc(100dvw - 6rem);
         overflow-x: auto;
         padding: .75rem;
+        pointer-events: all;
 
         .episode-today {
             background-color: var(--ardoise-80);
