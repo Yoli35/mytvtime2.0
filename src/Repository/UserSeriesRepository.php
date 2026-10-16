@@ -1270,15 +1270,20 @@ class UserSeriesRepository extends ServiceEntityRepository
               -- Séries terminées
               SELECT
                     s.id                         AS id,
+                    s.tmdb_id                    AS tmdb_id,
                     IFNULL(sln.`name`, s.`name`) AS name,
                     s.`poster_path`              AS poster_path,
                     YEAR(s.first_air_date)       AS year,
                     ue.episode_number            AS special_number,
-                    ue.season_number             AS season_number
+                    ue.season_number             AS season_number,
+                    ue.`id`                      AS episode_id,
+                    ue.`episode_number`          AS episode_number,
+                    esn.`name`                   AS esn_name                    
               FROM user_series us
                     LEFT JOIN user_episode ue ON ue.id=us.next_user_episode_id
                     LEFT JOIN `series` s ON s.`id` = us.`series_id`
                     LEFT JOIN `series_localized_name` sln ON sln.`series_id`=s.`id` AND sln.`locale`=:locale
+                    LEFT JOIN `episode_substitute_name` esn ON esn.`episode_id`=ue.`episode_id`
                 WHERE us.user_id=:userId
                     AND (us.next_user_episode_id IS NULL OR ue.season_number=0)
                 ORDER BY us.last_watched_at DESC

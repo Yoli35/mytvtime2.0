@@ -441,13 +441,13 @@ export class TvTime {
     }
 
     getEpisodeDetails() {
-        const firstContentDiv = document.querySelector('.content');
-        if (!firstContentDiv)
-            return;
-        const cards = firstContentDiv.querySelectorAll('.card');
+        const cards = document.querySelectorAll('.card');
         if (!cards)
             return;
         const refArray = Array.from(cards).map(card => card.getAttribute('data-ref'));
+        // Retirer les éléments null de refArray
+        const filteredRefArray = refArray.filter(ref => ref !== null);
+        /*console.log(filteredRefArray);*/
         fetch('/api/tv/time/episode/check', {
             method: 'POST',
             headers: {
@@ -455,7 +455,7 @@ export class TvTime {
                 'X-Requested-With': 'XMLHttpRequest'
             },
             body: JSON.stringify({
-                episodeRefs: refArray
+                episodeRefs: filteredRefArray
             })
         })
             .then(response => response.json())
