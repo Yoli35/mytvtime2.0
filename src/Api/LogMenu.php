@@ -47,7 +47,7 @@ class LogMenu extends AbstractController
                 'date' => $date,
                 'dateKey' => $dateKey,
             ];
-        }, $this->historyRepository->findBy(['user' => $user], ['date' => 'DESC'], 50));
+        }, $this->historyRepository->findBy(['user' => $user], [], 50));
 
         $lastId = $logs[0]['id'] ?? 0;
 
@@ -66,7 +66,7 @@ class LogMenu extends AbstractController
         /** @var User $user */
         $user = $this->getUser();
 
-        $last = $this->historyRepository->findOneBy(['user' => $user], ['date' => 'DESC']);
+        $last = $this->historyRepository->findOneBy(['user' => $user]);
 
         return $this->json([
             'ok' => true,

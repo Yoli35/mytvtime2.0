@@ -5,6 +5,7 @@ namespace App\Entity;
 use App\Repository\HistoryRepository;
 use DateTimeImmutable;
 use Doctrine\ORM\Mapping as ORM;
+use SortDirection;
 
 #[ORM\Entity(repositoryClass: HistoryRepository::class)]
 class History
@@ -22,6 +23,7 @@ class History
     private ?string $title;
 
     #[ORM\Column]
+    #[ORM\OrderBy(['date' => SortDirection::Descending])]
     private ?DateTimeImmutable $date;
 
     #[ORM\Column(length: 255)]

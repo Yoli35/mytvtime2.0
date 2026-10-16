@@ -7,6 +7,7 @@ use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
+use SortDirection;
 
 /**
  * @extends ServiceEntityRepository<History>
@@ -44,7 +45,7 @@ class HistoryRepository extends ServiceEntityRepository
             ->andWhere('h.link != :errorLink')
             ->setParameter('user', $user)
             ->setParameter('errorLink', '/error')
-            ->orderBy('h.id', 'DESC')
+            ->orderBy('h.id', SortDirection::Descending)
             ->setMaxResults(1)
             ->getQuery()
             ->getOneOrNullResult();
