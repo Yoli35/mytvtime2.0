@@ -4,19 +4,19 @@
             {{ include('_blocks/tv_time/_card_series.html.twig', {next: true, while: false}) }}
         {% endfor %}
     </div>
-    {% if specialEpisodes|length %}
-        <div class="divider" data-content="specials"><span>{{ 'Specials'|trans }} ({{ specialEpisodes|length }})</span></div>
-        <div class="content">
-            {% for series in specialEpisodes %}
-                {{ include('_blocks/tv_time/_card_series.html.twig', {next: true, while: false}) }}
-            {% endfor %}
-        </div>
-    {% endif %}
     {% if seriesUpToDate|length %}
         <div class="divider" data-content="up-to-date"><span>{{ 'Up to date'|trans }} ({{ seriesUpToDate|length }})</span></div>
         <div class="content">
             {% for series in seriesUpToDate %}
                 {{ include('_blocks/tv_time/_card_series.html.twig', {next: false, while: false}) }}
+            {% endfor %}
+        </div>
+    {% endif %}
+    {% if specialEpisodes|length %}
+        <div class="divider" data-content="specials"><span>{{ 'Specials'|trans }} ({{ specialEpisodes|length }})</span></div>
+        <div class="content">
+            {% for series in specialEpisodes %}
+                {{ include('_blocks/tv_time/_card_series.html.twig', {next: true, while: false}) }}
             {% endfor %}
         </div>
     {% endif %}
