@@ -42,7 +42,7 @@ export class TvTime {
         this.initComponents();
         if (this.tab === 0) {
             self.fixDetailsDivs(document.querySelector('main .series-tab .wrapper'));
-            /*this.getEpisodeNames();*/
+            this.getEpisodeDetails();
         }
 
         document.addEventListener("visibilitychange", () => {
@@ -383,7 +383,7 @@ export class TvTime {
                 self.initComponents();
                 self.toolsTips.init(document.querySelector('.series-tv-time .wrapper'));
                 /*self.episodesAvailable = data['data']['series']['episodesAvailable'];*/
-                self.getEpisodeNames();
+                self.getEpisodeDetails();
                 self.resetReload(data['data']['remainingSecondes']);
             })
             .catch((error) => {
@@ -440,7 +440,7 @@ export class TvTime {
         }, 1000);
     }
 
-    getEpisodeNames() {
+    getEpisodeDetails() {
         const firstContentDiv = document.querySelector('.content');
         if (!firstContentDiv)
             return;
