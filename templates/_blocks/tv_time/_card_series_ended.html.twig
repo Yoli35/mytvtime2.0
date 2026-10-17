@@ -2,7 +2,7 @@
      data-episode-id="{{ series.episode_id }}"
      data-ref="{{ series.tmdb_id }}-{{ series.episode_id }}-{{ series.season_number }}-{{ series.episode_number }}-{{ series.esn_name }}">
     <a href="{{ path('app_tv_series', { 'id': series.id, slug: series.name|slug}) }}" target="_blank">
-        <div class="poster">
+        <div class="poster" data-title="{{ series.name }}">
             {% if series.poster_path %}
                 <img src="/series/posters{{ series.poster_path }}" alt="{{ series.name }}">
             {% else %}
