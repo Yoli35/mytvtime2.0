@@ -94,7 +94,7 @@
                      data-user-episode-id="{{ series.userEpisodeId }}"
                 >{{ ux_icon('mdi:eye') }}</div>
             {% else %}
-                <div class="vote" data-id="{{ series.userEpisodeId }}">{% if series.prev_episode_vote %}{{ series.prev_episode_vote }}{% else %}{{ ux_icon('mdi:star') }}{% endif %}</div>
+                <div class="vote{% if series.prev_episode_vote > 10 %} voted-{{ series.prev_episode_vote }}{% endif %}" data-id="{{ series.userEpisodeId }}">{% if series.prev_episode_vote %}{{ series.prev_episode_vote }}{% else %}{{ ux_icon('mdi:star') }}{% endif %}</div>
                 <div class="done">{{ ux_icon('mdi:check') }}</div>
             {% endif %}
         </div>

@@ -721,6 +721,17 @@
                                             height: 1.75rem;
                                             width: 1.75rem;
                                         }
+
+                                        &.voted-11 {
+                                            background-color: var(--orange);
+                                            box-shadow: 0 0 .75rem 0.5rem var(--orange);
+                                        }
+
+                                        &.voted-12 {
+                                            background-color: var(--yellow);
+                                            box-shadow: 0 0 .75rem 0.5rem var(--yellow);
+                                            color: var(--orange-10);
+                                        }
                                     }
 
                                     .add-badge, .done {
@@ -1092,7 +1103,7 @@
                         &:not(:has(+ .vote-star + .vote-star)) {
                             color: var(--orange);
 
-                            /* Dernière étoile : couleur verte */
+                            /* Dernière étoile : couleur jaune */
                             &:not(:has(+ .vote-star)) {
                                 color: var(--yellow);
                             }
