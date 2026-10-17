@@ -42,7 +42,7 @@ export class TvTime {
         this.initComponents();
         if (this.tab === 0) {
             self.fixDetailsDivs(document.querySelector('main .series-tab .wrapper'));
-            this.getEpisodeDetails();
+            this.getEpisodeDetails(document);
         }
 
         document.addEventListener("visibilitychange", () => {
@@ -366,6 +366,7 @@ export class TvTime {
                 const div = document.createElement('div');
                 div.innerHTML = data['view'];
                 const newWrapper = div.querySelector('.wrapper');
+                self.getEpisodeDetails(newWrapper);
                 wrapper.replaceWith(newWrapper);
                 self.fixDetailsDivs(document.querySelector('.series-tv-time .series-tab .wrapper'));
                 if (data['noVoteView']) {
@@ -383,7 +384,6 @@ export class TvTime {
                 self.initComponents();
                 self.toolsTips.init(document.querySelector('.series-tv-time .wrapper'));
                 /*self.episodesAvailable = data['data']['series']['episodesAvailable'];*/
-                self.getEpisodeDetails();
                 self.resetReload(data['data']['remainingSecondes']);
             })
             .catch((error) => {
@@ -440,8 +440,8 @@ export class TvTime {
         }, 1000);
     }
 
-    getEpisodeDetails() {
-        const cards = document.querySelectorAll('.card');
+    getEpisodeDetails(parent) {
+        const cards = parent.querySelectorAll('.card');
         if (!cards)
             return;
         const refArray = Array.from(cards).map(card => card.getAttribute('data-ref'));
