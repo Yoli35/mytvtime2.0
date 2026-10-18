@@ -68,9 +68,9 @@
                         <div class="duration"></div>
                     </div>
                 {% else %}
-                    <div class="esn-name" data-title="">
-                        <div class="name"></div>
-                        <div class="duration"></div>
+                    <div class="esn-name" data-title="{{ series.episode_name ?? '' }}">
+                        <div class="name">{{ series.episode_name ?? '' }}</div>
+                        <div class="duration">{% if series.episode_runtime %}{{ series.episode_runtime }} minutes{% endif %}</div>
                     </div>
                 {% endif %}
             </div>

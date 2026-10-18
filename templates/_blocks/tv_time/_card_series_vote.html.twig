@@ -19,7 +19,10 @@
                 </div>
                 <div class="infos">
                     <div class="name">
-                        {{ series.name }}<span class="year">{{ series.year }}</span>
+                        {{ series.name }}
+                        <span class="year">{{ series.year }}</span>
+                        {% if series.episode_runtime %}<span class="episode-runtime">{{ series.episode_runtime }} minutes</span>{% endif %}
+                        {% if series.episode_overview %}<div class="episode-overview" data-title="{{ series.episode_overview }}" data-title-width="40ch">{{ ux_icon('mdi:text-box') }}</div>{% endif %}
                     </div>
                     <div class="episode-number">{{ 'S%02dE%02d'|format(series.episode_season, series.episode_number) }}</div>
                     {% if series.isLastEpisode > 0 %}
@@ -27,6 +30,8 @@
                     {% endif %}
                     {% if series.esn_name %}
                         <div class="esn-name" data-title="{{ series.esn_name }}">{{ series.esn_name }}</div>
+                    {% elseif series.episode_name %}
+                        <div class="esn-name" data-title="{{ series.episode_name }}">{{ series.episode_name }}</div>
                     {% endif %}
                     <div class="vote">
                         {% for vote in 1..12 %}

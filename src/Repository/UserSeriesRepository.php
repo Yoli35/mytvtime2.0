@@ -924,6 +924,9 @@ class UserSeriesRepository extends ServiceEntityRepository
                     ue.`episode_id`,
                     ue.`season_number`,
                     ue.`episode_number`,
+                    e.`name`                     AS episode_name,
+                    e.`overview`                 AS episode_overview,
+                    e.`runtime`                  AS episode_runtime,
                     esn.`name` AS esn_name,
                     DATEDIFF(IFNULL(sbd.date, ue.air_date), NOW()) * -1 AS sinceDays,
                     (SELECT COUNT(remain.`id`)
@@ -945,6 +948,7 @@ class UserSeriesRepository extends ServiceEntityRepository
                     LEFT JOIN `user_season_series_broadcast_schedule` usa_sbs ON usa_sbs.`user_season_id`=usa.`id`
                     LEFT JOIN `series_broadcast_schedule` sbs ON sbs.id=usa_sbs.`series_broadcast_schedule_id`
                     LEFT JOIN `series` s ON s.`id`=us.`series_id`
+                    LEFT JOIN `episode` e ON e.`tmdb_id`=ue.`episode_id`
                     LEFT JOIN `series_broadcast_date` sbd ON sbd.`episode_id`=ue.`episode_id`
                     LEFT JOIN `series_localized_name` sln ON sln.`series_id`=s.`id` AND sln.`locale`=:locale
                     LEFT JOIN `episode_substitute_name` esn ON esn.`episode_id`=ue.`episode_id`
@@ -973,6 +977,9 @@ class UserSeriesRepository extends ServiceEntityRepository
                     IF(sln.`id`, sln.`name` , s.name) AS name,
                     YEAR(s.first_air_date) AS year,
                     CONCAT(:label, ue.`episode_number`) AS number,
+                    e.`name`                     AS episode_name,
+                    e.`overview`                 AS episode_overview,
+                    e.`runtime`                  AS episode_runtime,
                     s.`poster_path`,
                     ue.`id` AS userEpisodeId,
                     ue.`episode_id`,
@@ -999,6 +1006,7 @@ class UserSeriesRepository extends ServiceEntityRepository
                     LEFT JOIN `user_season_series_broadcast_schedule` usa_sbs ON usa_sbs.`user_season_id`=usa.`id`
                     LEFT JOIN `series_broadcast_schedule` sbs ON sbs.id=usa_sbs.`series_broadcast_schedule_id`
                     LEFT JOIN `series` s ON s.`id`=us.`series_id`
+                    LEFT JOIN `episode` e ON e.`tmdb_id`=ue.`episode_id`
                     LEFT JOIN `series_broadcast_date` sbd ON sbd.`episode_id`=ue.`episode_id`
                     LEFT JOIN `series_localized_name` sln ON sln.`series_id`=s.`id` AND sln.`locale`=:locale
                     LEFT JOIN `episode_substitute_name` esn ON esn.`episode_id`=ue.`episode_id`
@@ -1059,6 +1067,9 @@ class UserSeriesRepository extends ServiceEntityRepository
                     ue.`id` AS userEpisodeId,
                     ue.`season_number`,
                     ue.`episode_number`,
+                    e.`name`                     AS episode_name,
+                    e.`overview`                 AS episode_overview,
+                    e.`runtime`                  AS episode_runtime,
                     esn.`name` AS esn_name,
                     DATEDIFF(IFNULL(sbd.date, ue.air_date), NOW()) AS remainingDays,
                     sbs.air_at,
@@ -1078,6 +1089,7 @@ class UserSeriesRepository extends ServiceEntityRepository
                     LEFT JOIN `series_broadcast_date` sbd ON sbd.`episode_id`=ue.`episode_id`
                     LEFT JOIN `episode_substitute_name` esn ON esn.`episode_id`=ue.`episode_id`
                     INNER JOIN `series` s ON s.`id`=us.`series_id`
+                    LEFT JOIN `episode` e ON e.`tmdb_id`=ue.`episode_id`
                     LEFT JOIN `user_episode` prev ON prev.`id` = (
                         SELECT ue2.`id`
                         FROM `user_episode` ue2
@@ -1120,6 +1132,9 @@ class UserSeriesRepository extends ServiceEntityRepository
                     ue.`season_number`,
                     ue.`episode_number`,
                     esn.`name` AS esn_name,
+                    e.`name`                     AS episode_name,
+                    e.`overview`                 AS episode_overview,
+                    e.`runtime`                  AS episode_runtime,
                     DATEDIFF(NOW(), us.`last_watched_at`) AS sinceDays,
                     prev.`id`             AS prev_episode_id,
                     prev.`vote`           AS prev_episode_vote,
@@ -1136,6 +1151,7 @@ class UserSeriesRepository extends ServiceEntityRepository
                     LEFT JOIN `series_broadcast_date` sbd ON sbd.`episode_id`=ue.`episode_id`
                     LEFT JOIN `episode_substitute_name` esn ON esn.`episode_id`=ue.`episode_id`
                     INNER JOIN `series` s ON s.`id`=us.`series_id`
+                    LEFT JOIN `episode` e ON e.`tmdb_id`=ue.`episode_id`
                     LEFT JOIN `user_episode` prev ON prev.`id` = (
                         SELECT ue2.`id`
                         FROM `user_episode` ue2
@@ -1188,9 +1204,12 @@ class UserSeriesRepository extends ServiceEntityRepository
                     ue.`vote`                    AS episode_vote,
                     ue.`season_number`           AS episode_season,
                     ue.`episode_number`          AS episode_number,
+                    e.`name`                     AS episode_name,
+                    e.`overview`                 AS episode_overview,
+                    e.`runtime`                  AS episode_runtime,
                     wp.provider_name             AS provider_name,
                     wp.logo_path                 AS provider_logo_path,
-                    esn.`name` AS esn_name,
+                    esn.`name`                   AS esn_name,
                     (SELECT COUNT(remain.id)
                      FROM user_episode remain
                      WHERE remain.`user_series_id`=us.`id`  AND remain.`season_number`=ue.`season_number`  AND remain.`episode_number`>ue.`episode_number`)=0 AS isLastEpisode
@@ -1199,6 +1218,7 @@ class UserSeriesRepository extends ServiceEntityRepository
                     LEFT JOIN `user_series` us ON us.`id` = ue.`user_series_id`
                     LEFT JOIN `user_season` usa ON usa.`id` = ue.`user_season_id`
                     LEFT JOIN `series` s ON s.`id` = us.`series_id`
+                    LEFT JOIN `episode` e ON e.`tmdb_id`=ue.`episode_id`
                     LEFT JOIN `series_localized_name` sln ON sln.`series_id`=s.`id` AND sln.`locale`=:locale
                     LEFT JOIN `episode_substitute_name` esn ON esn.`episode_id`=ue.`episode_id`
                     LEFT JOIN `watch_provider` wp ON wp.provider_id=ue.provider_id
@@ -1240,6 +1260,11 @@ class UserSeriesRepository extends ServiceEntityRepository
                     ue.`season_number`           AS episode_season,
                     ue.`episode_number`          AS episode_number,
                     esn.`name`                   AS esn_name,
+                    e.`name`                     AS episode_name,
+                    e.`overview`                 AS episode_overview,
+                    e.`runtime`                  AS episode_runtime,
+                    wp.provider_name             AS provider_name,
+                    wp.logo_path                 AS provider_logo_path,
                     (SELECT COUNT(remain.id)
                     FROM user_episode remain
                     WHERE remain.`user_series_id`=us.`id`  AND remain.`season_number`=ue.`season_number`  AND remain.`episode_number`>ue.`episode_number`)=0 AS isLastEpisode
@@ -1248,8 +1273,10 @@ class UserSeriesRepository extends ServiceEntityRepository
                     LEFT JOIN `user_series` us ON us.`id` = ue.`user_series_id`
                     LEFT JOIN `user_season` usa ON usa.`id` = ue.`user_season_id`
                     LEFT JOIN `series` s ON s.`id` = us.`series_id`
+                    LEFT JOIN `episode` e ON e.`tmdb_id`=ue.`episode_id`
                     LEFT JOIN `series_localized_name` sln ON sln.`series_id`=s.`id` AND sln.`locale`=:locale
                     LEFT JOIN `episode_substitute_name` esn ON esn.`episode_id`=ue.`episode_id`
+                    LEFT JOIN `watch_provider` wp ON wp.provider_id=ue.provider_id
                 WHERE ue.vote IS NULL
                 AND DATE(ue.watched_at) >= SUBDATE(CURDATE(), INTERVAL 3 WEEK)
                 AND (

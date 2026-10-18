@@ -443,7 +443,7 @@
                                         display: flex;
                                         gap: 0.5rem;
                                         height: 26px;
-                                        opacity: 0;
+                                        opacity: 1;
                                         padding-inline: 0.5rem;
                                         transition: opacity 0.25s ease-in-out;
                                         width: fit-content;
@@ -1028,13 +1028,24 @@
                 width: 24rem;
 
                 .name {
-                    /*display: flex;
-                    flex-wrap: wrap;
-                    gap: .25rem 1rem;*/
+                    align-items: center;
+                    display: flex;
+                    gap: 1rem;
 
-                    span.year {
+                    span.year,
+                    span.episode-runtime {
                         color: hsl(from var(--green) h 0% l);
-                        padding-inline-start: .5rem;
+                    }
+
+                    .episode-overview {
+                        align-items: center;
+                        background-color: var(--orange);
+                        border-radius: 5rem;
+                        display: flex;
+                        height: 2rem;
+                        justify-content: center;
+                        margin-inline-start: auto;
+                        width: 2rem;
                     }
                 }
 
