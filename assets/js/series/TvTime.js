@@ -633,6 +633,12 @@ export class TvTime {
                 if (seriesCard) { // Pour les multiples épisodes, la carte n'apparaitra qu'après leurs lectures
                     const seriesCardVoteDiv = seriesCard.querySelector('.vote');
                     seriesCardVoteDiv.innerHTML = vote;
+                    if (vote === 11) {
+                        seriesCardVoteDiv.classList.add('voted-11');
+                    }
+                    if (vote === 12) {
+                        seriesCardVoteDiv.classList.add('voted-12');
+                    }
                 }
                 if (isLastEpisode > 0) {
                     const jsConfetti = new JSConfetti();
