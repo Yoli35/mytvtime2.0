@@ -15,6 +15,7 @@ export class TvTime {
         this.toolsTips = toolsTips;
         this.peopleCard = new PeopleCard();
 
+        this.screenSaver = null;
 
         this.dividerStates = new Map();
         this.initializedDividers = new WeakSet();
@@ -40,6 +41,7 @@ export class TvTime {
         });
 
         this.initComponents();
+        this.initScreenSaver(1);
         if (this.tab === 0) {
             self.fixDetailsDivs(document.querySelector('main .series-tab .wrapper'));
             this.getEpisodeDetails(document);
@@ -68,6 +70,98 @@ export class TvTime {
         this.initCopyWatchLinks();
         this.initDividers();
         this.initShowMoreButtons();
+    }
+
+    initScreenSaver(minuteCount) {
+        const block = document.querySelector('.screen-saver-block');
+        if (!block) return;
+
+        const delay = minuteCount * 60 * 1000;
+        let idleTimeout = -1;
+        const wake = () => {
+            this.stopSlideshow();
+            clearTimeout(idleTimeout);
+            idleTimeout = setTimeout(() => this.startSlideshow(block), delay);
+        };
+
+        // Il n'existe pas d'événement unique "activité" : on écoute pointeur (souris, tactile, stylet), molette, clavier et défilement.
+        // "{capture: true}" pour attraper aussi les "scroll" des éléments internes (l'événement ne remonte pas)
+        ['pointermove', 'pointerdown', 'wheel', 'keydown', 'scroll'].forEach(type => {
+            document.addEventListener(type, wake, {passive: true, capture: true});
+        });
+        document.addEventListener("visibilitychange", () => {
+            if (document.visibilityState === 'visible') {
+                wake();
+            }
+        });
+        wake();
+    }
+
+    startSlideshow(block) {
+        // Posters présents sur la page au moment du déclenchement, sans doublons, dans un ordre aléatoire
+        const seen = new Map();
+        document.querySelectorAll('.series-tv-time .poster img').forEach(img => {
+            if (!seen.has(img.src)) seen.set(img.src, img.alt);
+        });
+        const posters = [...seen].map(([src, name]) => ({src, name}));
+        for (let i = posters.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [posters[i], posters[j]] = [posters[j], posters[i]];
+        }
+
+        const slides = [this.createSlide(), this.createSlide()];
+        slides.forEach(slide => block.appendChild(slide));
+        this.screenSaver = {slides, intervalId: -1};
+        document.body.classList.add('screen-saver');
+        if (!posters.length) return;
+
+        let current = 0, index = 0;
+        const show = async () => {
+            const poster = posters[index];
+            const slide = slides[current];
+            const img = slide.querySelector('img');
+            img.src = poster.src;
+            img.alt = poster.name;
+            slide.querySelector('.name').textContent = poster.name;
+            try {
+                await img.decode();
+            } catch (e) {
+                // Image indisponible : on l'affiche quand même (alt)
+            }
+            if (!this.screenSaver) return; // Arrêté pendant le chargement
+            // Le calque réutilisé est invisible depuis la fin de son fondu : on peut remettre son zoom à zéro
+            slide.classList.remove('zoom');
+            // Rotation animée : angles de départ et de fin entre -4° et 4°
+            slide.style.setProperty('--rotation-from', `${(Math.random() * 8 - 4).toFixed(2)}deg`);
+            slide.style.setProperty('--rotation-to', `${(Math.random() * 8 - 4).toFixed(2)}deg`);
+            void slide.offsetWidth; // Force un reflow pour relancer l'animation
+            slides[1 - current].classList.remove('visible');
+            slide.classList.add('visible', 'zoom');
+            current = 1 - current;
+            index = (index + 1) % posters.length;
+        };
+        show();
+        if (posters.length > 1) {
+            this.screenSaver.intervalId = setInterval(show, 6000);
+        }
+    }
+
+    stopSlideshow() {
+        if (!this.screenSaver) return;
+        clearInterval(this.screenSaver.intervalId);
+        this.screenSaver.slides.forEach(slide => slide.remove());
+        this.screenSaver = null;
+        document.body.classList.remove('screen-saver');
+    }
+
+    createSlide() {
+        const slide = document.createElement('div');
+        slide.classList.add('screen-saver-slide');
+        const img = document.createElement('img');
+        const name = document.createElement('div');
+        name.classList.add('name');
+        slide.append(img, name);
+        return slide;
     }
 
     initTab() {

@@ -34,6 +34,112 @@
     }
 }
 
+@property --rotation-from {
+    syntax: "<angle>";
+    inherits: true;
+    initial-value: 0deg;
+}
+
+@property --rotation-to {
+    syntax: "<angle>";
+    inherits: true;
+    initial-value: 0deg;
+}
+
+body {
+    .screen-saver-block {
+        align-items: center;
+        backdrop-filter: blur(4rem);
+        background-color: hsl(from var(--ardoise-80) h s l / .5);
+        display: none;
+        inset: 0;
+        justify-content: center;
+        position: fixed;
+        z-index: 1000;
+
+        svg {
+            color: var(--yellow);
+            height: 10rem;
+            width: 10rem;
+        }
+
+        /* Pendant le diaporama, l'icône passe dans un coin */
+        &:has(.screen-saver-slide) > svg {
+            height: 4rem;
+            opacity: .5;
+            position: absolute;
+            right: 2rem;
+            top: 2rem;
+            width: 4rem;
+        }
+
+        .screen-saver-slide {
+            --rotation-from: 0deg;
+            --rotation-to: 0deg;
+
+            align-items: center;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            inset: 0;
+            justify-content: center;
+            opacity: 0;
+            position: absolute;
+            transition: opacity 1.5s ease-in-out;
+
+            img {
+                aspect-ratio: 2 / 3;
+                border-radius: .5rem;
+                box-shadow: 0 0 3rem hsl(0 0% 0% / .6);
+                /* Hauteur imposée (et non max-height) : les petits fichiers (222px, 342px…) sont agrandis comme les autres */
+                height: min(80vh, 120vw); /* 120vw = 80vw × 3/2 : largeur ≤ 80vw */
+                object-fit: contain;
+                width: auto;
+                rotate: var(--rotation-from, 0deg); /* Sans animation (prefers-reduced-motion) : angle fixe */
+            }
+
+            .name {
+                color: var(--yellow);
+                font-size: 2rem;
+                font-weight: 600;
+                margin-block-start: 5vh;
+                text-align: center;
+                text-shadow: 0 0 1rem hsl(0 0% 0% / .8);
+            }
+
+            &.visible {
+                opacity: 1;
+            }
+
+            /* .zoom n'est retiré qu'à la réutilisation du calque : le zoom est conservé pendant le fondu de sortie */
+            &.zoom {
+                @media (prefers-reduced-motion: no-preference) {
+                    img {
+                        animation: screenSaverZoom 7.5s ease-out forwards;
+                    }
+                }
+            }
+        }
+    }
+}
+
+@keyframes screenSaverZoom {
+    from {
+        rotate: var(--rotation-from, 0deg);
+        transform: scale(1);
+    }
+    to {
+        rotate: var(--rotation-to, 0deg);
+        transform: scale(1.06);
+    }
+}
+
+body.screen-saver {
+    .screen-saver-block {
+        display: flex;
+    }
+}
+
 .series-tv-time {
     --active-tab: 0;
 
@@ -1043,6 +1149,7 @@
                     span.year,
                     span.episode-runtime {
                         color: hsl(from var(--green) h 0% l);
+                        flex-shrink: 0;
                     }
 
                     .episode-overview {
