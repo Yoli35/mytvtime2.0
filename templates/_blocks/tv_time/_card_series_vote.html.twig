@@ -10,7 +10,7 @@
                     {% endif %}
                     <div class="your-infos">
                         {% if series.provider_logo_path %}
-                            <div class="your-provider" data-title="{{ series.provider_name }}">
+                            <div class="your-provider" data-title="{{ series.provider_name }}"{% if series.provider_url %} data-link="{{ series.provider_url }}"{% endif %}>
                                 <img src="{{ series.provider_logo_path }}" alt="{{ series.provider_name }}"/>
                             </div>
                         {% endif %}

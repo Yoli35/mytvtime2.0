@@ -506,7 +506,9 @@ export class TvTime {
 
     initCopyWatchLinks() {
         const watchLinks = document.querySelectorAll('.series-tv-time .watch-link');
-        watchLinks.forEach(link => {
+        const voteCardWatchLinks = document.querySelectorAll('.series-tv-time .your-provider');
+        const allLinks = [...watchLinks, ...voteCardWatchLinks];
+        allLinks.forEach(link => {
             link.addEventListener('click', (e) => {
                 e.preventDefault();
                 e.stopPropagation();

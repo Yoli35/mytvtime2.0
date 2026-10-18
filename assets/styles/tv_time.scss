@@ -1011,6 +1011,14 @@
                             object-fit: cover;
                             width: 100%;
                         }
+
+                        &:is([data-link]) {
+                            cursor: pointer;
+
+                            &:hover {
+                                border-color: var(--orange);
+                            }
+                        }
                     }
                 }
             }

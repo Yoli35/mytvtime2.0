@@ -1209,6 +1209,7 @@ class UserSeriesRepository extends ServiceEntityRepository
                     e.`runtime`                  AS episode_runtime,
                     wp.provider_name             AS provider_name,
                     wp.logo_path                 AS provider_logo_path,
+                    swl.`url`                    AS provider_url,
                     esn.`name`                   AS esn_name,
                     (SELECT COUNT(remain.id)
                      FROM user_episode remain
@@ -1222,6 +1223,7 @@ class UserSeriesRepository extends ServiceEntityRepository
                     LEFT JOIN `series_localized_name` sln ON sln.`series_id`=s.`id` AND sln.`locale`=:locale
                     LEFT JOIN `episode_substitute_name` esn ON esn.`episode_id`=ue.`episode_id`
                     LEFT JOIN `watch_provider` wp ON wp.provider_id=ue.provider_id
+                    LEFT JOIN `series_watch_link` swl ON swl.`series_id`=s.`id` AND swl.`provider_id`=ue.`provider_id`
                 WHERE ue.vote IS NULL
                   AND (
                           (
@@ -1265,6 +1267,7 @@ class UserSeriesRepository extends ServiceEntityRepository
                     e.`runtime`                  AS episode_runtime,
                     wp.provider_name             AS provider_name,
                     wp.logo_path                 AS provider_logo_path,
+                    swl.`url`                    AS provider_url,
                     (SELECT COUNT(remain.id)
                     FROM user_episode remain
                     WHERE remain.`user_series_id`=us.`id`  AND remain.`season_number`=ue.`season_number`  AND remain.`episode_number`>ue.`episode_number`)=0 AS isLastEpisode
@@ -1277,6 +1280,7 @@ class UserSeriesRepository extends ServiceEntityRepository
                     LEFT JOIN `series_localized_name` sln ON sln.`series_id`=s.`id` AND sln.`locale`=:locale
                     LEFT JOIN `episode_substitute_name` esn ON esn.`episode_id`=ue.`episode_id`
                     LEFT JOIN `watch_provider` wp ON wp.provider_id=ue.provider_id
+                    LEFT JOIN `series_watch_link` swl ON swl.`series_id`=s.`id` AND swl.`provider_id`=ue.`provider_id`
                 WHERE ue.vote IS NULL
                 AND DATE(ue.watched_at) >= SUBDATE(CURDATE(), INTERVAL 3 WEEK)
                 AND (
