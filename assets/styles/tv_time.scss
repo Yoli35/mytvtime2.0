@@ -723,14 +723,12 @@
                                         }
 
                                         &.voted-11 {
-                                            background-color: var(--orange);
-                                            box-shadow: 0 0 .75rem 0.5rem var(--orange);
+                                            @include radiant(var(--orange));
                                         }
 
                                         &.voted-12 {
-                                            background-color: var(--yellow);
-                                            box-shadow: 0 0 .75rem 0.5rem var(--yellow);
                                             color: var(--orange-10);
+                                            @include radiant(var(--yellow));
                                         }
                                     }
 
