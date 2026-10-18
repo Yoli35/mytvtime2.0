@@ -90,10 +90,10 @@ body {
             flex-shrink: 0;
             font-size: 1.5rem;
             font-weight: 300;
-            height: 7.5rem;
+            height: 2.5rem;
             justify-content: center;
             margin-inline: 1rem;
-            width: 7.5rem;
+            width: 2.5rem;
 
             &.voted-11 {
                 @include radiant(var(--orange));
