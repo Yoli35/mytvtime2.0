@@ -1,0 +1,28 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Tools → Radiant!{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('styles/tools.scss') }}">
+{% endblock %}
+
+{% block body %}
+    {% if background %}
+        <script>
+            const bd = '{{ background }}';
+            const body = document.querySelector("body");
+            body.style.backgroundImage = "url(" + bd + ")";
+        </script>
+    {% endif %}
+    {% include('_blocks/_menu.html.twig') %}
+    <div class="container-fluid">
+        <div class="content">
+            <div class="css-radiant voted-11">11</div>
+            <div class="css-radiant voted-12">12</div>
+        </div>
+        {% include('_blocks/_footer.html.twig') %}
+    </div>
+{% endblock %}
+{% block javascripts %}
+{% endblock %}

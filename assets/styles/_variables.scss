@@ -132,6 +132,55 @@
     justify-content: $justify;
 }
 
+/*
+    Disque rayonnant : bord flou + deux couronnes de 12 rayons qui tournent en sens inverse.
+    L'élément doit avoir une taille et un border-radius: 50%.
+    La couleur peut être changée ensuite via --ray-color.
+ */
+@mixin radiant($color: var(--yellow), $duration: 12s) {
+    --ray-color: #{$color};
+    background-color: var(--ray-color);
+    box-shadow: 0 0 .75rem .5rem var(--ray-color);
+    isolation: isolate;
+    position: relative;
+
+    &::before, &::after {
+        border-radius: 50%;
+        content: '';
+        mask: radial-gradient(closest-side, #000 50%, transparent);
+        pointer-events: none;
+        position: absolute;
+        z-index: -1;
+    }
+
+    // 12 rayons longs (période de 30deg)
+    &::before {
+        animation: radiant-spin $duration linear infinite;
+        background: repeating-conic-gradient(var(--ray-color) 0 5deg, transparent 10deg 30deg);
+        inset: -50%;
+    }
+
+    // 12 rayons courts, décalés de 15deg
+    &::after {
+        animation: radiant-spin $duration * 1.5 linear infinite reverse;
+        background: repeating-conic-gradient(from 15deg, var(--ray-color) 0 3deg, transparent 6deg 30deg);
+        inset: -30%;
+        opacity: .6;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        &::before, &::after {
+            animation: none;
+        }
+    }
+}
+
+@keyframes radiant-spin {
+    to {
+        rotate: 1turn;
+    }
+}
+
 @mixin tab-menu($color: var(--green-60), $activeColor: var(--yellow)) {
     background-color: hsl(from var(--orange-20) h s l/0.25);
     border-radius: 5rem;

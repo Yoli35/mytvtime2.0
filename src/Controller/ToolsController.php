@@ -29,4 +29,11 @@ final class ToolsController extends AbstractController
             'background' => $this->backgroundService->getRandomBackgroundImage(),
         ]);
     }
+    #[Route('/css/radiant', name: 'css_radiant')]
+    public function cssRadiant(): Response
+    {
+        return $this->render('tools/css_radiant.html.twig', [
+            'background' => $this->backgroundService->getRandomBackgroundImage(),
+        ]);
+    }
 }
