@@ -122,7 +122,7 @@ readonly class ApiEpisodeCheck
             $series = $seriesByTmdbId[$ep['id']] ?? null;
             $season = $series ? $seasons[$series->getId() . '-' . $ep['seasonNumber']] ?? null : null;
             $episode = $season?->getEpisode($episodeId);
-            dump($episode);
+
             if (!$episode) {
                 $reason = match (true) {
                     !$series => '*** Series not found ***',

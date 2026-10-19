@@ -107,7 +107,7 @@ readonly class ApiTvTime
         }
         if ($content === 'not-watched-in-a-while') {
             $series = $this->tvTimeService->seriesNotSeenInAWhile($user, $locale, $offset);
-            dump($series);
+
             $watchLinks = $series['wp'];
             $block = array_map(function ($item) use ($watchLinks) {
                 return ($this->renderView)('_blocks/tv_time/_card_series.html.twig', [

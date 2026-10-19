@@ -236,9 +236,7 @@ final class SeriesShowController extends AbstractController
 //        $tv['seasons'] = $this->seriesService->seriesInfos($tv['id'], $tv['seasons']);
 
         $tv['credits'] = $this->castAndCrew($tv, $series);
-        dump($tv['aggregate_credits']);
         $tv['aggregate_credits'] = $this->castAndCrew($tv, $series, 'aggregate_credits');
-        dump($tv['aggregate_credits']);
         $tv['watch/providers'] = $this->watchProviders($tv, $country);
         $tv['status_css'] = $this->statusCss($tv);
 
