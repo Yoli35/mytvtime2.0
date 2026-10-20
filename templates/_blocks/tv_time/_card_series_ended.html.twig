@@ -45,6 +45,12 @@
                     </div>
                 {% endfor %}
             </div>
+            <div class="vote ended{% if series.average_vote > 10 %} voted-{{ series.average_vote|round(0) }}{% endif %}">
+                {% if series.average_vote %}
+                    {% if series.average_vote > 10 %}10+{% else %}{{ series.average_vote|round(1) }}{% endif %}
+                {% else %}
+                    {{ ux_icon('mdi:star') }}
+                {% endif %}</div>
         </div>
     </a>
 </div>

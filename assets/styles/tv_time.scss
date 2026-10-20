@@ -642,7 +642,7 @@ body.screen-saver {
                                         color: hsl(from var(--green) h 0 l);
                                         display: none;
                                         line-height: 1.1;
-                                        max-height: 6rem;
+                                        max-height: 4rem;
                                         overflow-y: auto;
                                         width: min(100%, 70ch);
                                     }
@@ -826,6 +826,16 @@ body.screen-saver {
                                             color: var(--yellow);
                                             height: 1.75rem;
                                             width: 1.75rem;
+                                        }
+
+                                        &.ended {
+                                            border: 2px solid var(--yellow);
+                                            height: 3.5rem;
+                                            width: 3.5rem;
+                                        }
+
+                                        &.voted-10 {
+                                            @include radiant(hsl(from var(--green) h 38% l));
                                         }
 
                                         &.voted-11 {

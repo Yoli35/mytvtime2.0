@@ -969,7 +969,7 @@ class UserSeriesRepository extends ServiceEntityRepository
     public function findSpecialEpisodes(int $userId, int $week, string $label, string  $locale): array
     {
         $sql = <<<SQL
-                -- Derniers épisodes disponibles comme sur TV Time
+                -- Épisodes spéciaux disponibles comme sur TV Time
                 SELECT DISTINCT
                     s.`id`,
                     s.`tmdb_id`,
@@ -1312,7 +1312,8 @@ class UserSeriesRepository extends ServiceEntityRepository
                     lue.`episode_id`             AS episode_id,
                     lue.`episode_number`         AS episode_number,
                     lue.season_number            AS season_number,
-                    esn.`name`                   AS esn_name                    
+                    esn.`name`                   AS esn_name,
+                    (SELECT AVG(vote) FROM user_episode ue2 WHERE ue2.user_series_id=us.id AND ue2.vote > 0) AS average_vote
               FROM user_series us
                     LEFT JOIN user_episode nue ON nue.id=us.next_user_episode_id
                     LEFT JOIN user_episode lue ON lue.id=us.last_user_episode_id
