@@ -51,7 +51,7 @@
                         ] }) }}
                     {{ include('_blocks/tv_time/_tab_menu.html.twig', {
                         menuId: 'series-kind-menu',
-                        tab: 0, class: 'kind-by',
+                        tab: kind, class: 'kind-by',
                         list: [
                             {id: 'in-progress', title: 'tv-time.in-progress-title'|trans, icon: '', text: 'tv-time.in-progress'|trans},
                             {id: 'ended', title: 'tv-time.ended-title'|trans, icon: '', text: 'tv-time.ended'|trans},
@@ -108,6 +108,8 @@
         <div id="global-data" class="hidden">{# "episodesAvailable": {{ episodesAvailable|json_encode|raw }}, #}
             {
                 "tab": {{ tab }},
+                "kind": {{ kind }},
+                "sort": {{ sort }},
 {#                "sub_0": {{ sub_0 }},#}
 {#                "sub_1": {{ sub_1 }},#}
 {#                "sub_2": {{ sub_2 }},#}

@@ -9,6 +9,8 @@ export class TvTime {
         const globs = JSON.parse(document.querySelector("#global-data").textContent);
         this.tab = globs.tab;
         this.sub = globs.sub;
+        this.sort = globs.sort;
+        this.kind = globs.kind;
         /*this.episodesAvailable = globs.episodesAvailable;*/
         this.remainingSecondes = globs.remainingSecondes;
         this.intervalId = -1;
@@ -40,6 +42,13 @@ export class TvTime {
             }
         });*/
 
+        // Éléments de l'en-tête : jamais remplacés, à n'initialiser qu'une seule fois
+        this.initTab();
+        this.initWeekCount();
+        this.initSortSwitch();
+        this.initKindSwitch();
+        this.initLayoutSwitch();
+
         this.initComponents();
         this.initScreenSaver(5);
         if (this.tab === 0) {
@@ -60,12 +69,8 @@ export class TvTime {
         this.displayRemainingTime();
     }
 
+    // Éléments du contenu : réinitialisés après chaque remplacement du wrapper par getEpisodes()
     initComponents() {
-        this.initTab();
-        this.initWeekCount();
-        this.initSortSwitch();
-        this.initKindSwitch();
-        this.initLayoutSwitch();
         this.initAddEpisodes();
         this.initVotes();
         this.initCopyWatchLinks();
@@ -142,7 +147,8 @@ export class TvTime {
             index = (index + 1) % posters.length;
         };
         show().then(r => {
-            console.log(r)});
+            console.log(r)
+        });
         if (posters.length > 1) {
             this.screenSaver.intervalId = setInterval(show, 6000);
         }
@@ -207,65 +213,45 @@ export class TvTime {
     }
 
     initSortSwitch() {
-        const sortDivs = document.querySelectorAll('.series-tv-time header .sort-by');
-        const sortR = document.querySelector("#series-sort-menu-remaining-days");
-        sortR.addEventListener('click', () => {
-            if (sortR.classList.contains('active')) return;
-            self.getEpisodes('0');
-            sortDivs.forEach((sortDiv) => {
-                sortDiv.classList.remove('active');
+        const sortMenu = document.querySelector("#series-sort-menu");
+        const activeMenu = sortMenu.querySelector('.active-menu');
+        const sortDivs = sortMenu.querySelectorAll('.sort-by');
+        self.setActiveMenu(activeMenu, sortMenu.querySelector('li.active'));
+        sortDivs.forEach((s) => {
+            s.addEventListener('click', (e) => {
+                e.preventDefault();
+                if (s.classList.contains('active')) return;
+                self.getEpisodes(s.dataset.index);
+                sortMenu.querySelector('li.active').classList.remove('active');
+                s.classList.add('active');
+                self.setActiveMenu(activeMenu, s);
             });
-            sortR.classList.add('active');
-        });
-        const sortL = document.querySelector("#series-sort-menu-last-watch-at");
-        sortL.addEventListener('click', () => {
-            if (sortL.classList.contains('active')) return;
-            self.getEpisodes('1');
-            sortDivs.forEach((sortDiv) => {
-                sortDiv.classList.remove('active');
-            });
-            sortL.classList.add('active');
-        });
-        const sortA = document.querySelector("#series-sort-menu-air-date");
-        sortA.addEventListener('click', () => {
-            if (sortA.classList.contains('active')) return;
-            self.getEpisodes('2');
-            sortDivs.forEach((sortDiv) => {
-                sortDiv.classList.remove('active');
-            });
-            sortA.classList.add('active');
         });
     }
 
     initKindSwitch() {
-        const kindDivs = document.querySelectorAll('.series-tv-time header .kind-by');
-        const kind_0 = document.querySelector("#series-kind-menu-in-progress");
-        kind_0.addEventListener('click', () => {
-            if (kind_0.classList.contains('active')) return;
-            self.getEpisodes(null, '0');
-            kindDivs.forEach((kindDiv) => {
-                kindDiv.classList.remove('active');
+        const kindMenu = document.querySelector('#series-kind-menu');
+        const activeMenu = kindMenu.querySelector('.active-menu');
+        const kindDivs = kindMenu.querySelectorAll('.kind-by');
+        self.setActiveMenu(activeMenu, kindMenu.querySelector('li.active'));
+        kindDivs.forEach((k) => {
+            k.addEventListener('click', (e) => {
+                e.preventDefault();
+                console.log(k,k.dataset.index);
+                if (k.classList.contains('active')) return;
+                self.getEpisodes(null, k.dataset.index);
+                kindMenu.querySelector('li.active').classList.remove('active');
+                k.classList.add('active');
+                self.setActiveMenu(activeMenu, k);
             });
-            kind_0.classList.add('active');
         });
-        const kind_1 = document.querySelector("#series-kind-menu-ended");
-        kind_1.addEventListener('click', () => {
-            if (kind_1.classList.contains('active')) return;
-            self.getEpisodes(null, '1');
-            kindDivs.forEach((kindDiv) => {
-                kindDiv.classList.remove('active');
-            });
-            kind_1.classList.add('active');
-        });
-        const kind_2 = document.querySelector("#series-kind-menu-specials");
-        kind_2.addEventListener('click', () => {
-            if (kind_2.classList.contains('active')) return;
-            self.getEpisodes(null, '2');
-            kindDivs.forEach((kindDiv) => {
-                kindDiv.classList.remove('active');
-            });
-            kind_2.classList.add('active');
-        });
+    }
+
+    setActiveMenu(activeMenu, item) {
+        const left = item.offsetLeft;
+        const width = item.offsetWidth;
+        activeMenu.style.left = `${left}px`;
+        activeMenu.style.width = `${width}px`;
     }
 
     initWeekCount() {

@@ -1,33 +1,8 @@
 <menu class="tab-menu" id="{{ menuId }}">
     {% for item in list %}
-        <li id="{{ menuId }}-{{ item.id }}" data-index="{{ loop.index0 }}" class="{{ class }}" data-title="{{ item.title }}">
+        <li id="{{ menuId }}-{{ item.id }}" data-index="{{ loop.index0 }}" class="{{ class }}{% if loop.index0 == tab %} active{% endif %}" data-title="{{ item.title }}">
             {{ item.icon|raw }}{{ item.text }}
         </li>
     {% endfor %}
     <li class="active-menu"></li>
 </menu>
-<script>
-    document.addEventListener('DOMContentLoaded', () => {
-        const menu = document.querySelector('menu#{{ menuId }}');
-        const activeLi = menu.querySelector('li[data-index="' + {{ tab }} + '"]');
-        const menuItems = menu.querySelectorAll('li');
-        const activeMenu = menu.querySelector('.active-menu');
-
-        setActiveMenu(activeLi);
-        activeMenu.style.transitionDuration = '0.25s';
-
-        menuItems.forEach((item) => {
-            item.addEventListener('click', () => {
-                setActiveMenu(item);
-            });
-        });
-
-        function setActiveMenu(item) {
-            const left = item.offsetLeft;
-            const width = item.offsetWidth;
-            activeMenu.style.left = `${left}px`;
-            activeMenu.style.width = `${width}px`;
-        }
-    });
-</script>
-
