@@ -32,16 +32,16 @@ export class TvTime {
             this.filterSeries(filterSeriesInput.value.toLowerCase());
         });
 
-        const specialsInput = document.querySelector("#filter-series-specials");
+        /*const specialsInput = document.querySelector("#filter-series-specials");
         specialsInput.addEventListener('click', () => {
             self.saveSpecials(specialsInput.checked ? 1 : 0);
             if (self.tab === 0) {
                 self.getEpisodes();
             }
-        });
+        });*/
 
         this.initComponents();
-        this.initScreenSaver(1);
+        this.initScreenSaver(5);
         if (this.tab === 0) {
             self.fixDetailsDivs(document.querySelector('main .series-tab .wrapper'));
             this.getEpisodeDetails(document);
@@ -64,6 +64,7 @@ export class TvTime {
         this.initTab();
         this.initWeekCount();
         this.initSortSwitch();
+        this.initKindSwitch();
         this.initLayoutSwitch();
         this.initAddEpisodes();
         this.initVotes();
@@ -100,7 +101,7 @@ export class TvTime {
     startSlideshow(block) {
         // Posters présents sur la page au moment du déclenchement, sans doublons, dans un ordre aléatoire
         const seen = new Map();
-        document.querySelectorAll('.series-tv-time .poster img').forEach(img => {
+        document.querySelectorAll('.series-tv-time .poster > img').forEach(img => {
             if (!seen.has(img.src)) seen.set(img.src, img.alt);
         });
         const posters = [...seen].map(([src, name]) => ({src, name}));
@@ -140,7 +141,8 @@ export class TvTime {
             current = 1 - current;
             index = (index + 1) % posters.length;
         };
-        show();
+        show().then(r => {
+            console.log(r)});
         if (posters.length > 1) {
             this.screenSaver.intervalId = setInterval(show, 6000);
         }
@@ -235,8 +237,40 @@ export class TvTime {
         });
     }
 
+    initKindSwitch() {
+        const kindDivs = document.querySelectorAll('.series-tv-time header .kind-by');
+        const kind_0 = document.querySelector("#series-kind-menu-in-progress");
+        kind_0.addEventListener('click', () => {
+            if (kind_0.classList.contains('active')) return;
+            self.getEpisodes(null, '0');
+            kindDivs.forEach((kindDiv) => {
+                kindDiv.classList.remove('active');
+            });
+            kind_0.classList.add('active');
+        });
+        const kind_1 = document.querySelector("#series-kind-menu-ended");
+        kind_1.addEventListener('click', () => {
+            if (kind_1.classList.contains('active')) return;
+            self.getEpisodes(null, '1');
+            kindDivs.forEach((kindDiv) => {
+                kindDiv.classList.remove('active');
+            });
+            kind_1.classList.add('active');
+        });
+        const kind_2 = document.querySelector("#series-kind-menu-specials");
+        kind_2.addEventListener('click', () => {
+            if (kind_2.classList.contains('active')) return;
+            self.getEpisodes(null, '2');
+            kindDivs.forEach((kindDiv) => {
+                kindDiv.classList.remove('active');
+            });
+            kind_2.classList.add('active');
+        });
+    }
+
     initWeekCount() {
         const weekInput = document.querySelector("#filter-series-specials-week");
+        if (!weekInput) return;
         weekInput.addEventListener('keyup', (e) => {
             if (e.key === 'Enter') {
                 self.saveWeek(weekInput.value);
@@ -438,7 +472,7 @@ export class TvTime {
             });
     }
 
-    getEpisodes(sort = null) {
+    getEpisodes(sort = null, kind = null) {
         fetch('/api/tv/time/check', {
             method: 'POST',
             headers: {
@@ -446,7 +480,8 @@ export class TvTime {
                 'X-Requested-With': 'XMLHttpRequest'
             },
             body: JSON.stringify({
-                sort: sort
+                sort: sort,
+                kind: kind,
             })
         })
             .then(response => response.json())
@@ -803,7 +838,7 @@ export class TvTime {
             });
     }
 
-    saveSpecials(specials) {
+    /*saveSpecials(specials) {
         console.log(specials);
         fetch('/api/tv/time/specials', {
             method: 'POST',
@@ -821,7 +856,7 @@ export class TvTime {
             .catch((error) => {
                 console.error('Error:', error);
             });
-    }
+    }*/
 
     saveWeek(week) {
         console.log(week);

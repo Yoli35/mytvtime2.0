@@ -1026,6 +1026,9 @@ class UserSeriesRepository extends ServiceEntityRepository
 
     public function availableSeriesWatchLinks(array $ids): array
     {
+        if (empty($ids)) {
+            return [];
+        }
         $sql = <<<SQL
             -- Watch links for available series
             SELECT swl.series_id                    AS seriesId,

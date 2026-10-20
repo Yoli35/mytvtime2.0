@@ -31,6 +31,7 @@ readonly class ApiTvTime
     {
         $inputBag = $request->getPayload();
         $sort = $inputBag->get('sort');
+        $kind = $inputBag->get('kind');
 
         $view = 'No data yet ;p';
         $noVoteView = null;
@@ -39,22 +40,19 @@ readonly class ApiTvTime
         if ($sort != null) {
             $this->tvTimeService->setTvTimeSort($user, intval($sort));
         }
+        if ($kind != null) {
+            $this->tvTimeService->setTvTimeKind($user, intval($kind));
+        }
         $data = $this->tvTimeService->getData($user, $locale);
 
         if ($data['tab'] == 0) {
             $noVoteView = ($this->renderView)('_blocks/tv_time/_card_series_vote.html.twig', ['seriesArr' => $data['noVoteArr']]);
             $view = ($this->renderView)('_blocks/tv_time/_wrapper_series.html.twig', [
-                'seriesAvailable' => $data['series']['available'],
-                'specialEpisodes' => $data['series']['specialEpisodes'],
-                'specials' => $data['specials'],
-                'week' => $data['week'],
-                'seriesUpToDate' => $data['series']['upToDate'],
-                'upToDateInAWhile' => $data['series']['upToDateInAWhile'],
-                'upToDateInAWhileCount' => $data['series']['upToDateInAWhileCount'],
-                'seriesEnded' => $data['series']['seriesEnded'],
-                'seriesEndedCount' => $data['series']['seriesEndedCount'],
+                'series' => $data['series']['content'],
                 'watchLinks' => $data['series']['watchLinks'],
+                'week' => $data['week'],
                 'list' => $data['list'],
+                'kind' => $data['kind'],
                 'loadCount' => $data['loadCount'],
             ]);
         }

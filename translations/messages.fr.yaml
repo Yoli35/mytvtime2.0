@@ -676,6 +676,10 @@ tv-time.air-date: Date de diffusion
 tv-time.coming.actors: Acteurs
 tv-time.coming.my-list: Ma liste
 tv-time.coming: À venir
+tv-time.ended: Terminées
+tv-time.ended-title: Séries terminées
+tv-time.in-progress: En cours
+tv-time.in-progress-title: Séries en cours
 tv-time.last-episodes-seen: Derniers épisodes vus
 tv-time.layout.grid: Grille
 tv-time.layout.list: Liste
@@ -691,7 +695,8 @@ tv-time.series: Séries
 tv-time.show-cast: Afficher / masquer les acteurs de la saison
 tv-time.show-more: Afficher plus
 tv-time.special: Épisode spécial
-tv-time.specials: Afficher / masquer les épisodes spéciaux
+tv-time.specials: Spéciaux
+tv-time.specials-title: Épisodes spéciaux
 tv-time.weeks: semaines
 tv-time.week-number: Nombre de semaine pour les épisodes spéciaux
 visit: visite

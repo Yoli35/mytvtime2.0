@@ -1,45 +1,44 @@
 <div class="wrapper{% if list %} list{% endif %}">
-    <div class="content">
-        {% for series in seriesAvailable %}
-            {{ include('_blocks/tv_time/_card_series.html.twig', {next: true, while: false}) }}
-        {% endfor %}
-    </div>
-    {% if seriesUpToDate|length %}
-        <div class="divider" data-content="up-to-date"><span>{{ 'Up to date'|trans }} ({{ seriesUpToDate|length }})</span></div>
+    {% if kind == 0 %}
+        <div class="divider" data-content="in-progress"><span>{{ 'In progress'|trans }} ({{ series.available.items|length }})</span></div>
         <div class="content">
-            {% for series in seriesUpToDate %}
-                {{ include('_blocks/tv_time/_card_series.html.twig', {next: false, while: false}) }}
-            {% endfor %}
-        </div>
-    {% endif %}
-    {% if specialEpisodes|length %}
-        <div class="divider" data-content="specials"><span>{{ 'Specials'|trans }} ({{ specialEpisodes|length }})</span></div>
-        <div class="content">
-            {% for series in specialEpisodes %}
+            {% for series in series.available.items %}
                 {{ include('_blocks/tv_time/_card_series.html.twig', {next: true, while: false}) }}
             {% endfor %}
         </div>
-    {% endif %}
-    {% if seriesEnded|length %}
-        <div class="divider" data-content="ended"><span>{{ 'Ended'|trans }}</span> <span class="counts">({{ seriesEnded|length }}/{{ seriesEndedCount }})</span></div>
-        <div class="content" data-content="ended">
-            {% for series in seriesEnded %}
-                {{ include('_blocks/tv_time/_card_series_ended.html.twig') }}
+        <div class="divider" data-content="up-to-date"><span>{{ 'Up to date'|trans }} ({{ series.upToDate.items|length }})</span></div>
+        <div class="content">
+            {% for series in series.upToDate.items %}
+                {{ include('_blocks/tv_time/_card_series.html.twig', {next: false, while: false}) }}
             {% endfor %}
-            {% if seriesEndedCount > seriesEnded|length %}
-                <button type="button" class="show-more" data-content="ended" data-offset="{{ seriesEnded|length }}">{{ 'tv-time.show-more'|trans }}</button>
+        </div>
+        <div class="divider" data-content="not-watched-in-a-while"><span>{{ 'Not watched in a while'|trans }}</span> <span class="counts">({{ series.upToDateInAWhile.items|length }}/{{ series.upToDateInAWhile.count }})</span></div>
+        <div class="content" data-content="not-watched-in-a-while">
+            {% for series in series.upToDateInAWhile.items %}
+                {{ include('_blocks/tv_time/_card_series.html.twig', {next: false, while: true}) }}
+            {% endfor %}
+            {% if series.upToDateInAWhile.count > series.upToDateInAWhile.items|length %}
+                <button type="button" class="show-more" data-content="not-watched-in-a-while" data-offset="{{ series.upToDateInAWhile.items|length }}">{{ 'tv-time.show-more'|trans }}</button>
             {% endif %}
         </div>
     {% endif %}
-    {% if upToDateInAWhileCount %}
-        <div class="divider" data-content="not-watched-in-a-while"><span>{{ 'Not watched in a while'|trans }}</span> <span class="counts">({{ upToDateInAWhile|length }}/{{ upToDateInAWhileCount }})</span></div>
-        <div class="content" data-content="not-watched-in-a-while">
-            {% for series in upToDateInAWhile %}
-                {{ include('_blocks/tv_time/_card_series.html.twig', {next: false, while: true}) }}
+    {% if kind == 1 %}
+        <div class="divider" data-content="ended"><span>{{ 'Ended'|trans }}</span> <span class="counts">({{ series.ended.items|length }}/{{ series.ended.count }})</span></div>
+        <div class="content" data-content="ended">
+            {% for series in series.ended.items %}
+                {{ include('_blocks/tv_time/_card_series_ended.html.twig') }}
             {% endfor %}
-            {% if upToDateInAWhileCount > upToDateInAWhile|length %}
-                <button type="button" class="show-more" data-content="not-watched-in-a-while" data-offset="{{ upToDateInAWhile|length }}">{{ 'tv-time.show-more'|trans }}</button>
+            {% if series.ended.count > series.ended.items|length %}
+                <button type="button" class="show-more" data-content="ended" data-offset="{{ series.ended.items|length }}">{{ 'tv-time.show-more'|trans }}</button>
             {% endif %}
+        </div>
+    {% endif %}
+    {% if kind == 2 %}
+        <div class="divider" data-content="specials"><span>{{ 'Specials'|trans }} ({{ series.specialEpisodes.items|length }})</span></div>
+        <div class="content">
+            {% for series in series.specialEpisodes.items %}
+                {{ include('_blocks/tv_time/_card_series.html.twig', {next: true, while: false}) }}
+            {% endfor %}
         </div>
     {% endif %}
     {% if app.environment == 'dev' %}

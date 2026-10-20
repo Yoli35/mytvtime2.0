@@ -69,7 +69,7 @@ readonly class TvTimeService
     public function getTvTimeSort(User $user): string
     {
         $data = $this->getSettings($user);
-        return $data['sort'];
+        return $data['sort'] ?? 0;
     }
 
     public function setTvTimeSort(User $user, int $sort): void
@@ -79,17 +79,30 @@ readonly class TvTimeService
         $this->setSettings($user, $data);
     }
 
+    public function getTvTimeKind(User $user): string
+    {
+        $data = $this->getSettings($user);
+        return $data['kind'] ?? 0;
+    }
+
+    public function setTvTimeKind(User $user, int $kind): void
+    {
+        $data = $this->getSettings($user);
+        $data['kind'] = $kind;
+        $this->setSettings($user, $data);
+    }
+
     private function getSettings(User $user): array
     {
         $s = $this->settingsRepository->findOneBy(['user' => $user, 'name' => 'tv time']);
         if ($s === null) {
             $data = [
-                'count' => 0,           // Nombre d'appel à l'API
+                'count' => 0,           // Nombre d'appels à l'API
                 'list' => 0,            // Affichage en mode liste ou grille
+                'kind' => 0,            // Affichage des séries disponibles / terminées / épisodes spéciaux
                 'sort' => 0,            // Affichage par jours restants / derniers vus / date de diffusion
                 'specials' => 0,        // Affichage des épisodes spéciaux
-                'sub' => 0,             // Onglet Séries, Films et séries et films à venir
-                'tab' => 0,             // Sous-onglet
+                'tab' => 0,             // Onglet Séries, Films et séries et films à venir
                 'week' => 52,           // Nombre de semaines avant de considérer un épisode spécial comme ancien
             ];
             $se = new Settings($user, 'tv time', $data);
@@ -114,13 +127,6 @@ readonly class TvTimeService
         $userId = $user->getId();
         $settings = $this->getTvTimeData($user);
         /*$settings['tab'] = 1;*/
-        $series = [
-            'available' => [],
-            'upToDate' => [],
-            'watchLinks' => [],
-            'tmdbIds' => [],
-            'lastWatchedSeriesId' => 0,
-        ];
         $movies = [];
         $coming = [];
 
@@ -130,74 +136,87 @@ readonly class TvTimeService
         $remainingSecondes = rand(1, 60) + $reloadAt->getTimestamp() - $now->getTimestamp();
 
         if ($settings['tab'] === 0) { // series
-            $seriesAvailable = $this->userSeriesRepository->findAvailableSeries($userId, $locale);
-            /*$episodesAvailable = array_map(fn($series) => [
-                'id' => $series['tmdb_id'],
-                'name' => $series['name'],
-                'poster_path' => $series['poster_path'],
-                'episodeId' => $series['episode_id'],
-                'esn' => $series['esn_name'],
-                'episodeNumber' => $series['episode_number'],
-                'seasonNumber' => $series['season_number']
-            ], $seriesAvailable);*/
+            $sort = $settings['sort'] ?? 0;
+            $kind = $settings['kind'] ?? 0;
+            $reloadAt = null;
+            $content = [];
+            $ids = [];
+            $tmdbIds = [];
 
-            if ($settings['specials']) {
-                $specialEpisodes = $this->userSeriesRepository->findSpecialEpisodes($userId, $settings['week'], $this->specialEpisodes[$locale], $locale);
-            } else {
-                $specialEpisodes = [];
+            $upToDateSeries = $this->userSeriesRepository->findUpToDateSeries($userId, $sort, $locale);
+
+            if ($kind === 0) {
+                $content['available']['items'] = $this->userSeriesRepository->findAvailableSeries($userId, $locale);
+                $content['available']['count'] = count($content['available']['items']);
+                $content['upToDate']['items'] = $upToDateSeries;
+                $content['upToDate']['count'] = count($upToDateSeries);
+                $content['upToDateInAWhile']['items'] = $this->userSeriesRepository->findUpToDateSeriesInAWhile($userId, $sort, $locale);
+                $content['upToDateInAWhile']['count'] = $this->userSeriesRepository->countUpToDateSeriesInAWhile($userId);
+                $ids = array_unique(
+                    array_merge(
+                        array_column($content['available']['items'], 'id'),
+                        array_column($content['upToDate']['items'], 'id'),
+                        array_column($content['upToDateInAWhile']['items'], 'id')
+                    )
+                );
+
+                $todaySeries = array_filter($content['upToDate']['items'], fn($s) => $s['remainingDays'] == 0);
+                if (!empty($todaySeries)) {
+                    $airAtArr = array_unique(array_column($todaySeries, 'nextEpisodeAirAtDate'));
+                    sort($airAtArr);
+                    $reloadAt = array_first($airAtArr);
+                    if ($reloadAt) {
+                        $reloadAt = $this->dateService->newDate($reloadAt, $user->getTimezone() ?? 'Europe/Paris');
+                        $remainingSecondes = rand(1, 60) + $reloadAt->getTimestamp() - $now->getTimestamp();
+                    }
+                }
+
+                $tmdbIds = array_unique(
+                    array_merge(
+                        array_column($content['available']['items'], 'tmdb_id'),
+                        array_column($upToDateSeries, 'tmdb_id'),
+                        array_column($content['upToDateInAWhile']['items'], 'tmdb_id')
+                    )
+                );
             }
-            $seriesUpToDate = $this->userSeriesRepository->findUpToDateSeries($userId, $settings['sort'], $locale);
-            $todaySeries = array_filter($seriesUpToDate, fn($series) => $series['remainingDays'] == 0);
-            $airAtArr = array_unique(array_column($todaySeries, 'nextEpisodeAirAtDate'));
-            sort($airAtArr);
-            $reloadAt = array_first($airAtArr);
-            if ($reloadAt) {
-                $reloadAt = $this->dateService->newDate($reloadAt, $user->getTimezone() ?? 'Europe/Paris');
-                $remainingSecondes = rand(1, 60) + $reloadAt->getTimestamp() - $now->getTimestamp();
+
+            if ($kind == 1) {
+                $content['ended']['items'] = $this->userSeriesRepository->seriesEnded($user->getId(), $locale);
+                $content['ended']['count'] = $this->userSeriesRepository->countSeriesEnded($user->getId());
+                $ids = array_column($content['ended']['items'], 'id');
             }
-            $seriesUpToDateInAWhile = $this->userSeriesRepository->findUpToDateSeriesInAWhile($userId, $settings['sort'], $locale);
-            $seriesUpToDateInAWhileCount = $this->userSeriesRepository->countUpToDateSeriesInAWhile($userId);
+
+            if ($kind === 2) {
+                $content['specialEpisodes']['items'] = $this->userSeriesRepository->findSpecialEpisodes($userId, $settings['week'], $this->specialEpisodes[$locale], $locale);
+                $content['specialEpisodes']['count'] = count($content['specialEpisodes']['items']);
+                $ids = array_column($content['specialEpisodes']['items'], 'id');
+            }
+
             $providerUrl = $this->imageConfiguration->getUrl('logo_sizes', 3);
             $watchLinks = array_map(function ($wp) use ($providerUrl) {
                 $wp['providerLogoPath'] = $this->providerService->getProviderLogoFullPath($wp['providerLogoPath'], $providerUrl);
                 return $wp;
-            }, $this->userSeriesRepository->availableSeriesWatchLinks(
-                array_unique(
-                    array_merge(
-                        array_column($seriesAvailable, 'id'),
-                        array_column($seriesUpToDate, 'id'),
-                        array_column($seriesUpToDateInAWhile, 'id'),
-                        array_column($specialEpisodes, 'id')
-                    ),
-                )
-            ));
-            $seriesUpToDateIds = array_unique(array_column($seriesUpToDate, 'userEpisodeId'));
+            }, $this->userSeriesRepository->availableSeriesWatchLinks($ids));
+
+            $seriesUpToDateIds = array_unique(array_column($upToDateSeries, 'userEpisodeId'));
             $lastEpisodeWithNoVoteArr = array_map(function ($wp) use ($providerUrl) {
                 $wp['provider_logo_path'] = $this->providerService->getProviderLogoFullPath($wp['provider_logo_path'], $providerUrl);
                 return $wp;
             }, $this->userSeriesRepository->findUpToDateSeriesWithNoVote($seriesUpToDateIds, $locale));
-            $tmdbIds = array_unique(array_merge(array_column($seriesAvailable, 'tmdb_id'), array_column($seriesUpToDate, 'tmdb_id'), array_column($seriesUpToDateInAWhile, 'tmdb_id')));
-            $lastWatchedSeriesId = $this->userSeriesRepository->getLastWatchedSeries($user);
-
-            $seriesEnded = $this->userSeriesRepository->seriesEnded($user->getId(), $locale);
-            $seriesEndedCount = $this->userSeriesRepository->countSeriesEnded($user->getId());
 
             $series = [
-                'available' => $seriesAvailable,
-                'specialEpisodes' => $specialEpisodes,
-                'upToDate' => $seriesUpToDate,
-                'upToDateInAWhile' => $seriesUpToDateInAWhile,
-                'upToDateInAWhileCount' => $seriesUpToDateInAWhileCount,
-                'seriesEnded' => $seriesEnded,
-                'seriesEndedCount' => $seriesEndedCount,
+                'content' => $content,
                 'watchLinks' => $watchLinks,
                 'tmdbIds' => $tmdbIds,
-                /*'episodesAvailable' => $episodesAvailable,*/
-                'lastWatchedSeriesId' => $lastWatchedSeriesId,
             ];
             $noVoteArr = $lastEpisodeWithNoVoteArr;
         } else {
             $noVoteArr = $this->userSeriesRepository->seriesWithNoVote($locale);
+            $series = [
+                'content' => [],
+                'watchLinks' => [],
+                'tmdbIds' => [],
+            ];
         }
 
         if ($settings['tab'] === 1) {// movies
@@ -233,11 +252,12 @@ readonly class TvTimeService
             'noVoteArr' => $noVoteArr,
             'loadCount' => $settings['count'],
             'tab' => $settings['tab'],
-            'sub_0' => $settings['sub-0'],
-            'sub_1' => $settings['sub-1'],
-            'sub_2' => $settings['sub-2'],
+//            'sub_0' => $settings['sub-0'],
+//            'sub_1' => $settings['sub-1'],
+//            'sub_2' => $settings['sub-2'],
             'list' => $settings['list'],
             'sort' => $settings['sort'],
+            'kind' => $settings['kind'],
             'specials' => $settings['specials'],
             'week' => $settings['week'],
             'remainingSecondes' => $remainingSecondes,
@@ -270,7 +290,8 @@ readonly class TvTimeService
         ];
     }
 
-    public function getWatchLinks(array $ids): array{
+    public function getWatchLinks(array $ids): array
+    {
         $providerUrl = $this->imageConfiguration->getUrl('logo_sizes', 3);
         return array_map(function ($wp) use ($providerUrl) {
             $wp['providerLogoPath'] = $this->providerService->getProviderLogoFullPath($wp['providerLogoPath'], $providerUrl);
