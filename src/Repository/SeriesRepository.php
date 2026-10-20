@@ -165,6 +165,24 @@ class SeriesRepository extends ServiceEntityRepository
         return $this->getAll($sql, ['seriesId' => $seriesId], ['seriesId' => ParameterType::INTEGER]);
     }
 
+    public function getSeriesPosters(int $userId): array
+    {
+        $sql = <<<SQL
+            --  Poster from series added by user
+                SELECT IFNULL(sln.name, s.name) AS name, s.poster_path AS poster_path
+                FROM series s
+                         INNER JOIN user_series us ON us.series_id = s.id
+                         LEFT JOIN series_localized_name sln ON s.id = sln.series_id
+                WHERE us.user_id = :userId
+                  AND s.poster_path IS NOT NULL
+                  AND (us.last_watched_at > SUBDATE(CURDATE(), INTERVAL 6 MONTH)
+                    OR s.first_air_date > SUBDATE(CURDATE(), INTERVAL 6 MONTH)
+                    );
+        SQL;
+
+        return $this->getAll($sql, ['userId' => $userId], ['userId' => ParameterType::INTEGER]);
+    }
+
     public function hasSeriesStartedAiring(int $seriesId, string $date): bool
     {
         $params = [

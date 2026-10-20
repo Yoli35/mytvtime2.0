@@ -103,22 +103,30 @@ export class TvTime {
         wake();
     }
 
-    startSlideshow(block) {
-        // Posters présents sur la page au moment du déclenchement, sans doublons, dans un ordre aléatoire
+    async startSlideshow(block) {
+        const slides = [this.createSlide(), this.createSlide()];
+        slides.forEach(slide => block.appendChild(slide));
+        const screenSaver = {slides, intervalId: -1};
+        this.screenSaver = screenSaver;
+        document.body.classList.add('screen-saver');
+
+        // Posters des séries de l'utilisateur, sans doublons, dans un ordre aléatoire
         const seen = new Map();
-        document.querySelectorAll('.series-tv-time .poster > img').forEach(img => {
-            if (!seen.has(img.src)) seen.set(img.src, img.alt);
-        });
+        try {
+            const response = await fetch('/api/tv/time/posters');
+            const data = await response.json();
+            data.posters.forEach(poster => {
+                if (!seen.has(poster.poster_path)) seen.set(poster.poster_path, poster.name);
+            });
+        } catch (error) {
+            console.error('Error:', error);
+        }
+        if (this.screenSaver !== screenSaver) return; // Arrêté pendant la requête
         const posters = [...seen].map(([src, name]) => ({src, name}));
         for (let i = posters.length - 1; i > 0; i--) {
             const j = Math.floor(Math.random() * (i + 1));
             [posters[i], posters[j]] = [posters[j], posters[i]];
         }
-
-        const slides = [this.createSlide(), this.createSlide()];
-        slides.forEach(slide => block.appendChild(slide));
-        this.screenSaver = {slides, intervalId: -1};
-        document.body.classList.add('screen-saver');
         if (!posters.length) return;
 
         let current = 0, index = 0;
@@ -134,7 +142,7 @@ export class TvTime {
             } catch (e) {
                 // Image indisponible : on l'affiche quand même (alt)
             }
-            if (!this.screenSaver) return; // Arrêté pendant le chargement
+            if (this.screenSaver !== screenSaver) return; // Arrêté pendant le chargement
             // Le calque réutilisé est invisible depuis la fin de son fondu : on peut remettre son zoom à zéro
             slide.classList.remove('zoom');
             // Rotation animée : angles de départ et de fin entre -4° et 4°
