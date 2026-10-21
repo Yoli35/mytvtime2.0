@@ -93,7 +93,7 @@ body {
                 box-shadow: 0 0 3rem hsl(0 0% 0% / .6);
                 /* Hauteur imposée (et non max-height) : les petits fichiers (222px, 342px…) sont agrandis comme les autres */
                 height: min(80vh, 120vw); /* 120vw = 80vw × 3/2 : largeur ≤ 80vw */
-                object-fit: contain;
+                object-fit: cover;
                 width: auto;
                 rotate: var(--rotation-from, 0deg); /* Sans animation (prefers-reduced-motion) : angle fixe */
             }
@@ -664,14 +664,18 @@ body.screen-saver {
                     }
 
                     .show-more {
+                        align-items: center;
                         background-color: var(--yellow);
                         border-radius: 5rem;
                         color: var(--orange-10);
                         cursor: pointer;
+                        display: flex;
                         font-weight: 600;
-                        margin-block: 1rem;
+                        height: 2rem;
+                        margin-block: auto;
                         margin-inline: auto;
-                        padding: .5rem 1rem;
+                        padding-inline: 1.5rem;
+                        width: fit-content;
                     }
                 }
 
