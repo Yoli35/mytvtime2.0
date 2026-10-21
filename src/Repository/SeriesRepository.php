@@ -165,11 +165,11 @@ class SeriesRepository extends ServiceEntityRepository
         return $this->getAll($sql, ['seriesId' => $seriesId], ['seriesId' => ParameterType::INTEGER]);
     }
 
-    public function getSeriesPosters(int $userId): array
+    public function getSeriesPosters(int $userId, string $root = '/series/posters'): array
     {
         $sql = <<<SQL
             --  Poster from series added by user
-                SELECT IFNULL(sln.name, s.name) AS name, s.poster_path AS poster_path
+                SELECT IFNULL(sln.name, s.name) AS name, CONCAT(:root, s.poster_path) AS poster_path
                 FROM series s
                          INNER JOIN user_series us ON us.series_id = s.id
                          LEFT JOIN series_localized_name sln ON s.id = sln.series_id
@@ -180,7 +180,7 @@ class SeriesRepository extends ServiceEntityRepository
                     );
         SQL;
 
-        return $this->getAll($sql, ['userId' => $userId], ['userId' => ParameterType::INTEGER]);
+        return $this->getAll($sql, ['userId' => $userId, 'root' => $root], ['userId' => ParameterType::INTEGER, 'root' => ParameterType::STRING]);
     }
 
     public function hasSeriesStartedAiring(int $seriesId, string $date): bool

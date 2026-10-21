@@ -2,11 +2,10 @@
 
 namespace App\Api;
 
-use App\Entity\Series;
 use App\Entity\User;
+use App\Repository\MovieRepository;
 use App\Repository\SeriesRepository;
 use App\Service\ImageConfiguration;
-use App\Service\ImageService;
 use App\Service\TvTimeService;
 use Closure;
 use Symfony\Bundle\FrameworkBundle\Controller\ControllerHelper;
@@ -24,6 +23,7 @@ readonly class ApiTvTime
         #[AutowireMethodOf(ControllerHelper::class)]
         private Closure            $renderView,
         private ImageConfiguration $imageConfiguration,
+        private MovieRepository    $movieRepository,
         private SeriesRepository   $seriesRepository,
         private TvTimeService      $tvTimeService,
     )
@@ -203,10 +203,12 @@ readonly class ApiTvTime
     #[Route('/posters', name: 'posters')]
     public function posters(#[CurrentUser] User $user): JsonResponse
     {
-        $posters = array_map(function (array $s) {
-            return ['name' => $s['name'], 'poster_path' => '/series/posters' . $s['poster_path']];
-        }, $this->seriesRepository->getSeriesPosters($user->getId()));
+        $timestamp = time() % 2;
+        $arr = $timestamp ?
+            $this->seriesRepository->getSeriesPosters($user->getId())
+            :
+            $this->movieRepository->getMoviesPosters($user->getId());
 
-        return new JsonResponse(['posters' => $posters]);
+        return new JsonResponse(['posters' => $arr]);
     }
 }

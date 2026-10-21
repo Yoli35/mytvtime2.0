@@ -331,6 +331,24 @@ class MovieRepository extends ServiceEntityRepository
         return $this->getAll($sql, $params, $types);
     }
 
+    public function getMoviesPosters(int $userId, string $root = '/movies/posters'): array
+    {
+        $sql = <<<SQL
+            --  Poster from movies added by user
+                SELECT IFNULL(mln.name, m.title) AS name, CONCAT(:root, m.poster_path) AS poster_path
+                FROM movie m
+                         INNER JOIN user_movie um ON um.movie_id = m.id
+                         LEFT JOIN movie_localized_name mln ON m.id = mln.movie_id
+                WHERE um.user_id = :userId
+                  AND m.poster_path IS NOT NULL
+                  AND (um.created_at > SUBDATE(CURDATE(), INTERVAL 1 YEAR)
+                    OR m.release_date > SUBDATE(CURDATE(), INTERVAL 1 YEAR)
+                    );
+        SQL;
+
+        return $this->getAll($sql, ['userId' => $userId, 'root' => $root], ['userId' => ParameterType::INTEGER, 'root' => ParameterType::STRING]);
+    }
+
     public function getAll($sql, array $params = [], array $types = []): array
     {
         try {
