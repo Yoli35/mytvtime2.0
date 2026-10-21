@@ -2,6 +2,14 @@
 
 symfony -q serve --allow-all-ip --no-tls --port=8000
 
+// Mise à jours automatiques depuis git :
+
+// Pour le template updates.html.twig
+cons updates-from-git.php 94 94 --skip-empty --write
+
+// Pour index.php du serveur
+cons updates-from-git.php 81 93 --skip-empty --indent=12 > var/updates.html
+
 // Déploiement
 
 1- cons app:ep:ai;
