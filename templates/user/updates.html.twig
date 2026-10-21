@@ -19,11 +19,266 @@
             </div>
             <div class="site-update glowing-border">
                 <div class="list">
+                    <h2>93° mise à jour : 21/10/2026 13:00</h2>
+                    <ul>
+                        <li>
+                            <div class="change">→ Update yellow color values for light mode support</div>
+                            <div class="details">Improves color contrast and visibility by adjusting yellow tones to better suit both light and dark modes. Enhances the visual experience across themes while maintaining accessibility standards.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Add mixed series and movie posters to API response</div>
+                            <div class="details">Enhances the posters API endpoint to dynamically include both series and movie posters based on a timestamp condition. Improves user experience by providing a richer and more varied set of personalized poster images.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Adjust vote style threshold for series episodes</div>
+                            <div class="details">Updates the vote styling to apply a special format for scores starting at 10. Enhances user interface consistency by aligning visual feedback with the new scoring criteria.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Add user-specific series posters to screen saver</div>
+                            <div class="details">Enhances the screen saver with personalized series posters from the user's library, displayed dynamically via an API call. Improves user engagement by showcasing familiar series content in a visually appealing slideshow format.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Add average vote display for ended series</div>
+                            <div class="details">Adds a visual representation of the average vote for ended series, highlighting scores over 10 with a special style. Enhances the user interface by providing more detailed feedback on series popularity.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Add visual feedback for active tabs</div>
+                            <div class="details">Improves user navigation with highlighted active tabs in series filters and sorting menus. Enhances clarity by dynamically updating active states with smooth transitions when switching between options.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Add filtering by series kind (in-progress, ended, specials)</div>
+                            <div class="details">Introduces tabs to filter series by their status: in-progress, ended, or specials. Improves navigation and user control by enabling quick access to specific categories directly within the interface.</div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="site-update glowing-border">
+                <div class="list">
                     <h2>92° mise à jour : 19/10/2026 13:00</h2>
                     <ul>
                         <li>
-                            <div class="change">→ The changes included in Update 92 will be added soon</div>
-                            <div class="details"></div>
+                            <div class="change">→ Add screen saver with slideshow</div>
+                            <div class="details">Introduces a screen saver feature displaying a slideshow of series posters after inactivity. Enhances user engagement and provides a visually appealing idle state with smooth animations and randomized transitions.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Add clickable provider links to vote cards</div>
+                            <div class="details">Enhances the user experience by making provider logos in vote cards clickable when a provider link is available. Allows users to quickly navigate to the provider's page directly from the vote card.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Highlight special styling for votes of 11 and 12</div>
+                            <div class="details">Adds distinct visual classes for votes of 11 and 12 to emphasize these specific ratings. Enhances user feedback by making notable votes more visually recognizable.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Display episode details in series cards</div>
+                            <div class="details">Adds episode runtime and overview to series cards for better at-a-glance information. Improves user experience by providing more contextual details directly within the interface.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Adjust vote button dimensions for better layout fit</div>
+                            <div class="details">Reduces the height and width of the vote buttons to improve their alignment and ensure a more compact, balanced layout. Enhances visual consistency and optimizes space usage in the interface.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Update vote styles for improved visual consistency</div>
+                            <div class="details">Replaces hardcoded styles with a reusable radiant effect for votes above 10. Enhances maintainability and ensures a uniform glow effect across different vote values.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Add radiant box shadow example to tools module</div>
+                            <div class="details">Introduces a new interactive example in the tools module, demonstrating a glowing box shadow effect with a radial gradient. Enhances visual examples for CSS techniques, offering users an engaging way to explore and understand styling options.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Add series title as a data attribute in ended series cards</div>
+                            <div class="details">Improves accessibility by including the series title as a data attribute on poster elements. Enables better front-end handling and dynamic interactions tied to specific series.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Fix episode details loading in dynamic content</div>
+                            <div class="details">Ensures episode details are correctly initialized after content updates or tab changes. Improves user experience by maintaining accurate and complete episode data visibility.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Highlight votes above 10 with distinct styles</div>
+                            <div class="details">Improves visual feedback by adding unique colors and effects for votes above 10. Enhances user experience by making high vote values more noticeable and intuitive.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Show localized episode overviews in ended series cards</div>
+                            <div class="details">Displays translated episode summaries in the cards of finished series when available. Enhances user experience by providing additional context directly on the series overview page.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Improve episode linkage in user series query</div>
+                            <div class="details">Enhances the query logic to distinguish between next and last watched episodes more accurately. Provides better data consistency and ensures correct episode details are displayed to users.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Disable pointer events for better UI responsiveness</div>
+                            <div class="details">Prevents unintended interactions with UI elements while maintaining hover effects where needed. Enhances user experience by ensuring clearer and smoother behavior during navigation and interaction.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Add detailed episode data attributes for series cards</div>
+                            <div class="details">Enhances series cards with additional episode-related data attributes for improved accessibility. Enables more precise front-end operations and dynamic interactions by including unique identifiers and localized episode names.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Reorganize display of special episodes in series view</div>
+                            <div class="details">Moves special episodes section below up-to-date series for better logical grouping. Improves clarity and aligns with user expectations by presenting ongoing content before supplementary items.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Remove image reload CLI command</div>
+                            <div class="details">Deletes the command for reloading images from TheMovieDB. This functionality is no longer needed and has been determined redundant for the current application workflow.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Simplify history query ordering logic</div>
+                            <div class="details">Removes redundant manual sorting and replaces it with predefined directions. Improves query consistency and clarity across the application.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Add season and episode entities with caching support</div>
+                            <div class="details">Introduces local caching for season and episode data retrieved from TheMovieDB. Improves performance and decreases external API calls by storing localized season and episode details in the database.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Add locale support to logout route</div>
+                            <div class="details">Allows users to access the logout route with locale-specific URLs. Improves adaptability for multilingual environments by supporting multiple languages in route definitions.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Add account deletion feature</div>
+                            <div class="details">Introduces functionality for users to permanently delete their account along with all associated data. Adds confirmation prompts and visual elements to ensure clarity and prevent accidental deletions.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Adjust search results layout and responsiveness</div>
+                            <div class="details">Improves the styling and positioning of search results for better alignment on varying screen sizes. Refines dynamic adjustments to ensure usability, particularly in narrow viewports, for a consistent search experience.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Fix menu layout indentation</div>
+                            <div class="details">Adjusts indentation for consistent formatting in the menu block. Enhances readability and ensures alignment integrity within the navigation structure.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Add data attribute to series posters</div>
+                            <div class="details">Introduces a `data-title` attribute to series posters for easier access to series names and a larger view of the poster when the option is enabled. Enhances flexibility for front-end interactions or debugging by including series name metadata directly in the DOM.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Add map interaction to location form</div>
+                            <div class="details">Enables users to click on the map to select or copy coordinates directly into the form. Improves usability by allowing easier coordinate input and file uploads through drag-and-drop or paste actions.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Fix search results positioning in narrow viewports</div>
+                            <div class="details">Ensures search results are fully visible on smaller screens by adjusting their position dynamically. Improves usability and prevents layout issues when viewing search results in constrained viewport sizes.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Remove nullable return types for TMDBService methods</div>
+                            <div class="details">Standardizes return types by removing nullable string options and ensuring consistent outputs. Improves reliability and enforces stricter method contracts across the service, reducing potential null reference errors.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Simplify sorting and reduce redundant query parameters</div>
+                            <div class="details">Replaces custom sorting logic with defaults in data fetching operations to reduce complexity. Improves maintainability and performance by eliminating unnecessary order parameters across multiple entities.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Fix phrasing in flash messages and improve translation consistency</div>
+                            <div class="details">Refines the wording of several flash messages and error outputs for improved clarity. Standardizes translations across the application to provide users with more consistent and user-friendly text.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Add dynamic date range to provider rankings</div>
+                            <div class="details">Displays the date range for provider rankings, improving clarity on the displayed data's timeframe. Enhances user experience by making ranking periods explicit across different views.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Fix typos in translations and improve phrasing consistency</div>
+                            <div class="details">Corrects minor spelling errors and adjusts phrasing in translations across multiple sections for improved clarity. Enhances user experience by ensuring more accurate and user-friendly messages and labels.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Remove episode import command and refactor user episode handling</div>
+                            <div class="details">Deletes the command for importing episodes and updates references to episode watch dates. Simplifies the codebase and enhances consistency by standardizing to the `watched_at` attribute across the application.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Fix translation inconsistencies and add missing keys</div>
+                            <div class="details">Standardizes phrasing across translations for improved consistency. Adds missing translations and updates several keys to provide a more complete and accurate localized experience for users.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Add "Show More" button for series sections</div>
+                            <div class="details">Introduces a "Show More" button to expand lists in the "Ended" and "Not Watched in a While" sections. Improves usability by allowing users to load additional series without page refreshes, enhancing the browsing experience.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Add scrollable cast display to TV Time</div>
+                            <div class="details">Enhances the cast display in TV Time with a new scrollable layout, improving accessibility for large casts. Updates visuals and interactivity to provide a more user-friendly and organized experience.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Add hover effect to home info cards</div>
+                            <div class="details">Enhances visuals for info cards by introducing a blur and background color change on hover. Improves user experience with a subtle and visually appealing interactive feedback.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Add animated transitions to series voting stars</div>
+                            <div class="details">Introduces smooth color and rotation animations for voting stars, enhancing interactivity and visual feedback. Improves the user experience by making vote actions more engaging and intuitive.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Enhance cast and crew display styling</div>
+                            <div class="details">Improves cast and crew layout with new responsive designs, better spacing, and job-specific styling. Ensures consistent display across devices and enhances user experience with updated interactive elements and dynamic visuals.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Remove unused episode and pinned series extensions</div>
+                            <div class="details">Eliminates outdated Twig extensions and runtime files for episodes and pinned series. Simplifies the codebase by removing unused functionality, improving maintainability and reducing complexity in related menus and views.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Improve next episode selection for special episodes</div>
+                            <div class="details">Enhances episode navigation by prioritizing unwatched specials when all regular episodes are completed. Improves series progress tracking and ensures accurate handling of viewing progress across seasons and specials.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Refine cast display and badge styling</div>
+                            <div class="details">Improves the appearance and alignment of badges with new spacing and border adjustments. Updates the cast display to enhance interactivity and responsiveness when toggling episode-specific details.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Add ended series section to TV Time</div>
+                            <div class="details">Displays a new "Ended" section in the TV Time view to list completed series with their details. Enhances categorization and provides users with a clearer overview of shows that are no longer ongoing.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Update cast display to support episode-specific details</div>
+                            <div class="details">Improves the cast display for each series episode by adding support for episode-specific data. Enhances interactivity and accuracy when displaying cast details based on the currently selected episode.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Improve tooltip display alignment and styling</div>
+                            <div class="details">Refines tooltip alignment by adjusting text width and centering behavior based on content. Enhances readability and ensures consistent visual presentation, adapting dynamically to the presence or absence of a specified width.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Add season cast display to series cards</div>
+                            <div class="details">Introduces a button to view or hide the cast for a season directly on series cards. Improves user experience by providing quick access to cast details, enhancing engagement with season-specific information.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Add air time details to series countdowns</div>
+                            <div class="details">Displays the air time for episodes airing today or tomorrow on series cards. Improves clarity by providing specific schedule information directly alongside the countdown text.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Add episode overview and update series card data</div>
+                            <div class="details">Displays episode overviews on hover and updates card references for consistency. Improves usability by providing additional context directly on series cards and aligning data attributes with updated reference identifiers.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Improve schedule form toggle animations</div>
+                            <div class="details">Enhances the behavior of schedule form toggling by introducing smoother height transitions. Improves the visual experience and makes interactions more intuitive for users.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Add preferred name display to series cast and crew</div>
+                            <div class="details">Enhances cast and crew cards from aggregate credits by displaying a person's preferred name when available. Improves clarity and personalization for users by incorporating this additional detail directly into the visual display.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Update season overview styling</div>
+                            <div class="details">Adjusts the season overview section for better readability and layout consistency. Limits the text width, improves padding, and refines text wrapping to enhance the visual presentation and user experience.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Fix series details alignment in list and grid layouts</div>
+                            <div class="details">Ensures proper alignment of series details when toggling between list and grid layouts. Improves consistency and readability by adjusting the width of details based on the selected layout.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Update TV Time series cards layout and links</div>
+                            <div class="details">Refines the design of series cards, including adjustments to layout, styling, and link behavior. Enhances clarity, usability, and navigation by improving visual organization and introducing updated links for better access to series and episodes.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Add provider logos to series vote cards</div>
+                            <div class="details">Enhances series vote cards by displaying the provider's logo when available. Improves visual information and helps users identify streaming providers at a glance.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Add placeholder information for future update details</div>
+                            <div class="details">Introduces a placeholder section for Update 91 with date and basic information. Enhances communication by indicating upcoming changes while content details are being finalized.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Update Rakuten Viki provider logo</div>
+                            <div class="details">Change for a 256x256 webp file.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Update countdown to start of winter season</div>
+                            <div class="details">Revises the countdown timer and translations to reflect the start of winter instead of fall. Enhances accuracy and clarity for users by aligning the displayed information with the correct season and date.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Add series year display in TV Time tab</div>
+                            <div class="details">Enhances series cards by including the year of first airing alongside the series name. Improves informational clarity and provides users with additional context about the series.</div>
                         </li>
                     </ul>
                 </div>
@@ -33,8 +288,144 @@
                     <h2>91° mise à jour : 07/10/2026 20:10</h2>
                     <ul>
                         <li>
-                            <div class="change">→ The changes included in Update 91 will be added soon</div>
-                            <div class="details"></div>
+                            <div class="change">→ Fix dynamic series wrapper updates in TvTime tab</div>
+                            <div class="details">Ensures series details are correctly updated within the TvTime tab when changes occur. Improves user experience by addressing issues with dynamic content replacement and maintaining accurate display consistency.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Show translated movie overviews when available</div>
+                            <div class="details">Displays translated overviews for movies when the user's locale differs from the original language. Improves accessibility and user experience by providing localized content where available.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Update label translation for specials week filter</div>
+                            <div class="details">Revises the translation for the specials week filter label to ensure consistency across languages. Enhances usability by providing clearer and localized text for better user understanding.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Update next episode when a new season is added</div>
+                            <div class="details">Automatically updates the user's next episode tracker when a new season becomes available. Enhances user experience by ensuring episode progression remains accurate and seamless after season updates.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Add Channel 3 provider support</div>
+                            <div class="details">Introduces support for the Channel 3 streaming service, enabling link recognition and provider integration. Improves functionality by expanding the range of supported content providers.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Simplify episode data handling for performance improvements</div>
+                            <div class="details">Replaces detailed `episodesAvailable` data with concise `episodeRefs` to streamline API requests and processing. Reduces unnecessary data handling and improves efficiency across episode-related operations.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Add week-based filter input for specials</div>
+                            <div class="details">Enhances functionality with a week-specific filter for special episodes. Allows users to set and save a week value, improving flexibility and control over episode filtering.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Update label for week-based specials filter</div>
+                            <div class="details">Improves clarity by adjusting the label text for the week-based filter on special episodes. Provides more accurate and user-friendly phrasing to enhance understanding and usability.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Remove excessive commented-out episode translation data</div>
+                            <div class="details">Cleans up the codebase by removing large blocks of unused and outdated episode translation data. Improves code readability and maintainability by eliminating irrelevant comments.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Fix height transition issue for fold/unfold animations</div>
+                            <div class="details">Prevents abrupt transitions by ensuring height values are correctly reset during fold/unfold animations. Improves visual fluidity and enhances the user experience with smoother content toggle effects.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Add padding and outline to map container styles</div>
+                            <div class="details">Improves visual clarity and layout consistency by adding padding and a subtle outline to the map container. Enhances the overall appearance and readability of the map interface.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Add fold/unfold toggle with persistence for dividers</div>
+                            <div class="details">Improves usability by enabling dividers to toggle between folded and expanded states. Remembers user preferences using local storage, allowing for a consistent experience across sessions.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Add week-based filtering for special episodes</div>
+                            <div class="details">Introduces a filter to display special episodes aired within a user-defined timeframe. Enhances browsing by allowing users to customize visibility based on recent airing dates.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Add runtime to episode name display</div>
+                            <div class="details">Enhances episode cards by appending runtime information next to episode names where available. Provides users with additional context about episode duration directly on the series cards.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Fix incorrect data reference in page reload logic</div>
+                            <div class="details">Resolves an issue where the wrong data was used for calculating the reload timer. Ensures accurate countdown functionality and prevents potential misalignment with expected refresh behavior.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Add countdown timer for page auto-refresh</div>
+                            <div class="details">Displays a countdown timer indicating time remaining until the page refreshes automatically. Enhances user awareness by providing a clear visual of scheduled reloads. And by extension, the time remaining until the next episode, if there is one, or the time remaining until midnight.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Add toggle for displaying special episodes</div>
+                            <div class="details">Introduces an option to show or hide special episodes in the series filter. Enhances user control and customization when browsing available series.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Remove unused dependencies from ApiEpisodeNameCheck</div>
+                            <div class="details">Simplifies the service by eliminating unused dependencies. Reduces code complexity and ensures cleaner, more maintainable functionality.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Highlight active menu item on load</div>
+                            <div class="details">Ensures the correct menu item is visually highlighted based on predefined sorting. Improves navigation clarity and provides a better user experience by dynamically aligning the active state to the selected option.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Add homepage link to series details</div>
+                            <div class="details">Includes a link to the series homepage in the details section, offering users quick access to official series websites. Improves navigation and enriches the viewing experience.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Add dynamic episode name updates for series cards</div>
+                            <div class="details">Enables real-time episode name updates on series cards, ensuring accurate display of episodes and associated data. Improves user experience by reflecting the latest information seamlessly.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Fix `this` context handling in AddCast initialization</div>
+                            <div class="details">Resolves incorrect `this` context in the AddCast constructor, ensuring consistent behavior and preventing potential runtime issues when accessing instance properties or methods.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Add episode translation support and episode ID tracking</div>
+                            <div class="details">Introduces support for episode translations and adds episode ID data tracking to enhance episode handling and improve data accuracy across features.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Add progress indicator to "Not watched in a while" section</div>
+                            <div class="details">Displays the current number of series up-to-date out of the total in the "Not watched in a while" section. Improves user clarity on their progress within this category.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Remove source data from season overviews</div>
+                            <div class="details">Simplifies season overview management by eliminating unused source data. Reduces unnecessary complexity and ensures cleaner, more streamlined data handling.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Improve cast search and cleanup behavior</div>
+                            <div class="details">Refines user experience by clearing search inputs, removing results, and resetting menus after adding a cast member. Ensures smoother workflows and prevents outdated data from remaining visible in the form.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Update to use `api_series_tmdb_check` endpoint</div>
+                            <div class="details">Replaces outdated endpoint with the new API endpoint for TMDB checks on series pages. Improves consistency with updated backend standards and ensures smoother functionality across the application.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Update JS dependencies to latest versions</div>
+                            <div class="details">Upgrades various JavaScript package versions to ensure compatibility and access to the latest features and fixes. Improves application stability and resolves potential issues with outdated dependencies.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Replace `app_series_tmdb_check` with `api_series_tmdb_check`</div>
+                            <div class="details">Updates to use a new API endpoint for TMDB checks across series pages, enabling improved maintainability and consistency. Ensures the application leverages the latest standards for backend API integration.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Enhance sorting and filtering in series tabs</div>
+                            <div class="details">Simplifies sorting menu structure and improves filtering with clearer placeholders and accessibility updates. Enhances user experience through streamlined controls and better organization of sorting options.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Improve folding animations for series sections</div>
+                            <div class="details">Enhances the folding and unfolding animations for better visual smoothness and interaction. Improves user experience with clearer transitions and ensures consistency across collapsible elements.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Add support for Heavenly TV watch links</div>
+                            <div class="details">Extends watch link detection to include Heavenly TV and adds its associated icons. Enhances compatibility with more providers, offering users a broader range of supported streaming services.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Add placeholder for upcoming Update 90 details</div>
+                            <div class="details">Introduces an empty placeholder section for the upcoming Update 90 with a placeholder message. Prepares the page for future updates, ensuring consistency and providing users with a preview of pending changes.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Simplify tab layout and series sections</div>
+                            <div class="details">Unifies tab layout controls into a single location and enhances the structure of the series sections. Improves navigation clarity and reduces redundancy for a cleaner, more cohesive user experience.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Add "Not watched in a while" category to series tabs</div>
+                            <div class="details">Introduces a new category in the series section for shows with no recent viewings, including count and visual enhancements. Improves navigation and organization for better tracking of series progress over time.</div>
                         </li>
                     </ul>
                 </div>
@@ -44,8 +435,104 @@
                     <h2>90° mise à jour : 28/09/2026 13:15</h2>
                     <ul>
                         <li>
-                            <div class="change">→ The changes included in Update 90 will be added soon</div>
-                            <div class="details"></div>
+                            <div class="change">→ Add blur effects to episode headers and details</div>
+                            <div class="details">Introduces dynamic blur effects for episode headers and details on hover, enhancing the visual depth and interactivity. Aims to improve the user experience with smoother transitions and modern design elements.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Improve episode name fallback logic</div>
+                            <div class="details">Refines the logic for determining fallback episode names when substitutes are unavailable, ensuring names are only replaced when appropriate. Enhances clarity and accuracy in episode naming for better user experience.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Fix episode scheduling check for unaired series</div>
+                            <div class="details">Corrects the logic to accurately schedule episodes for series with future air dates. Ensures proper handling of unaired episodes, improving user experience for upcoming series.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Remove unused SeriesService dependency</div>
+                            <div class="details">Refactors episode handling logic by excluding an unnecessary service dependency. Simplifies the codebase while retaining all existing functionality.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Enhance provider ranking visuals and locale handling</div>
+                            <div class="details">Improves ranking bar height calculations for better visual clarity. Adds route handling for locale-specific home redirects, enhancing navigation in localized versions of the app.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Add localized episode overviews and substitute names support</div>
+                            <div class="details">Improves episode detail handling by adding localized overviews for unsupported languages and allowing substitute episode names in specific cases. Enhances clarity for users viewing non-English episode information.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Revamp TV time tab layouts and improve navigation</div>
+                            <div class="details">Redesigns the TV time tab headers for better clarity and alignment while introducing a responsive menu for sorting and filtering options. Enhances navigation between tabs and sub-tabs, providing a more structured and user-friendly interface.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Add tools section with CSS menu demo</div>
+                            <div class="details">Introduces a new tools section accessible in development mode, featuring a CSS menu demonstration. Enhances developer productivity and provides a space for future tools and UI experiments.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Clarify countdown labels on TV series cards</div>
+                            <div class="details">Improves the countdown display on series cards by using "Tomorrow" for a single day and keeping "Today" for same-day releases. Makes the labels more intuitive and user-friendly for better understanding of upcoming episodes.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Update TV series cards and improve layout styling</div>
+                            <div class="details">Enhances the TV series cards by introducing a "New series" badge for unaired shows and improving the layout with cleaner, rounded styling and better alignment. Refines the user interface for a polished and consistent look.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Disable display of TVDB episode data</div>
+                            <div class="details">Hides TVDB episode-related content in the season view to reduce clutter and focus on core season details. Simplifies the UI for a cleaner and more streamlined user experience.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Strengthen password requirements in registration form</div>
+                            <div class="details">Adds stricter password rules, including a minimum of 12 characters and a mix of letters and numbers. Enhances account security and promotes safer password practices for users.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Add smooth scrolling and improve form input visibility</div>
+                            <div class="details">Introduces smooth scrolling for better navigation and enhances form inputs with clearer focus and validation styles. Improves usability and overall user experience.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Add sorting and search functionality to TV time</div>
+                            <div class="details">Introduces sorting options and a search filter in the TV time series tab. Enhances user experience by allowing easier content navigation and improved content discovery.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Highlight new seasons in TV cards</div>
+                            <div class="details">Adds a badge and visual styling to emphasize new seasons in the TV time section. Improves visibility and makes it easier for users to identify fresh content at a glance.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Adjust naming in quick links data structure</div>
+                            <div class="details">Updates terminology in quick links for consistency and clarity. Ensures better alignment with intended functionality and improves maintainability.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Disable font smoothing styles for readability</div>
+                            <div class="details">Commented out font smoothing to improve readability and visual clarity across different browsers. Ensures a more consistent text appearance for users.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Add dynamic content loading for TV time tabs</div>
+                            <div class="details">Improves the TV time section by dynamically loading content based on the selected tab. Optimizes performance and ensures users see relevant data without unnecessary loading.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Add support for HBO Max watch links</div>
+                            <div class="details">Extends the watch link functionality to include HBO Max content. Enhances platform compatibility and expands coverage for supported streaming services.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Add quick links for seasons and episodes</div>
+                            <div class="details">Introduces quick link buttons to navigate directly to specific seasons and episodes. Enhances ease of access and improves user navigation within the series pages.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Add blur toggle for content overview</div>
+                            <div class="details">Allows users to toggle a blur effect under the series or episode overview. Improves customization and visual focus options for a more personalized viewing experience.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Update template for TV time section</div>
+                            <div class="details">Replaces the old series template with a dedicated TV time template. Improves consistency and aligns the layout with the updated TV time section.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Add dynamic tabs for TV time section</div>
+                            <div class="details">Introduces a tabbed interface in the TV time section, allowing users to switch between series, movies, and upcoming content. Enhances navigation and organizes content for improved user experience.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Add changelog for recent site updates</div>
+                            <div class="details">Introduces changelog entries for updates 87, 88, and 89. Provides users with a clearer overview of recent changes and update history directly on the updates page.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Update deployment instructions for clarity and optimization</div>
+                            <div class="details">Adjusts file compression behavior to reduce unnecessary processing and adds specific exclusions during database exports. Simplifies and clarifies deployment steps for improved efficiency and accuracy.</div>
                         </li>
                     </ul>
                 </div>
@@ -55,8 +542,72 @@
                     <h2>89° mise à jour : 21/09/2026 09:00</h2>
                     <ul>
                         <li>
-                            <div class="change">→ The changes included in Update 89 will be added soon</div>
-                            <div class="details"></div>
+                            <div class="change">→ Improve hover effects and content layout</div>
+                            <div class="details">Refines hover styles and adjusts height behaviors for better visual feedback and layout consistency. Enhances the interface's clarity and polish for a smoother user experience.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Add progress bars to episode tracking</div>
+                            <div class="details">Introduces separate progress bars for aired and viewed episodes with hover details. Improves clarity by providing a visual overview of progress directly on the series cards.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Add series substitute names to episode cards</div>
+                            <div class="details">Displays substitute names for series episodes when available. Improves clarity by providing users with additional context directly on episode cards.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Improve text rendering for smoother appearance</div>
+                            <div class="details">Enhances font rendering with antialiasing and grayscale smoothing. Improves overall text clarity and polish across the app interface.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Add blur effect to hover and improve icon alignment</div>
+                            <div class="details">Introduces a subtle blur effect on hover for better visual feedback and ensures icons are consistently aligned. Enhances the overall interface polish and improves usability by providing clearer visual cues and consistent styling.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Add "Today" highlight to series episode dates</div>
+                            <div class="details">Introduces a green-highlighted "Today" label for episodes airing today. Enhances visual clarity and helps users easily spot relevant episodes at a glance.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Update badge and button styling for consistency</div>
+                            <div class="details">Adjusts padding, colors, and border radii to align badges and buttons with the app's updated visual design. Enhances visual consistency and promotes a cleaner, more cohesive user interface.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Highlight last episodes in vote cards</div>
+                            <div class="details">Adds a "Last episode!" badge to vote cards for better recognition of final episodes. Improves clarity and ensures users can easily identify series milestones at a glance.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Celebrate votes on series finales with confetti</div>
+                            <div class="details">Adds a confetti animation when voting for the last episode of a series. Enhances the voting experience by making milestone interactions more celebratory and engaging.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Adjust episode card structure for improved poster interaction</div>
+                            <div class="details">Moves the clickable link for episodes to encapsulate the poster directly. Enhances user experience by making the interaction more intuitive and easier to access from the episode cards.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Adjust icon container sizing for better alignment</div>
+                            <div class="details">Ensures icons are properly centered by updating container dimensions. Improves visual consistency and alignment within the interface.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Update card styles with green theme accents</div>
+                            <div class="details">Replaces orange highlights with green accents for borders and backgrounds in cards. Refreshes the visual design to better align with the app's current color scheme and improve overall aesthetic appeal.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Update styling for cards and highlight animations</div>
+                            <div class="details">Adjusts card border radii for a more modern look and refines highlight animation behavior for better visual hierarchy. Enhances aesthetic appeal and ensures smoother transitions to improve the overall user experience.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Add web app manifest and SVG favicon support</div>
+                            <div class="details">Introduces support for a web app manifest and an SVG favicon for enhanced compatibility. Improves app appearance on various platforms and devices by defining icons and settings for streamlined user experiences.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Enhance TV Time episode status styling</div>
+                            <div class="details">Improves visual clarity by updating styles for last episodes and remaining episode counts. Adds highlights and transparency effects to ensure better differentiation and focus on key information in the episode cards.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Update series title styling with blur effect</div>
+                            <div class="details">Adds a blur effect and enhances borders for fixed series titles. Improves visual focus and ensures titles stand out more clearly while scrolling through the page.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Add watch provider links with copy-to-clipboard support</div>
+                            <div class="details">Introduces provider logos and clickable watch links for series, enabling users to easily copy URLs. Enhances convenience and usability by providing quick access to watch options directly from the series cards.</div>
                         </li>
                     </ul>
                 </div>
@@ -66,8 +617,44 @@
                     <h2>88° mise à jour : 14/09/2026 13:30</h2>
                     <ul>
                         <li>
-                            <div class="change">→ The changes included in Update 88 will be added soon</div>
-                            <div class="details"></div>
+                            <div class="change">→ Update dialog width for consistency</div>
+                            <div class="details">Aligns the width of episode name and overview dialogs for a uniform appearance. Enhances visual consistency and ensures a cohesive user experience across dialog components.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Update styling for responsive layout and visual elements</div>
+                            <div class="details">Enhances readability and layout consistency across various screen sizes. Introduces improved spacing, responsive behaviors, and alignment updates to optimize the user experience on both mobile and desktop views.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Adjust margins for TV Time layout elements</div>
+                            <div class="details">Improves spacing around series blocks and search components to enhance visual balance. Creates a cleaner layout for a more consistent and user-friendly interface.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Improve query logic for recent and unrated episodes</div>
+                            <div class="details">Refines filtering rules by incorporating first episodes watched within the last week. Enhances precision in displaying relevant episodes based on user activity and voting patterns.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Adjust card dimensions and text alignment in TV Time</div>
+                            <div class="details">Improves visual consistency by updating card height, padding, and line spacing. Enhances readability and layout balance for a smoother user experience.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Add backdrop images to highlighted series</div>
+                            <div class="details">Enhances the display of highlighted series by introducing backdrop images alongside posters. Improves the visual appeal and layout while providing a richer viewing experience for users.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Update star ratings for visual clarity</div>
+                            <div class="details">Improves the display of episode star ratings by adding distinct colors for the second-to-last and last stars. Enhances visual feedback for a clearer and more intuitive user experience.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Refine query for unrated seen episodes</div>
+                            <div class="details">Improves precision in filtering episodes by factoring in user votes and recent activity. Ensures better alignment between displayed episodes and users' watching patterns for a more relevant experience.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Add placeholder for Update 87 in user updates</div>
+                            <div class="details">Introduces a placeholder entry for Update 87 with its scheduled timestamp. Improves transparency by informing users about upcoming changes even before full details are available.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Update "TV Time" episode visibility and query logic</div>
+                            <div class="details">Improves usability by hiding elements for episodes without votes and refining the query logic for fetching up-to-date series. Enhances interface clarity and ensures accurate data retrieval for better user experience.</div>
                         </li>
                     </ul>
                 </div>
@@ -77,19 +664,427 @@
                     <h2>87° mise à jour : 07/09/2026 21:30</h2>
                     <ul>
                         <li>
-                            <div class="change">→ The changes included in Update 87 will be added soon</div>
-                            <div class="details"></div>
+                            <div class="change">→ Reorder episode validation logic</div>
+                            <div class="details">Improves logic clarity by ensuring episodes are validated only after necessary user season data is initialized. Prevents potential errors and maintains consistency in processing season data.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Add conditional visibility for season episode list</div>
+                            <div class="details">Improves usability by displaying the episode list button only for valid seasons. Reduces clutter by hiding the button for invalid or special seasons without episodes.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Add direct links to specific episode pages</div>
+                            <div class="details">Enhances navigation by introducing links that lead directly to individual episode pages. Improves usability by providing more precise access to specific episodes.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Add navigation links and improve "TV Time" interface styling</div>
+                            <div class="details">Enhances the "TV Time" view by adding direct links to episode pages for easier navigation and improving visual styling with borders, padding, and backdrop effects. Improves usability and creates a more polished, user-friendly interface.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Update "TV Time" episode details and visual styling</div>
+                            <div class="details">Refines the "TV Time" layout with improved name, status, and countdown displays while enhancing visual styling for readability and consistency. Provides clearer episode tracking and a more polished user interface for a better viewing experience.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Add progress indicators for watched episodes</div>
+                            <div class="details">Enhances the "TV Time" view with visual progress indicators for watched episodes, showing completion percentages and remaining counts. Improves usability by providing clearer tracking of viewing progress within a season.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Hide date in schedule menu for episodes of today</div>
+                            <div class="details">Improves clarity in the schedule menu by conditionally displaying the date only when a relative day is available. Enhances the visual presentation by removing unnecessary or redundant elements.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Add "TV Time" load count and layout persistence</div>
+                            <div class="details">Introduces a load count display and persistent layout preference for the "TV Time" page, allowing users to customize their viewing experience. Enhances usability by saving user preferences and providing visual feedback on data loads.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Optimize series and episode queries for "TV Time"</div>
+                            <div class="details">Improves query performance for series and episodes displayed in "TV Time," reducing redundancy and ensuring faster, more reliable data retrieval. Enhances user experience with quicker load times and accurate updates.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Add voting feature for just watched episodes</div>
+                            <div class="details">Introduces the ability to submit star ratings for watched episodes directly within the "TV Time" page. Enhances interactivity and user engagement by allowing users to rate episodes they haven't yet watched, with immediate visual updates.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Add toggle between list and grid views for "TV Time"</div>
+                            <div class="details">Introduces a list/grid toggle for the "TV Time" page, allowing users to switch between display modes for better browsing flexibility. In list view, episodes can be marked as watched directly.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Add dynamic updates for "TV Time" page</div>
+                            <div class="details">Introduces real-time updates for the "TV Time" series list, refreshing the displayed content when new episodes are available. Enhances user experience by keeping the page current and responsive, with seamless visibility checks and visual changes.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Highlight premieres on "TV Time" series cards</div>
+                            <div class="details">Adds a visual indicator for series premieres within the "TV Time" page, improving clarity and making it easier for users to identify first episodes at a glance. Enhances the browsing experience with subtle but meaningful UI adjustments.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Assign user episodes to corresponding seasons</div>
+                            <div class="details">Links episodes to their respective seasons if not already set, ensuring season-specific groupings are maintained. Improves data consistency and enhances the logical organization within the app.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Introduce provider ranking visualization update</div>
+                            <div class="details">Adds dynamic provider ranking charts with time-based sliders for "month" and "evolution" views. Enhances data interaction and visualization, allowing users to explore provider statistics effectively through an interactive interface.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Capitalize season air date display</div>
+                            <div class="details">Improves readability by capitalizing the season air date text, ensuring a more polished and consistent presentation across the interface.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Add season-based filtering for cast and crew display</div>
+                            <div class="details">Limits the complete cast and crew display to series with multiple seasons. Improves clarity and relevance by showing this information only when applicable, enhancing the browsing experience.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Refine the results for the “TV Time” page</div>
+                            <div class="details">Taking Broadcast Schedules into Account rather than official dates</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Fix missing backdrop artwork in series data</div>
+                            <div class="details">Corrects how backdrops are located within series artwork data. Ensures the app displays the intended backdrop image without errors, improving reliability and user experience.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Remove keyword separator validation</div>
+                            <div class="details">Disables validation for the keyword separator to allow greater flexibility in supported formats. Ensures smoother functionality and avoids potential restrictions in user inputs.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Update episode progress tracking and series details</div>
+                            <div class="details">Improves episode tracking and updates series progress dynamically when episodes are marked as watched or unwatched. Ensures series details reflect accurate progress, enhancing user experience and clarity.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Add aggregate cast and crew display to series pages</div>
+                            <div class="details">Displays complete cast and crew information on series pages, including roles and jobs. Enhances the user experience by providing more comprehensive and organized series details.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Update series tracking page titles and improve data loading</div>
+                            <div class="details">Renames titles and headings for better clarity, aligning with user expectations. Adds additional data to improve the accuracy and functionality of the series tracking page.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Fix missing backdrop handling in series data</div>
+                            <div class="details">Adds safeguards to handle cases where series data does not include artworks. Prevents errors and ensures the app functions correctly even when some series data is incomplete.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Add TV Time-style series tracking page</div>
+                            <div class="details">Introduces a dedicated page for tracking series progress, inspired by TV Time. Allows users to view available and up-to-date series in a visually organized layout for improved navigation and usability.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Reset scroll position on movie search results</div>
+                            <div class="details">Ensures the search results list resets to the top when new results are loaded. Improves user experience by providing a more intuitive and seamless navigation flow.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Add list and grid view toggle to movie discovery</div>
+                            <div class="details">Allows users to switch between list and grid layouts for search results in movie discovery. Enhances usability and provides more control over how search results are displayed.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Update search result cards and refine series data handling</div>
+                            <div class="details">Improves the appearance and usability of search result cards by using a dedicated layout. Simplifies series data handling and ensures better consistency across series display elements.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Set focus on search input after clearing</div>
+                            <div class="details">Improves user experience by automatically focusing the search input field after clearing it, enabling smoother and faster interactions for users performing consecutive searches.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Fix a typo</div>
+                            <div class="details">TheTvdbService → ThetvdbService</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Add user season creation and broadcast schedule linking to episodes</div>
+                            <div class="details">Automatically creates user-specific seasons and links broadcast schedules when user episodes are added. Improves season-level organization and integrates broadcast information for a more complete episode tracking experience.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Adjust episode display layout in series view</div>
+                            <div class="details">Improves the layout of episode cards by making them dynamically expand to fill available space. Enhances visual consistency and ensures better adaptability across different screen sizes.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Add TVDB episode details to season view</div>
+                            <div class="details">Displays episodes from TVDB in the season view, including titles and images. Enhances visual representation and provides additional information about episodes directly from TVDB.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Add pagination to movie discovery results</div>
+                            <div class="details">Improves navigation for movie discovery by introducing pagination controls. Allows users to easily explore multiple pages of search results and displays relevant page and result information.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Fix CSRF handling and remove unused form constraints</div>
+                            <div class="details">Re-enables CSRF protection for a secured area and removes unused constraints from the registration form. Ensures better security and simplifies form setup.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Improve search results handling for better reliability</div>
+                            <div class="details">Simplifies the handling of search results, ensuring more accurate data processing and reducing potential issues. Enhances the overall reliability and consistency of the search experience.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Add advanced filters and sorting for movie discovery</div>
+                            <div class="details">Enhances the movie discovery experience with additional filters, such as region, release year, and sorting options. Improves user control and flexibility in searching for movies.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Update yellow color variables for consistency</div>
+                            <div class="details">Tweaks the yellow color palette to ensure consistency and alignment with updated design standards. Enhances visual coherence across the app.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Fix spacing in multi-part episode labels</div>
+                            <div class="details">Fixes spacing in labels for multi-part episodes in schedules. Ensures consistent and cleaner display of episode information for improved readability.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Add advanced movie discovery feature - WIP</div>
+                            <div class="details">Introduces a new advanced search for movies, allowing filtering by cast, crew, genres, keywords, language, and country. Enhances the user experience by providing detailed search options for better personalization and discovery.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Add pre-autoload cleanup and YouTube service inclusion</div>
+                            <div class="details">Introduces a pre-autoload cleanup script and adds YouTube to the list of Google API services. Improves application setup efficiency and ensures access to YouTube features for enhanced functionality.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Increment visit counter for series page</div>
+                            <div class="details">Increases the series visit count displayed to users by 1. Improves accuracy and reflects the up-to-date total visits for better user engagement tracking.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Increment visit counter for series page</div>
+                            <div class="details">Increases the series visit count displayed to users by 1. Improves accuracy and reflects the up-to-date total visits for better user engagement tracking.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Integrate TheTVDB API for series data</div>
+                            <div class="details">Adds support for fetching detailed series information using TheTVDB API. Enhances the app's ability to retrieve extended series metadata, including episodes and other related details.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Update YouTube API access scope</div>
+                            <div class="details">Adjusts the API scope to ensure secure and appropriate access rights for video-related features. Enhances compatibility with YouTube's API requirements while maintaining proper functionality.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Remove unused translation dependency in video service</div>
+                            <div class="details">Eliminates an unnecessary dependency to simplify the service. Reduces complexity and ensures the service is focused solely on video category management.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Handle multiple provider selections for toggled episodes</div>
+                            <div class="details">Improves interaction with watch providers by supporting fallback to alternative selections. Ensures accurate provider identification and enhances flexibility in user choices when toggling episode watch states.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Refactor provider query handling</div>
+                            <div class="details">Optimizes provider queries for clearer structure and added flexibility, including improved error handling. Enhances maintainability and ensures better handling of localized provider data for a smoother user experience.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Update M6 provider ID</div>
+                            <div class="details">Corrects the provider ID for M6 links to ensure accurate recognition. Improves link handling and maintains consistency across supported providers.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Add vintage French TV provider logos</div>
+                            <div class="details">Expands provider imagery with vintage logos for improved historical context and visual appeal. Enhances the aesthetic and nostalgic experience for users exploring older French TV providers.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Add M6 as a supported provider</div>
+                            <div class="details">Enables support for M6 links by adding recognition for the domain. Expands provider coverage to offer a more comprehensive user experience.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Add "watched as they come out" option for episodes</div>
+                            <div class="details">Introduces a checkbox to mark episodes as watched as they air and adds enhanced provider selection. Also, include unseen episodes from previous seasons, if any. Improves episode tracking flexibility and viewing experience for users.</div>
                         </li>
                     </ul>
                 </div>
             </div>
             <div class="site-update glowing-border">
                 <div class="list">
-                    <h2>86° mise à jour : 26/07/2026 12:15</h2>
+                    <h2>86° mise à jour : 18/08/2026 10:00</h2>
                     <ul>
                         <li>
-                            <div class="change">→ The changes included in Update 86 will be added soon</div>
-                            <div class="details"></div>
+                            <div class="change">→ Add HBO as a supported provider</div>
+                            <div class="details">Enables support for HBO links by adding recognition for the domain. Improves provider coverage for a more comprehensive user experience.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Add episode list view and toggle functionality</div>
+                            <div class="details">Introduces a new feature to view and toggle episode states via a visually enhanced list. Improves user interaction by allowing seamless episode status updates and better season navigation.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Handle edge cases and finalize episode trimming logic</div>
+                            <div class="details">Improves handling of edge cases for season and episode data trimming. Ensures accurate display and processing of episodes, even with incomplete or customized data, enhancing robustness and user experience.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Improve input validation for content and titles</div>
+                            <div class="details">Adds safeguards to ensure non-empty values are properly handled before processing. Enhances stability and prevents potential errors caused by invalid or empty input across various features.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Improve display of series images</div>
+                            <div class="details">Adds background color and object-fit styling to series images for better visual consistency. Enhances the presentation of images without altering layout or functionality.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Add checks for missing elements in person view</div>
+                            <div class="details">Prevents potential errors by ensuring required elements like images and posters exist before running interactions. Improves stability and avoids issues when data is incomplete or unavailable.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Update pagination input label for clarity</div>
+                            <div class="details">Replaces "Go to page" with "Page" in pagination input labels for a simpler and more concise user experience. Improves clarity without altering functionality or behavior.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Improve readability of series comments</div>
+                            <div class="details">Adjusts background colors, shadows, and borders for better visual clarity and contrast in the series view. Enhances the overall style to improve readability and user experience without changing layout or functionality.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Add "Add this" option for movies and TV shows</div>
+                            <div class="details">Enables users to quickly add movies and TV shows directly from search results. Improves usability by integrating dynamic links and visual prompts for streamlined content addition.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Add user settings modal</div>
+                            <div class="details">Introduces a settings modal for users to customize preferences like language, appearance, and series options. Enhances usability by providing a centralized, intuitive interface for personalization.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Extract global tools into a separate block</div>
+                            <div class="details">Moves global tool components into a standalone block for better modularity and reuse. Simplifies template structure and improves maintainability without altering visible behavior.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Update episode navigation icon and provider card styles</div>
+                            <div class="details">Replaces the episode navigation icon for clarity and consistency. Refines styles for provider cards and buttons to enhance visual appeal, accessibility, and hover interactions, improving the overall user experience.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Highlight active schedules in series view</div>
+                            <div class="details">Introduces visual indicators for active schedules, making it easier to identify them in the series view. Enhances user experience by dynamically updating styles to reflect schedule availability.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Adjust series overview font and width for improved readability</div>
+                            <div class="details">Improves text readability by increasing the font size and line length on series overviews. Enhances the layout for a better user experience, particularly for larger screens.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Add support for multiple episode air dates</div>
+                            <div class="details">Displays multiple air dates with corresponding provider logos for better clarity and information. Enhances the user experience by presenting detailed scheduling information dynamically.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Improve series overview readability and layout consistency</div>
+                            <div class="details">Enhances readability of series overviews by refining line spacing and handling empty descriptions gracefully. Improves layout consistency by limiting text width, ensuring a more polished and user-friendly presentation.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Handle TMDB error responses gracefully</div>
+                            <div class="details">Adds feedback for TMDB errors by showing user-friendly warnings and redirecting to a dedicated error page. Improves clarity and user experience when external data retrieval fails.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Add episode broadcast schedule display</div>
+                            <div class="details">Displays detailed broadcast schedules for episodes, including air dates and times, to improve clarity for users. Enhances the viewing experience by dynamically adapting information based on locale and scheduling patterns.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Update ball animations and textarea behavior</div>
+                            <div class="details">Improves consistent sizing and animation timing for orange balls to enhance visual effects. Prevents resizing of textareas to ensure a more uniform and controlled user input experience.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Format localized series overviews for readability</div>
+                            <div class="details">Improves the display of localized series overviews by preserving line breaks. Enhances readability and user experience when viewing detailed descriptions.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Add hover transitions to episode details</div>
+                            <div class="details">Improves user interactions by adding smooth hover effects to episode detail elements. Enhances visual feedback and user experience when navigating episode-specific content.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Adjust layout styling for series comment images</div>
+                            <div class="details">Improves the layout by ensuring better alignment and responsive behavior for comment images. Enhances the viewing experience on various screen sizes.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ “episode:air-date” command: Added support for the userSeason entity</div>
+                            <div class="details">This command may create new records in the UserEpisode table, which are now linked to the UserSeason table.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Ensure user episode data is returned consistently</div>
+                            <div class="details">Adds default values for missing user episode data, ensuring consistent behavior when such records are absent. Improves reliability when accessing episode details without user-specific data.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Fix a bug with Safari Technology Preview</div>
+                            <div class="details">Override the width value despite the aspect ratio.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Adjust spacing for banners on movie pages</div>
+                            <div class="details">Improves alignment for banners, particularly those marked as "coming soon." Enhances visual consistency and ensures better spacing across different screen setups.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Split series page components into reusable blocks</div>
+                            <div class="details">Reorganizes the series page by separating elements like ratings, badges, and actions into distinct and reusable blocks. Simplifies future customizations and improves template maintainability.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Add support for years and months in countdowns</div>
+                            <div class="details">Extends countdown displays with years and months for more accurate time representations. Enhances clarity for users viewing distant events or deadlines.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Set series' first air date from user episodes</div>
+                            <div class="details">Ensures missing first air dates for a series are set using the air date of its earliest user episode. Improves data accuracy for series with incomplete information.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Update preferred name handling for people records</div>
+                            <div class="details">Improves how preferred names are updated by avoiding unnecessary changes. Ensures smoother processing when assigning or modifying user-preferred names for people records.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Refine sidebar toggle animation</div>
+                            <div class="details">Improves the smoothness of the sidebar toggle transition with updated timing and easing behavior. Enhances the visual feedback for users interacting with the sidebar.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Add people cards to TMDB series pages</div>
+                            <div class="details">Introduces dynamic people cards for TMDB series pages, enhancing character and actor visibility. Improves user experience by providing detailed and interactive information directly on the series page.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Add localized labels for series status updates</div>
+                            <div class="details">Enhances series status display with dynamic translations for upcoming, currently airing, and next season announcements. Improves clarity for users by presenting more accurate and localized status information.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Improve user season synchronization logic</div>
+                            <div class="details">Optimizes broadcast schedule association and season tracking during synchronization. Reduces redundant queries and enhances performance, ensuring more efficient user data updates.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Improve user season synchronization</div>
+                            <div class="details">Adds broadcast schedules to user seasons during syncing and refines season tracking logic. Enhances data structure and provides clearer insights into user activity and season-specific scheduling.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Link broadcast schedules to user seasons</div>
+                            <div class="details">Automatically associates broadcast schedules with user seasons when created or updated. Improves data organization and enhances user tracking of season-specific schedules within series.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Improve image scaling and fade transitions</div>
+                            <div class="details">Adjusts image scaling behavior for a more consistent display across aspect ratios and increases fade transition duration for smoother visual effects. Enhances the overall presentation and user experience in image-heavy sections.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Add user seasons to series tracking</div>
+                            <div class="details">Introduces user seasons for better episode organization and links episodes to their corresponding seasons. Enhances structure and clarity in series management, improving user experience and data organization.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Add error logging to repositories</div>
+                            <div class="details">Improves error handling by logging exceptions encountered during database operations. Helps with debugging and monitoring by providing better visibility into issues during runtime.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Add user seasons and sync commands</div>
+                            <div class="details">Introduces user seasons to organize episodes by season and adds commands to sync user data. Enhances data structure and usability for better organization and management of series-related user data. WIP</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Fix border rounding for last episodes in series view</div>
+                            <div class="details">Corrects the border styling for the last visible episodes when no next items are present. Ensures a smoother visual appearance in the series view for better consistency and polish.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Prevent removal of "New list" option in discovery dropdown</div>
+                            <div class="details">Ensures the "New list" option remains visible when repopulating the discovery dropdown. Improves usability by maintaining access to list creation functionality.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Fix visibility logic for watch links</div>
+                            <div class="details">Corrects the logic determining when watch links are hidden. Ensures links display properly regardless of user watch status, improving consistency and accessibility for all viewers.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Improve appearance and behavior of custom selects</div>
+                            <div class="details">Refines the design and functionality of dropdown selects for better cross-browser support. Enhances usability with a consistent visual style and improved focus and hover states.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Update settings names for consistency</div>
+                            <div class="details">Standardizes settings names across the app to include a consistent prefix. Improves clarity and alignment with naming conventions, reducing potential confusion for users and developers alike.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Improve responsiveness of external links display</div>
+                            <div class="details">Ensures external links adjust dynamically based on available space to prevent overflow. Enhances usability and layout clarity, particularly when resizing the browser window.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Add "New list" option to discovery dropdown</div>
+                            <div class="details">Allows users to quickly create a new list from the TV discovery settings. Enhances usability by simplifying access to list creation functionality.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Add Update 86 placeholder to user updates</div>
+                            <div class="details">Introduces a placeholder for the 86th update in the user updates section. Prepares the page for displaying details of upcoming site changes and improvements.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Add subtle shadows to key UI elements</div>
+                            <div class="details">Improves visual hierarchy and depth for series-related components and buttons. Enhances the overall aesthetic with a cleaner and more polished look.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Improve episode details layout responsiveness</div>
+                            <div class="details">Ensures episode details adapt dynamically to available space and prevent overflowing. Enhances user experience, particularly on smaller screens, by improving readability and layout clarity.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Add Update 85 placeholder to user updates</div>
+                            <div class="details">Introduces a placeholder for the 85th update in the user updates section. Prepares the page for displaying details of the upcoming site changes.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Improve external links layout responsiveness</div>
+                            <div class="details">Sets wrapper width dynamically based on available space to better accommodate external links. Enhances the design's adaptability across different screen sizes.</div>
                         </li>
                         <li>
                             <div class="change">→ Fix conditional logic for external series links display</div>
@@ -103,8 +1098,88 @@
                     <h2>85° mise à jour : 26/07/2026 12:15</h2>
                     <ul>
                         <li>
-                            <div class="change">→ The changes included in Update 85 will be added soon</div>
-                            <div class="details"></div>
+                            <div class="change">→ Allow admins to view external series links</div>
+                            <div class="details">Enables external series links to be visible to admins in addition to developers. Enhances accessibility for key users to relevant series resources.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Reload page when the day changes</div>
+                            <div class="details">Automatically refreshes the page if opened across different days. Ensures content remains relevant and up-to-date without requiring manual interaction.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Update HighlightSeries to accept NavBar as a dependency</div>
+                            <div class="details">Simplifies the HighlightSeries initialization by passing NavBar as a dependency. Improves modularity and prepares the code for better scalability and reuse.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Add provider logos to episode statistics</div>
+                            <div class="details">Includes provider logos in episode statistics breakdowns for better visualization. Enhances the clarity and appeal of the episode count data by provider.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Update season order toggle for series pages</div>
+                            <div class="details">Enables the season order toggle functionality specifically for series pages. Improves user interaction by allowing seamless reordering of season lists directly on the series page.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Add vote average display to series details</div>
+                            <div class="details">Displays the average user rating for each series alongside the title. Enhances user experience by providing additional context on series popularity at a glance.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Add Discover TV settings option</div>
+                            <div class="details">Includes a new settings menu for Discover TV, allowing users to customize TV discovery lists and sorting preferences. Enhances user control over content exploration.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Add provider-based episode statistics</div>
+                            <div class="details">Displays episode counts by provider, including totals and monthly breakdowns. Enhances user insight into viewing habits with detailed provider-based statistics.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Add homepage link to series networks section</div>
+                            <div class="details">Adds a button linking to the homepage of the series, displayed within the networks section. Improves navigation by giving users quick access to the official series website.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Add theme toggler with persistent settings</div>
+                            <div class="details">Introduces a theme toggler for series, seasons, and episodes, allowing users to switch between dark, light, and auto modes. The chosen setting is saved per item for a personalized viewing experience.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Fix input IDs in schedule settings</div>
+                            <div class="details">Corrects mismatched input and label IDs in the schedule settings menu. Ensures proper form functionality and improves accessibility for users when adjusting schedule-related fields.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Improve hover effects in series overview sections</div>
+                            <div class="details">Adjusts hover animations to use more appropriate height and transition properties. Enhances visual consistency and ensures smoother interactions when browsing series details.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Add hover animations to movie posters</div>
+                            <div class="details">Enhances interactions by adding hover effects to movie posters, including scaling and border color changes. Improves visual feedback and creates a more engaging browsing experience.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Improve contact form user flow with referer tracking</div>
+                            <div class="details">Enables the contact form to remember the page the user came from and redirect back after submission. Provides a smoother user experience by returning users to their previous context where possible. Prevents open redirects by validating URL safety.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Add support for customizable SVG sizes</div>
+                            <div class="details">Introduces a CSS property to control SVG dimensions dynamically. Enhances flexibility and consistency in styling across different components.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Refine episode visibility logic in schedules</div>
+                            <div class="details">Adds conditional checks to ensure only relevant episodes are displayed in user schedules. Improves clarity by hiding episodes that have already been viewed.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Update labels in schedule settings menu</div>
+                            <div class="details">Corrects label identifiers in the schedule settings menu for improved clarity and consistency. Enhances user understanding when adjusting the number of days displayed before and after.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Update movie backdrop display logic</div>
+                            <div class="details">Improves how movie backdrops and posters are displayed based on their availability and screen aspect ratio. Enhances the visual presentation for a more dynamic and responsive user experience.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Add placeholder for upcoming update details</div>
+                            <div class="details">Introduces a placeholder section for the next site update, providing a visible area to inform users about pending changes and updates. Improves communication and prepares the layout for future content.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Update scroll behavior for better layout handling</div>
+                            <div class="details">Adjusts scrolling properties to improve layout consistency and prevent unintended overflow. Enhances the visual presentation and ensures smoother navigation within the interface.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Refine episode schedule design</div>
+                            <div class="details">Improves the visual grouping of episodes within user schedules. Ensures better alignment, consistent styling, and updated hover effects for a cleaner and more intuitive interface.</div>
                         </li>
                     </ul>
                 </div>
@@ -114,8 +1189,56 @@
                     <h2>84° mise à jour : 23/07/2026 12:45</h2>
                     <ul>
                         <li>
-                            <div class="change">→ The changes included in Update 84 will be added soon</div>
-                            <div class="details"></div>
+                            <div class="change">→ Support movie overview in translations forms</div>
+                            <div class="details">Allows movie overviews to appear alongside series overviews in the translations form. Enhances functionality by ensuring movies are handled correctly in these sections for improved consistency and usability.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Add movie backdrop improvements and rating display</div>
+                            <div class="details">Improves movie backdrop layout with enhanced aspect ratio and masking behavior. Adds a prominent movie rating display for better user engagement and a refined visual experience.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Enhance series schedule design</div>
+                            <div class="details">Refines visual elements of the series schedule, including episode alignment, badge styles, and updated icons. Improves the clarity and interactivity of the schedule, ensuring a more visually appealing and user-friendly experience.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Improve handling of 'Episodes of the Day' section</div>
+                            <div class="details">Fixes an issue where missing elements could cause errors and ensures proper initialization only when data is available. These changes improve app stability and user experience when interacting with the 'Episodes of the Day' feature.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Refine episode list positioning and responsiveness</div>
+                            <div class="details">Centers and adjusts the episode list for better alignment and dynamic resizing. These changes enhance the layout's adaptability, ensuring a more consistent and user-friendly experience across different devices.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Add additional search type for individual person</div>
+                            <div class="details">Introduces a new search type to handle individual person queries separately. This enhancement provides more specific results and improves the overall search accuracy for person-related data.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Add network matching to external series sources</div>
+                            <div class="details">Includes network data in external series source matching to improve accuracy and relevance. This enhancement ensures better alignment between series data and user expectations when external sources are displayed.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Refine provider logo styling</div>
+                            <div class="details">Simplifies the appearance of provider logos by adjusting borders and rounding. These updates improve the visual consistency and enhance the overall design.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Improve user episode block display and positioning</div>
+                            <div class="details">Enhances the layout and visibility of the user episode block by adjusting its styling and placement. These changes improve aesthetics and ensure a more intuitive experience for users interacting with episode details.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ YouTube logo</div>
+                            <div class="details">Add YouTube to external sources to retrieve series infos</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Add Update 83 placeholder to user updates</div>
+                            <div class="details">Introduces a placeholder for Update 83 in the user updates section, indicating that details will be added soon. This ensures users are aware of the upcoming changes while maintaining consistency in the update timeline.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Trim unnecessary whitespace in series display name</div>
+                            <div class="details">Improves the presentation of series names by removing leading and trailing whitespace, ensuring cleaner and more consistent display for users.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Adjust drawer positioning for improved layout</div>
+                            <div class="details">Refines the drawer's top spacing and maximum height to ensure better alignment and usability on various screen sizes. These updates enhance the overall layout consistency and visual balance for users.</div>
                         </li>
                     </ul>
                 </div>
@@ -125,8 +1248,156 @@
                     <h2>83° mise à jour : 19/07/2026 18:30</h2>
                     <ul>
                         <li>
-                            <div class="change">→ The changes included in Update 83 will be added soon</div>
-                            <div class="details"></div>
+                            <div class="change">→ Adjust episode styles for improved readability and layout consistency</div>
+                            <div class="details">Refines textarea font size for better legibility and adjusts element positioning for a more balanced design. These changes enhance the overall user experience by ensuring consistent and visually appealing layouts.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Improve episode provider resolution and refactor query handling</div>
+                            <div class="details">Optimizes how episode providers are resolved by refining query logic and merging redundant sections. Enhances performance and ensures consistent, accurate display of episode provider details for better user experience.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Make episode overview textarea auto-resizable</div>
+                            <div class="details">Improves the user experience by dynamically adjusting the textarea height based on content. Ensures smoother editing and eliminates the need for manual resizing.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Fix animation positioning for bouncing balls</div>
+                            <div class="details">Corrects the positioning logic of animated balls in the interface. Ensures smoother and more accurate motion behavior for an improved visual effect.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Update default series attributes and reorder for clarity</div>
+                            <div class="details">Adds missing attributes and reorders default series data for better organization. Ensures a more consistent initialization of series properties, improving maintainability and reducing potential errors.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Enable user to remove personal ratings and highlight current selection</div>
+                            <div class="details">Allows users to reset their personal rating to zero by clicking the current star. Highlights the selected rating for better feedback, ensuring a smoother and more interactive experience when rating people.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Adjust episode card layout and improve dynamic updates</div>
+                            <div class="details">Standardizes the episode card container and layout for better consistency across the series page. Ensures unused scripts are removed during updates and adjusts card dimensions for improved readability and visual design.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Center episode card on page load</div>
+                            <div class="details">Ensures the currently active episode card is visible within its container when the episode page loads. With smooth transitioning. Improves visibility and focus on the active episode for better user experience.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Add support for arte.tv watch links</div>
+                            <div class="details">Extends the list of recognized watch link providers to include arte.tv. Ensures users can seamlessly access and manage links from this platform.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Ensure correct broadcast schedule matching for episodes</div>
+                            <div class="details">Fixes an issue where the broadcast schedule wasn't accurately matched to episodes in specific seasons. Ensures data consistency and correct scheduling details for users.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Remove `.container` styles for simpler layout management</div>
+                            <div class="details">Simplifies CSS by removing unused `.container` styles and related media queries. Ensures consistent layout behavior across breakpoints without affecting the visible design.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Remove unused CSS class for preferred names</div>
+                            <div class="details">Simplifies the markup by removing an unused class from preferred name elements. Ensures cleaner code without affecting the visible behavior.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Ensure smooth transitions for episode links in today's section</div>
+                            <div class="details">Improves navigation by adding a smooth transition effect when clicking episode links in the 'Episodes Today' section. Enhances the user experience by preventing abrupt changes and maintaining interface consistency.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Add episode preview cards for seasons</div>
+                            <div class="details">Introduces visually engaging episode preview cards showing still images or placeholders. Enhances the user experience by making season episodes more informative and visually appealing.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Add quick navigation buttons for map and credits</div>
+                            <div class="details">Introduces floating buttons to navigate directly to the filming locations map and series credits sections. Enhances usability by providing faster access to key information with a smoother scrolling experience.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Load episode cards with still previews</div>
+                            <div class="details">Replaces loader animation with episode cards showing still images or placeholders. Enhances the experience by immediately displaying relevant content, giving users a more engaging and informative interface.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Add forced still images for episodes</div>
+                            <div class="details">Allows users to set custom still images for specific episodes, enhancing visual customization. Improves flexibility by displaying the chosen images when available, providing a tailored viewing experience.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Enhance episodes of the day with dynamic date and visibility toggle</div>
+                            <div class="details">Adds dynamic updates based on the current date and a visibility toggle for the episodes section. Improves usability by ensuring the displayed content is relevant and enables better interaction with the episodes interface.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Add "Weekly, three, then two" schedule option</div>
+                            <div class="details">Introduces a new scheduling option for better flexibility in episode releases. Enhances user experience by providing more variety in weekly viewing schedules.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Update schedule timezone selection behavior</div>
+                            <div class="details">Improves how timezone changes are handled by syncing selections across form elements. Ensures consistency when modifying timezone settings for a clearer and more intuitive user experience.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Handle short video links in parse logic</div>
+                            <div class="details">Allows direct handling of 11-character video links, improving support for non-URL video inputs. Ensures compatibility with various link formats for a smoother user experience.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Ensure error handling and improve UI feedback in people cards</div>
+                            <div class="details">Adds safeguards to prevent errors when elements are missing and adjusts transitions for smoother animations. Improves user experience by ensuring fallbacks and consistency when interacting with people card features.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ New Countdown: Fall</div>
+                            <div class="details">Visible in dev mode</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Adjust comment section layout</div>
+                            <div class="details">Centers text and balances wrapping in the comment section for improved readability. Ensures consistent alignment and layout across various screen sizes.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Fix image display placement in season comments</div>
+                            <div class="details">Corrects the placement of image displays within season comments to ensure they appear in the appropriate section. Enhances consistency and improves the overall layout for users interacting with comment images.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Refine episode card scrolling behavior</div>
+                            <div class="details">Improves the scrolling experience by centering the selected episode card within its container. Ensures a smoother and more intuitive navigation for users when interacting with episode lists.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Add localized timezone names to schedules</div>
+                            <div class="details">Adds support for displaying timezone names in multiple languages in the schedule dropdown menu. Improves accessibility and usability for users by adapting timezone names to their selected locale.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Update hover effects for episode cards</div>
+                            <div class="details">Enhances the visual design of episode card hover states with smoother transitions and improved shadows. Creates a more polished and interactive user experience.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Simplify conditional rendering for series backdrops</div>
+                            <div class="details">Streamlines the logic for displaying series backdrops and posters, ensuring cleaner and more maintainable templates without altering the visual output. Improves readability and consistency in the code structure.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Add timezone bookmarks to schedules</div>
+                            <div class="details">Introduces a dropdown menu for timezone bookmarks in series schedules, enabling users to quickly select their preferred timezones. Enhances convenience and usability for managing scheduling preferences.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Adjust season and series backdrops and hover effects</div>
+                            <div class="details">Refines the appearance and behavior of season and series backdrops with hover effects, enhancing visual consistency and interactivity. Includes updates to gradients, shadows, and animations for improved design aesthetics and usability.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Update keyword handling for series filtering</div>
+                            <div class="details">Expands keyword-based filtering to support multiple pages, allowing more comprehensive content retrieval for "Latest LGBT &amp; BL Series". Enhances visibility by showing the total number of series in the section header.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Add command to update series keywords</div>
+                            <div class="details">Allows batch updates of series keywords from an external source, improving data accuracy and ensuring series keyword information is up to date. Provides options for specific series or all series, enhancing flexibility and control in keyword management.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Add "Latest LGBT &amp; BL Series" section to home page</div>
+                            <div class="details">Introduces a new section showcasing LGBT and Boys' Love series on the home page. Improves content discovery by highlighting these genres in a dedicated area, enhancing visibility and user engagement.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Refine UI for episode of the day</div>
+                            <div class="details">Improves the visual consistency of interface elements by adjusting spacing and increasing border-radius across components. Enhances the design's overall aesthetic and usability while maintaining uniformity in styles.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Source images</div>
+                            <div class="details">GMM tv</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Use dynamic avatars for users</div>
+                            <div class="details">Replaces default and missing user avatars with dynamically generated images, improving personalization and user identification across the app. This enhances visual appeal and provides a unique representation for each user.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Add hoverable checkmark for watched episodes in "Episodes of the Day"</div>
+                            <div class="details">Enhances clarity by adding a hoverable checkmark icon on watched episodes, providing instant visual feedback. Refines interface styles with adjusted spacing, animations, and rounded elements, improving consistency and user experience.</div>
                         </li>
                     </ul>
                 </div>
@@ -136,8 +1407,84 @@
                     <h2>82° mise à jour : 02/07/2026 10:00</h2>
                     <ul>
                         <li>
-                            <div class="change">→ The changes included in Update 82 will be added soon</div>
-                            <div class="details"></div>
+                            <div class="change">→ Add placeholders for upcoming updates in user dashboard</div>
+                            <div class="details">Introduces placeholder sections for updates 81 and 82 with dates and titles. Improves transparency by informing users about upcoming changes while content details are being finalized.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Add provider logos and enhance hover effects in "Episodes of the Day"</div>
+                            <div class="details">Improves visual clarity by displaying provider logos on episode cards with smooth hover transitions. Refines the user interface with dynamic color adjustments and subtle animations, enhancing the overall interactivity and aesthetic appeal of the component.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Highlight watched episodes in "Episodes of the Day"</div>
+                            <div class="details">Adds a visual indicator for watched episodes, improving clarity and user experience in the episode list. Enhances interface consistency by adjusting styles to reflect episode state.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Mark episodes as watched and update card dynamically</div>
+                            <div class="details">Refactored code of functionality to mark episodes as watched directly on their cards. Enhances interactivity by dynamically updating the card state, including visual feedback and removing redundant elements after the action.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Enable tooltips for "Episodes of the Day" component</div>
+                            <div class="details">Improves interactivity by adding tooltip support to the toggler, providing additional context for users. Enhances usability and ensures better guidance when interacting with the sliding sidebar feature.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Add "Episodes of the Day" feature</div>
+                            <div class="details">Introduces a sliding sidebar displaying today's episodes with relevant details, including posters, air times, and links. Enhances user engagement with an interactive, visually appealing component.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Improve episode layout and styling</div>
+                            <div class="details">Enhances readability with formatted overviews and refined hover effects. Adjusts image scaling for better visual balance and interaction responsiveness.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Handle TMDB API errors with fallback page</div>
+                            <div class="details">Introduces a dedicated error page for TMDB-related errors, ensuring users are redirected when API issues occur. Improves user experience by providing clearer feedback and preventing application crashes in case of external service failures.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Add keyword display to movie details</div>
+                            <div class="details">Introduces a visual block for displaying movie keywords, improving content discovery. Enhances styling consistency with updated padding, borders, and layout adjustments for keyword and genre elements.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Add admin API integration for data.gouv.fr</div>
+                            <div class="details">Introduces an admin interface for fetching and managing data from data.gouv.fr. Enhances administrative capabilities by enabling data exploration and interaction directly within the platform.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Update preferred name display styles</div>
+                            <div class="details">Improves the visual appearance by refining styles and animations for preferred name elements. Ensures a more cohesive and polished presentation across series pages.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Ensure fallback still images are defined</div>
+                            <div class="details">Improves reliability by checking if fallback still images are properly defined before use. Prevents potential rendering issues when fallback data is unavailable, enhancing robustness and display consistency.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Adjust backdrop styling for dialogs</div>
+                            <div class="details">Improves visual consistency with smoother transitions and reduced backdrop blur intensity. Enhances the overall user experience by creating a more refined and polished appearance for modal dialogs.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Account for language-region variations in episode data</div>
+                            <div class="details">Improves handling of language and region combinations for more accurate episode information retrieval. Ensures fallback to 'en-US' for missing image data, providing better compatibility and user experience.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Add TMDB season edit link for reference</div>
+                            <div class="details">Adds a comment with a link to the TMDB season edit page for easier access and reference. Simplifies navigation for managing season details directly on TMDB.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Add support for managing series videos</div>
+                            <div class="details">Enables adding and managing videos within series pages, with improved forms, dynamic UI updates, and YouTube link parsing. Enhances user experience for video integration and viewing.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Move preferred name display to dynamic container</div>
+                            <div class="details">Preferred names now display dynamically in a dedicated container, improving layout flexibility and consistency. This ensures a more adaptable structure for name presentation across various views.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Add relative date translations and improved date formatting logic</div>
+                            <div class="details">Introduces support for relative date translations across multiple languages and enhances date formatting for better readability. Improves localization and provides more user-friendly date displays in the app.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Mapbox GL JS v3.14.0 → v3.25.0</div>
+                            <div class="details">Also removed mapbox-gl search box</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Link episodes in user schedules to episode details</div>
+                            <div class="details">Allows users to click on episodes in their schedule to view detailed information. Improves navigation and provides easier access to episode-specific pages.</div>
                         </li>
                     </ul>
                 </div>
@@ -147,8 +1494,76 @@
                     <h2>81° mise à jour : 23/06/2026 08:30</h2>
                     <ul>
                         <li>
-                            <div class="change">→ The changes included in Update 81 will be added soon</div>
-                            <div class="details"></div>
+                            <div class="change">→ Fix missing episode overview fallback handling</div>
+                            <div class="details">Ensures episodes without an overview are handled appropriately. Improves consistency by addressing cases where localized overviews or fallback naming conventions were previously ignored.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Adjust poster container width for improved layout</div>
+                            <div class="details">Enhances poster section layout by setting a consistent width. Ensures better alignment and visual balance across different screen sizes.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Update watched date formatting for clarity</div>
+                            <div class="details">Improves readability of watched dates by switching to a more concise and user-friendly format. Enhances the display of viewing history for better clarity and accessibility.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Improve progress display and calculation for user-added items</div>
+                            <div class="details">Refines progress presentation with better handling of TV and movie differences. Ensures clearer and more dynamic progress feedback for user-added media, enhancing clarity and user experience.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Refine average vote display logic</div>
+                            <div class="details">Improves clarity of average vote calculations and ensures consistent formatting. Fixes edge cases related to values exceeding or falling below expected thresholds for better user interpretation.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Update deployment instructions for local server setup</div>
+                            <div class="details">Clarifies steps for launching a local server accessible on the network. Improves guidance for deployment with detailed commands and notes for environment configuration.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Update styles and backdrop handling for series pages</div>
+                            <div class="details">Improves visual consistency with adjusted backdrop gradients and background colors. Refines responsive behavior of element layouts and transitions for a better user experience.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Update sorting and date logic for user series</div>
+                            <div class="details">Improves sorting flexibility by refining the handling of episode air dates and final air dates. Enhances user experience with more accurate and dynamic date calculations in the series list.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Adjust aspect ratios for series headers and images</div>
+                            <div class="details">Improves responsiveness by replacing orientation-based rules with aspect ratio-based ones. Ensures consistent display of series headers and images across various screen sizes and devices.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Improve layout and styling for network logos</div>
+                            <div class="details">Adds padding, background, and rounded corners to network logos for a cleaner presentation. Enhances visual distinction and ensures better responsiveness across different screen sizes.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Improve network logo hover details</div>
+                            <div class="details">Adds enhanced hover details for network logos on the episode page, including headquarters and country information. Provides clearer context and a more informative user experience.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Add network logos and details to episodes</div>
+                            <div class="details">Displays network logos with headquarters and country details on the episode page. Enhances content presentation and provides users with additional context about the networks.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Enhance episode card styles and customization options</div>
+                            <div class="details">Improves the appearance of episode vote selectors and provider logos for better visual consistency. Adds dynamic background and text color support to match user preferences.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Update date handling for improved flexibility</div>
+                            <div class="details">Replaces fixed timezones with dynamic handling to better accommodate various configurations. Ensures more consistent and accurate date formatting across the app.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Refine episode actions and styling adjustments</div>
+                            <div class="details">Improve handling of watch actions for better user experience and hide unused elements conditionally. Update styling of interactive elements for a more consistent and modern appearance across the series page.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Handle missing stills for episodes</div>
+                            <div class="details">Displays an empty stills list when no stills are available for an episode. Prevents errors and ensures consistent behavior across the series page.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Adjust series layout for improved scrolling and readability</div>
+                            <div class="details">Aligns content within a flexible column layout to better accommodate limited screen space. Ensures smoother scrolling and enhances readability for longer series lists.</div>
+                        </li>
+                        <li>
+                            <div class="change">→ Refine map layout and height calculations</div>
+                            <div class="details">Improves the visual consistency of map containers by adjusting height calculations. Enhances responsiveness and ensures better alignment across various screen sizes for a more seamless user experience.</div>
                         </li>
                     </ul>
                 </div>
