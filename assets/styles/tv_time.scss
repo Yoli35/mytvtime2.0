@@ -620,7 +620,7 @@ body.screen-saver {
                                         }
 
                                         .new {
-                                            color: hsl(from var(--yellow) h s 75%);
+                                            color: var(--yellow);
                                         }
                                     }
 
