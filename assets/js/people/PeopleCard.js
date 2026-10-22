@@ -125,6 +125,7 @@ export class PeopleCard {
     }
 
     closeCard() {
+        const body = document.querySelector('body');
         const peopleBigCard = document.querySelector('.people-big-card');
         const peopleCard = this.currentPeopleCard;
         const photoDiv = peopleCard.querySelector('.photo');
