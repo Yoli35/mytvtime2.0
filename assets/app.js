@@ -2,6 +2,7 @@ import './bootstrap.js';
 
 import {AdminApi} from "AdminApi";
 import {AdminKeyword} from "AdminKeyword";
+import {AdminMessages} from "AdminMessages";
 import {AdminMovieEdit} from "AdminMovieEdit";
 import {AdminPointsOfInterest} from "AdminPointsOfInterest";
 import {AdminSeriesUpdates} from "AdminSeriesUpdates";
@@ -65,6 +66,10 @@ window.addEventListener("DOMContentLoaded", () => {
         }
         if (admin.querySelector(".admin__keywords")) {
             new AdminKeyword(flashMessage);
+            return;
+        }
+        if (admin.querySelector(".admin__messages")) {
+            new AdminMessages();
             return;
         }
         if (admin.querySelector(".admin__movie__edit") || admin.querySelector(".admin__series__edit")) {

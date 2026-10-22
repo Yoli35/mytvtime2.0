@@ -1,27 +1,81 @@
-<h2>{{ 'Messages'|trans }} ({{ messages|length }})</h2>
+{% set unreadCount = messages|filter(m => not m.messageRead)|length %}
+<h2>{{ 'Messages'|trans }} ({{ messages|length }}{% if unreadCount %} - {{ 'Unread'|trans }} : {{ unreadCount }}{% endif %})</h2>
 <div class="admin__messages">
 
-    <div class="message">
+    {% if messages|length %}
+        <div class="admin__messages__toolbar">
+            <form method="post" action="{{ path('admin_messages_action') }}" id="messages-bulk-form" class="admin__messages__bulk">
+                <input type="hidden" name="_token" value="{{ csrf_token('admin_messages_action') }}">
+                <span class="admin__messages__selection" data-label="{{ 'selected'|trans }}">0 {{ 'selected'|trans }}</span>
+                <button type="submit" name="action" value="read" class="bulk-action" disabled>
+                    {{ ux_icon('mdi:email-open-outline') }} {{ 'Mark as read'|trans }}
+                </button>
+                <button type="submit" name="action" value="unread" class="bulk-action" disabled>
+                    {{ ux_icon('mdi:email-mark-as-unread') }} {{ 'Mark as unread'|trans }}
+                </button>
+                <button type="submit" name="action" value="delete" class="bulk-action delete" disabled data-confirm="{{ 'Are you sure you want to delete the selected messages?'|trans }}">
+                    {{ ux_icon('mdi:delete-outline') }} {{ 'Delete'|trans }}
+                </button>
+            </form>
+            <form method="post" action="{{ path('admin_messages_action') }}">
+                <input type="hidden" name="_token" value="{{ csrf_token('admin_messages_action') }}">
+                <button type="submit" name="action" value="read_all"{% if unreadCount == 0 %} disabled{% endif %}>
+                    {{ ux_icon('mdi:email-multiple-outline') }} {{ 'Mark all as read'|trans }}
+                </button>
+            </form>
+        </div>
+    {% endif %}
+
+    <div class="message header">
+        <div class="message__select">
+            {% if messages|length %}
+                <input type="checkbox" class="select-all" data-title="{{ 'Select all'|trans }}">
+            {% endif %}
+        </div>
         <div class="message__read"></div>
-        <div class="message__id">#</div>
-        <div class="message__name">{{ 'Name'|trans }}</div>
-        <div class="message__email">{{ 'Email'|trans }}</div>
-        <div class="message__subject">{{ 'Subject'|trans }}</div>
-        <div class="message__date">{{ 'Date'|trans }}</div>
+        <div class="message__link">
+            <div class="message__id">#</div>
+            <div class="message__name">{{ 'Name'|trans }}</div>
+            <div class="message__email">{{ 'Email'|trans }}</div>
+            <div class="message__subject">{{ 'Subject'|trans }}</div>
+            <div class="message__date">{{ 'Date'|trans }}</div>
+        </div>
+        <div class="message__actions"></div>
     </div>
     {% for m in messages %}
-        <a class="message" href="{{ path('admin_message_detail', {'id': m.id}) }}">
+        <div class="message{% if not m.messageRead %} unread{% endif %}">
+            <div class="message__select">
+                <input type="checkbox" name="ids[]" value="{{ m.id }}" form="messages-bulk-form" class="select-one">
+            </div>
             <div class="message__read">
-                {% if m.messageRead == 0 %}
+                {% if not m.messageRead %}
                     <div class="read-indicator"></div>
                 {% endif %}
             </div>
-            <div class="message__id">{{ m.id }}</div>
-            <div class="message__name">{{ m.name }}</div>
-            <div class="message__email">{{ m.email }}</div>
-            <div class="message__subject">{{ m.subject }}</div>
-            <div class="message__date">{{ m.date|format_datetime('short', 'short') }}</div>
-        </a>
+            <a class="message__link" href="{{ path('admin_message_detail', {'id': m.id}) }}">
+                <div class="message__id">{{ m.id }}</div>
+                <div class="message__name">{{ m.name }}</div>
+                <div class="message__email">{{ m.email }}</div>
+                <div class="message__subject">{{ m.subject }}</div>
+                <div class="message__date">{{ m.date|format_datetime('short', 'short') }}</div>
+            </a>
+            <form method="post" action="{{ path('admin_messages_action') }}" class="message__actions">
+                <input type="hidden" name="_token" value="{{ csrf_token('admin_messages_action') }}">
+                <input type="hidden" name="ids[]" value="{{ m.id }}">
+                {% if m.messageRead %}
+                    <button type="submit" name="action" value="unread" data-title="{{ 'Mark as unread'|trans }}">
+                        {{ ux_icon('mdi:email-mark-as-unread') }}
+                    </button>
+                {% else %}
+                    <button type="submit" name="action" value="read" data-title="{{ 'Mark as read'|trans }}">
+                        {{ ux_icon('mdi:email-open-outline') }}
+                    </button>
+                {% endif %}
+                <button type="submit" name="action" value="delete" class="delete" data-title="{{ 'Delete message'|trans }}" data-confirm="{{ 'Are you sure you want to delete this message?'|trans }}">
+                    {{ ux_icon('mdi:delete-outline') }}
+                </button>
+            </form>
+        </div>
     {% else %}
         <div class="no-messages">
             {{ 'No messages'|trans }}

@@ -1758,6 +1758,15 @@ Message details: Détails du message
 Messages: Messages
 Minutes passed since...: Minutes passées depuis...
 No messages: Aucun message
+'Are you sure you want to delete the selected messages?': 'Êtes-vous sûr de vouloir supprimer les messages sélectionnés ?'
+Mark all as read: Tout marquer comme lu
+Mark as read: Marquer comme lu
+Mark as unread: Marquer comme non lu
+Messages deleted: Messages supprimés
+Messages updated: Messages mis à jour
+Select all: Tout sélectionner
+Unread: Non lus
+selected: sélectionné(s)
 Only one translation left!: Plus qu'une traduction restante !
 Points of interrest: Points d'intérêt
 Results: Résultats

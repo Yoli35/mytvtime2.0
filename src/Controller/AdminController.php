@@ -161,6 +161,39 @@ class AdminController extends AbstractController
         return $this->redirectToRoute('admin_messages');
     }
 
+    #[Route('/messages/action', name: 'messages_action', methods: ['POST'])]
+    public function messagesAction(Request $request): Response
+    {
+        if (!$this->isCsrfTokenValid('admin_messages_action', (string)$request->request->get('_token'))) {
+            throw $this->createAccessDeniedException();
+        }
+
+        $action = (string)$request->request->get('action');
+        $ids = array_map('intval', $request->request->all('ids'));
+
+        $messages = match ($action) {
+            'read_all' => $this->contactMessageRepository->findBy(['messageRead' => false]),
+            'read', 'unread', 'delete' => $ids ? $this->contactMessageRepository->findBy(['id' => $ids]) : [],
+            default => throw $this->createNotFoundException(),
+        };
+
+        foreach ($messages as $message) {
+            if ($action === 'delete') {
+                $this->contactMessageRepository->remove($message);
+            } else {
+                $message->setMessageRead($action !== 'unread');
+                $this->contactMessageRepository->save($message);
+            }
+        }
+        $this->contactMessageRepository->flush();
+
+        if (count($messages)) {
+            $this->addFlash('success', $this->translator->trans($action === 'delete' ? 'Messages deleted' : 'Messages updated') . ' (' . count($messages) . ')');
+        }
+
+        return $this->redirectToRoute('admin_messages');
+    }
+
     #[Route('/message/block/name/{id}', name: 'message_block_name', requirements: ['id' => Requirement::DIGITS], methods: ['POST'])]
     public function messageBlockName(ContactMessage $message, Request $request): Response
     {

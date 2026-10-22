@@ -1753,6 +1753,15 @@ Duration: 기간
 Messages: 메시지
 'Minutes passed since...': '몇 분이 지났습니다...'
 'No messages': '메시지 없음'
+'Are you sure you want to delete the selected messages?': '선택한 메시지를 삭제하시겠습니까?'
+'Mark all as read': '모두 읽음으로 표시'
+'Mark as read': '읽음으로 표시'
+'Mark as unread': '읽지 않음으로 표시'
+'Messages deleted': '메시지가 삭제되었습니다'
+'Messages updated': '메시지가 업데이트되었습니다'
+'Select all': '모두 선택'
+'Unread': '읽지 않음'
+'selected': '개 선택됨'
 'Only one translation left!': '번역이 하나만 남았습니다!'
 'Points of interrest': '관심 지점'
 Results: 결과

@@ -1753,6 +1753,15 @@ Duration: Duration
 Messages: Messages
 'Minutes passed since...': 'Minutes passed since...'
 'No messages': 'No messages'
+'Are you sure you want to delete the selected messages?': 'Are you sure you want to delete the selected messages?'
+'Mark all as read': 'Mark all as read'
+'Mark as read': 'Mark as read'
+'Mark as unread': 'Mark as unread'
+'Messages deleted': 'Messages deleted'
+'Messages updated': 'Messages updated'
+'Select all': 'Select all'
+'Unread': 'Unread'
+'selected': 'selected'
 'Only one translation left!': 'Only one translation left!'
 'Points of interrest': 'Points of interest'
 Results: Results

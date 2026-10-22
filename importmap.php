@@ -27,6 +27,7 @@ return [
     'AddCast' => ['path' => './assets/js/series/AddCast.js'],
     'AdminApi' => ['path' => './assets/js/admin/AdminApi.js'],
     'AdminKeyword' => ['path' => './assets/js/admin/AdminKeyword.js'],
+    'AdminMessages' => ['path' => './assets/js/admin/AdminMessages.js'],
     'AdminMovieEdit' => ['path' => './assets/js/admin/AdminMovieEdit.js'],
     'AdminPointsOfInterest' => ['path' => './assets/js/admin/AdminPointsOfInterest.js'],
     'AdminSeriesUpdates' => ['path' => './assets/js/admin/AdminSeriesUpdates.js'],

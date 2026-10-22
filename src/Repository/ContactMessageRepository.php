@@ -37,6 +37,11 @@ class ContactMessageRepository extends ServiceEntityRepository
         }
     }
 
+    public function flush(): void
+    {
+        $this->entityManager->flush();
+    }
+
     public function getPreviousMessage(?int $getId): array|false
     {
         $params = ['getId' => $getId];
