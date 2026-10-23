@@ -164,7 +164,7 @@ readonly class ApiSeasonComments
 
         $images = [];
         foreach ($files as $file) {
-            $image = $this->imageService->fileToWebp($file, $title, $location, $n, '/public/images/comments/', $seasonNumber, $episodeNumber);
+            $image = $this->imageService->fileToWebp($file, $title, $location, $n, '/images/comments/', $seasonNumber, $episodeNumber);
             if ($image) {
                 $episodeCommentImage = new EpisodeCommentImage($commentEntity, $image, $this->now($user));
                 $this->episodeCommentImageRepository->save($episodeCommentImage, true);

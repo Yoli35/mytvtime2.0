@@ -1280,7 +1280,7 @@ class AdminController extends AbstractController
          * Images ajoutées depuis des fichiers locaux (type : UploadedFile)           *
          ******************************************************************************/
         foreach ($imageFiles as $key => $file) {
-            $image = $this->imageService->fileToWebp($file, $name, $city, $n, '/public/images/poi/');
+            $image = $this->imageService->fileToWebp($file, $name, $city, $n, '/images/poi/');
             if ($image) {
                 $poiImage = new PointOfInterestImage($poi, $image, "", $now);
                 $this->pointOfInterestImageRepository->save($poiImage, true);

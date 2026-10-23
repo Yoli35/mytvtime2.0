@@ -2,34 +2,40 @@
 
 namespace App\Service;
 
+use Closure;
 use DateTimeImmutable;
 use Exception;
 use GdImage;
 use Psr\Log\LoggerInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Bundle\FrameworkBundle\Controller\ControllerHelper;
+use Symfony\Component\DependencyInjection\Attribute\AutowireMethodOf;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\String\Slugger\AsciiSlugger;
 use Throwable;
 
-class ImageService extends AbstractController
+class ImageService
 {
+    private string $projectDir;
+    private string $publicDir;
 
     public function __construct(
+        #[AutowireMethodOf(ControllerHelper::class)]
+        private readonly Closure         $getParameter,
         private readonly LoggerInterface $logger,
         private readonly DateService     $dateService,
     )
     {
+        $this->projectDir = ($this->getParameter)('kernel.project_dir');
+        $this->publicDir = $this->projectDir . '/public';
     }
 
-    public function blobToWebp2(string $blob, string $title, string $location, int $n, string $path = '/public/images/map/'): ?string
+    public function blobToWebp2(string $blob, string $title, string $location, int $n, string $path = '/images/map/'): ?string
     {
-        $kernelProjectDir = $this->getParameter('kernel.project_dir');
         try {
             // Define constants for paths
-            $imageMapPath = $kernelProjectDir . '/public/images/map/';
-            $imageTempPath = $kernelProjectDir . '/public/images/temp/';
-//            $blob = $this->blobs[$name];
+            $imageMapPath = $this->publicDir . '/images/map/';
+            $imageTempPath = $this->publicDir . '/images/temp/';
 
             // Create necessary directories
             if (!file_exists($imageMapPath)) {
@@ -75,19 +81,18 @@ class ImageService extends AbstractController
         }
     }
 
-    public function urlToWebp(string $url, string $title, string $location, int $n, string $path = '/public/images/map/'): ?string
+    public function urlToWebp(string $url, string $title, string $location, int $n, string $path = '/images/map/'): ?string
     {
-        $kernelProjectDir = $this->getParameter('kernel.project_dir');
         $slugger = new AsciiSlugger();
-        $imageMapPath = $kernelProjectDir . $path;
-        $imageTempPath = $kernelProjectDir . '/public/images/temp/';
+        $imageMapPath = $this->projectDir . $path;
+        $imageTempPath = $this->publicDir . '/images/temp/';
 
         $extension = pathinfo($url, PATHINFO_EXTENSION);
         $basename = $slugger->slug($title)->lower()->toString() . '-' . $slugger->slug($location)->lower()->toString() . '-' . $n;
         $tempName = $imageTempPath . $basename . '.' . $extension;
         $destination = $imageMapPath . $basename . '.webp';
 
-        $copied = $this->saveImageFromUrl($url, $tempName, true);
+        $copied = $this->saveImageFromUrl($url, $tempName);
         if ($copied) {
             $webp = $this->webpImage($title . (str_contains('poi', $path) ? ' - ' . $location : ''), $tempName, $destination);
             if ($webp) {
@@ -103,10 +108,9 @@ class ImageService extends AbstractController
 
     public function fileToWebp(UploadedFile $file, string $title, string $location, int $n, string $path, ?int $seasonNumber = null, ?int $episodeNumber = null): ?string
     {
-        $kernelProjectDir = $this->getParameter('kernel.project_dir');
         $slugger = new AsciiSlugger();
-        $imageMapPath = $kernelProjectDir . $path;
-        $imageTempPath = $kernelProjectDir . '/public/images/temp/';
+        $imageMapPath = $this->publicDir . $path;
+        $imageTempPath = $this->publicDir . '/images/temp/';
 
         $filename = $file->getClientOriginalName();
         $isGoogleMapsImage = str_contains($filename, 'maps');
@@ -141,23 +145,21 @@ class ImageService extends AbstractController
 
     public function seasonPosterToWebp(string $poster_path, string $base_url): ?string
     {
-        $kernelProjectDir = $this->getParameter('kernel.project_dir');
         $source = $base_url . $poster_path;
 
         $destination = pathinfo($poster_path, PATHINFO_FILENAME) . '.webp';
-        $tempFile = $kernelProjectDir . '/public/images/temp' . $poster_path;
-        $imagePath = $kernelProjectDir . '/public/series/season_posters/';
+        $tempFile = $this->publicDir . '/images/temp' . $poster_path;
+        $imagePath = $this->publicDir . '/series/season_posters/';
 
-        $this->saveImageFromUrl($source, $tempFile, true);
+        $this->saveImageFromUrl($source, $tempFile);
         $webp = $this->webpImage("", $tempFile, $imagePath . $destination, 100, 780, 1170);
 
         return $webp ? $destination : null;
     }
 
-    public function photoExists(UploadedFile $file, int $userId, string $path = '/public/albums/'): ?string
+    public function photoExists(UploadedFile $file, int $userId, string $path = '/albums/'): ?string
     {
-        $kernelProjectDir = $this->getParameter('kernel.project_dir');
-        $photoPath = $kernelProjectDir . $path . $userId . '/';
+        $photoPath = $this->publicDir . $path . $userId . '/';
         $filename = $file->getClientOriginalName();
         $basename = pathinfo($filename, PATHINFO_FILENAME);
         $originalPath = $photoPath . 'original/';
@@ -176,12 +178,10 @@ class ImageService extends AbstractController
         return @$this->exifInfos($file->getPathname());
     }
 
-    public function photoToWebp(UploadedFile $file, int $userId, string $path = '/public/albums/'): array|null
+    public function photoToWebp(UploadedFile $file, int $userId, string $path = '/albums/'): array|null
     {
-        $kernelProjectDir = $this->getParameter('kernel.project_dir');
-
-        $photoPath = $kernelProjectDir . $path . $userId . '/';
-        $imageTempPath = $kernelProjectDir . '/public/images/temp/';
+        $photoPath = $this->publicDir . $path . $userId . '/';
+        $imageTempPath = $this->publicDir . '/images/temp/';
 
         $filename = $file->getClientOriginalName();
         $extension = $file->guessExtension();
@@ -300,10 +300,9 @@ class ImageService extends AbstractController
         if (!$imagePath) {
             return null;
         }
-        $kernelProjectDir = $this->getParameter('kernel.project_dir');
-        $fullPath = $kernelProjectDir . "/public/$mediaPath/posters" . $imagePath;
+        $fullPath = $this->publicDir . "/$mediaPath/posters" . $imagePath;
         $imageDestPath = str_replace(['.jpg', '.jpeg', '.png'], '.webp', $imagePath);
-        $fullDestPath = $kernelProjectDir . "/public/$mediaPath/posters_blurred" . $imageDestPath;
+        $fullDestPath = $this->publicDir . "/$mediaPath/posters_blurred" . $imageDestPath;
 
         // if the blurred image already exists, do nothing
         if (file_exists($fullDestPath)) {
@@ -405,10 +404,9 @@ class ImageService extends AbstractController
 
     public function userFiles2Webp(UploadedFile $file, string $type, string $username): ?string
     {
-        $kernelProjectDir = $this->getParameter('kernel.project_dir');
         $slugger = new AsciiSlugger();
-        $imagePath = $kernelProjectDir . '/public/images/users/' . $type . '/';
-        $imageTempPath = $kernelProjectDir . '/public/images/temp/';
+        $imagePath = $this->publicDir . '/images/users/' . $type . '/';
+        $imageTempPath = $this->publicDir . '/images/temp/';
 
         $extension = $file->guessExtension();
         $basename = $slugger->slug($username)->lower()->toString() . '-' . new DateTimeImmutable()->format('Y-m-d-H-i-s');
@@ -555,14 +553,13 @@ class ImageService extends AbstractController
 
     private function composeImage(GdImage $gdImage, string $title, string $destPath, int $quality): bool
     {
-        $kernelProjectDir = $this->getProjectDir();
-        $this->markImage($destPath, $kernelProjectDir, $gdImage);
-        $this->addTitle($title, $kernelProjectDir, $gdImage);
+        $this->markImage($destPath, $gdImage);
+        $this->addTitle($title, $gdImage);
 
         return imagewebp($gdImage, $destPath, $quality);
     }
 
-    private function markImage(string $destPath, string $kernelProjectDir, GdImage $newImage): void
+    private function markImage(string $destPath, GdImage $newImage): void
     {
         $labels = [
             'maps' => 'Google Maps',
@@ -580,7 +577,7 @@ class ImageService extends AbstractController
 
         $width = imagesx($newImage);
         $height = imagesy($newImage);
-        $font = $kernelProjectDir . '/public/fonts/google-sans/ProductSans-Regular.ttf';
+        $font = $this->publicDir . '/fonts/google-sans/ProductSans-Regular.ttf';
         $fontSize = $this->fontSizeFromImageWidth($width);
         $radius = 8;
         $textColor = imagecolorallocate($newImage, 240, 240, 240);
@@ -595,14 +592,14 @@ class ImageService extends AbstractController
         imagettftext($newImage, $fontSize, 0, $width - $textWidth - 40, $height - 30, $textColor, $font, $text);
     }
 
-    private function addTitle(string $title, string $kernelProjectDir, GdImage $newImage): void
+    private function addTitle(string $title, GdImage $newImage): void
     {
         if ($title === "") {
             return; // No title to add
         }
         $width = imagesx($newImage);
         $height = imagesy($newImage);
-        $font = $kernelProjectDir . '/public/fonts/google-sans/ProductSans-Regular.ttf';
+        $font = $this->publicDir . '/fonts/google-sans/ProductSans-Regular.ttf';
         $fontSize = $this->fontSizeFromImageWidth($width);
         $radius = 8;
         $textColor = imagecolorallocate($newImage, 240, 240, 240); // #f0f0f0
@@ -695,29 +692,35 @@ class ImageService extends AbstractController
         imagefilledellipse($im, $x2 - $radius, $y2 - $radius, $radius * 2, $radius * 2, $color);
     }
 
+    public function saveImages(array $arr, string $type, string $imageUrl, string $localPath = "/series/"): bool
+    {
+        foreach ($arr as $item) {
+            $this->saveImage($type, '/' . basename($item['poster_path']), $imageUrl, $localPath);
+        }
+        return true;
+    }
+
     public function saveImage($type, $imagePath, $imageUrl, $localPath = "/series/"): bool
     {
         if (!$imagePath) return false;
-        $kernelProjectDir = $this->getParameter('kernel.project_dir');
 
         return $this->saveImageFromUrl(
             $imageUrl . $imagePath,
-            $kernelProjectDir . "/public" . $localPath . $type . $imagePath
+            $this->publicDir . $localPath . $type . $imagePath
         );
     }
 
     public function saveImage2(string $src, string $dest): bool
     {
         if (!$dest) return false;
-        $kernelProjectDir = $this->getParameter('kernel.project_dir');
 
         return $this->saveImageFromUrl(
             $src,
-            $kernelProjectDir . "/public" . $dest
+            $this->publicDir . $dest
         );
     }
 
-    public function saveImageFromUrl(string $imageUrl, string $localeFile, bool $dontValidate = false): bool
+    public function saveImageFromUrl(string $imageUrl, string $localeFile): bool
     {
         if (file_exists($localeFile) && filesize($localeFile) == 0) {
             unlink($localeFile);
@@ -727,31 +730,30 @@ class ImageService extends AbstractController
             return true;
         }
 
-        if ($dontValidate || filter_var($imageUrl, FILTER_VALIDATE_URL)) {
-            try {
-                $imageContent = file_get_contents($imageUrl);
-
-                $file = fopen($localeFile, 'wb');
-                fwrite($file, $imageContent);
-                fclose($file);
-
-                return true;
-            } catch (Exception) {
+        try {
+            $imageContent = file_get_contents($imageUrl);
+            if ($imageContent === false || $imageContent === '') {
                 return false;
             }
-        } else {
+
+            $file = fopen($localeFile, 'wb');
+            fwrite($file, $imageContent);
+            fclose($file);
+
+            return true;
+        } catch (Exception) {
             return false;
         }
     }
 
     public function getProjectDir(): string
     {
-        return $this->getParameter('kernel.project_dir');
+        return ($this->getParameter)('kernel.project_dir');
     }
 
     public function getRandomBlurredPosters(): string
     {
-        $blurredPostersDir = $this->getParameter('kernel.project_dir') . "/public/series/posters_blurred";
+        $blurredPostersDir = $this->publicDir . "/series/posters_blurred";
 
         // Retourne le nom d'un fichier aléatoire dans le dossier $blurredPostersDir
         $files = array_diff(scandir($blurredPostersDir), ['.', '..']);

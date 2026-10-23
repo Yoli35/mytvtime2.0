@@ -150,7 +150,7 @@ readonly class ApiLocation
          * Images ajoutées depuis des fichiers locaux (type : UploadedFile)           *
          ******************************************************************************/
         foreach ($imageFiles as $key => $file) {
-            $image = $this->imageService->fileToWebp($file, $title, $location, $n, '/public/images/map/', $seasonNumber, $episodeNumber);
+            $image = $this->imageService->fileToWebp($file, $title, $location, $n, '/images/map/', $seasonNumber, $episodeNumber);
             if ($image) {
                 $filmingLocationImage = new FilmingLocationImage($filmingLocation, $image, $now);
                 $this->filmingLocationImageRepository->save($filmingLocationImage, true);

@@ -6,6 +6,7 @@ use App\Entity\User;
 use App\Repository\MovieRepository;
 use App\Repository\SeriesRepository;
 use App\Service\ImageConfiguration;
+use App\Service\ImageService;
 use App\Service\TvTimeService;
 use Closure;
 use Symfony\Bundle\FrameworkBundle\Controller\ControllerHelper;
@@ -23,6 +24,7 @@ readonly class ApiTvTime
         #[AutowireMethodOf(ControllerHelper::class)]
         private Closure            $renderView,
         private ImageConfiguration $imageConfiguration,
+        private ImageService       $imageService,
         private MovieRepository    $movieRepository,
         private SeriesRepository   $seriesRepository,
         private TvTimeService      $tvTimeService,
@@ -204,10 +206,15 @@ readonly class ApiTvTime
     public function posters(#[CurrentUser] User $user): JsonResponse
     {
         $timestamp = time() % 2;
-        $arr = $timestamp ?
-            $this->seriesRepository->getSeriesPosters($user->getId())
-            :
-            $this->movieRepository->getMoviesPosters($user->getId());
+        $posterUrl = $this->imageConfiguration->getUrl('poster_sizes', 5);
+
+        if ($timestamp) {
+            $arr = $this->seriesRepository->getSeriesPosters($user->getId());
+            $this->imageService->saveImages($arr, "posters", $posterUrl);
+        } else {
+            $arr = $this->movieRepository->getMoviesPosters($user->getId());
+            $this->imageService->saveImages($arr, "posters", $posterUrl, '/movies/');
+        }
 
         return new JsonResponse(['posters' => $arr]);
     }
