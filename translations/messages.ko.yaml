@@ -69,6 +69,10 @@ Limit: 제한
 'Please log in to see more options': '더 많은 옵션을 보려면 로그인하세요.'
 'Search options': '검색 옵션'
 'What next to watch': '다음에 볼 내용'
+'Event countdown': '이벤트 카운트다운'
+'Event label': '이벤트 이름'
+'Event date and time': '이벤트 날짜 및 시간'
+'Display the countdown': '카운트다운 표시'
 
 # Home
 'A series by name/year': '이름/년도로 시리즈'

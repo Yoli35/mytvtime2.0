@@ -116,6 +116,7 @@ export class Menu {
         this.scheduleMenuSettings = this.userMenu.querySelector(".schedule-range-settings");
         this.discoverTvSettings = this.userMenu.querySelector(".discover-tv-settings");
         this.whatNext = this.userMenu.querySelector(".what-next-settings");
+        this.eventClockSettings = this.userMenu.querySelector(".event-clock-settings");
         this.menuPreview = this.userMenu.querySelector(".menu-preview-settings");
         this.menuThemes = this.userMenu.querySelectorAll(".menu-theme");
         this.clientHeight = window.innerHeight;
@@ -515,6 +516,7 @@ export class Menu {
             this.scheduleMenuSettings.addEventListener("click", this.setScheduleMenuSettings);
             this.discoverTvSettings.addEventListener("click", this.setDiscoverTvSettings);
             this.whatNext.addEventListener("click", this.setWhatNext);
+            this.eventClockSettings.addEventListener("click", this.setEventClockSettings);
             this.menuPreview.addEventListener("click", this.togglePreview);
             this.initPreview();
         }
@@ -1214,6 +1216,68 @@ export class Menu {
             .then(response => response.json())
             .then(data => {
                 console.log(data);
+            })
+            .catch((error) => {
+                console.log(error);
+            });
+    }
+
+    setEventClockSettings() {
+        document.documentElement.click();
+        fetch("/api/settings/event-clock/form")
+            .then(response => response.json())
+            .then(data => {
+                if (!data.read) return;
+                // Le formulaire n'existe dans le DOM que le temps de l'édition
+                document.body.insertAdjacentHTML("beforeend", data.html);
+                /** @type HTMLDialogElement */
+                const eventClockSettingsDialog = document.querySelector("#eventClockSettingsDialog");
+                const form = eventClockSettingsDialog.querySelector("form");
+                const cancelButton = eventClockSettingsDialog.querySelector("button[type=button]");
+                const displayInput = eventClockSettingsDialog.querySelector("input[id=event-clock-settings-display]");
+                const fieldset = eventClockSettingsDialog.querySelector("fieldset");
+                const labelInputs = eventClockSettingsDialog.querySelectorAll("input[type=text][data-lang]");
+                const dateInput = eventClockSettingsDialog.querySelector("input[id=event-clock-settings-date]");
+
+                // datetime-local attend une heure locale "YYYY-MM-DDTHH:MM"
+                const utcDate = dateInput.dataset.utc ? new Date(dateInput.dataset.utc) : null;
+                dateInput.value = utcDate ? new Date(utcDate.getTime() - utcDate.getTimezoneOffset() * 60000).toISOString().slice(0, 16) : '';
+
+                displayInput.addEventListener("change", () => {
+                    fieldset.disabled = !displayInput.checked;
+                });
+                cancelButton.addEventListener("click", () => {
+                    eventClockSettingsDialog.close();
+                });
+                eventClockSettingsDialog.addEventListener("close", () => {
+                    eventClockSettingsDialog.remove();
+                });
+                form.addEventListener("submit", (e) => {
+                    e.preventDefault();
+                    const labels = {};
+                    labelInputs.forEach(input => {
+                        labels[input.dataset.lang] = input.value;
+                    });
+                    const date = dateInput.value ? new Date(dateInput.value).toISOString() : null;
+                    fetch("/api/settings/event-clock", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify({display: displayInput.checked, labels: labels, date: date})
+                    })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.update) {
+                                document.dispatchEvent(new CustomEvent("event-clock-updated", {detail: data}));
+                            }
+                        })
+                        .catch((error) => {
+                            console.log(error);
+                        });
+                    eventClockSettingsDialog.close();
+                });
+                eventClockSettingsDialog.showModal();
             })
             .catch((error) => {
                 console.log(error);

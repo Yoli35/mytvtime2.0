@@ -1,0 +1,31 @@
+<dialog id="eventClockSettingsDialog" class="event-clock-settings-dialog" closedby="any">
+    <form>
+        <label for="event-clock-settings-display" class="switch">
+            <input type="checkbox" switch id="event-clock-settings-display"{% if display %} checked{% endif %}>
+            <span>{{ 'Display the countdown'|trans }}</span>
+        </label>
+        <fieldset{% if not display %} disabled{% endif %}>
+            <label for="event-clock-settings-label-fr">
+                {{ getEmojiFlag('FR') }} {{ 'Event label'|trans }}
+                <input type="text" id="event-clock-settings-label-fr" data-lang="fr" value="{{ labels.fr ?? '' }}"/>
+            </label>
+            <label for="event-clock-settings-label-en">
+                {{ getEmojiFlag('GB') }} {{ 'Event label'|trans }}
+                <input type="text" id="event-clock-settings-label-en" data-lang="en" value="{{ labels.en ?? '' }}"/>
+            </label>
+            <label for="event-clock-settings-label-ko">
+                {{ getEmojiFlag('KR') }} {{ 'Event label'|trans }}
+                <input type="text" id="event-clock-settings-label-ko" data-lang="ko" value="{{ labels.ko ?? '' }}"/>
+            </label>
+            <label for="event-clock-settings-date">
+                {{ 'Event date and time'|trans }}
+                {# Stored in UTC, converted to the browser's local time by Menu.js #}
+                <input type="datetime-local" id="event-clock-settings-date" data-utc="{{ date }}" value=""/>
+            </label>
+        </fieldset>
+        <div class="row">
+            <button type="button">{{ 'Cancel'|trans }}</button>
+            <button type="submit">{{ 'Save'|trans }}</button>
+        </div>
+    </form>
+</dialog>

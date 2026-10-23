@@ -15,37 +15,26 @@ export class NavBar {
 
     init() {
         const navbar = document.querySelector(".navbar");
-        const multiSearchDiv = navbar.querySelector('.multi-search.dev');
+        const multiSearchDiv = navbar.querySelector('.multi-search');
         const countDownDiv = navbar.querySelector('.count-down');
         if (countDownDiv) {
-            const span = countDownDiv.querySelector('span');
-            const labels = {
-                'en': 'Presidential election result 2027',
-                'fr': 'Résultat présidentielle 2027',
-                'ko': '2027년 대통령 선거 결과'
-            }
-            const label = labels[document.documentElement.lang];
-            countDownDiv.dataset.title = label;
-            countDownDiv.title = label;
-            countDownDiv.setAttribute('aria-label', label);
+            this.countDownDiv = countDownDiv;
+            this.countDownInterval = null;
+            countDownDiv.style.display = 'none';
+            fetch('/api/settings/event-clock')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.read) this.startCountDown(data.display, data.labels, data.date);
+                })
+                .catch(error => console.log(error));
+            // Menu.js dispatches this event after the event clock settings have been saved
+            document.addEventListener('event-clock-updated', (e) => {
+                this.startCountDown(e.detail.display, e.detail.labels, e.detail.date);
+            });
+        }
 
-            const initialDate = new Date('2027-05-02T20:00:00.000Z');
-            const countDownInterval = setInterval(() => {
-                const currentDate = new Date();
-                const timeDifference = initialDate - currentDate;
-                if (timeDifference < 0) {
-                    clearInterval(countDownInterval);
-                    countDownDiv.remove();
-                    return;
-                }
-                const days = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
-                const hours = Math.floor((timeDifference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-                const minutes = Math.floor((timeDifference % (1000 * 60 * 60)) / (1000 * 60));
-                const seconds = Math.floor((timeDifference % (1000 * 60)) / 1000);
-                // Affiche le temps restant au format DD:HH:MM:SS
-                span.textContent = ' → ' + `${days.toString().padStart(2, '0')}:${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-            }, 1000);
-
+        const multiSearchDevDiv = navbar.querySelector('.multi-search.dev');
+        if (multiSearchDevDiv) {
             const screenSizeDiv = document.createElement('div');
             screenSizeDiv.classList.add('screen-size');
             navbar.insertBefore(screenSizeDiv, multiSearchDiv);
@@ -55,6 +44,42 @@ export class NavBar {
                 screenSizeDiv.textContent = `${window.innerWidth}x${window.innerHeight}`;
             });
         }
+    }
+
+    startCountDown(display, labels, date) {
+        const countDownDiv = this.countDownDiv;
+        const span = countDownDiv.querySelector('span');
+        clearInterval(this.countDownInterval);
+
+        const initialDate = date ? new Date(date) : null;
+        if (!display || !initialDate || isNaN(initialDate.getTime()) || initialDate <= new Date()) {
+            countDownDiv.style.display = 'none';
+            return;
+        }
+
+        const label = labels?.[document.documentElement.lang] || labels?.['en'] || '';
+        countDownDiv.dataset.title = label;
+        countDownDiv.title = label;
+        countDownDiv.setAttribute('aria-label', label);
+
+        const update = () => {
+            const currentDate = new Date();
+            const timeDifference = initialDate - currentDate;
+            if (timeDifference < 0) {
+                clearInterval(this.countDownInterval);
+                countDownDiv.style.display = 'none';
+                return;
+            }
+            const days = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((timeDifference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((timeDifference % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((timeDifference % (1000 * 60)) / 1000);
+            // Affiche le temps restant au format DD:HH:MM:SS
+            span.textContent = ' → ' + `${days.toString().padStart(2, '0')}:${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        };
+        update();
+        countDownDiv.style.display = '';
+        this.countDownInterval = setInterval(update, 1000);
     }
 
     navBarColor(hsl) {

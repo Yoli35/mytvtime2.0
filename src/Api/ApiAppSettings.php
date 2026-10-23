@@ -6,6 +6,9 @@ use App\Entity\Settings;
 use App\Entity\User;
 use App\Repository\SettingsRepository;
 use Closure;
+use DateTimeImmutable;
+use DateTimeZone;
+use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\ControllerHelper;
 use Symfony\Component\DependencyInjection\Attribute\AutowireMethodOf;
 use Symfony\Component\HttpFoundation\Request;
@@ -22,6 +25,8 @@ readonly class ApiAppSettings
         private Closure            $json,
         #[AutowireMethodOf(ControllerHelper::class)]
         private Closure            $getUser,
+        #[AutowireMethodOf(ControllerHelper::class)]
+        private Closure            $renderView,
         private SettingsRepository $settingsRepository,
     )
     {
@@ -106,6 +111,113 @@ readonly class ApiAppSettings
             'ok' => true,
             'update' => true,
         ]);
+    }
+
+    /**
+     * Read (GET) or update (POST) the navbar event countdown.
+     * Stored under the name "app_event_clock" with data
+     * ['display' => bool, 'labels' => ['en' => …, 'fr' => …, 'ko' => …], 'date' => ISO 8601 UTC string or null].
+     */
+    #[Route('/event-clock', name: 'event_clock', methods: ['GET', 'POST'])]
+    public function eventClock(Request $request): Response
+    {
+        $user = ($this->getUser)();
+        if (!$user) {
+            return ($this->json)([
+                'ok' => true,
+                'read' => false,
+                'update' => false,
+            ]);
+        }
+
+        $settings = $this->getEventClockSettings($user);
+
+        if ($request->isMethod('POST')) {
+            $inputBag = $request->getPayload();
+            $labels = $inputBag->all('labels');
+            $date = $inputBag->get('date');
+
+            if ($date) {
+                try {
+                    $date = new DateTimeImmutable($date)->setTimezone(new DateTimeZone('UTC'))->format('Y-m-d\TH:i:s.v\Z');
+                } catch (Exception) {
+                    return ($this->json)([
+                        'ok' => false,
+                        'update' => false,
+                        'error' => 'Invalid date value',
+                    ]);
+                }
+            } else {
+                $date = null;
+            }
+
+            $settings->setData([
+                'display' => $inputBag->getBoolean('display'),
+                'labels' => [
+                    'en' => trim((string)($labels['en'] ?? '')),
+                    'fr' => trim((string)($labels['fr'] ?? '')),
+                    'ko' => trim((string)($labels['ko'] ?? '')),
+                ],
+                'date' => $date,
+            ]);
+            $this->settingsRepository->save($settings, true);
+        }
+
+        $data = $settings->getData();
+
+        return ($this->json)([
+            'ok' => true,
+            'read' => true,
+            'update' => $request->isMethod('POST'),
+            'display' => $data['display'] ?? true,
+            'labels' => $data['labels'] ?? [],
+            'date' => $data['date'] ?? null,
+        ]);
+    }
+
+    /**
+     * Event countdown edit form, rendered on demand and appended to the body by Menu.js.
+     */
+    #[Route('/event-clock/form', name: 'event_clock_form', methods: ['GET'])]
+    public function eventClockForm(): Response
+    {
+        $user = ($this->getUser)();
+        if (!$user) {
+            return ($this->json)([
+                'ok' => true,
+                'read' => false,
+            ]);
+        }
+
+        $data = $this->getEventClockSettings($user)->getData();
+
+        return ($this->json)([
+            'ok' => true,
+            'read' => true,
+            'html' => ($this->renderView)('_blocks/settings/_event_clock.html.twig', [
+                'display' => $data['display'] ?? true,
+                'labels' => $data['labels'] ?? [],
+                'date' => $data['date'] ?? null,
+            ]),
+        ]);
+    }
+
+    private function getEventClockSettings(User $user): Settings
+    {
+        $settings = $this->settingsRepository->findOneBy(['user' => $user, 'name' => 'app_event_clock']);
+        if (!$settings) {
+            $settings = new Settings($user, 'app_event_clock', [
+                'display' => true,
+                'labels' => [
+                    'en' => 'Presidential election result 2027',
+                    'fr' => 'Résultat présidentielle 2027',
+                    'ko' => '2027년 대통령 선거 결과',
+                ],
+                'date' => '2027-05-02T20:00:00.000Z',
+            ]);
+            $this->settingsRepository->save($settings, true);
+        }
+        return $settings;
     }
 
     #[Route('/schedule-range/read', name: 'schedule_menu_settings_read', methods: ['GET'])]
