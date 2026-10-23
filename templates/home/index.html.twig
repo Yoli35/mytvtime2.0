@@ -129,7 +129,7 @@
             </div> #}
 
             {% if app.user %}
-                {% if lastViewedMovies|length %}
+                {% if lastViewedMovies|length > 20 %}
                     <div class="series-group">
                         <h2>{{ 'Last viewed movies'|trans }} ({{ lastViewedMovies|length }})</h2>
                         <div class="wrapper">
@@ -159,42 +159,45 @@
                         {% endfor %}
                     </div>
                 </div>
-                <div class="provider-ranking">
-                    {% set total = providerMonthArray|reduce((carry, s) => carry + s.count) %}
-                    <div class="ranking-title">{{ 'Providers this month (episode count)'|trans }}</div>
-                    <div class="ranking-content">
-                        <div class="ranking-wrapper">
-                            <div class="ranking-items">
-                                <div class="ranking-item">
-                                    <div class="name">{{ 'Total'|trans }}</div>
-                                    <div class="count">{{ total }}</div>
-                                    <div class="percent">100%</div>
-                                </div>
-                                {% for p in providerMonthArray %}
+                {% set total = providerMonthArray|reduce((carry, s) => carry + s.count) %}
+                {% if total > 20 %}
+                    <div class="provider-ranking">
+                        <div class="ranking-title">{{ 'Providers this month (episode count)'|trans }}</div>
+                        <div class="ranking-content">
+                            <div class="ranking-wrapper">
+                                <div class="ranking-items">
                                     <div class="ranking-item">
-                                        <div class="logo">
-                                            <img src="{{ p.logo_path }}" alt="{{ p.provider_name }}">
-                                        </div>
-                                        <div class="index">{{ loop.index }}</div>
-                                        <div class="name">{{ p.provider_name }}</div>
-                                        <div class="count">{{ p.count }}</div>
-                                        <div class="percent">{{ (100 * p.count / total)|round(1) }}%</div>
+                                        <div class="name">{{ 'Total'|trans }}</div>
+                                        <div class="count">{{ total }}</div>
+                                        <div class="percent">100%</div>
                                     </div>
-                                {% endfor %}
+                                    {% for p in providerMonthArray %}
+                                        <div class="ranking-item">
+                                            <div class="logo">
+                                                <img src="{{ p.logo_path }}" alt="{{ p.provider_name }}">
+                                            </div>
+                                            <div class="index">{{ loop.index }}</div>
+                                            <div class="name">{{ p.provider_name }}</div>
+                                            <div class="count">{{ p.count }}</div>
+                                            <div class="percent">{{ (100 * p.count / total)|round(1) }}%</div>
+                                        </div>
+                                    {% endfor %}
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
-                <div class="provider-ranking bar-chart">
-                    {% set total = providerMonthArray|reduce((carry, s) => carry + s.count) %}
-                    <div class="ranking-title">{{ ux_icon('mdi:bar-chart') }}{{ 'Providers this month (episode count)'|trans }}</div>
-                    <div class="ranking-time-machine">
-                        <label for="time-machine-slider-month">{{ 'Time machine'|trans }}</label>
-                        <input type="range" min="0" max="100" value="100" step="1" class="time-machine-slider-month" id="time-machine-slider-month">
+                {% endif %}
+                {% set total = providerMonthArray|reduce((carry, s) => carry + s.count) %}
+                {% if total > 20 %}
+                    <div class="provider-ranking bar-chart">
+                        <div class="ranking-title">{{ ux_icon('mdi:bar-chart') }}{{ 'Providers this month (episode count)'|trans }}</div>
+                        <div class="ranking-time-machine">
+                            <label for="time-machine-slider-month">{{ 'Time machine'|trans }}</label>
+                            <input type="range" min="0" max="100" value="100" step="1" class="time-machine-slider-month" id="time-machine-slider-month">
+                        </div>
+                        {{ include('_blocks/home/_provider_ranking_content.html.twig', {'providerArray': providerMonthArray, 'total': total, 'periodStart': 'now'|date_modify('-1 month'), 'periodEnd': 'now'}) }}
                     </div>
-                    {{ include('_blocks/home/_provider_ranking_content.html.twig', {'providerArray': providerMonthArray, 'total': total, 'periodStart': 'now'|date_modify('-1 month'), 'periodEnd': 'now'}) }}
-                </div>
-                {#<div class="provider-ranking bar-chart">
+                    {# <div class="provider-ranking bar-chart">
                     <div class="ranking-title">{{ ux_icon('mdi:bar-chart') }}{{ 'Providers this month (episode count)'|trans }}</div>
                     <div class="ranking-gauge">
                         <div class="js-double-range"
@@ -207,42 +210,47 @@
                              data-id="time-machine-slider-month"
                         ></div>
                     </div>
-                </div>#}
-                <div class="provider-ranking">
-                    {% set total = providerAllArray|reduce((carry, s) => carry + s.count) %}
-                    <div class="ranking-title">{{ 'Providers (episode count)'|trans }}</div>
-                    <div class="ranking-content">
-                        <div class="ranking-wrapper">
-                            <div class="ranking-items">
-                                <div class="ranking-item">
-                                    <div class="name">{{ 'Total'|trans }}</div>
-                                    <div class="count">{{ total }}</div>
-                                    <div class="percent">100%</div>
-                                </div>
-                                {% for p in providerAllArray %}
+                </div> #}
+                {% endif %}
+                {% set total = providerAllArray|reduce((carry, s) => carry + s.count) %}
+                {% if total > 20 %}
+                    <div class="provider-ranking">
+                        <div class="ranking-title">{{ 'Providers (episode count)'|trans }}</div>
+                        <div class="ranking-content">
+                            <div class="ranking-wrapper">
+                                <div class="ranking-items">
                                     <div class="ranking-item">
-                                        <div class="logo">
-                                            <img src="{{ p.logo_path }}" alt="{{ p.provider_name }}">
-                                        </div>
-                                        <div class="index">{{ loop.index }}</div>
-                                        <div class="name">{{ p.provider_name }}</div>
-                                        <div class="count">{{ p.count }}</div>
-                                        <div class="percent">{{ (100 * p.count / total)|round(1) }}%</div>
+                                        <div class="name">{{ 'Total'|trans }}</div>
+                                        <div class="count">{{ total }}</div>
+                                        <div class="percent">100%</div>
                                     </div>
-                                {% endfor %}
+                                    {% for p in providerAllArray %}
+                                        <div class="ranking-item">
+                                            <div class="logo">
+                                                <img src="{{ p.logo_path }}" alt="{{ p.provider_name }}">
+                                            </div>
+                                            <div class="index">{{ loop.index }}</div>
+                                            <div class="name">{{ p.provider_name }}</div>
+                                            <div class="count">{{ p.count }}</div>
+                                            <div class="percent">{{ (100 * p.count / total)|round(1) }}%</div>
+                                        </div>
+                                    {% endfor %}
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
-                <div class="provider-ranking bar-chart">
-                    {% set total = providerAllArray|reduce((carry, s) => carry + s.count) %}
-                    <div class="ranking-title">{{ 'Providers (episode count)'|trans }}</div>
-                    <div class="ranking-time-machine">
-                        <label for="time-machine-slider-evo">{{ 'Time machine'|trans }}</label>
-                        <input type="range" min="0" max="100" value="100" step="1" class="time-machine-slider-evo" id="time-machine-slider-evo">
+                {% endif %}
+                {% set total = providerAllArray|reduce((carry, s) => carry + s.count) %}
+                {% if total > 20 %}
+                    <div class="provider-ranking bar-chart">
+                        <div class="ranking-title">{{ 'Providers (episode count)'|trans }}</div>
+                        <div class="ranking-time-machine">
+                            <label for="time-machine-slider-evo">{{ 'Time machine'|trans }}</label>
+                            <input type="range" min="0" max="100" value="100" step="1" class="time-machine-slider-evo" id="time-machine-slider-evo">
+                        </div>
+                        {{ include('_blocks/home/_provider_ranking_content.html.twig', {'providerArray': providerAllArray, 'total': total, 'periodStart': providerFirstDate, 'periodEnd': 'now'}) }}
                     </div>
-                    {{ include('_blocks/home/_provider_ranking_content.html.twig', {'providerArray': providerAllArray, 'total': total, 'periodStart': providerFirstDate, 'periodEnd': 'now'}) }}
-                </div>
+                {% endif %}
                 {% if episodesOfTheDay|length %}
                     <div class="series-group">
                         <h2>{{ 'Episodes of the day'|trans }} ({{ episodesOfTheDay|length }})</h2>
@@ -267,26 +275,30 @@
                         </div>
                     </div>
                 {% endif %}
-                <div class="series-group">
-                    <h2>{{ 'Your series'|trans }} ({{ userSeriesCount }})</h2>
-                    <div class="wrapper">
-                        <div class="content">
-                            {% for s in userSeries %}
-                                {{ include('_blocks/series/_card.html.twig', { series: s, dataTitle: s.localized_name ?? s.name, home: 1 }) }}
-                            {% endfor %}
+                {% if userSeriesCount > 10 %}
+                    <div class="series-group">
+                        <h2>{{ 'Your series'|trans }} ({{ userSeriesCount }})</h2>
+                        <div class="wrapper">
+                            <div class="content">
+                                {% for s in userSeries %}
+                                    {{ include('_blocks/series/_card.html.twig', { series: s, dataTitle: s.localized_name ?? s.name, home: 1 }) }}
+                                {% endfor %}
+                            </div>
                         </div>
                     </div>
-                </div>
-                <div class="series-group">
-                    <h2>{{ 'Last added series'|trans }}</h2>
-                    <div class="wrapper">
-                        <div class="content">
-                            {% for s in lastAddedSeries %}
-                                {{ include('_blocks/series/_card.html.twig', { series: s, dataTitle: s.localized_name ?? s.name, home: 1 }) }}
-                            {% endfor %}
+                {% endif %}
+                {% if lastAddedSeries|length > 10 %}
+                    <div class="series-group">
+                        <h2>{{ 'Last added series'|trans }}</h2>
+                        <div class="wrapper">
+                            <div class="content">
+                                {% for s in lastAddedSeries %}
+                                    {{ include('_blocks/series/_card.html.twig', { series: s, dataTitle: s.localized_name ?? s.name, home: 1 }) }}
+                                {% endfor %}
+                            </div>
                         </div>
                     </div>
-                </div>
+                {% endif %}
                 <div class="series-group">
                     <h2>{{ 'Series history'|trans }}</h2>
                     <div class="wrapper">
@@ -297,28 +309,30 @@
                         </div>
                     </div>
                 </div>
-                <div class="series-group">
-                    <div class="header">
-                        {% if dayCount == 1 %}
-                            <h2>{{ 'Episode history (%h)'|trans|format(dayCount*24) }} ({{ historyEpisode|length }})</h2>
-                        {% else %}
-                            <h2>{{ 'Episode history (%d)'|trans|format(dayCount) }} ({{ historyEpisode|length }})</h2>
-                        {% endif %}
-                        <label for="day-count">{{ 'Day count'|trans }}
-                            <select id="day-count">
-                                <option value="1"{% if dayCount == 1 %} selected{% endif %}>{{ 'Last 24 hours'|trans }}</option>
-                                <option value="7"{% if dayCount == 7 %} selected{% endif %}>{{ 'Last 7 days'|trans }}</option>
-                                <option value="14"{% if dayCount == 14 %} selected{% endif %}>{{ 'Last 14 days'|trans }}</option>
-                                <option value="30"{% if dayCount == 30 %} selected{% endif %}>{{ 'Last 30 days'|trans }}</option>
-                            </select>
-                        </label>
-                    </div>
-                    <div class="wrapper" id="episode-history">
-                        <div class="content">
-                            {{ include('_blocks/home/_episode_history.html.twig') }}
+                {% if historyEpisode|length > 10 %}
+                    <div class="series-group">
+                        <div class="header">
+                            {% if dayCount == 1 %}
+                                <h2>{{ 'Episode history (%h)'|trans|format(dayCount*24) }} ({{ historyEpisode|length }})</h2>
+                            {% else %}
+                                <h2>{{ 'Episode history (%d)'|trans|format(dayCount) }} ({{ historyEpisode|length }})</h2>
+                            {% endif %}
+                            <label for="day-count">{{ 'Day count'|trans }}
+                                <select id="day-count">
+                                    <option value="1"{% if dayCount == 1 %} selected{% endif %}>{{ 'Last 24 hours'|trans }}</option>
+                                    <option value="7"{% if dayCount == 7 %} selected{% endif %}>{{ 'Last 7 days'|trans }}</option>
+                                    <option value="14"{% if dayCount == 14 %} selected{% endif %}>{{ 'Last 14 days'|trans }}</option>
+                                    <option value="30"{% if dayCount == 30 %} selected{% endif %}>{{ 'Last 30 days'|trans }}</option>
+                                </select>
+                            </label>
+                        </div>
+                        <div class="wrapper" id="episode-history">
+                            <div class="content">
+                                {{ include('_blocks/home/_episode_history.html.twig') }}
+                            </div>
                         </div>
                     </div>
-                </div>
+                {% endif %}
             {% endif %}
             <div class="series-group">
                 <div class="header">

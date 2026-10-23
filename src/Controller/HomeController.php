@@ -106,7 +106,7 @@ class HomeController extends AbstractController
             $episodesToWatch = array_map(function ($series) {
                 $series['posterPath'] = $series['poster_path'] ? '/series/posters' . $series['poster_path'] : null;
                 $series['seasonNumber'] = $series['next_episode_season_number'];
-                $series['episodeNumber'] = $series['next_episode_season_number'];
+                $series['episodeNumber'] = $series['next_episode_episode_number'];
                 return $series;
             }, $episodesToWatch);
 
