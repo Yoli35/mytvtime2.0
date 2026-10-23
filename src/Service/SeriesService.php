@@ -9,6 +9,7 @@ use App\Entity\Series;
 use App\Entity\SeriesBroadcastSchedule;
 use App\Entity\SeriesImage;
 use App\Entity\SeriesLocalizedName;
+use App\Entity\SeriesLocalizedOverview;
 use App\Entity\SeriesVideo;
 use App\Entity\Settings;
 use App\Entity\User;
@@ -23,6 +24,7 @@ use App\Repository\NetworkRepository;
 use App\Repository\SeriesBroadcastScheduleRepository;
 use App\Repository\SeriesImageRepository;
 use App\Repository\SeriesLocalizedNameRepository;
+use App\Repository\SeriesLocalizedOverviewRepository;
 use App\Repository\SeriesRepository;
 use App\Repository\SeriesVideoRepository;
 use App\Repository\SettingsRepository;
@@ -70,6 +72,7 @@ readonly class SeriesService
         private SeriesBroadcastScheduleRepository $seriesBroadcastScheduleRepository,
         private SeriesImageRepository             $seriesImageRepository,
         private SeriesLocalizedNameRepository     $seriesLocalizedNameRepository,
+        private SeriesLocalizedOverviewRepository $seriesLocalizedOverviewRepository,
         private SeriesRepository                  $seriesRepository,
         private SeriesVideoRepository             $seriesVideoRepository,
         private SettingsRepository                $settingsRepository,
@@ -590,16 +593,16 @@ readonly class SeriesService
     public function localizeSeries(Series $series, array $localization, string $locale): void
     {
         $localizedName = $localization['localizedName'];
-//        $localizedOverview = $localization['localizedOverview'];
+        $localizedOverview = $localization['localizedOverview'];
         $localizedSlug = $localization['localizedSlug'];
-        if ($localizedName) {
+        if ($localizedName && !$series->getLocalizedName($locale)) {
             $newLocalizedName = new SeriesLocalizedName($series, $localizedName, $localizedSlug, $locale);
             $this->seriesLocalizedNameRepository->save($newLocalizedName, true);
         }
-//        if ($localizedOverview) {
-//            $newLocalizedOverview = new SeriesLocalizedOverview($series, $localizedOverview, $locale);
-//            $this->seriesLocalizedOverviewRepository->save($newLocalizedOverview, true);
-//        }
+        if ($localizedOverview && !$series->getLocalizedOverview($locale)) {
+            $newLocalizedOverview = new SeriesLocalizedOverview($series, $localizedOverview, $locale);
+            $this->seriesLocalizedOverviewRepository->save($newLocalizedOverview, true);
+        }
     }
 
     public function seasonsPosterPath(array $seasons): array
