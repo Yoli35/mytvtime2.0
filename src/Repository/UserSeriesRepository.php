@@ -959,7 +959,13 @@ class UserSeriesRepository extends ServiceEntityRepository
                     AND ue.`watched_at` IS NULL
                 --  AND IF(sbd.id, DATE(sbd.`date`), ue.`air_date`) <= CURDATE()
                     AND CONCAT(IFNULL(DATE(sbd.`date`), ue.`air_date`), IF(sbs.`air_at`, CONCAT(' ', sbs.`air_at`), '')) <= NOW()
-                	AND (us.`last_watched_at` >= SUBDATE(CURDATE(), INTERVAL 3 WEEK) or (IF(sbd.id, DATE(sbd.`date`), ue.`air_date`) >= SUBDATE(CURDATE(), INTERVAL 3 WEEK) AND ue.`episode_number`=1))
+                	AND (
+                            us.`last_watched_at` >= SUBDATE(CURDATE(), INTERVAL 3 WEEK)
+                         OR
+                            (IF(sbd.id, DATE(sbd.`date`), ue.`air_date`) >= SUBDATE(CURDATE(), INTERVAL 3 WEEK) AND ue.`episode_number`=1)
+                         OR
+                            (us.added_at >= SUBDATE(CURDATE(), INTERVAL 3 WEEK) AND ue.`episode_number`=1)
+                	    )
                 ORDER BY us.`last_watched_at` DESC;
             SQL;
 
