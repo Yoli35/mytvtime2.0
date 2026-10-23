@@ -56,6 +56,8 @@
     /*--yellow-50: hsl(45, 50%, 50%);*/
     --yellow-50: hsl(from var(--yellow) h s 50%);
 
+    --salmon: hsl(346 62% 64%);
+
     --purple: hsl(306, 50%, 50%);
     --purple-50: hsl(306, 50%, 50%);
 
@@ -210,7 +212,7 @@
         z-index: 1;
 
         &.active {
-            color: var(--orange-10);
+            color: var(--orange-100);
         }
 
         svg {

@@ -1226,14 +1226,15 @@ class SeriesController extends AbstractController
         $user = $userSeries->getUser();
         $series = $userSeries->getSeries();
         $sln = $series->getLocalizedName($user->getPreferredLanguage() ?: 'fr');
+
         $message = new ContactMessage();
         $message->setName($user->getUsername());
         $message->setEmail($user->getEmail());
-        $message->setSubject('Nouvel ajout par ' . $user->getUsername() . "(" . $user->getId() . ")");
+        $message->setSubject('Nouvel ajout par ' . $user->getUsername() . "(" . $user->getId() . ")" . " - " . ($sln ? $sln->getName() : $series->getName()));
         $message->setMessage(
             "IDs : " . $series->getId() . " / " . $userSeries->getId() . "\n\n"
             . "Nom : " . $series->getName() . ($localizedName ? " - " . $localizedName : '') . "\n\n"
-            . ($sln ? "Nom localisé : " . $series->getLocalizedName($user->getPreferredLanguage() ?: 'fr')->getName() . "\n\n" : "")
+            . ($sln ? "Nom localisé : " . $sln->getName() . "\n\n" : "")
             . "Résumé : " . $localizedOverview ?: $series->getOverview() . "\n\n"
         );
 

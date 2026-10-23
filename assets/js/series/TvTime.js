@@ -51,6 +51,7 @@ export class TvTime {
 
         this.initComponents();
         this.initScreenSaver(5);
+
         if (this.tab === 0) {
             self.fixDetailsDivs(document.querySelector('main .series-tab .wrapper'));
             this.getEpisodeDetails(document);
