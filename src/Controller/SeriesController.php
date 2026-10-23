@@ -34,7 +34,6 @@ use App\Service\ProviderService;
 use App\Service\SeriesService;
 use App\Service\SettingsAdvancedDbSearchService;
 use App\Service\TMDBService;
-use App\Service\TvTimeService;
 use Collator;
 use DateInvalidTimeZoneException;
 use DateMalformedStringException;
@@ -81,7 +80,6 @@ class SeriesController extends AbstractController
         private readonly SettingsRepository                $settingsRepository,
         private readonly TMDBService                       $tmdbService,
         private readonly TranslatorInterface               $translator,
-        private readonly TvTimeService                     $tvTimeService,
         private readonly UserEpisodeRepository             $userEpisodeRepository,
         private readonly UserSeasonRepository              $userSeasonRepository,
         private readonly UserSeriesRepository              $userSeriesRepository,
@@ -370,7 +368,9 @@ class SeriesController extends AbstractController
         $selectedProvider = array_find($providers['userProviders'], function ($p) use ($provider) {
             return $p['provider_id'] == $provider;
         });
-        $selectedProvider['logo_path'] = $this->providerService->getProviderLogoFullPath($selectedProvider['logo_path'], $this->imageConfiguration->getUrl('logo_sizes', 5));
+        if ($selectedProvider) {
+            $selectedProvider['logo_path'] = $this->providerService->getProviderLogoFullPath($selectedProvider['logo_path'], $this->imageConfiguration->getUrl('logo_sizes', 5));
+        }
 
         $tmdbIds = array_column($seriesByProvider['results'], 'tmdb_id');
 
@@ -454,7 +454,7 @@ class SeriesController extends AbstractController
     }
 
     #[IsGranted('ROLE_USER')]
-    #[Route('/all', name: 'all', methods: ['GET', 'POST'])]
+    #[Route('/in-progress', name: 'in_progress', methods: ['GET', 'POST'])]
     public function all(#[CurrentUser] User $user, Request $request): Response
     {
         $localisation = [
@@ -543,7 +543,7 @@ class SeriesController extends AbstractController
                 $networkLogoPaths[$nlp['id']] = null;
         }
 
-        return $this->render('series/all.html.twig', [
+        return $this->render('series/series_in_progress.html.twig', [
             'userSeries' => $userSeries,
             'userSeriesCount' => $userSeriesCount,
             'tmdbIds' => $tmdbIds,

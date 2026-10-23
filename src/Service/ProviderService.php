@@ -62,7 +62,16 @@ readonly class ProviderService
 
     public function seriesByProvider(User $user, int $provider, string $locale, int $page, int $limit): array
     {
-        $count = count($this->userSeriesRepository->userSeriesByProviderCount($user, $provider));
+        if ($provider <= 0) {
+            $count = $this->userSeriesRepository->userSeriesWithProviderCount($user, $locale);
+            return [
+                'results' => $this->userSeriesRepository->userSeriesWithProvider($user, $locale, $page, $limit),
+                'count' => $count,
+                'page' => $page,
+                'pages' => ceil($count / $limit),
+            ];
+        }
+        $count = $this->userSeriesRepository->userSeriesByProviderCount($user, $provider,$locale);
         return [
             'results' => $this->userSeriesRepository->userSeriesByProvider($user, $provider, $locale, $page, $limit),
             'count' => $count,

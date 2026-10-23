@@ -12,7 +12,11 @@
     {% include('_blocks/_menu.html.twig') %}
     <div class="container-fluid series-by-provider">
         <h1{% if tab == 2 %} class="without"{% endif %}>
-            <span class="by">{{ title }}<img src="{{ selectedProvider.logo_path }}" class="logo" alt="{{ title }}"></span>
+            {% if 0 == provider %}
+                <span class="by">{{ 'All providers'|trans }}</span>
+            {% else %}
+                <span class="by">{{ title }}{% if selectedProvider %}<img src="{{ selectedProvider.logo_path }}" class="logo" alt="{{ title }}">{% endif %}</span>
+            {% endif %}
             <span class="without">{{ 'With watched episodes without provider'|trans }}</span>
         </h1>
         <header>
@@ -29,6 +33,7 @@
                 {% endif %}
                 <label for="provider-select">
                     <select id="provider-select">
+                        <option value="0"{% if 0 == provider %} selected{% endif %}>{{ 'All'|trans }}</option>
                         {% for option in providers.userProviders %}
                             <option value="{{ option.provider_id }}"{% if option.provider_id == provider %} selected{% endif %}>{{ option.provider_name }}</option>
                         {% endfor %}

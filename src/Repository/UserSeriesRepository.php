@@ -800,6 +800,63 @@ class UserSeriesRepository extends ServiceEntityRepository
         return $this->getAll($sql, $params, $types);
     }
 
+    public function userSeriesWithProvider(User $user, string $locale, int $page, int $limit): array
+    {
+        $params = [
+            'id' => $user->getId(),
+            'locale' => $locale,
+            'offset' => ($page - 1) * $limit,
+            'limit' => $limit,
+        ];
+        $types = [
+            'id' => ParameterType::INTEGER,
+            'locale' => ParameterType::STRING,
+            'offset' => ParameterType::INTEGER,
+            'limit' => ParameterType::INTEGER,
+        ];
+        $sql = <<<SQL
+                SELECT
+                    DISTINCT us.`id`                                             AS `user_series_id`,
+                    s.`id`                                                       AS id,
+                    s.`tmdb_id`                                                  AS tmdb_id,
+                    IF(sln.`id`, CONCAT(sln.`name`, ' - ', s.`name`), s.`name`)  AS display_name,
+                    IF(sln.`id`, sln.`slug`, s.`slug`)                           AS slug,
+                    s.`poster_path`                                              AS poster_path,
+                    us.`last_watched_at`
+                FROM `user_episode` ue
+                    LEFT JOIN `user_series` us ON us.`id`=ue.`user_series_id`
+                    LEFT JOIN `series` s ON s.`id`=us.`series_id`
+                    LEFT JOIN `series_localized_name` sln ON sln.`series_id`=s.`id` AND sln.`locale`=:locale
+                WHERE ue.user_id=:id AND ue.`provider_id` IS NOT NULL
+                ORDER BY us.`last_watched_at` DESC
+                LIMIT :limit OFFSET :offset;
+                SQL;
+
+        return $this->getAll($sql, $params, $types);
+    }
+
+    public function userSeriesWithProviderCount(User $user, string $locale): int
+    {
+        $params = [
+            'id' => $user->getId(),
+            'locale' => $locale,
+        ];
+        $types = [
+            'id' => ParameterType::INTEGER,
+            'locale' => ParameterType::STRING,
+        ];
+        $sql = <<<SQL
+                SELECT COUNT(DISTINCT us.`id`) AS count
+                FROM `user_episode` ue
+                    LEFT JOIN `user_series` us ON us.`id`=ue.`user_series_id`
+                    LEFT JOIN `series` s ON s.`id`=us.`series_id`
+                    LEFT JOIN `series_localized_name` sln ON sln.`series_id`=s.`id` AND sln.`locale`=:locale
+                WHERE ue.user_id=:id AND ue.`provider_id` IS NOT NULL;
+                SQL;
+
+        return $this->getOne($sql, $params, $types);
+    }
+
     public function userSeriesByProvider(User $user, int $provider, string $locale, int $page, int $limit): array
     {
         $params = [
@@ -837,26 +894,29 @@ class UserSeriesRepository extends ServiceEntityRepository
         return $this->getAll($sql, $params, $types);
     }
 
-    public function userSeriesByProviderCount(User $user, int $provider): array
+    public function userSeriesByProviderCount(User $user, int $provider, string $locale): int
     {
         $params = [
             'id' => $user->getId(),
             'provider' => $provider,
+            'locale' => $locale
         ];
         $types = [
             'id' => ParameterType::INTEGER,
             'provider' => ParameterType::INTEGER,
+            'locale' => ParameterType::STRING
         ];
         $sql = <<<SQL
                 SELECT
-                    DISTINCT us.`id`
+                    COUNT(DISTINCT us.`id`)
                 FROM `user_episode` ue
                     LEFT JOIN `user_series` us ON us.`id`=ue.`user_series_id`
                     LEFT JOIN `series` s ON s.`id`=us.`series_id`
+                    LEFT JOIN `series_localized_name` sln ON sln.`series_id`=s.`id` AND sln.`locale`=:locale
                 WHERE ue.user_id=:id AND ue.`provider_id`=:provider;
                 SQL;
 
-        return $this->getAll($sql, $params, $types);
+        return $this->getOne($sql, $params, $types);
     }
 
     public function userSeriesProviders(User $user): array
@@ -871,7 +931,7 @@ class UserSeriesRepository extends ServiceEntityRepository
                     SELECT DISTINCT ue.`provider_id`, wp.`provider_name`, wp.`logo_path`
                     FROM `user_episode` ue
                         LEFT JOIN `watch_provider` wp ON wp.`provider_id`=ue.`provider_id`
-                    WHERE ue.`user_id`=:id
+                    WHERE ue.`user_id`=:id AND ue.`provider_id` IS NOT NULL
                     ORDER BY wp.`provider_name`;
                 SQL;
 

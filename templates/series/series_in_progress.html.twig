@@ -18,7 +18,7 @@
         {% endif %}
         <aside>
             <article>
-                <header>
+                <header class="collapse" data-title="{{ 'Show / hide filter options'|trans }}">
                     <div class="title">{{ 'Filters'|trans }}</div>
                     <div class="filter-values">
                         <div class="filter-value" data-title="{{ 'Sort'|trans }} / {{ 'Order'|trans }}">
@@ -33,13 +33,6 @@
                         <div class="filter-value" data-title="{{ 'Number of elements per page'|trans }}">
                             {{ ux_icon('mdi:dots-grid') }}&nbsp;{{ filters.limit }}
                         </div>
-                    </div>
-                    <div class="collapse" data-title="{{ 'Show / hide filter options'|trans }}">
-                        {% if filterBoxOpen %}
-                            {{ ux_icon('mdi:chevron-down') }}
-                        {% else %}
-                            {{ ux_icon('mdi:chevron-up') }}
-                        {% endif %}
                     </div>
                 </header>
                 <div class="filters{% if filterBoxOpen == 0 %} collapse{% endif %}">
