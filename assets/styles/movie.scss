@@ -140,15 +140,16 @@
         font-size: 2rem;
         justify-content: center;
         margin-block-start: 2rem;
+        margin-inline: auto;
         position: relative;
-        width: 100%;
+        width: fit-content;
 
         label {
             align-items: center;
             display: flex;
             gap: .5rem;
             min-width: 25rem;
-            width: 50%;
+            width: 90vw;
 
             input {
                 appearance: none;
@@ -165,9 +166,9 @@
         }
 
         .search-results {
-            left: 50%;
+            /*left: 50%;*/
             max-width: 90vw;
-            translate: -50% 1rem;
+            /*translate: -50% 1rem;*/
 
             ul {
                 border-radius: .5rem;
