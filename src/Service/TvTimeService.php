@@ -105,8 +105,8 @@ readonly class TvTimeService
                 'tab' => 0,             // Onglet Séries, Films et séries et films à venir
                 'week' => 52,           // Nombre de semaines avant de considérer un épisode spécial comme ancien
             ];
-            $se = new Settings($user, 'tv time', $data);
-            $this->settingsRepository->save($se, true);
+            $s = new Settings($user, 'tv time', $data);
+            $this->settingsRepository->save($s, true);
         }
         return $s->getData();
     }
