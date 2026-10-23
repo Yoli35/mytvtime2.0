@@ -159,6 +159,7 @@
         });
     </script>
     {% if app.user %}
+        <div class="count-down">{{ ux_icon('mdi:alarm-clock') }} <span></span></div>
         <div class="multi-search{% if app.environment == 'dev' %} dev{% endif %}">
             <label for="multi-search">
                 <input type="search" id="multi-search" data-type="multi" data-sub-type="all" class="search" placeholder="{{ 'Movies, series, actors…'|trans }}" spellcheck="false">

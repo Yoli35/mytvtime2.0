@@ -16,17 +16,20 @@ export class NavBar {
     init() {
         const navbar = document.querySelector(".navbar");
         const multiSearchDiv = navbar.querySelector('.multi-search.dev');
-        if (multiSearchDiv) {
+        const countDownDiv = navbar.querySelector('.count-down');
+        if (countDownDiv) {
+            const span = countDownDiv.querySelector('span');
             const labels = {
-                'en': 'Winter',
-                'fr': 'Hiver',
-                'ko': '겨울'
+                'en': 'Presidential election result 2027',
+                'fr': 'Résultat présidentielle 2027',
+                'ko': '2027년 대통령 선거 결과'
             }
             const label = labels[document.documentElement.lang];
-            const countDownDiv = document.createElement('div');
-            countDownDiv.classList.add('count-down');
-            navbar.insertBefore(countDownDiv, multiSearchDiv);
-            const initialDate = new Date('2026-12-21T21:50:00.000Z');
+            countDownDiv.dataset.title = label;
+            countDownDiv.title = label;
+            countDownDiv.setAttribute('aria-label', label);
+
+            const initialDate = new Date('2027-05-02T20:00:00.000Z');
             const countDownInterval = setInterval(() => {
                 const currentDate = new Date();
                 const timeDifference = initialDate - currentDate;
@@ -40,7 +43,7 @@ export class NavBar {
                 const minutes = Math.floor((timeDifference % (1000 * 60 * 60)) / (1000 * 60));
                 const seconds = Math.floor((timeDifference % (1000 * 60)) / 1000);
                 // Affiche le temps restant au format DD:HH:MM:SS
-                countDownDiv.textContent = label + ' → ' + `${days.toString().padStart(2, '0')}:${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+                span.textContent = ' → ' + `${days.toString().padStart(2, '0')}:${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
             }, 1000);
 
             const screenSizeDiv = document.createElement('div');
