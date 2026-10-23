@@ -202,7 +202,7 @@ readonly class TvTimeService
             $lastEpisodeWithNoVoteArr = array_map(function ($wp) use ($providerUrl) {
                 $wp['provider_logo_path'] = $this->providerService->getProviderLogoFullPath($wp['provider_logo_path'], $providerUrl);
                 return $wp;
-            }, $this->userSeriesRepository->findUpToDateSeriesWithNoVote($seriesUpToDateIds, $locale));
+            }, $this->userSeriesRepository->findUpToDateSeriesWithNoVote($userId, $seriesUpToDateIds, $locale));
 
             $series = [
                 'content' => $content,

@@ -1259,7 +1259,7 @@ class UserSeriesRepository extends ServiceEntityRepository
         return $this->getOne($sql, ['id' => $userId], ['id' => Types::INTEGER]);
     }
 
-    public function findUpToDateSeriesWithNoVote(array $ids, string  $locale): array
+    public function findUpToDateSeriesWithNoVote(int $userId, array $ids, string  $locale): array
     {
         $sql = <<<SQL
                 -- Épisodes pas notés
@@ -1293,7 +1293,8 @@ class UserSeriesRepository extends ServiceEntityRepository
                     LEFT JOIN `episode_substitute_name` esn ON esn.`episode_id`=ue.`episode_id`
                     LEFT JOIN `watch_provider` wp ON wp.provider_id=ue.provider_id
                     LEFT JOIN `series_watch_link` swl ON swl.`series_id`=s.`id` AND swl.`provider_id`=ue.`provider_id`
-                WHERE ue.vote IS NULL
+                WHERE ue.user_id = :userId
+                  AND ue.vote IS NULL
                   AND (
                           (
                               ue.id IN (:ids)
@@ -1315,7 +1316,7 @@ class UserSeriesRepository extends ServiceEntityRepository
                 ORDER BY ue.`watched_at` DESC;
             SQL;
 
-        return $this->getAll($sql, ['ids' => $ids, 'locale' => $locale], ['ids' => ArrayParameterType::INTEGER, 'locale' => ParameterType::STRING]);
+        return $this->getAll($sql, ['userId' => $userId, 'ids' => $ids, 'locale' => $locale], ['userId' => ParameterType::INTEGER, 'ids' => ArrayParameterType::INTEGER, 'locale' => ParameterType::STRING]);
     }
 
     public function seriesWithNoVote(string  $locale): array
