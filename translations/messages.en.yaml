@@ -1845,3 +1845,8 @@ Deathday: 'Date of death'
 logo: logo
 'Point of interest added successfully': 'Point of interest added successfully'
 'No data received': 'No data received'
+'Movie added to your watchlist': 'Movie added to your watchlist'
+'Movie already added to your watchlist': 'Movie already added to your watchlist'
+'Added to your watchlist': 'Added to your watchlist'
+'Your movie list is empty': 'Your movie list is empty'
+'Use the search field above to add movies': 'Use the search field above to add movies'

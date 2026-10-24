@@ -1,0 +1,19 @@
+{#
+Liste des films de la page "Mes films"
+Rendue par MovieController::index et par ApiWatchlistAdd::movie (ajout depuis un champ de recherche)
+
+Params:
+- userMovies: array             // Cartes des films (MovieService::getWatchlistCards)
+- userMovieTotalCount: int      // Nombre total de films de l'utilisateur (sans filtre)
+#}
+{% if not userMovieTotalCount %}
+    <div class="no-movies-header">
+        {{ 'Your movie list is empty'|trans }}
+        <span>{{ 'Use the search field above to add movies'|trans }}</span>
+    </div>
+{% endif %}
+<div class="wrapper">
+    {% for movie in userMovies %}
+        {{ include('_blocks/movie/_card.html.twig') }}
+    {% endfor %}
+</div>

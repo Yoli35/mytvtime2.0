@@ -42,6 +42,30 @@ export class MovieIndex {
             movieSearchInput.addEventListener("input", this.menu.searchFetch);
             movieSearchInput.addEventListener("keydown", this.menu.searchMenuNavigate);
         }
+        // Film ajouté depuis un champ de recherche (cf. Menu.addThisMedia)
+        document.addEventListener('movie-watchlist-update', e => this.updateWatchlist(e.detail));
+    }
+
+    updateWatchlist(watchlist) {
+        const watchlistArticle = document.getElementById('movie-watchlist');
+        watchlistArticle.innerHTML = watchlist['html'];
+        this.menu.tooltips.init(watchlistArticle);
+        document.getElementById('movie-count').textContent = watchlist['userMovieCount'];
+        this.updatePaginations(watchlist['paginationSections']);
+    }
+
+    updatePaginations(paginationSections) {
+        const currentPaginationSections = document.querySelectorAll('section[id^=pagination-section]');
+        currentPaginationSections.forEach((oldSectionElement, index) => {
+            const tempDiv = document.createElement('div');
+            tempDiv.innerHTML = paginationSections[index];
+            const newSectionElement = tempDiv.querySelector('section');
+            if (newSectionElement) {
+                oldSectionElement.replaceWith(newSectionElement);
+            } else {
+                oldSectionElement.style.display = 'none';
+            }
+        });
     }
 
     initFilter() {
@@ -129,17 +153,7 @@ export class MovieIndex {
                         wrapper.appendChild(card(movie));
                     });
 
-                    const currentPaginationSections = document.querySelectorAll('section[id^=pagination-section]');
-                    currentPaginationSections.forEach((oldSectionElement, index) => {
-                        const tempDiv = document.createElement('div');
-                        tempDiv.innerHTML = paginationSections[index];
-                        const newSectionElement = tempDiv.querySelector('section');
-                        if (newSectionElement) {
-                            oldSectionElement.replaceWith(newSectionElement);
-                        } else {
-                            oldSectionElement.style.display = 'none';
-                        }
-                    });
+                    self.updatePaginations(paginationSections);
                 })
                 .catch(error => console.error(error));
         }

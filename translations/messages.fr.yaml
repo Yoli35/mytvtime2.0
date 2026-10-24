@@ -1851,3 +1851,8 @@ Deathday: 'Date de décès'
 logo: logo
 'Point of interest added successfully': "Le point d'intérêt a été ajouté avec succès"
 'No data received': 'Aucune donnée reçue'
+'Movie added to your watchlist': 'Film ajouté à votre liste'
+'Movie already added to your watchlist': 'Film déjà ajouté à votre liste'
+'Added to your watchlist': 'Ajouté à votre liste'
+'Your movie list is empty': 'Votre liste est vide'
+'Use the search field above to add movies': 'Utilisez le champ de recherche ci-dessus pour ajouter des films'

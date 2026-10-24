@@ -6,11 +6,23 @@ use App\Entity\Movie;
 use App\Entity\MovieCollection;
 use App\Entity\MovieImage;
 use App\Entity\User;
+use App\Entity\UserMovie;
 use App\Repository\MovieCollectionRepository;
 use App\Repository\MovieImageRepository;
+use App\Repository\MovieRepository;
+use App\Repository\SettingsRepository;
+use App\Repository\UserMovieRepository;
 
 class MovieService
 {
+    public const array WATCHLIST_DEFAULT_FILTERS = [
+        'order' => 'DESC',
+        'page' => 1,
+        'limit' => 10,
+        'sort' => 'releaseDate',
+        'title' => '',
+    ];
+
     private string $root;
     private array $sizes;
     private array $messages = [];
@@ -21,6 +33,10 @@ class MovieService
         private readonly ImageService              $imageService,
         private readonly MovieCollectionRepository $movieCollectionRepository,
         private readonly MovieImageRepository      $movieImageRepository,
+        private readonly MovieRepository           $movieRepository,
+        private readonly SettingsRepository        $settingsRepository,
+        private readonly TMDBService             $tmdbService,
+        private readonly UserMovieRepository       $userMovieRepository,
     )
     {
         $this->root = $this->imageService->getProjectDir() . '/public';
@@ -186,6 +202,76 @@ class MovieService
             }
         }
         return $updated;
+    }
+
+    /**
+     * Ajoute un film (TMDB id) à la liste de l'utilisateur.
+     * Utilisé par la route app_movie_add et par l'api (ajout depuis les champs de recherche).
+     *
+     * @return array{userMovie: UserMovie, alreadyAdded: bool}
+     */
+    public function addMovieToWatchlist(User $user, int $tmdbId): array
+    {
+        $movie = $this->movieRepository->findOneBy(['tmdbId' => $tmdbId]);
+        if ($movie) {
+            $userMovie = $this->userMovieRepository->findOneBy(['movie' => $movie, 'user' => $user]);
+            if ($userMovie) {
+                return ['userMovie' => $userMovie, 'alreadyAdded' => true];
+            }
+        } else {
+            $tmdbMovie = json_decode($this->tmdbService->getMovie($tmdbId, 'fr-FR', ['videos,images,credits,recommendations,watch/providers,release_dates']), true);
+            $movie = new Movie($tmdbMovie);
+            $movie->setCollection($this->getCollection($tmdbMovie));
+            $this->movieRepository->save($movie, true);
+        }
+
+        $timezone = $user->getTimezone() ?? 'Europe/Paris';
+        $now = $this->dateService->getNowImmutable($timezone);
+        $userMovie = new UserMovie($user, $movie, $now);
+        $this->userMovieRepository->save($userMovie, true);
+
+        return ['userMovie' => $userMovie, 'alreadyAdded' => false];
+    }
+
+    /**
+     * Filtres de la page "Mes films" enregistrés par l'utilisateur (ou ceux par défaut)
+     */
+    public function getWatchlistFilters(User $user): array
+    {
+        $settings = $this->settingsRepository->findOneBy(['user' => $user, 'name' => 'my movies']);
+        return $settings ? $settings->getData() : self::WATCHLIST_DEFAULT_FILTERS;
+    }
+
+    /**
+     * Cartes des films de la page "Mes films" (cf. _blocks/movie/_watchlist.html.twig)
+     */
+    public function getWatchlistCards(User $user, array $filters): array
+    {
+        return array_map(function ($movie) {
+            $this->imageService->saveImage("posters", $movie['posterPath'], $this->imageConfiguration->getUrl('poster_sizes', 5), '/movies/');
+            return $movie;
+        }, $this->movieRepository->getMovieCards($user, $filters));
+    }
+
+    public function getCollection(array $tmdbMovie): ?MovieCollection
+    {
+        $movieCollection = null;
+        if (key_exists('belongs_to_collection', $tmdbMovie)) {
+            $collection = $tmdbMovie['belongs_to_collection'];
+            if ($collection) {
+                $collectionId = $collection['id'];
+                $movieCollection = $this->movieCollectionRepository->findOneBy(['tmdbId' => $collectionId]);
+                if (!$movieCollection) {
+                    $movieCollection = new MovieCollection();
+                    $movieCollection->setTmdbId($collectionId);
+                    $movieCollection->setName($collection['name']);
+                    $movieCollection->setPosterPath($collection['poster_path']);
+                    $this->movieCollectionRepository->save($movieCollection, true);
+                    $movieCollection = $this->movieCollectionRepository->findOneBy(['tmdbId' => $collectionId]);
+                }
+            }
+        }
+        return $movieCollection;
     }
 
     public function checkMovieInfos(string $title, array $tmdbMovie, Movie $movie, string $region, bool $isCommand = false): bool

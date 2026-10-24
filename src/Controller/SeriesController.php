@@ -5,7 +5,6 @@ namespace App\Controller;
 use App\Api\ApiWatchLink;
 use App\DTO\SeriesAdvancedSearchDTO;
 use App\DTO\SeriesSearchDTO;
-use App\Entity\ContactMessage;
 use App\Entity\Series;
 use App\Entity\SeriesBroadcastDate;
 use App\Entity\SeriesBroadcastSchedule;
@@ -16,7 +15,6 @@ use App\Entity\UserSeries;
 use App\Form\SeriesAdvancedDbSearchType;
 use App\Form\SeriesAdvancedSearchType;
 use App\Form\SeriesSearchType;
-use App\Repository\ContactMessageRepository;
 use App\Repository\NetworkRepository;
 use App\Repository\SeriesBroadcastDateRepository;
 use App\Repository\SeriesBroadcastScheduleRepository;
@@ -41,14 +39,11 @@ use DateTime;
 use DateTimeImmutable;
 use DateTimeZone;
 use Psr\Log\LoggerInterface as MonologLogger;
-use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Intl\Countries;
-use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
-use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Routing\Requirement\Requirement;
 use Symfony\Component\Security\Http\Attribute\CurrentUser;
@@ -62,12 +57,10 @@ class SeriesController extends AbstractController
 {
     public function __construct(
         private readonly ApiWatchLink                      $watchLinkApi,
-        private readonly ContactMessageRepository          $contactMessageRepository,
         private readonly DateService                       $dateService,
         private readonly ImageConfiguration                $imageConfiguration,
         private readonly ImageService                      $imageService,
         private readonly KeywordService                    $keywordService,
-        private readonly MailerInterface                   $mailer,
         private readonly MonologLogger                     $logger,
         private readonly NetworkRepository                 $networkRepository,
         private readonly ProviderService                   $providerService,
@@ -757,35 +750,19 @@ class SeriesController extends AbstractController
     #[Route('/add/{id}', name: 'add', requirements: ['id' => Requirement::DIGITS])]
     public function add(#[CurrentUser] User $user, int $id): Response
     {
-        $date = $this->now();
-        $locale = $user->getPreferredLanguage() ?: 'fr';
-        $language = $locale . '-' . ($user->getCountry() ?: 'FR');
-
-        $result = $this->addSeries($id, $date, $locale, $language);
-        $tv = $result['tv'];
+        $result = $this->seriesService->addSeriesToWatchlist($user, $id);
         $series = $result['series'];
-        $localizedName = $result['localizedName'];
-        $localizedSlug = $result['localizedSlug'];
-        $localizedOverview = $result['localizedOverview'];
 
-        $userSeries = $this->addSeriesToUser($user, $series, $tv, $date);
-        $this->sendMail('Nouvelle série', $this->prepareMail($userSeries, $localizedName, $localizedOverview), $userSeries);
-
-        $firstAirDate = $tv['first_air_date'] ? $this->dateService->newDateImmutable($tv['first_air_date'], 'Europe/Paris', true) : null;
-        $oldSeries = false;
-        $nowYear = $this->now()->format('Y');
-        $firstAirDateYear = $firstAirDate?->format('Y');
-
-        if ($firstAirDateYear) {
-            if ($nowYear - $firstAirDateYear > 2) {
-                $oldSeries = true;
-            }
+        if ($result['alreadyAdded']) {
+            $this->addFlash('warning', $this->translator->trans('Series already added to your watchlist'));
+        } else {
+            $this->addFlash('success', $this->translator->trans('Series added to your watchlist'));
         }
 
         return $this->redirectToRoute('app_tv_series', [
             'id' => $series->getId(),
-            'slug' => $localizedSlug ?: $series->getSlug(),
-            'oldSeriesAdded' => $oldSeries,
+            'slug' => $result['localizedSlug'] ?: $series->getSlug(),
+            'oldSeriesAdded' => $result['oldSeries'],
         ]);
     }
 
@@ -1165,124 +1142,6 @@ class SeriesController extends AbstractController
             'addedLogos' => $addedLogoCount,
             'addedPosters' => $addedPosterCount,
         ]);
-    }
-
-    public function addSeries(int $id, DateTimeImmutable $date, string $locale, string $language): array
-    {
-        $series = $this->seriesRepository->findOneBy(['tmdbId' => $id]);
-
-        $slugger = new AsciiSlugger();
-        $tv = json_decode($this->tmdbService->getTv($id, $language, ['translations']), true);
-
-        if (!$series) $series = new Series();
-        $series->setBackdropPath($tv['backdrop_path']);
-        $series->setCreatedAt($date);
-        $series->setFirstAirDate($tv['first_air_date'] ? $this->dateService->newDateImmutable($tv['first_air_date'], "Europe/Paris", true) : null);
-        $series->setName($tv['name']);
-        $series->setOriginalName($tv['original_name']);
-        $series->setOriginCountry($tv['origin_country']);
-        $series->setOverview($tv['overview']);
-        $series->setPosterPath($tv['poster_path']);
-        $series->setSlug($slugger->slug($tv['name']));
-        $series->setStatus($tv['status']);
-        $series->setTmdbId($id);
-        $series->setUpdatedAt($date);
-        $series->setVisitNumber(0);
-        $this->seriesRepository->save($series, true);
-
-        $localization = $this->localizeSeries($tv);
-        $this->seriesService->localizeSeries($series, $localization, $locale);
-
-        return [
-            'series' => $this->seriesRepository->findOneBy(['tmdbId' => $id]),
-            'localizedName' => $localization['localizedName'],
-            'localizedSlug' => $localization['localizedSlug'],
-            'localizedOverview' => $localization['localizedOverview'],
-            'tv' => $tv,
-        ];
-    }
-
-    public function addSeriesToUser(User $user, Series $series, array $tv, DateTimeImmutable $date): UserSeries
-    {
-        $userSeries = $this->userSeriesRepository->findOneBy(['user' => $user, 'series' => $series]);
-        if ($userSeries) {
-            $this->addFlash('warning', $this->translator->trans('Series already added to your watchlist'));
-        }
-
-        if (!$userSeries) {
-            $userSeries = new UserSeries($user, $series, $date);
-            $this->userSeriesRepository->save($userSeries, true);
-            $this->addFlash('success', $this->translator->trans('Series added to your watchlist'));
-        }
-
-        foreach ($tv['seasons'] as $season) {
-            $this->seriesService->addSeasonToUser($user, $userSeries, $season['season_number'], [], $season);
-        }
-        return $userSeries;
-    }
-
-    public function prepareMail(UserSeries $userSeries, ?string $localizedName, ?string $localizedOverview): ContactMessage
-    {
-        $user = $userSeries->getUser();
-        $series = $userSeries->getSeries();
-        $sln = $series->getLocalizedName($user->getPreferredLanguage() ?: 'fr');
-
-        $message = new ContactMessage();
-        $message->setName($user->getUsername());
-        $message->setEmail($user->getEmail());
-        $message->setSubject('Nouvel ajout par ' . $user->getUsername() . "(" . $user->getId() . ")" . " - " . ($sln ? $sln->getName() : $series->getName()));
-        $message->setMessage(
-            "IDs : " . $series->getId() . " / " . $userSeries->getId() . "\n\n"
-            . "Nom : " . $series->getName() . ($localizedName ? " - " . $localizedName : '') . "\n\n"
-            . ($sln ? "Nom localisé : " . $sln->getName() . "\n\n" : "")
-            . "Résumé : " . $localizedOverview ?: $series->getOverview() . "\n\n"
-        );
-
-        return $message;
-    }
-
-    public function sendMail(string $title, ContactMessage $message, UserSeries $userSeries): void
-    {
-        $this->contactMessageRepository->save($message, true);
-
-        $mail = new TemplatedEmail()
-            ->from($message->getEmail())
-            ->to('contact@mytvtime.fr')
-            ->subject($this->translator->trans('Contact form') . ' - ' . $message->getSubject())
-            ->htmlTemplate('emails/contact.html.twig')
-            ->context([
-                'title' => $title,
-                'data' => $message,
-            ])
-            ->locale('fr');
-        try {
-            $this->mailer->send($mail);
-        } catch (TransportExceptionInterface) {
-            $this->logger->error("Error sending email (serie {$userSeries->getSeries()->getTmdbId()}) new addition by {$userSeries->getUser()->getUsername()})");
-        }
-    }
-
-    public function localizeSeries(array $tv): array
-    {
-        $localizedName = null;
-        $localizedSlug = null;
-        $localizedOverview = null;
-        $translations = array_find($tv['translations']['translations'], function ($item) {
-            return $item['iso_639_1'] == 'en';
-        });
-        if ($translations) {
-            $localizedName = $this->seriesService->getLatinPart($tv['name']);
-            if ($this->seriesService->hasNoLatinChars($tv['name'])) {
-                $localizedName = $translations['data']['name'];
-            }
-            $localizedOverview = $translations['data']['overview'];
-            $localizedSlug = new AsciiSlugger()->slug($localizedName)->lower()->toString();
-        }
-        return [
-            'localizedName' => $localizedName,
-            'localizedOverview' => $localizedOverview,
-            'localizedSlug' => $localizedSlug,
-        ];
     }
 
     public function getEpisodeHistory(User $user, int $dayCount, string $locale): array

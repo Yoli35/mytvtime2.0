@@ -6,7 +6,6 @@ use App\Api\ApiWatchLink;
 use App\DTO\MovieSearchDTO;
 use App\Entity\Movie;
 use App\Entity\MovieAdditionalOverview;
-use App\Entity\MovieCollection;
 use App\Entity\MovieDirectLink;
 use App\Entity\MovieLocalizedName;
 use App\Entity\MovieLocalizedOverview;
@@ -15,7 +14,6 @@ use App\Entity\User;
 use App\Entity\UserMovie;
 use App\Form\MovieSearchType;
 use App\Repository\MovieAdditionalOverviewRepository;
-use App\Repository\MovieCollectionRepository;
 use App\Repository\MovieDirectLinkRepository;
 use App\Repository\MovieLocalizedNameRepository;
 use App\Repository\MovieLocalizedOverviewRepository;
@@ -52,7 +50,6 @@ class MovieController extends AbstractController
         private readonly ImageConfiguration           $imageConfiguration,
         private readonly ImageService                 $imageService,
         private readonly KeywordService               $keywordService,
-        private readonly MovieCollectionRepository    $movieCollectionRepository,
         private readonly MovieDirectLinkRepository    $movieDirectLinkRepository,
         private readonly MovieLocalizedNameRepository $movieLocalizedNameRepository,
         private readonly MovieRepository              $movieRepository,
@@ -89,13 +86,7 @@ class MovieController extends AbstractController
         // Parameters count
         if (!count($request->query->all())) {
             if (!$settings) {
-                $settings = new Settings($user, 'my movies', [
-                    'order' => 'DESC',
-                    'page' => 1,
-                    'limit' => 10,
-                    'sort' => 'releaseDate',
-                    'title' => '',
-                ]);
+                $settings = new Settings($user, 'my movies', MovieService::WATCHLIST_DEFAULT_FILTERS);
                 $this->settingsRepository->save($settings, true);
             }
         } else {
@@ -124,16 +115,9 @@ class MovieController extends AbstractController
         ];
 
         $userMovieCount = $this->movieRepository->countMovieCards($user, $filters);
-        if ($userMovieCount) {
-            $userMovies = array_map(function ($movie) {
-                $this->imageService->saveImage("posters", $movie['posterPath'], $this->imageConfiguration->getUrl('poster_sizes', 5), '/movies/');
-                return $movie;
-            }, $this->movieRepository->getMovieCards($user, $filters));
-        } else {
-            do {
-                $userMovies = $this->getTMDBMovies();
-            } while (!count($userMovies));
-        }
+        // Nombre total de films, sans le filtre sur le titre : liste vide ou aucun résultat pour ce titre ?
+        $userMovieTotalCount = strlen($filters['title'] ?? '') ? $this->movieRepository->countMovieCards($user, ['title' => '']) : $userMovieCount;
+        $userMovies = $userMovieCount ? $this->movieService->getWatchlistCards($user, $filters) : [];
 
         $filterMeanings = [
             'name' => 'Name',
@@ -146,6 +130,7 @@ class MovieController extends AbstractController
         return $this->render('movie/index.html.twig', [
             'userMovies' => $userMovies,
             'userMovieCount' => $userMovieCount,
+            'userMovieTotalCount' => $userMovieTotalCount,
             'pages' => ceil($userMovieCount / $filters['limit']),
             'filterMeanings' => $filterMeanings,
             'filterBoxOpen' => $filterBoxOpen,
@@ -400,23 +385,7 @@ class MovieController extends AbstractController
     {
         /** @var User $user */
         $user = $this->getUser();
-        $movie = $this->movieRepository->findOneBy(['tmdbId' => $id]);
-        if ($movie) {
-            $userMovie = $this->userMovieRepository->findOneBy(['movie' => $movie, 'user' => $user]);
-            if ($userMovie) {
-                return $this->redirectToRoute('app_movie_show', ['id' => $userMovie->getId()]);
-            }
-        } else {
-            $tmdbMovie = json_decode($this->tmdbService->getMovie($id, 'fr-FR', ['videos,images,credits,recommendations,watch/providers,release_dates']), true);
-            $movie = new Movie($tmdbMovie);
-            $movie->setCollection($this->getCollection($tmdbMovie));
-            $this->movieRepository->save($movie, true);
-        }
-
-        $timezone = $user->getTimezone() ?? 'Europe/Paris';
-        $now = $this->dateService->getNowImmutable($timezone);
-        $userMovie = new UserMovie($user, $movie, $now);
-        $this->userMovieRepository->save($userMovie, true);
+        $userMovie = $this->movieService->addMovieToWatchlist($user, $id)['userMovie'];
 
         return $this->redirectToRoute('app_movie_show', ['id' => $userMovie->getId()]);
     }
@@ -742,27 +711,6 @@ class MovieController extends AbstractController
             ];
         }, $movie['recommendations']['results']);
         $movie['recommendations'] = $recommandations;
-    }
-
-    public function getCollection(array $tmdbMovie): ?MovieCollection
-    {
-        $movieCollection = null;
-        if (key_exists('belongs_to_collection', $tmdbMovie)) {
-            $collection = $tmdbMovie['belongs_to_collection'];
-            if ($collection) {
-                $collectionId = $collection['id'];
-                $movieCollection = $this->movieCollectionRepository->findOneBy(['tmdbId' => $collectionId]);
-                if (!$movieCollection) {
-                    $movieCollection = new MovieCollection();
-                    $movieCollection->setTmdbId($collectionId);
-                    $movieCollection->setName($collection['name']);
-                    $movieCollection->setPosterPath($collection['poster_path']);
-                    $this->movieCollectionRepository->save($movieCollection, true);
-                    $movieCollection = $this->movieCollectionRepository->findOneBy(['tmdbId' => $collectionId]);
-                }
-            }
-        }
-        return $movieCollection;
     }
 
     public function getWatchLinks(array &$movie, Movie $dbMovie): void

@@ -1845,3 +1845,8 @@ Deathday: 사망일
 logo: 로고
 'Point of interest added successfully': '관심 지점이 추가되었습니다'
 'No data received': '받은 데이터가 없습니다'
+'Movie added to your watchlist': '영화가 목록에 추가되었습니다'
+'Movie already added to your watchlist': '이미 목록에 추가된 영화입니다'
+'Added to your watchlist': '목록에 추가됨'
+'Your movie list is empty': '영화 목록이 비어 있습니다'
+'Use the search field above to add movies': '위의 검색창을 사용하여 영화를 추가하세요'

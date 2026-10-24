@@ -12,14 +12,11 @@
     {% include('_blocks/_menu.html.twig') %}
     <div class="container-fluid movie-index filter-page">
         <article>
-            {#{% if firstMovie.userMovieId is null or userMovieCount < 20 %}#}
             {{ include('_blocks/movie/_search.html.twig') }}
-            {#{% endif %}#}
         </article>
-        {% set firstMovie = userMovies|first %}
         <h1>{{ 'My movies'|trans }} (<span id="movie-count">{{ userMovieCount }}</span>)</h1>
         <aside>
-            {% if firstMovie.userMovieId %}
+            {% if userMovieTotalCount %}
                 <article id="filter-box" class="filter-box">
                     <header class="collapse" data-for="filters" data-title="{{ 'Show / hide filter options'|trans }}">
                         <div class="title">{{ 'Filters'|trans }}</div>
@@ -73,21 +70,8 @@
             {{ include('_blocks/_pagination.html.twig', {index: 1, current_page: filters.page, total_pages: pages}) }}
         </aside>
         <main>
-            <article>
-                {% if firstMovie.userMovieId is null %}
-                    <div class="no-movies-header">{{ 'Your list does not contain any movies'|trans }}</div>
-                {% endif %}
-                <div class="wrapper">
-                    {% if firstMovie.userMovieId %}
-                        {% for movie in userMovies %}
-                            {{ include('_blocks/movie/_card.html.twig') }}
-                        {% endfor %}
-                    {% else %}
-                        {% for movie in userMovies %}
-                            {{ include('_blocks/movie/_card_tmdb.html.twig') }}
-                        {% endfor %}
-                    {% endif %}
-                </div>
+            <article id="movie-watchlist">
+                {{ include('_blocks/movie/_watchlist.html.twig') }}
             </article>
         </main>
         <aside>

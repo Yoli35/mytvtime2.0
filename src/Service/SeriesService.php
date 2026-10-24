@@ -2,6 +2,7 @@
 
 namespace App\Service;
 
+use App\Entity\ContactMessage;
 use App\Entity\FilmingLocation;
 use App\Entity\Network;
 use App\Entity\PointOfInterest;
@@ -18,6 +19,7 @@ use App\Entity\UserSeason;
 use App\Entity\UserSeries;
 use App\Form\AddBackdropType;
 use App\Form\SeriesVideoType;
+use App\Repository\ContactMessageRepository;
 use App\Repository\CountryRepository;
 use App\Repository\FilmingLocationRepository;
 use App\Repository\NetworkRepository;
@@ -36,11 +38,14 @@ use Closure;
 use DateMalformedStringException;
 use DateTimeImmutable;
 use Psr\Log\LoggerInterface as MonologLogger;
+use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Bundle\FrameworkBundle\Controller\ControllerHelper;
 use Symfony\Component\DependencyInjection\Attribute\AutowireMethodOf;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
+use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\String\Slugger\AsciiSlugger;
 use Symfony\Component\Uid\Uuid;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -59,6 +64,7 @@ readonly class SeriesService
         private Closure                           $getParameter,
         #[AutowireMethodOf(ControllerHelper::class)]
         private Closure                           $getUser,
+        private ContactMessageRepository          $contactMessageRepository,
         private CountryRepository                 $countryRepository,
         private DateService                       $dateService,
         private FilmingLocationRepository         $filmingLocationRepository,
@@ -66,7 +72,8 @@ readonly class SeriesService
         private ImageService                      $imageService,
         private KeywordService                    $keywordService,
         private MonologLogger                     $logger,
-        private NetworkRepository                 $networkRepository,
+        private MailerInterface                   $mailer,
+        private NetworkRepository                $networkRepository,
         private ProviderService                   $providerService,
         private SeasonService                     $seasonService,
         private SeriesBroadcastScheduleRepository $seriesBroadcastScheduleRepository,
@@ -380,6 +387,148 @@ readonly class SeriesService
         }
 
         return $syncResults;  // Retourne pour usage interne (ex. : tests)
+    }
+
+    /**
+     * Ajoute une série (TMDB id) à la liste de suivi de l'utilisateur.
+     * Utilisé par la route app_series_add et par l'api (ajout depuis les champs de recherche).
+     *
+     * @return array{series: Series, userSeries: UserSeries, alreadyAdded: bool, localizedSlug: ?string, oldSeries: bool}
+     */
+    public function addSeriesToWatchlist(User $user, int $tmdbId): array
+    {
+        $date = $this->dateService->newDateImmutable('now', $user->getTimezone() ?: 'Europe/Paris');
+        $locale = $user->getPreferredLanguage() ?: 'fr';
+        $language = $locale . '-' . ($user->getCountry() ?: 'FR');
+
+        $result = $this->addSeries($tmdbId, $date, $locale, $language);
+        $tv = $result['tv'];
+        $series = $result['series'];
+
+        $userSeries = $this->userSeriesRepository->findOneBy(['user' => $user, 'series' => $series]);
+        $alreadyAdded = $userSeries !== null;
+        if (!$alreadyAdded) {
+            $userSeries = new UserSeries($user, $series, $date);
+            $this->userSeriesRepository->save($userSeries, true);
+        }
+
+        foreach ($tv['seasons'] as $season) {
+            $this->addSeasonToUser($user, $userSeries, $season['season_number'], [], $season);
+        }
+
+        if (!$alreadyAdded) {
+            $this->sendMail('Nouvelle série', $this->prepareMail($userSeries, $result['localizedName'], $result['localizedOverview']), $userSeries);
+        }
+
+        $firstAirDate = $tv['first_air_date'] ? $this->dateService->newDateImmutable($tv['first_air_date'], 'Europe/Paris', true) : null;
+        $oldSeries = $firstAirDate && $date->format('Y') - $firstAirDate->format('Y') > 2;
+
+        return [
+            'series' => $series,
+            'userSeries' => $userSeries,
+            'alreadyAdded' => $alreadyAdded,
+            'localizedSlug' => $result['localizedSlug'],
+            'oldSeries' => $oldSeries,
+        ];
+    }
+
+    public function addSeries(int $id, DateTimeImmutable $date, string $locale, string $language): array
+    {
+        $series = $this->seriesRepository->findOneBy(['tmdbId' => $id]);
+
+        $slugger = new AsciiSlugger();
+        $tv = json_decode($this->tmdbService->getTv($id, $language, ['translations']), true);
+
+        if (!$series) $series = new Series();
+        $series->setBackdropPath($tv['backdrop_path']);
+        $series->setCreatedAt($date);
+        $series->setFirstAirDate($tv['first_air_date'] ? $this->dateService->newDateImmutable($tv['first_air_date'], "Europe/Paris", true) : null);
+        $series->setName($tv['name']);
+        $series->setOriginalName($tv['original_name']);
+        $series->setOriginCountry($tv['origin_country']);
+        $series->setOverview($tv['overview']);
+        $series->setPosterPath($tv['poster_path']);
+        $series->setSlug($slugger->slug($tv['name']));
+        $series->setStatus($tv['status']);
+        $series->setTmdbId($id);
+        $series->setUpdatedAt($date);
+        $series->setVisitNumber(0);
+        $this->seriesRepository->save($series, true);
+
+        $localization = $this->getSeriesLocalization($tv);
+        $this->localizeSeries($series, $localization, $locale);
+
+        return [
+            'series' => $this->seriesRepository->findOneBy(['tmdbId' => $id]),
+            'localizedName' => $localization['localizedName'],
+            'localizedSlug' => $localization['localizedSlug'],
+            'localizedOverview' => $localization['localizedOverview'],
+            'tv' => $tv,
+        ];
+    }
+
+    public function getSeriesLocalization(array $tv): array
+    {
+        $localizedName = null;
+        $localizedSlug = null;
+        $localizedOverview = null;
+        $translations = array_find($tv['translations']['translations'], function ($item) {
+            return $item['iso_639_1'] == 'en';
+        });
+        if ($translations) {
+            $localizedName = $this->getLatinPart($tv['name']);
+            if ($this->hasNoLatinChars($tv['name'])) {
+                $localizedName = $translations['data']['name'];
+            }
+            $localizedOverview = $translations['data']['overview'];
+            $localizedSlug = new AsciiSlugger()->slug($localizedName)->lower()->toString();
+        }
+        return [
+            'localizedName' => $localizedName,
+            'localizedOverview' => $localizedOverview,
+            'localizedSlug' => $localizedSlug,
+        ];
+    }
+
+    public function prepareMail(UserSeries $userSeries, ?string $localizedName, ?string $localizedOverview): ContactMessage
+    {
+        $user = $userSeries->getUser();
+        $series = $userSeries->getSeries();
+        $sln = $series->getLocalizedName($user->getPreferredLanguage() ?: 'fr');
+
+        $message = new ContactMessage();
+        $message->setName($user->getUsername());
+        $message->setEmail($user->getEmail());
+        $message->setSubject('Nouvel ajout par ' . $user->getUsername() . "(" . $user->getId() . ")" . " - " . ($sln ? $sln->getName() : $series->getName()));
+        $message->setMessage(
+            "IDs : " . $series->getId() . " / " . $userSeries->getId() . "\n\n"
+            . "Nom : " . $series->getName() . ($localizedName ? " - " . $localizedName : '') . "\n\n"
+            . ($sln ? "Nom localisé : " . $sln->getName() . "\n\n" : "")
+            . "Résumé : " . ($localizedOverview ?: $series->getOverview()) . "\n\n"
+        );
+
+        return $message;
+    }
+
+    public function sendMail(string $title, ContactMessage $message, UserSeries $userSeries): void
+    {
+        $this->contactMessageRepository->save($message, true);
+
+        $mail = new TemplatedEmail()
+            ->from($message->getEmail())
+            ->to('contact@mytvtime.fr')
+            ->subject($this->translator->trans('Contact form') . ' - ' . $message->getSubject())
+            ->htmlTemplate('emails/contact.html.twig')
+            ->context([
+                'title' => $title,
+                'data' => $message,
+            ])
+            ->locale('fr');
+        try {
+            $this->mailer->send($mail);
+        } catch (TransportExceptionInterface) {
+            $this->logger->error("Error sending email (serie {$userSeries->getSeries()->getTmdbId()}) new addition by {$userSeries->getUser()->getUsername()})");
+        }
     }
 
     public function addSeasonToUser(User $user, UserSeries $userSeries, int $seasonNumber, array $userEpisodes, array $season): array

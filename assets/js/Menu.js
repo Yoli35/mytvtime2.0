@@ -136,6 +136,8 @@ export class Menu {
         this.profileUrl = null;
         this.multiSearchAddIcon = null;
         this.multiSearchAddText = {'tv': '', 'movie': ''};
+        this.multiSearchAddedIcon = null;
+        this.multiSearchAddedText = '';
         this.svgs = {
             "mdi:tv": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"1em\" height=\"1em\" viewBox=\"0 0 24 24\"><path fill=\"currentColor\" d=\"M21 17H3V5h18m0-2H3a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h5v2h8v-2h5a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2\"/></svg>",
             "mdi:mobile-phone": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"1em\" height=\"1em\" viewBox=\"0 0 24 24\"><path fill=\"currentColor\" d=\"M17 19H7V5h10m0-4H7c-1.11 0-2 .89-2 2v18a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3a2 2 0 0 0-2-2\"/></svg>",
@@ -301,6 +303,8 @@ export class Menu {
         this.multiSearchAddIcon = multiSearchDiv.querySelector(".icons svg#multi-search-add");
         this.multiSearchAddText.tv = multiSearchDiv.querySelector("span#multi-search-add-tv").innerText;
         this.multiSearchAddText.movie = multiSearchDiv.querySelector("span#multi-search-add-movie").innerText;
+        this.multiSearchAddedIcon = multiSearchDiv.querySelector(".icons svg#multi-search-added");
+        this.multiSearchAddedText = multiSearchDiv.querySelector("span#multi-search-added").innerText;
 
         document.addEventListener("keydown", e => {
             const active = document.activeElement;
@@ -866,7 +870,8 @@ export class Menu {
                         addThisDiv.setAttribute('data-title', self.multiSearchAddText[type]);
                         addThisDiv.addEventListener('click', function(e) {
                             e.preventDefault();
-                            window.location.href = this.getAttribute('data-link');
+                            e.stopPropagation();
+                            self.addThisMedia(this, aDiv, type);
                         });
                         const addSvg = self.multiSearchAddIcon.cloneNode(true);
                         addSvg.removeAttribute('id');
@@ -881,6 +886,46 @@ export class Menu {
                 self.fixSearchResultsWidth(searchResults);
             })
             .catch(err => console.error('error:' + err));
+    }
+
+    addThisMedia(addThisDiv, aDiv, type) {
+        // Ajout du média sans quitter la recherche : l'icône + devient ✓
+        if (addThisDiv.classList.contains('adding') || addThisDiv.classList.contains('added')) return;
+        addThisDiv.classList.add('adding');
+        // Sur la page "Mes films", la liste des films est rendue à nouveau (cf. MovieIndex.js)
+        const watchlist = type === 'movie' && document.getElementById('movie-watchlist') !== null;
+
+        fetch(addThisDiv.getAttribute('data-link'), {
+            method: 'POST',
+            headers: {
+                accept: 'application/json'
+            },
+            body: JSON.stringify({watchlist: watchlist, locale: self.lang})
+        })
+            .then(res => {
+                if (!res.ok) throw new Error(res.statusText);
+                return res.json();
+            })
+            .then(json => {
+                addThisDiv.classList.remove('adding');
+                if (!json.ok) return;
+                addThisDiv.classList.add('added');
+                addThisDiv.innerHTML = '';
+                const addedSvg = self.multiSearchAddedIcon.cloneNode(true);
+                addedSvg.removeAttribute('id');
+                addThisDiv.appendChild(addedSvg);
+                addThisDiv.setAttribute('data-title', self.multiSearchAddedText);
+                self.tooltips.hide();
+                // Le lien du résultat mène maintenant à la page du média ajouté
+                if (json.url) aDiv.href = json.url;
+                if (json.watchlist) {
+                    document.dispatchEvent(new CustomEvent('movie-watchlist-update', {detail: json.watchlist}));
+                }
+            })
+            .catch(err => {
+                addThisDiv.classList.remove('adding');
+                console.error('error:' + err);
+            });
     }
 
     fixSearchResultsWidth(searchResultsDiv) {

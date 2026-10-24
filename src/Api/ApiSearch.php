@@ -63,11 +63,11 @@ readonly class ApiSearch
                 if (key_exists('media_type', $result)) {
                     if ($result['media_type'] == 'tv') {
                         $result['add_this'] = !in_array($result['id'], $usIds);
-                        $result['add_this_link'] = ($this->generateUrl)('app_series_add', ['id' => $result['id']]);
+                        $result['add_this_link'] = ($this->generateUrl)('api_watchlist_add_series', ['id' => $result['id']]);
                     }
                     if ($result['media_type'] == 'movie') {
                         $result['add_this'] = !in_array($result['id'], $umIds);
-                        $result['add_this_link'] = ($this->generateUrl)('app_movie_add', ['id' => $result['id']]);
+                        $result['add_this_link'] = ($this->generateUrl)('api_watchlist_add_movie', ['id' => $result['id']]);
                     }
                 }
                 return $result;
@@ -114,7 +114,7 @@ readonly class ApiSearch
 
         $movies = array_map(function ($movie) use ($umIds) {
             $movie['add_this'] = !in_array($movie['id'], $umIds);
-            $movie['add_this_link'] = ($this->generateUrl)('app_movie_add', ['id' => $movie['id']]);
+            $movie['add_this_link'] = ($this->generateUrl)('api_watchlist_add_movie', ['id' => $movie['id']]);
             return $movie;
         }, $movies['results']);
 
@@ -165,7 +165,7 @@ readonly class ApiSearch
 
         $series = array_map(function ($serie) use ($usIds) {
             $serie['add_this'] = !in_array($serie['id'], $usIds);
-            $serie['add_this_link'] = ($this->generateUrl)('app_series_add', ['id' => $serie['id']]);
+            $serie['add_this_link'] = ($this->generateUrl)('api_watchlist_add_series', ['id' => $serie['id']]);
             return $serie;
         }, $series['results']);
 

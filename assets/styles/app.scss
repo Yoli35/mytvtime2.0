@@ -1724,6 +1724,15 @@ label:has(input[type="text"]) {
     }
 }
 
+@keyframes add-this-item-pulse {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: .3;
+    }
+}
+
 @keyframes loading {
     0% {
         background-color: hsl(0 0% 0% / 0);
@@ -1835,6 +1844,16 @@ label:has(input[type="text"]) {
                     svg {
                         height: 1.5rem;
                         width: 1.5rem;
+                    }
+
+                    &.adding {
+                        animation: add-this-item-pulse 1s ease-in-out infinite;
+                        cursor: wait;
+                    }
+
+                    &.added {
+                        color: var(--green-50);
+                        cursor: default;
                     }
                 }
             }
