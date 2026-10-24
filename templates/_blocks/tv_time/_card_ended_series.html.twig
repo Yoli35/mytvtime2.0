@@ -31,7 +31,7 @@
                 <div class="overview">{{ series.episodeOverview }}</div>
             </div>
             <div class="watch-links">
-                {% if providerLogoPath %}
+                {% if series.providerLogoPath %}
                     <div class="watch-link" data-title="{{ series.providerName }}">
                         <img src="{{ series.providerLogoPath }}" alt="{{ series.providerName }}">
                     </div>

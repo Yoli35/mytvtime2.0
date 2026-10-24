@@ -12,7 +12,7 @@
                 {{ include('_blocks/tv_time/_card_series.html.twig', {next: false, while: false}) }}
             {% endfor %}
         </div>
-        <div class="divider" data-content="ended-up-to-date"><span>{{ 'Ended series up to date'|trans }} ({{ series.ended.items|length }})</span></div>
+        <div class="divider" data-content="ended-up-to-date"><span>{{ 'Ended series - last episode'|trans }} ({{ series.ended.items|length }})</span></div>
         <div class="content">
             {% for series in series.ended.items %}
                 {{ include('_blocks/tv_time/_card_ended_series.html.twig', {next: false, while: false}) }}
