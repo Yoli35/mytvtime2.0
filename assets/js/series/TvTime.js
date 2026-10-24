@@ -63,6 +63,10 @@ export class TvTime {
             }
         });
 
+        document.addEventListener('tv-time-series-update', () => {
+            self.getEpisodes();
+        });
+
         this.intervalId = setInterval(() => {
             self.getEpisodes();
         }, this.remainingSecondes * 1000);

@@ -89,21 +89,21 @@
             </div>
         </header>
         <main>
-            <div class="content-tab series-tab{% if tab == 0 %} active{% endif %}" data-tab-index="0">
+            <article id="tv-time-series" class="content-tab series-tab{% if tab == 0 %} active{% endif %}" data-tab-index="0">
                 {% if tab==0 %}
                     {{ include('_blocks/tv_time/_wrapper_series.html.twig') }}
                 {% endif %}
-            </div>
-            <div class="content-tab movies-tab{% if tab == 1 %} active{% endif %}" data-tab-index="1">
+            </article>
+            <article id="tv-time-movies" class="content-tab movies-tab{% if tab == 1 %} active{% endif %}" data-tab-index="1">
                 {% if tab==1 %}
                     {{ include('_blocks/tv_time/_wrapper_movies.html.twig', {movies: movies.movies, movieCount: movies.movieCount, loadCount: loadCount}) }}
                 {% endif %}
-            </div>
-            <div class="content-tab coming-tab{% if tab == 2 %} active{% endif %}" data-tab-index="2">
+            </article>
+            <article id="tv-time-coming" class="content-tab coming-tab{% if tab == 2 %} active{% endif %}" data-tab-index="2">
                 {% if tab==2 %}
                     {{ include('_blocks/tv_time/_wrapper_coming.html.twig', {comingMedia: coming.media, comingActors: coming.actors, loadCount: loadCount}) }}
                 {% endif %}
-            </div>
+            </article>
         </main>
         <div id="global-data" class="hidden">{# "episodesAvailable": {{ episodesAvailable|json_encode|raw }}, #}
             {

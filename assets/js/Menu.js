@@ -894,13 +894,14 @@ export class Menu {
         addThisDiv.classList.add('adding');
         // Sur la page "Mes films", la liste des films est rendue à nouveau (cf. MovieIndex.js)
         const watchlist = type === 'movie' && document.getElementById('movie-watchlist') !== null;
+        const tvTimeList = type === 'tv' && document.querySelector('#tv-time-series.active') !== null;
 
         fetch(addThisDiv.getAttribute('data-link'), {
             method: 'POST',
             headers: {
                 accept: 'application/json'
             },
-            body: JSON.stringify({watchlist: watchlist, locale: self.lang})
+            body: JSON.stringify({watchlist: watchlist, tvTimeList: tvTimeList, locale: self.lang})
         })
             .then(res => {
                 if (!res.ok) throw new Error(res.statusText);
@@ -920,6 +921,9 @@ export class Menu {
                 if (json.url) aDiv.href = json.url;
                 if (json.watchlist) {
                     document.dispatchEvent(new CustomEvent('movie-watchlist-update', {detail: json.watchlist}));
+                }
+                if (tvTimeList) {
+                    document.dispatchEvent(new CustomEvent('tv-time-series-update', {detail: 'update'}));
                 }
             })
             .catch(err => {
