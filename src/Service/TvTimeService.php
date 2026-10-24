@@ -129,6 +129,7 @@ readonly class TvTimeService
         /*$settings['tab'] = 1;*/
         $movies = [];
         $coming = [];
+        $providerUrl = $this->imageConfiguration->getUrl('logo_sizes', 3);
 
         // Reload page at midnight plus 1 to 60 secondes
         $now = $this->dateService->getNow($user->getTimezone() ?? 'Europe/Paris');
@@ -150,6 +151,11 @@ readonly class TvTimeService
                 $content['available']['count'] = count($content['available']['items']);
                 $content['upToDate']['items'] = $upToDateSeries;
                 $content['upToDate']['count'] = count($upToDateSeries);
+                $content['ended']['items'] = array_map(function ($ep) use ($providerUrl) {
+                    $ep['providerLogoPath'] = $this->providerService->getProviderLogoFullPath($ep['providerLogoPath'], $providerUrl);
+                    return $ep;
+                }, $this->userSeriesRepository->findUpToDateEndedSeries($userId, $sort, $locale));
+                $content['ended']['count'] = count($content['ended']['items']);
                 $content['upToDateInAWhile']['items'] = $this->userSeriesRepository->findUpToDateSeriesInAWhile($userId, $sort, $locale);
                 $content['upToDateInAWhile']['count'] = $this->userSeriesRepository->countUpToDateSeriesInAWhile($userId);
                 $ids = array_unique(
@@ -175,9 +181,11 @@ readonly class TvTimeService
                     array_merge(
                         array_column($content['available']['items'], 'tmdb_id'),
                         array_column($upToDateSeries, 'tmdb_id'),
+                        array_column($content['ended']['items'], 'tmdbId'),
                         array_column($content['upToDateInAWhile']['items'], 'tmdb_id')
                     )
                 );
+                dump($content);
             }
 
             if ($kind == 1) {
@@ -192,7 +200,6 @@ readonly class TvTimeService
                 $ids = array_column($content['specialEpisodes']['items'], 'id');
             }
 
-            $providerUrl = $this->imageConfiguration->getUrl('logo_sizes', 3);
             $watchLinks = array_map(function ($wp) use ($providerUrl) {
                 $wp['providerLogoPath'] = $this->providerService->getProviderLogoFullPath($wp['providerLogoPath'], $providerUrl);
                 return $wp;

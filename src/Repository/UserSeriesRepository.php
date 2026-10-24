@@ -1181,6 +1181,50 @@ class UserSeriesRepository extends ServiceEntityRepository
         return $this->getAll($sql, ['id' => $userId, 'sort'=> $sort, 'locale' => $locale], ['id' => Types::INTEGER, 'sort' => Types::STRING, 'locale' => Types::STRING]);
     }
 
+    public function findUpToDateEndedSeries(int $userId, int $sort, string  $locale, string $path="/series/posters"): array
+    {
+        $sql = <<<SQL
+                -- Séries en cours de visionnage dans la diffusion est terminée
+                SELECT
+                    s.`id`                           AS id,
+                    s.`tmdb_id`                      AS tmdbId,
+                    IFNULL(sln.name, s.name)         AS name,
+                    YEAR(s.first_air_date)           AS year,
+                    DATEDIFF(ue.air_date, NOW())     AS remainingDays,
+                    CONCAT(:path, s.`poster_path`)   AS posterPath,
+                    CONCAT('S', LPAD(ue.`season_number`, 2, '0'), 'E', LPAD(ue.`episode_number`, 2, '0'))
+                                                     AS `number`,
+                    ue.`id`                          AS userEpisodeId,
+                    ue.`episode_id`                  AS episodeId,
+                    ue.`season_number`               AS seasonNumber,
+                    ue.`episode_number`              AS episodeNumber,
+                    ue.`vote`                        AS episodeVote,
+                    wp.`logo_path`                   AS providerLogoPath,
+                    wp.`provider_name`               AS providerName,
+                    IFNULL(esn.`name`, e.`name`)     AS episodeName,
+                    e.`overview`                     AS episodeOverview,
+                    e.`runtime`                      AS episodeRuntime
+                FROM user_episode ue
+                    INNER JOIN `user_series` us ON us.`last_user_episode_id` = ue.`id`
+                    INNER JOIN series s ON s.id=us.series_id AND (SELECT COUNT(*) FROM episode e2 WHERE e2.series_id=s.id AND e2.air_date>SUBDATE(CURDATE(), INTERVAL 3 WEEK))=0 -- Diffusion terminée
+                    LEFT JOIN episode e ON e.tmdb_id=ue.episode_id
+                    LEFT JOIN `series_localized_name` sln ON sln.`series_id` = s.`id` AND sln.`locale` = :locale
+                    LEFT JOIN `episode_substitute_name` esn ON esn.`episode_id` = ue.`episode_id`
+                    LEFT JOIN `watch_provider` wp ON wp.provider_id=ue.provider_id
+                WHERE ue.user_id=:id
+                  AND ue.watched_at >= SUBDATE(CURDATE(), INTERVAL 3 WEEK)
+                  AND ue.season_number>0 -- Les épisodes spéciaux disponibles sont déjà répertoriés ailleurs
+                ORDER BY us.last_watched_at DESC;
+            SQL;
+        match ($sort) {
+            1 => $sql .= " ORDER BY us.`last_watched_at` DESC",
+            2 => $sql .= " ORDER BY IFNULL(DATE(sbd.`date`), ue.`air_date`) DESC",
+            default => $sql .= " ORDER BY remainingDays"
+        };
+
+        return $this->getAll($sql, ['id' => $userId, 'sort'=> $sort, 'locale' => $locale, 'path' => $path], ['id' => Types::INTEGER, 'sort' => Types::STRING, 'locale' => Types::STRING, 'path' => Types::STRING]);
+    }
+
     public function findUpToDateSeriesInAWhile(int $userId, int $sort, string  $locale, int $offset = 0, int $limit = 20): array
     {
         $sql = <<<SQL

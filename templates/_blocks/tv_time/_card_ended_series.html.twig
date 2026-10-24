@@ -1,0 +1,49 @@
+<div class="card"
+     data-episode-id="{{ series.episodeId }}"
+     data-ref="{{ series.tmdbId }}-{{ series.episodeId }}-{{ series.seasonNumber }}-{{ series.episodeNumber }}-{{ series.episodeName }}">
+    <a href="{{ path('app_tv_series', { 'id': series.id, slug: series.name|slug}) }}" target="_blank">
+        <div class="poster" data-title="{{ series.name }}">
+            {% if series.posterPath %}
+                <img src="{{ series.posterPath }}" alt="{{ series.name }}">
+            {% else %}
+                <div>{{ 'No poster'|trans }}</div>
+            {% endif %}
+        </div>
+    </a>
+    <a href="{{ path('app_tv_episode', { 'id': series.id, slug: series.name|slug, seasonNumber: series.seasonNumber, episodeNumber: series.episodeNumber}) }}" target="_blank">
+        <div class="infos">
+            <div class="details">
+                <div class="name">{{ series.name }} <span>{{ series.year }}</span></div>
+                <div class="number">
+                    {{ series.number }}
+                </div>
+                {% if series.episodeName %}
+                    <div class="esn-name" data-title="{{ series.episodeName }}">
+                        <div class="name">{{ series.episodeName }}</div>
+                        <div class="duration">{{ series.episodeRuntime }} min</div>
+                    </div>
+                {% else %}
+                    <div class="esn-name" data-title="">
+                        <div class="name"></div>
+                        <div class="duration"></div>
+                    </div>
+                {% endif %}
+                <div class="overview">{{ series.episodeOverview }}</div>
+            </div>
+            <div class="watch-links">
+                {% if providerLogoPath %}
+                    <div class="watch-link" data-title="{{ series.providerName }}">
+                        <img src="{{ series.providerLogoPath }}" alt="{{ series.providerName }}">
+                    </div>
+                {% endif %}
+            </div>
+            <div class="vote{% if series.episodeVote >= 10 %} voted-{{ series.episodeVote }}{% endif %}">
+                {% if series.episodeVote %}
+                    {% if series.episodeVote > 10 %}10+{% else %}{{ series.episodeVote }}{% endif %}
+                {% else %}
+                    {{ ux_icon('mdi:star') }}
+                {% endif %}
+            </div>
+        </div>
+    </a>
+</div>
