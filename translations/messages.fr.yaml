@@ -1,5 +1,6 @@
 #Admin
 Api: API
+Back to users: Retour aux utilisateurs
 Base url: URL de base
 Catalog - API to enumerate datasets: Catalogue - API pour énumérer les ensembles de données
 Dashboard: Tableau de bord
@@ -13,6 +14,7 @@ Export a dataset in Parquet: Exporter un ensemble de données en Parquet
 Export a dataset: Exporter un ensemble de données
 Export catalog in CSV format: Exporter un catalogue au format CSV
 Export catalog in specified format: Exporter le catalogue dans le format spécifié
+Last activity: Dernière activité
 List dataset attachments: Lister les pièces jointes de l'ensemble de données
 List export formats for a dataset: Lister les formats d'exportation pour un ensemble de données
 List export formats: Lister les formats d'exportation
@@ -20,15 +22,23 @@ List facet values for a dataset: Lister les valeurs de facette pour un ensemble 
 List facet values: Lister les valeurs de facette
 Modules: Modules
 Next message: Message suivant
+Next user: Utilisateur suivant
 No next message: Pas de message suivant
+No next user: Pas d'utilisateur suivant
 No previous message: Pas de message précédent
+No previous user: Pas d'utilisateur précédent
+Not verified: Non vérifié
 Previous message: Message précédent
+Previous user: Utilisateur précédent
 Providers: Plateformes
 Query catalog datasets: Interroger les ensembles de données du catalogue
 Query dataset records: Interroger les enregistrements de l'ensemble de données
 Read a dataset record: Lire un enregistrement d'ensemble de données
 Show dataset information: Afficher les informations sur l'ensemble de données
+Statistics: Statistiques
+User details: Détails de l'utilisateur
 Users: Utilisateurs
+Verified: Vérifié
 more notifications: notifications supplémentaires
 # Blog
 Abort: Annuler les modifications

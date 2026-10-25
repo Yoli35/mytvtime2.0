@@ -1,5 +1,6 @@
 #Admin
 Api: API
+'Back to users': 'Back to users'
 'Base url': 'Base url'
 'Catalog - API to enumerate datasets': 'Catalog - API to enumerate datasets'
 Dashboard: Dashboard
@@ -13,6 +14,7 @@ Execute: Execute
 'Export a dataset': 'Export a dataset'
 'Export catalog in CSV format': 'Export catalog in CSV format'
 'Export catalog in specified format': 'Export catalog in specified format'
+'Last activity': 'Last activity'
 'List dataset attachments': 'List dataset attachments'
 'List export formats for a dataset': 'List export formats for a dataset'
 'List export formats': 'List export formats'
@@ -20,15 +22,23 @@ Execute: Execute
 'List facet values': 'List facet values'
 Modules: Modules
 'Next message': 'Next message'
+'Next user': 'Next user'
 'No next message': 'No next message'
+'No next user': 'No next user'
 'No previous message': 'No previous message'
+'No previous user': 'No previous user'
+'Not verified': 'Not verified'
 'Previous message': 'Previous message'
+'Previous user': 'Previous user'
 Providers: Providers
 'Query catalog datasets': 'Query catalog datasets'
 'Query dataset records': 'Query dataset records'
 'Read a dataset record': 'Read a dataset record'
 'Show dataset information': 'Show dataset information'
+'Statistics': 'Statistics'
+'User details': 'User details'
 Users: Users
+'Verified': 'Verified'
 'more notifications': 'more notifications'
 # Blog
 Abort: 'Discard changes'

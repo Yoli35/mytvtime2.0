@@ -102,6 +102,22 @@ class AdminController extends AbstractController
         ]);
     }
 
+    #[Route('/user/{id}', name: 'user_detail', requirements: ['id' => Requirement::DIGITS])]
+    public function user(User $user): Response
+    {
+        $userId = $user->getId();
+
+        return $this->render('admin/index.html.twig', [
+            'detailUser' => $user,
+            'stats' => $this->userRepository->adminUserStats($userId),
+            'lastSeries' => $this->userRepository->adminUserLastSeries($userId),
+            'lastMovies' => $this->userRepository->adminUserLastMovies($userId),
+            'messages' => $this->contactMessageRepository->findBy(['email' => $user->getEmail()], ['date' => 'DESC']),
+            'previous' => $this->userRepository->getPreviousUserId($userId),
+            'next' => $this->userRepository->getNextUserId($userId),
+        ]);
+    }
+
     #[Route('/keywords', name: 'keywords')]
     public function keywords(Request $request): Response
     {

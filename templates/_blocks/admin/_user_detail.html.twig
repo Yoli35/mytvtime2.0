@@ -1,0 +1,129 @@
+<section class="admin__user__details">
+    <h2>{{ 'User details'|trans }}</h2>
+    <div class="admin__user__details__container">
+        <div class="admin_user_tools">
+            <a href="{{ path('admin_users') }}" class="button admin__user__details__navigation">
+                {{ 'Back to users'|trans }}
+            </a>
+            {% if previous %}
+                <a href="{{ path('admin_user_detail', {'id': previous}) }}" data-title="{{ 'Previous user'|trans }}" class="button admin__user__details__navigation">
+                    {{ ux_icon('mdi:chevron-left') }}
+                </a>
+            {% else %}
+                <div data-title="{{ 'No previous user'|trans }}" class="button admin__user__details__navigation none">
+                    {{ ux_icon('mdi:chevron-left') }}
+                </div>
+            {% endif %}
+            {% if next %}
+                <a href="{{ path('admin_user_detail', {'id': next}) }}" data-title="{{ 'Next user'|trans }}" class="button admin__user__details__navigation">
+                    {{ ux_icon('mdi:chevron-right') }}
+                </a>
+            {% else %}
+                <div data-title="{{ 'No next user'|trans }}" class="button admin__user__details__navigation none">
+                    {{ ux_icon('mdi:chevron-right') }}
+                </div>
+            {% endif %}
+        </div>
+
+        <div class="admin__user__details__header"{% if detailUser.banner %} style="background-image: url('/images/users/banners/{{ detailUser.banner }}')"{% endif %}>
+            {% if detailUser.avatar %}
+                <img src="/images/users/avatars/{{ detailUser.avatar }}" class="admin__user__details__avatar" alt="{{ detailUser.username }}">
+            {% else %}
+                <img src="https://i.pravatar.cc/450?img={{ detailUser.id }}" class="admin__user__details__avatar" alt="{{ detailUser.username }}'s avatar">
+            {% endif %}
+            <div class="admin__user__details__identity">
+                <div class="admin__user__details__username">{{ detailUser.username }} <span>#{{ detailUser.id }}</span></div>
+                <div class="admin__user__details__roles">
+                    {% for role in detailUser.roles %}
+                        <span class="badge">{{ role|replace({'ROLE_': ''}) }}</span>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+        <div class="admin__user__details__field">
+            <strong>{{ 'Email'|trans }}:</strong> <a href="mailto:{{ detailUser.email }}" class="button">{{ detailUser.email }}</a>
+            {% if detailUser.verified %}
+                <span class="verified" data-title="{{ 'Verified'|trans }}">{{ ux_icon('mdi:check-decagram') }}</span>
+            {% else %}
+                <span class="not-verified" data-title="{{ 'Not verified'|trans }}">{{ ux_icon('mdi:alert-decagram-outline') }}</span>
+            {% endif %}
+        </div>
+        <div class="admin__user__details__field">
+            <strong>{{ 'Country'|trans }}:</strong> {{ detailUser.country ? detailUser.country|country_name : '-' }}
+        </div>
+        <div class="admin__user__details__field">
+            <strong>{{ 'Language'|trans }}:</strong> {{ detailUser.preferredLanguage ? detailUser.preferredLanguage|language_name : '-' }}
+        </div>
+        <div class="admin__user__details__field">
+            <strong>{{ 'Timezone'|trans }}:</strong> {{ detailUser.timezone ?? '-' }}
+        </div>
+        <div class="admin__user__details__field">
+            <strong>{{ 'Created at'|trans }}:</strong> {{ detailUser.createdAt ? detailUser.createdAt|format_datetime('short', 'short') : '-' }}
+        </div>
+        <div class="admin__user__details__field">
+            <strong>{{ 'Updated at'|trans }}:</strong> {{ detailUser.updatedAt ? detailUser.updatedAt|format_datetime('short', 'short') : '-' }}
+        </div>
+        <div class="admin__user__details__field">
+            <strong>{{ 'Last activity'|trans }}:</strong> {{ stats.lastEpisodeWatchedAt ? stats.lastEpisodeWatchedAt|format_datetime('short', 'short') : '-' }}
+        </div>
+
+        <h3>{{ 'Statistics'|trans }}</h3>
+        <div class="admin__user__details__stats">
+            <div class="stat"><span>{{ stats.movieCount ?? 0 }}</span>{{ 'Movies'|trans }}</div>
+            <div class="stat"><span>{{ stats.seriesCount ?? 0 }}</span>{{ 'Series'|trans }}</div>
+            <div class="stat"><span>{{ stats.watchedEpisodeCount ?? 0 }} / {{ stats.episodeCount ?? 0 }}</span>{{ 'Episodes'|trans }}</div>
+            <div class="stat"><span>{{ stats.providerCount ?? 0 }}</span>{{ 'Providers'|trans }}</div>
+            <div class="stat"><span>{{ stats.networkCount ?? 0 }}</span>{{ 'Networks'|trans }}</div>
+            <div class="stat"><span>{{ stats.listCount ?? 0 }}</span>{{ 'Lists'|trans }}</div>
+            <div class="stat"><span>{{ stats.commentCount ?? 0 }}</span>{{ 'Comments'|trans }}</div>
+            <div class="stat"><span>{{ stats.videoCount ?? 0 }}</span>{{ 'Videos'|trans }}</div>
+            <div class="stat"><span>{{ stats.albumCount ?? 0 }}</span>{{ 'Albums'|trans }}</div>
+            <div class="stat"><span>{{ stats.photoCount ?? 0 }}</span>{{ 'Photos'|trans }}</div>
+        </div>
+
+        {% if lastSeries|length %}
+            <h3>{{ 'Recent series'|trans }}</h3>
+            <div class="admin__user__details__posters">
+                {% for s in lastSeries %}
+                    <a href="{{ path('app_tv_series', {'id': s.id, 'slug': s.slug ?? s.name|slug}) }}" class="poster" data-title="{{ s.name }}" target="_blank">
+                        {% if s.posterPath %}
+                            <img src="/series/posters{{ s.posterPath }}" alt="{{ s.name }}" loading="lazy">
+                        {% else %}
+                            <div class="no-poster">{{ s.name }}</div>
+                        {% endif %}
+                        <div class="date">{{ (s.lastWatchedAt ?? s.addedAt)|format_date('short') }}</div>
+                    </a>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        {% if lastMovies|length %}
+            <h3>{{ 'Recent movies'|trans }}</h3>
+            <div class="admin__user__details__posters">
+                {% for m in lastMovies %}
+                    <a href="{{ path('app_movie_show', {'id': m.id}) }}" class="poster" data-title="{{ m.title }}" target="_blank">
+                        {% if m.posterPath %}
+                            <img src="/movies/posters{{ m.posterPath }}" alt="{{ m.title }}" loading="lazy">
+                        {% else %}
+                            <div class="no-poster">{{ m.title }}</div>
+                        {% endif %}
+                        <div class="date">{{ (m.lastViewedAt ?? m.addedAt)|format_date('short') }}</div>
+                    </a>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        {% if messages|length %}
+            <h3>{{ 'Messages'|trans }} ({{ messages|length }})</h3>
+            <div class="admin__user__details__messages">
+                {% for m in messages %}
+                    <a href="{{ path('admin_message_detail', {'id': m.id}) }}" class="admin__user__details__field{% if not m.messageRead %} unread{% endif %}">
+                        <span class="date">{{ m.date|format_datetime('short', 'short') }}</span>
+                        <span>{{ m.subject }}</span>
+                    </a>
+                {% endfor %}
+            </div>
+        {% endif %}
+    </div>
+</section>

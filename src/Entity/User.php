@@ -58,6 +58,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(nullable: true)]
     private ?DateTimeImmutable $updatedAt = null;
 
+    #[ORM\Column]
+    private ?DateTimeImmutable $createdAt;
+
     #[ORM\OneToMany(targetEntity: UserSeries::class, mappedBy: 'user', orphanRemoval: true)]
     private Collection $series;
 
@@ -167,6 +170,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->userLists = new ArrayCollection();
         $this->episodeComments = new ArrayCollection();
         $this->preferredDevices = new ArrayCollection();
+        $this->createdAt = new DateTimeImmutable();
     }
 
     public function getId(): ?int
@@ -366,6 +370,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setUpdatedAt(?DateTimeImmutable $updatedAt): void
     {
         $this->updatedAt = $updatedAt;
+    }
+
+    public function getCreatedAt(): ?DateTimeImmutable
+    {
+        return $this->createdAt;
+    }
+
+    public function setCreatedAt(DateTimeImmutable $createdAt): static
+    {
+        $this->createdAt = $createdAt;
+
+        return $this;
     }
 
     public function getAvatarFile(): ?File

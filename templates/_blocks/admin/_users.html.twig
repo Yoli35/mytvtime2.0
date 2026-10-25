@@ -8,6 +8,7 @@
         <div class="user__id">#</div>
         <div class="user__name">{{ 'Username'|trans }}</div>
         <div class="user__email">{{ 'Email'|trans }}</div>
+        <div class="user__created">{{ 'Created at'|trans }}</div>
         <div class="user__movie">{{ 'Movie'|trans }}</div>
         <div class="user__series">{{ 'Series'|trans }}</div>
         <div class="user__episodes">{{ 'Episodes'|trans }}</div>
@@ -28,8 +29,9 @@
 {#                </div>#}
             {% endif %}
             <div class="user__id">{{ u.id }}</div>
-            <div class="user__name">{{ u.username }}</div>
+            <a class="user__name" href="{{ path('admin_user_detail', {id: u.id}) }}">{{ u.username }}</a>
             <div class="user__email">{{ u.email }}</div>
+            <div class="user__created">{{ u.createdAt ? u.createdAt|format_date('short') : '-' }}</div>
             <div class="user__movie">{{ u.movieCount }}</div>
             <div class="user__series">{{ u.seriesCount }}</div>
             <div class="user__episodes">{{ u.watchedEpisodeCount }} / {{ u.episodeCount }}</div>

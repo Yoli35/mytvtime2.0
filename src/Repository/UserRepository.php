@@ -59,7 +59,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
     {
         $offset = ($page - 1) * $limit;
 
-        $validSorts = ['id', 'username', 'email', 'roles', 'movieCount', 'seriesCount', 'providerCount', 'networkCount', 'episodeCount', 'watchedEpisodeCount'];
+        $validSorts = ['id', 'username', 'email', 'roles', 'createdAt', 'movieCount', 'seriesCount', 'providerCount', 'networkCount', 'episodeCount', 'watchedEpisodeCount'];
         $validOrders = ['ASC', 'DESC'];
         if (!in_array($sort, $validSorts, true)) {
             $sort = 'id';
@@ -84,6 +84,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
                        u.email    AS email,
                        u.username AS username,
                        u.roles    AS roles,
+                       u.created_at AS createdAt,
                        (SELECT COUNT(*) FROM user_movie um WHERE um.user_id=u.id)          AS movieCount,
                        (SELECT COUNT(*) FROM user_series us WHERE us.user_id=u.id)         AS seriesCount,
                        (SELECT COUNT(*) FROM user_watch_provider up WHERE up.user_id=u.id) AS providerCount,
@@ -95,6 +96,76 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
             SQL;
 
         return $this->getAll($sql, $params, $types);
+    }
+
+    public function adminUserStats(int $userId): array
+    {
+        $sql = <<<SQL
+                SELECT (SELECT COUNT(*) FROM user_movie um WHERE um.user_id=:userId)          AS movieCount,
+                       (SELECT COUNT(*) FROM user_series us WHERE us.user_id=:userId)         AS seriesCount,
+                       (SELECT COUNT(*) FROM user_episode ue WHERE ue.user_id=:userId)        AS episodeCount,
+                       (SELECT COUNT(*) FROM user_episode ue WHERE ue.user_id=:userId AND ue.watched_at IS NOT NULL) AS watchedEpisodeCount,
+                       (SELECT COUNT(*) FROM user_watch_provider up WHERE up.user_id=:userId) AS providerCount,
+                       (SELECT COUNT(*) FROM user_network un WHERE un.user_id=:userId)        AS networkCount,
+                       (SELECT COUNT(*) FROM user_list ul WHERE ul.user_id=:userId)           AS listCount,
+                       (SELECT COUNT(*) FROM episode_comment ec WHERE ec.user_id=:userId)     AS commentCount,
+                       (SELECT COUNT(*) FROM user_video uv WHERE uv.user_id=:userId)          AS videoCount,
+                       (SELECT COUNT(*) FROM album a WHERE a.user_id=:userId)                 AS albumCount,
+                       (SELECT COUNT(*) FROM photo p WHERE p.user_id=:userId)                 AS photoCount,
+                       (SELECT MAX(ue.watched_at) FROM user_episode ue WHERE ue.user_id=:userId) AS lastEpisodeWatchedAt
+            SQL;
+
+        return $this->getAll($sql, ['userId' => $userId], ['userId' => ParameterType::INTEGER])[0] ?? [];
+    }
+
+    public function adminUserLastSeries(int $userId, int $limit = 10): array
+    {
+        $sql = <<<SQL
+                SELECT s.id               AS id,
+                       s.name             AS name,
+                       s.slug             AS slug,
+                       s.poster_path      AS posterPath,
+                       us.added_at        AS addedAt,
+                       us.last_watched_at AS lastWatchedAt,
+                       us.progress        AS progress
+                FROM user_series us
+                INNER JOIN series s ON s.id = us.series_id
+                WHERE us.user_id = :userId
+                ORDER BY COALESCE(us.last_watched_at, us.added_at) DESC
+                LIMIT :limit
+            SQL;
+
+        return $this->getAll($sql, ['userId' => $userId, 'limit' => $limit], ['userId' => ParameterType::INTEGER, 'limit' => ParameterType::INTEGER]);
+    }
+
+    public function adminUserLastMovies(int $userId, int $limit = 10): array
+    {
+        $sql = <<<SQL
+                SELECT m.id              AS id,
+                       m.title           AS title,
+                       m.poster_path     AS posterPath,
+                       um.created_at     AS addedAt,
+                       um.last_viewed_at AS lastViewedAt
+                FROM user_movie um
+                INNER JOIN movie m ON m.id = um.movie_id
+                WHERE um.user_id = :userId
+                ORDER BY COALESCE(um.last_viewed_at, um.created_at) DESC
+                LIMIT :limit
+            SQL;
+
+        return $this->getAll($sql, ['userId' => $userId, 'limit' => $limit], ['userId' => ParameterType::INTEGER, 'limit' => ParameterType::INTEGER]);
+    }
+
+    public function getPreviousUserId(int $userId): ?int
+    {
+        $result = $this->getAll('SELECT MAX(id) AS id FROM user WHERE id < :userId', ['userId' => $userId], ['userId' => ParameterType::INTEGER]);
+        return isset($result[0]['id']) ? (int)$result[0]['id'] : null;
+    }
+
+    public function getNextUserId(int $userId): ?int
+    {
+        $result = $this->getAll('SELECT MIN(id) AS id FROM user WHERE id > :userId', ['userId' => $userId], ['userId' => ParameterType::INTEGER]);
+        return isset($result[0]['id']) ? (int)$result[0]['id'] : null;
     }
 
     public function getUserNetworkIds($userId): array
