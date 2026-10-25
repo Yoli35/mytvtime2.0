@@ -1580,3 +1580,250 @@
         }
     }
 }
+
+/******************************************************************************
+ * Comments (cf. .episodes-comments in series.scss)                           *
+ ******************************************************************************/
+.movie-comments {
+    background-color: hsla(from var(--ardoise-90) h s l / .5);
+    border-radius: 1rem;
+    color: var(--orange-90);
+    display: flex;
+    flex-direction: column;
+    gap: .5rem;
+    padding: 1rem;
+
+    .movie-comments-title {
+        font-size: 1.375rem;
+        font-weight: 500;
+    }
+
+    .movie-comments-content {
+        display: flex;
+        flex-direction: column;
+        gap: .5rem;
+
+        &:empty {
+            display: none;
+        }
+    }
+
+    .comment {
+        display: flex;
+        gap: .5rem;
+
+        .message {
+            background-color: hsla(0 0% 0% / .05);
+            border-radius: .5rem;
+            display: flex;
+            flex-direction: column;
+            padding: .25rem;
+            position: relative;
+            width: 100%;
+
+            span {
+                background-color: hsl(from var(--green) h s 38%);
+                border-radius: 5rem;
+                font-weight: 300;
+                margin-block: .25rem;
+                margin-inline-start: auto;
+                padding: .25rem .75rem;
+                white-space: pre-wrap;
+                width: fit-content;
+            }
+
+            .comment {
+                margin-block-start: 0.5rem;
+                margin-inline-start: 2rem;
+            }
+        }
+
+        .comment-images {
+            align-items: center;
+            display: flex;
+            flex-wrap: wrap;
+            gap: .5rem;
+            justify-content: center;
+            margin-inline: auto;
+            max-width: 100%;
+            overflow-x: auto;
+            overflow-y: clip;
+            width: fit-content;
+
+            .comment-image {
+                border-radius: .5rem;
+                height: 10rem;
+                width: auto;
+
+                img {
+                    border-radius: .5rem;
+                    height: 100%;
+                    object-fit: cover;
+                    width: auto;
+                }
+            }
+        }
+    }
+
+    .answer-button {
+        color: hsla(from var(--green-50) h s l / .25);
+        cursor: pointer;
+        position: absolute;
+        right: 0;
+
+        &:hover {
+            color: var(--green-50);
+        }
+    }
+}
+
+.movie-comments,
+.answer-dialog {
+    .comment-user {
+        align-items: center;
+        background-color: var(--orange-30);
+        border-radius: 5rem;
+        display: inline-flex;
+        gap: .5rem;
+        height: 2.25rem;
+        width: fit-content;
+
+        .avatar {
+            border: 2px solid var(--orange-30);
+            border-radius: 50%;
+            flex-shrink: 0;
+            height: 2.25rem;
+            width: 2.25rem;
+
+            &:not(:has(img)) {
+                align-items: center;
+                background-color: var(--ardoise-80);
+                color: var(--ardoise-10);
+                display: flex;
+                font-size: 1.5rem;
+                font-weight: 500;
+                justify-content: center;
+            }
+
+            img {
+                border-radius: 50%;
+                height: 100%;
+                object-fit: cover;
+                width: 100%;
+            }
+        }
+
+        .date {
+            font-size: 0.875rem;
+            font-weight: 300;
+            padding-inline-end: 1rem;
+        }
+    }
+
+    .comment-form {
+        align-items: center;
+        display: flex;
+        font-size: 0.875rem;
+        font-weight: 300;
+        gap: .5rem;
+        justify-content: flex-start;
+
+        textarea {
+            background-color: hsl(0 0% 0% / .1);
+            border: none;
+            border-radius: 1rem;
+            flex-grow: 1;
+            min-height: 1lh;
+            padding: .5rem;
+            resize: vertical;
+        }
+
+        &.to-comment {
+            width: min(42rem, 80vw);
+        }
+
+        .add-image-button {
+            position: relative;
+
+            .count-badge {
+                align-items: center;
+                background-color: var(--red);
+                border-radius: 5rem;
+                bottom: -0.25rem;
+                color: var(--ardoise-10);
+                display: flex;
+                font-size: 0.875rem;
+                font-weight: 500;
+                height: 1.25rem;
+                justify-content: center;
+                min-width: 1.25rem;
+                padding-inline: .25rem;
+                position: absolute;
+                right: -0.25rem;
+            }
+        }
+
+        .send-button, .add-image-button {
+            align-items: center;
+            border: 2px solid;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            flex-shrink: 0;
+            height: 2.25rem;
+            justify-content: center;
+            width: 2.25rem;
+
+            svg {
+                height: 1.25rem;
+                width: 1.25rem;
+            }
+        }
+    }
+}
+
+#commentImagesDialog {
+    width: min(90vw, 40rem);
+
+    .form-field:has(input[type="file"]) label {
+        background-color: var(--ardoise-80);
+        border: 2px dashed var(--orange-50);
+        border-radius: 5rem;
+        color: var(--ardoise-10);
+        cursor: pointer;
+        display: block;
+        padding: .5rem 1rem;
+        position: relative;
+
+        input[type="file"] {
+            inset: 0;
+            opacity: 0;
+            position: absolute;
+        }
+    }
+
+    .preview-image-files {
+        max-height: 30rem;
+        overflow-y: auto;
+
+        ol {
+            display: flex;
+            flex-direction: column;
+            gap: .5rem;
+            list-style-type: none;
+            padding: 1rem;
+
+            img {
+                border-radius: .5rem;
+                max-height: 8rem;
+                max-width: 100%;
+            }
+        }
+    }
+
+    .submit-row {
+        display: flex;
+        gap: .5rem;
+        justify-content: flex-end;
+    }
+}

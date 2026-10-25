@@ -161,6 +161,10 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
             'SELECT eci.`path` FROM episode_comment_image eci INNER JOIN episode_comment ec ON ec.id = eci.episode_comment_id WHERE ec.user_id = :userId',
             $params, $types
         );
+        $commentImagePaths = array_merge($commentImagePaths, $connection->fetchFirstColumn(
+            'SELECT mci.`path` FROM movie_comment_image mci INNER JOIN movie_comment mc ON mc.id = mci.movie_comment_id WHERE mc.user_id = :userId',
+            $params, $types
+        ));
 
         $statements = [
             // Références croisées user_series ↔ user_episode
@@ -182,6 +186,8 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
             'UPDATE episode_comment reply INNER JOIN episode_comment parent ON parent.id = reply.reply_to_id SET reply.reply_to_id = NULL WHERE parent.user_id = :userId',
             'DELETE eci FROM episode_comment_image eci INNER JOIN episode_comment ec ON ec.id = eci.episode_comment_id WHERE ec.user_id = :userId',
             'DELETE FROM episode_comment WHERE user_id = :userId',
+            // Commentaires de films : les images (ON DELETE CASCADE) suivent, les réponses des autres utilisateurs deviennent de premier niveau (ON DELETE SET NULL)
+            'DELETE FROM movie_comment WHERE user_id = :userId',
             'DELETE FROM photo WHERE user_id = :userId',
             'DELETE FROM album WHERE user_id = :userId',
             'DELETE FROM `user` WHERE id = :userId',

@@ -309,6 +309,9 @@ class MovieController extends AbstractController
             'Poster' => $this->translator->trans('Poster'),
             'Logo' => $this->translator->trans('Logo'),
             'Watch on' => $this->translator->trans('Watch on'),
+            'Add answer' => $this->translator->trans('Add answer'),
+            'Add images' => $this->translator->trans('Add images'),
+            'Send your comment' => $this->translator->trans('Send your comment'),
         ];
         $providers = $this->watchLinkApi->getWatchProviders($user->getCountry() ?? 'FR');
 

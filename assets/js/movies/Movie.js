@@ -1,4 +1,5 @@
 import {Keyword} from "Keyword";
+import {MovieComments} from "MovieComments";
 import {TranslationsForms} from "TranslationsForms";
 import {Diaporama} from "Diaporama";
 import {ToolTips} from "ToolTips";
@@ -12,6 +13,7 @@ export class Movie {
     /**
      * @typedef Globs
      * @type {Object}
+     * @property {Object} user
      * @property {number} userMovieId
      * @property {number} movieId
      * @property {number} tmdbId
@@ -34,6 +36,7 @@ export class Movie {
 
         /** @var {Globs} */
         const jsonGlobsObject = JSON.parse(document.querySelector('div#globs').textContent);
+        this.user = jsonGlobsObject.user;
         this.images = jsonGlobsObject.images;
         this.title = jsonGlobsObject.title;
         this.movieId = jsonGlobsObject.movieId;
@@ -173,6 +176,11 @@ export class Movie {
          * Keyword translation                                                        *
          ******************************************************************************/
         new Keyword('movie');
+
+        /******************************************************************************
+         * Comments                                                                   *
+         ******************************************************************************/
+        new MovieComments(this.user, this.movieId, this.translations).init();
 
         /******************************************************************************
          * Diaporama for posters, backdrops, and logos                                 *

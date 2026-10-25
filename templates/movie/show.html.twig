@@ -222,6 +222,13 @@
                     </div>
                 </section>
                 <section>
+                    <div class="movie-comments">
+                        <div class="movie-comments-title">{{ 'Comments'|trans }}</div>
+                        <div class="movie-comments-content"></div>
+                        <div class="movie-comments-footer"></div>
+                    </div>
+                </section>
+                <section>
                     {{ include('_blocks/movie/_collection.html.twig') }}
                 </section>
                 <section>
@@ -429,8 +436,13 @@
             </main>
         </div>
     </div>
+    {{ include('_blocks/series/_comment_image.html.twig') }}
     <div id="globs" style="display: none">
         {
+            "user": {
+                "avatar": "{{ app.user.avatar|e('js') }}",
+                "username": "{{ app.user.username|e('js') }}"
+            },
             "userMovieId": {{ userMovie.id }},
             "movieId": {{ dbMovie.id }},
             "tmdbId": {{ movie.id }},
@@ -458,6 +470,9 @@
         <div class="svg" id="save">{{ ux_icon('mdi:checkbox-outline') }}</div>
         <div class="svg" id="cancel">{{ ux_icon('mdi:close') }}</div>
         <div class="svg" id="trash">{{ ux_icon('mdi:trash') }}</div>
+        {{ ux_icon('mdi:image-plus', {id: 'image-plus' }) }}
+        {{ ux_icon('mdi:question-answer', {id: 'answer-badge' }) }}
+        {{ ux_icon('mdi:send', {id: 'send' }) }}
     </div>
     {% include('_blocks/_footer.html.twig') %}
 {% endblock %}
