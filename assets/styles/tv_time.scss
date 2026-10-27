@@ -25,11 +25,25 @@
         }
     }
 
-    ::view-transition-old(.series-tv-time .series-group .wrapper) {
+    /* Mise à jour du wrapper (TvTime.js → getEpisodes) : seul le wrapper est animé, pas la page.
+       Le nom n'est appliqué que pendant la transition : un view-transition-name permanent fait
+       du wrapper une « backdrop root » et le backdrop-filter des .divider span ne voit plus le fond (Safari, Firefox). */
+    html:active-view-transition-type(tv-time-series) {
+        main > article#tv-time-series > div.wrapper {
+            view-transition-name: tv-time-series-wrapper;
+        }
+
+        &::view-transition-old(root),
+        &::view-transition-new(root) {
+            animation: none;
+        }
+    }
+
+    ::view-transition-old(tv-time-series-wrapper) {
         animation: fadeOut .5s ease-in-out;
     }
 
-    ::view-transition-new(.series-tv-time .series-group .wrapper) {
+    ::view-transition-new(tv-time-series-wrapper) {
         animation: fadeIn .5s ease-in-out;
     }
 }

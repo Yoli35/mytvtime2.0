@@ -297,6 +297,8 @@ export class TvTime {
                     // Le stockage peut être indisponible : conserver l'état en mémoire.
                     this.dividerStates.set(storageKey, contentDiv.classList.contains('folded'));
                 }
+                // Synchronise le cookie (lu par Twig) avec l'état existant
+                this.setDividerCookie(storageKey, this.dividerStates.get(storageKey));
             }
             if (storageKey) {
                 contentDiv.classList.toggle('folded', this.dividerStates.get(storageKey));
@@ -329,6 +331,7 @@ export class TvTime {
                 }
                 if (storageKey) {
                     this.dividerStates.set(storageKey, folded);
+                    this.setDividerCookie(storageKey, folded);
                     try {
                         localStorage.setItem(storageKey, folded ? 'folded' : 'expanded');
                     } catch {
@@ -337,6 +340,11 @@ export class TvTime {
                 }
             });
         });
+    }
+
+    setDividerCookie(key, folded) {
+        // Permet au rendu Twig d'ajouter directement la classe "folded" (voir _wrapper_series.html.twig)
+        document.cookie = `${key}=${folded ? 'folded' : 'expanded'}; path=/; max-age=31536000; SameSite=Lax`;
     }
 
     initShowMoreButtons() {
@@ -495,8 +503,23 @@ export class TvTime {
                 div.innerHTML = data['view'];
                 const newWrapper = div.querySelector('.wrapper');
                 self.getEpisodeDetails(newWrapper);
-                wrapper.replaceWith(newWrapper);
-                self.fixDetailsDivs(document.querySelector('.series-tv-time .series-tab .wrapper'));
+                const update = () => {
+                    wrapper.replaceWith(newWrapper);
+                    self.fixDetailsDivs(document.querySelector('.series-tv-time .series-tab .wrapper'));
+                };
+                let updateDone;
+                if (window.ViewTransition && 'types' in ViewTransition.prototype) {
+                    updateDone = document.startViewTransition({update: update, types: ['tv-time-series']}).updateCallbackDone;
+                } else {
+                    update();
+                    updateDone = Promise.resolve();
+                }
+                return updateDone.then(() => data);
+            })
+            .then(data => {
+                if (!data) {
+                    return;
+                }
                 if (data['noVoteView']) {
                     const tvTimeDiv = document.querySelector('.series-tv-time');
                     const lastEpisodeVotesDiv = tvTimeDiv.querySelector('.last-episode-votes');

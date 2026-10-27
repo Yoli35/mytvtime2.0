@@ -1,25 +1,28 @@
+{# État des dividers, enregistré dans des cookies par TvTime.js → setDividerCookie() #}
+{% set cookies = app.request.cookies %}
+{% set dividerKey = 'mytvtime_2_divider_0_' %}
 <div class="wrapper{% if list %} list{% endif %}">
     {% if kind == 0 %}
         <div class="divider" data-content="in-progress"><span>{{ 'In progress'|trans }} ({{ series.available.items|length }})</span></div>
-        <div class="content">
+        <div class="content{{ cookies.get(dividerKey ~ 'in-progress') == 'folded' ? ' folded' }}">
             {% for series in series.available.items %}
                 {{ include('_blocks/tv_time/_card_series.html.twig', {next: true, while: false}) }}
             {% endfor %}
         </div>
         <div class="divider" data-content="up-to-date"><span>{{ 'Up to date'|trans }} ({{ series.upToDate.items|length }})</span></div>
-        <div class="content">
+        <div class="content{{ cookies.get(dividerKey ~ 'up-to-date') == 'folded' ? ' folded' }}">
             {% for series in series.upToDate.items %}
                 {{ include('_blocks/tv_time/_card_series.html.twig', {next: false, while: false}) }}
             {% endfor %}
         </div>
         <div class="divider" data-content="ended-up-to-date"><span>{{ 'Ended series - last episode'|trans }} ({{ series.ended.items|length }})</span></div>
-        <div class="content">
+        <div class="content{{ cookies.get(dividerKey ~ 'ended-up-to-date') == 'folded' ? ' folded' }}">
             {% for series in series.ended.items %}
                 {{ include('_blocks/tv_time/_card_ended_series.html.twig', {next: false, while: false}) }}
             {% endfor %}
         </div>
         <div class="divider" data-content="not-watched-in-a-while"><span>{{ 'Not watched in a while'|trans }}</span> <span class="counts">({{ series.upToDateInAWhile.items|length }}/{{ series.upToDateInAWhile.count }})</span></div>
-        <div class="content" data-content="not-watched-in-a-while">
+        <div class="content{{ cookies.get(dividerKey ~ 'not-watched-in-a-while') == 'folded' ? ' folded' }}" data-content="not-watched-in-a-while">
             {% for series in series.upToDateInAWhile.items %}
                 {{ include('_blocks/tv_time/_card_series.html.twig', {next: false, while: true}) }}
             {% endfor %}
@@ -30,7 +33,7 @@
     {% endif %}
     {% if kind == 1 %}
         <div class="divider" data-content="ended"><span>{{ 'Ended'|trans }}</span> <span class="counts">({{ series.ended.items|length }}/{{ series.ended.count }})</span></div>
-        <div class="content" data-content="ended">
+        <div class="content{{ cookies.get(dividerKey ~ 'ended') == 'folded' ? ' folded' }}" data-content="ended">
             {% for series in series.ended.items %}
                 {{ include('_blocks/tv_time/_card_series_ended.html.twig') }}
             {% endfor %}
@@ -41,7 +44,7 @@
     {% endif %}
     {% if kind == 2 %}
         <div class="divider" data-content="specials"><span>{{ 'Specials'|trans }} ({{ series.specialEpisodes.items|length }})</span></div>
-        <div class="content">
+        <div class="content{{ cookies.get(dividerKey ~ 'specials') == 'folded' ? ' folded' }}">
             {% for series in series.specialEpisodes.items %}
                 {{ include('_blocks/tv_time/_card_series.html.twig', {next: true, while: false}) }}
             {% endfor %}
