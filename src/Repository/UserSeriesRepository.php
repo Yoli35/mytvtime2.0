@@ -1205,14 +1205,16 @@ class UserSeriesRepository extends ServiceEntityRepository
                     e.`overview`                     AS episodeOverview,
                     e.`runtime`                      AS episodeRuntime
                 FROM user_episode ue
-                    INNER JOIN `user_series` us ON us.`last_user_episode_id` = ue.`id`
+                    INNER JOIN `user_series` us ON us.`last_user_episode_id` = ue.`id` AND us.`next_user_episode_id` IS NOT NULL
                     INNER JOIN series s ON s.id=us.series_id AND (SELECT COUNT(*) FROM episode e2 WHERE e2.series_id=s.id AND e2.air_date>SUBDATE(CURDATE(), INTERVAL 3 WEEK))=0 -- Diffusion terminée
+                    LEFT JOIN user_episode nue ON nue.id=us.next_user_episode_id
                     LEFT JOIN episode e ON e.tmdb_id=ue.episode_id
                     LEFT JOIN `series_localized_name` sln ON sln.`series_id` = s.`id` AND sln.`locale` = :locale
                     LEFT JOIN `episode_substitute_name` esn ON esn.`episode_id` = ue.`episode_id`
                     LEFT JOIN `watch_provider` wp ON wp.provider_id=ue.provider_id
                 WHERE ue.user_id=:id
                   AND ue.watched_at >= SUBDATE(CURDATE(), INTERVAL 3 WEEK)
+                  AND nue.season_number>0 -- L'épisode suivant ne doit pas être un épisode spécial
                   AND ue.season_number>0 -- Les épisodes spéciaux disponibles sont déjà répertoriés ailleurs
                 ORDER BY us.last_watched_at DESC;
             SQL;
@@ -1336,7 +1338,7 @@ class UserSeriesRepository extends ServiceEntityRepository
                     LEFT JOIN `series_localized_name` sln ON sln.`series_id`=s.`id` AND sln.`locale`=:locale
                     LEFT JOIN `episode_substitute_name` esn ON esn.`episode_id`=ue.`episode_id`
                     LEFT JOIN `watch_provider` wp ON wp.provider_id=ue.provider_id
-                    LEFT JOIN `series_watch_link` swl ON swl.`series_id`=s.`id` AND swl.`provider_id`=ue.`provider_id`
+                    LEFT JOIN `series_watch_link` swl ON swl.`series_id`=s.`id` AND swl.`provider_id`=ue.`provider_id` AND (swl.season_number=ue.season_number OR swl.season_number=-1)
                 WHERE ue.user_id = :userId
                   AND ue.vote IS NULL
                   AND (

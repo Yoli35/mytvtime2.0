@@ -1,4 +1,5 @@
 <div class="card"
+     data-prev-id="{{ series.userEpisodeId }}"
      data-episode-id="{{ series.episodeId }}"
      data-ref="{{ series.tmdbId }}-{{ series.episodeId }}-{{ series.seasonNumber }}-{{ series.episodeNumber }}-{{ series.episodeName }}">
     <a href="{{ path('app_tv_series', { 'id': series.id, slug: series.name|slug}) }}" target="_blank">
