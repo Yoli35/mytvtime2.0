@@ -185,7 +185,6 @@ readonly class TvTimeService
                         array_column($content['upToDateInAWhile']['items'], 'tmdb_id')
                     )
                 );
-                dump($content);
             }
 
             if ($kind == 1) {
