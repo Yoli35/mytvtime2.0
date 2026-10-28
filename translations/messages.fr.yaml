@@ -1700,6 +1700,7 @@ Manuel Bompart: Manuel Bompart
 Mass extinction: Extinction massive
 Mercosur: Mercosur
 My videos: Mes vidéos
+My YouTube videos: Mes vidéos YouTube
 Neoliberalism: Néolibéralisme
 New category: Nouvelle catégorie
 Nicolas Framont: Nicolas Framont
@@ -1867,3 +1868,17 @@ logo: logo
 'Added to your watchlist': 'Ajouté à votre liste'
 'Your movie list is empty': 'Votre liste est vide'
 'Use the search field above to add movies': 'Utilisez le champ de recherche ci-dessus pour ajouter des films'
+'Add videos': 'Ajouter des vidéos'
+'Max. size': 'Taille max.'
+'Recorded at': 'Filmée le'
+'Conversion pending': 'Conversion en attente'
+'Conversion in progress': 'Conversion en cours'
+'Video conversion failed': 'Échec de la conversion'
+'Video added': 'Vidéo ajoutée'
+'Video added, conversion pending': 'Vidéo ajoutée, conversion en attente'
+'No video file received': 'Aucun fichier vidéo reçu (fichier trop volumineux ?)'
+'Not a video file': "Ce n'est pas un fichier vidéo"
+'Video updated': 'Vidéo modifiée'
+'Video deleted': 'Vidéo supprimée'
+'Video is being converted, try again later': 'La vidéo est en cours de conversion, réessayez plus tard'
+'Delete this video?': 'Supprimer cette vidéo ?'

@@ -1,0 +1,20 @@
+{% macro duration(seconds) %}
+    {%- set h = seconds // 3600 -%}
+    {%- set m = (seconds % 3600) // 60 -%}
+    {%- set s = seconds % 60 -%}
+    {%- if h > 0 -%}
+        {{ h }}:{{ '%02d'|format(m) }}:{{ '%02d'|format(s) }}
+    {%- else -%}
+        {{ m }}:{{ '%02d'|format(s) }}
+    {%- endif -%}
+{% endmacro %}
+
+{% macro status(video) %}
+    {%- if video.status == 'pending' -%}
+        {{ 'Conversion pending'|trans }}
+    {%- elseif video.status == 'processing' -%}
+        {{ 'Conversion in progress'|trans }}
+    {%- elseif video.status == 'failed' -%}
+        {{ 'Video conversion failed'|trans }}
+    {%- endif -%}
+{% endmacro %}

@@ -1,0 +1,69 @@
+{% extends 'base.html.twig' %}
+
+{% import 'personal_video/_macros.html.twig' as pv %}
+
+{% block title %}my Tv Time → {{ video.title }}{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('styles/video.scss') }}">
+{% endblock %}
+
+{% block body %}
+    {{ include('_blocks/_menu.html.twig') }}
+    {% set dir = '/videos/personal/' ~ video.user.id %}
+    <div class="container-fluid video-page personal-video-page">
+        <div class="back">
+            <a href="{{ path('app_video_personal_index') }}">{{ ux_icon('mdi:arrow-left') }} {{ 'My videos'|trans }}</a>
+        </div>
+        <h1>{{ video.title }}</h1>
+        {% if video.ready %}
+            <div class="player{% if video.portrait %} portrait{% endif %}">
+                <video controls playsinline preload="metadata"
+                       {% if video.thumbnail %}poster="{{ dir }}/thumbnails/{{ video.thumbnail }}"{% endif %}
+                       {% if video.width and video.height %}style="aspect-ratio: {{ video.width }}/{{ video.height }}"{% endif %}>
+                    <source src="{{ dir }}/{{ video.filename }}" type="video/mp4">
+                </video>
+            </div>
+        {% else %}
+            <div class="player status {{ video.status }}">
+                <div class="placeholder">
+                    {{ ux_icon(video.status == 'failed' ? 'mdi:alert-circle-outline' : 'mdi:progress-clock') }}
+                    <span>{{ pv.status(video) }}</span>
+                    {% if video.error %}<pre class="error">{{ video.error }}</pre>{% endif %}
+                </div>
+            </div>
+        {% endif %}
+        <div class="details">
+            {% if video.duration %}<div>{{ 'Duration'|trans }} : {{ pv.duration(video.duration) }}</div>{% endif %}
+            {% if video.width %}<div>{{ video.width }}×{{ video.height }}</div>{% endif %}
+            {% if video.size %}<div>{{ (video.size / 1048576)|round(1) }} Mo</div>{% endif %}
+            {% if video.recordedAt %}<div>{{ 'Recorded at'|trans }} : {{ video.recordedAt|format_datetime('long', 'short') }}</div>{% endif %}
+            <div>{{ 'Added at'|trans }} : {{ video.createdAt|format_datetime('long', 'short') }}</div>
+        </div>
+        {% if video.description %}
+            <div class="description">{{ video.description|nl2br }}</div>
+        {% endif %}
+        <div class="video-tools">
+            <form action="{{ path('app_video_personal_edit', {'id': video.id}) }}" method="post" class="edit">
+                <input type="hidden" name="_token" value="{{ csrf_token('personal_video_edit_' ~ video.id) }}">
+                <div class="form-group">
+                    <label for="title"><span>{{ 'Title'|trans }}</span>
+                        <input type="text" id="title" name="title" value="{{ video.title }}" maxlength="255" required>
+                    </label>
+                </div>
+                <div class="form-group">
+                    <label for="description"><span>{{ 'Description'|trans }}</span>
+                        <textarea id="description" name="description" rows="4">{{ video.description }}</textarea>
+                    </label>
+                </div>
+                <button type="submit">{{ 'Save'|trans }}</button>
+            </form>
+            <form action="{{ path('app_video_personal_delete', {'id': video.id}) }}" method="post" onsubmit="return confirm('{{ 'Delete this video?'|trans|e('js') }}')">
+                <input type="hidden" name="_token" value="{{ csrf_token('personal_video_delete_' ~ video.id) }}">
+                <button type="submit" class="delete">{{ ux_icon('mdi:delete-outline') }} {{ 'Delete'|trans }}</button>
+            </form>
+        </div>
+    </div>
+    {% include '_blocks/_footer.html.twig' %}
+{% endblock %}

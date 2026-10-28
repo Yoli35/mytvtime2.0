@@ -838,3 +838,206 @@
 .youtube-red {
     color: #FF0000;
 }
+/* Vidéos personnelles (importées depuis des fichiers) */
+.personal-videos-page {
+    .video-tools {
+        form {
+            .form-group {
+                align-items: center;
+
+                input[type="file"] {
+                    border-radius: .5rem;
+                    width: 100%;
+                }
+
+                .max-size {
+                    color: var(--orange-90);
+                    font-size: .875rem;
+                    text-wrap: nowrap;
+                }
+            }
+        }
+    }
+
+    .video-wrapper {
+        .video {
+            .thumbnail {
+                .placeholder {
+                    align-items: center;
+                    aspect-ratio: 16/9;
+                    background-color: var(--orange-20);
+                    border-radius: .5rem .5rem 0 0;
+                    color: var(--orange-90);
+                    display: flex;
+                    flex-direction: column;
+                    gap: .5rem;
+                    justify-content: center;
+
+                    svg {
+                        height: 3rem;
+                        width: 3rem;
+                    }
+                }
+            }
+
+            .infos {
+                height: 6.5rem;
+
+                .content {
+                    height: 100%;
+                }
+            }
+
+            &.failed .placeholder {
+                color: var(--red-50);
+            }
+        }
+    }
+}
+
+.personal-video-page {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+
+    .back a {
+        align-items: center;
+        color: var(--orange-90);
+        display: inline-flex;
+        gap: .5rem;
+    }
+
+    .player {
+        display: flex;
+        justify-content: center;
+
+        video {
+            background-color: black;
+            border-radius: .5rem;
+            max-height: calc(100dvh - 16rem);
+            max-width: 100%;
+        }
+
+        &.status .placeholder {
+            align-items: center;
+            aspect-ratio: 16/9;
+            background-color: var(--orange-20);
+            border-radius: .5rem;
+            color: var(--orange-90);
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            justify-content: center;
+            width: 100%;
+
+            svg {
+                height: 4rem;
+                width: 4rem;
+            }
+
+            .error {
+                font-size: .75rem;
+                max-width: 90%;
+                overflow-x: auto;
+                white-space: pre-wrap;
+            }
+        }
+
+        &.failed .placeholder {
+            color: var(--red-50);
+        }
+    }
+
+    .details {
+        color: var(--orange-90);
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem 2rem;
+    }
+
+    .description {
+        color: var(--orange-90);
+        line-height: 1.5;
+    }
+
+    .video-tools {
+        align-items: flex-end;
+        background-color: var(--orange-30-alpha-75);
+        border-radius: .5rem;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem;
+        justify-content: space-between;
+        padding: 1rem;
+
+        form {
+            align-items: center;
+            display: flex;
+            gap: 1rem;
+
+            &.edit {
+                align-items: flex-end;
+                flex: 1;
+                flex-wrap: wrap;
+            }
+
+            .form-group {
+                align-items: center;
+                display: flex;
+                flex: 1 1 100%;
+                gap: 1rem;
+
+                label {
+                    align-items: center;
+                    display: flex;
+                    flex: 1;
+                    gap: 1rem;
+
+                    span {
+                        min-width: 6rem;
+                    }
+
+                    input, textarea {
+                        background-color: var(--orange-20);
+                        border: none;
+                        border-radius: 5rem;
+                        color: var(--orange-90);
+                        flex: 1;
+                        padding: .5rem 1rem;
+                    }
+
+                    textarea {
+                        border-radius: 1rem;
+                        font: inherit;
+                        resize: vertical;
+                    }
+                }
+            }
+
+            button {
+                align-items: center;
+                background-color: var(--orange-50);
+                border: none;
+                border-radius: 5rem;
+                color: var(--orange-90);
+                cursor: pointer;
+                display: inline-flex;
+                gap: .5rem;
+                padding: .25rem 1rem;
+
+                &:hover {
+                    background-color: var(--orange-60);
+                }
+
+                &.delete {
+                    background-color: var(--red-50);
+                    color: white;
+
+                    &:hover {
+                        background-color: var(--red-40);
+                    }
+                }
+            }
+        }
+    }
+}

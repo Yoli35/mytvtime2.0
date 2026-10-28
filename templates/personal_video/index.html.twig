@@ -1,0 +1,73 @@
+{% extends 'base.html.twig' %}
+
+{% import 'personal_video/_macros.html.twig' as pv %}
+
+{% block title %}my Tv Time → {{ 'My videos'|trans }}{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('styles/video.scss') }}">
+{% endblock %}
+
+{% block body %}
+    {{ include('_blocks/_menu.html.twig') }}
+    <div class="container-fluid videos-page personal-videos-page">
+        <h1>{{ 'My videos'|trans }}</h1>
+        <div class="video-tools">
+            <form action="{{ path('app_video_personal_upload') }}" method="post" enctype="multipart/form-data">
+                <input type="hidden" name="_token" value="{{ csrf_token('personal_video_upload') }}">
+                <div class="form-group">
+                    <label for="videos"><span>{{ 'Add videos'|trans }}</span>
+                        <input type="file" id="videos" name="videos[]" accept="video/*,.mov" multiple required>
+                    </label>
+                    <span class="max-size">{{ 'Max. size'|trans }} : {{ (maxFileSize / 1048576)|round }} Mo</span>
+                    <button type="submit" id="upload-videos">{{ 'Add'|trans }}</button>
+                </div>
+            </form>
+        </div>
+        <div class="video-wrapper">
+            {% for video in videos %}
+                <div class="video{% if not video.ready %} {{ video.status }}{% endif %}">
+                    <div class="thumbnail">
+                        <a href="{{ path('app_video_personal_show', {'id': video.id}) }}">
+                            {% if video.thumbnail %}
+                                <img src="/videos/personal/{{ video.user.id }}/thumbnails/{{ video.thumbnail }}" alt="{{ video.title }}" loading="lazy">
+                            {% else %}
+                                <div class="placeholder">
+                                    {{ ux_icon(video.status == 'failed' ? 'mdi:alert-circle-outline' : 'mdi:progress-clock') }}
+                                    <span>{{ pv.status(video) }}</span>
+                                </div>
+                            {% endif %}
+                        </a>
+                        {% if video.duration %}
+                            <div class="duration">{{ pv.duration(video.duration) }}</div>
+                        {% endif %}
+                    </div>
+                    <div class="infos">
+                        <div class="content">
+                            <div class="title">{{ video.title }}</div>
+                            <div class="at">
+                                {% if video.recordedAt %}
+                                    <div class="published-at" data-title="{{ 'Recorded at'|trans }}">{{ ux_icon('mdi:video-outline') }} {{ video.recordedAt|format_datetime('relative_short', 'short') }}</div>
+                                {% endif %}
+                                <div class="added-at" data-title="{{ 'Added at'|trans }}">{{ ux_icon('mdi:upload') }} {{ video.createdAt|format_datetime('relative_short', 'short') }}</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% else %}
+                <div class="no-video">
+                    <img src="{{ asset('images/interface/novideo.webp') }}" alt="{{ 'No video'|trans }}">
+                    <p>{{ 'No video'|trans }}</p>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% if hasPending %}
+        <script>
+            // Des vidéos sont en cours de conversion (commande app:videos:process) : on rafraîchit la page
+            setTimeout(() => window.location.reload(), 30000);
+        </script>
+    {% endif %}
+    {% include '_blocks/_footer.html.twig' %}
+{% endblock %}
