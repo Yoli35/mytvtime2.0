@@ -1,7 +1,7 @@
 import {ToolTips} from "ToolTips";
 
 let self = null;
-export class VideoList {
+export class YTVideoList {
     constructor() {
         self = this;
         this.tooltips = new ToolTips();

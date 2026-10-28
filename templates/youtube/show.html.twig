@@ -9,7 +9,7 @@
 
 {% block body %}
     {{ include('_blocks/_menu.html.twig') }}
-    <div class="container-fluid video-page" data-id="{{ video.id }}">
+    <div class="container-fluid video-page youtube-video-page" data-id="{{ video.id }}">
         <div class="video">
             <iframe src="https://www.youtube.com/embed/{{ video.link }}" title="{{ video.title }}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
         </div>
@@ -17,16 +17,16 @@
             <div class="h1-categories">
                 <h1>{{ video.title }}</h1>
                 <div class="tools">
-                    {{ include('_blocks/video/_categories.html.twig', {'video': video, 'categories': categories}) }}
-                    <a href="{{ path('app_video_index', {page: page ?? 1}) }}" class="back-to-videos" data-title="{{ 'Back to my videos'|trans }}">
+                    {{ include('_blocks/youtube/_categories.html.twig', {'youtube': video, 'categories': categories}) }}
+                    <a href="{{ path('app_video_youtube_index', {page: page ?? 1}) }}" class="back-to-videos" data-title="{{ 'Back to my videos'|trans }}">
                         {{ ux_icon('mdi:youtube-tv') }}
                     </a>
                     {% if categoryId ?? 0 %}
-                        <a href="{{ path('app_video_index', {category: categoryId, page: page}) }}" class="back-to-video-category" data-title="{{ 'Back to my videos by category'|trans }}">
-                            {#{{ ux_icon('mdi:arrow-back') }}#}{{ ux_icon('mdi:category') }}
+                        <a href="{{ path('app_video_youtube_index', {category: categoryId, page: page}) }}" class="back-to-video-category" data-title="{{ 'Back to my videos by category'|trans }}">
+                            {{ ux_icon('mdi:category') }}
                         </a>
                     {% endif %}
-                    <div class="share-video" data-title="{{ 'Share this video'|trans }}">
+                    <div class="share-video" data-title="{{ 'Share this youtube'|trans }}">
                         {{ ux_icon('mdi:share-variant') }}
                     </div>
                     <script>
@@ -34,11 +34,11 @@
                             const shareButton = document.querySelector('.share-video');
                             shareButton.addEventListener('click', function (event) {
                                 event.preventDefault();
-                                const url = "{{ url('app_video_share', parameters = {id: video.id}, schemeRelative = false) }}";
+                                const url = "{{ url('app_video_youtube_share', parameters = {id: video.id}, schemeRelative = false) }}";
                                 navigator.clipboard.writeText(url).then(function () {
                                     alert('{{ 'Video link copied to clipboard'|trans }}');
                                 }, function () {
-                                    alert('{{ 'Failed to copy video link'|trans }}');
+                                    alert('{{ 'Failed to copy youtube link'|trans }}');
                                 });
                             });
                         });
@@ -60,9 +60,9 @@
             <div class="prev-next-videos">
                 <div>
                     {% if previousVideo %}
-                        <h4 class="youtube-red">{{ 'Previous video'|trans }}</h4>
+                        <h4 class="youtube-red">{{ 'Previous youtube'|trans }}</h4>
                         <div class="prev-video">
-                            <a href="{{ path('app_video_show', {id: previousVideo.user_video_id}) }}">
+                            <a href="{{ path('app_video_youtube_show', {id: previousVideo.user_video_id}) }}">
                                 <img src="/videos/thumbnails{{ previousVideo.thumbnail }}" alt="{{ previousVideo.title }}">
                                 <div class="title">{{ previousVideo.title }}</div>
                             </a>
@@ -71,9 +71,9 @@
                 </div>
                 <div>
                     {% if nextVideo %}
-                        <h4 class="youtube-red">{{ 'Next video'|trans }}</h4>
+                        <h4 class="youtube-red">{{ 'Next youtube'|trans }}</h4>
                         <div class="next-video">
-                            <a href="{{ path('app_video_show', {id: nextVideo.user_video_id}) }}">
+                            <a href="{{ path('app_video_youtube_show', {id: nextVideo.user_video_id}) }}">
                                 <img src="/videos/thumbnails{{ nextVideo.thumbnail }}" alt="{{ nextVideo.title }}e">
                                 <div class="title">{{ nextVideo.title }}</div>
                             </a>
@@ -86,10 +86,10 @@
     </div>
     <div id="global-data" style="display: none">
         {
-            "app_video_details": "{{ path('app_video_details', {id: video.id}) }}",
-            "app_video_comments": "{{ path('app_video_comments') }}",
-            "app_video_category_add": "{{ path('app_video_category_add') }}",
-            "app_video_category_delete": "{{ path('app_video_category_delete') }}",
+            "app_video_youtube_details": "{{ path('app_video_youtube_details', {id: video.id}) }}",
+            "app_video_youtube_comments": "{{ path('app_video_youtube_comments') }}",
+            "app_video_youtube_category_add": "{{ path('app_video_youtube_category_add') }}",
+            "app_video_youtube_category_delete": "{{ path('app_video_youtube_category_delete') }}",
             "published_at": "{{ userVideo ? userVideo.publishedAtString : publishedAt }}",
             "added_at": "{{ userVideo ? userVideo.addedAtString : null }}",
             "texts": {

@@ -58,19 +58,19 @@ class AdminController extends AbstractController
         private readonly KeywordService                    $keywordService,
         private readonly MovieRepository                   $movieRepository,
         private readonly PointOfInterestCategoryRepository $pointOfInterestCategoryRepository,
-        private readonly PointOfInterestImageRepository    $pointOfInterestImageRepository,
-        private readonly PointOfInterestRepository         $pointOfInterestRepository,
-        private readonly ProviderService                   $providerService,
-        private readonly SeriesRepository                  $seriesRepository,
-        private readonly SeriesService                     $seriesService,
-        private readonly SettingsRepository                $settingsRepository,
-        private readonly TMDBService                       $tmdbService,
-        private readonly TranslatorInterface               $translator,
-        private readonly UserRepository                    $userRepository,
-        private readonly VideoCategoryRepository           $categoryRepository,
-        private readonly VideoController                   $videoController,
-        private readonly VideoRepository                   $videoRepository,
-        private readonly WatchProviderRepository           $watchProviderRepository
+        private readonly PointOfInterestImageRepository $pointOfInterestImageRepository,
+        private readonly PointOfInterestRepository      $pointOfInterestRepository,
+        private readonly ProviderService                $providerService,
+        private readonly SeriesRepository               $seriesRepository,
+        private readonly SeriesService                  $seriesService,
+        private readonly SettingsRepository             $settingsRepository,
+        private readonly TMDBService                    $tmdbService,
+        private readonly TranslatorInterface            $translator,
+        private readonly UserRepository                 $userRepository,
+        private readonly VideoCategoryRepository        $categoryRepository,
+        private readonly YoutubeController              $youtubeController,
+        private readonly VideoRepository                $videoRepository,
+        private readonly WatchProviderRepository        $watchProviderRepository
     )
     {
     }
@@ -1321,7 +1321,7 @@ class AdminController extends AbstractController
         ]);
     }
 
-    #[Route('/videos', name: 'videos')]
+    #[Route('/videos/youtube', name: 'videos_youtube')]
     public function videos(Request $request): Response
     {
         list($sort, $order, $page, $limit) = $this->getParameters($request);
@@ -1337,11 +1337,11 @@ class AdminController extends AbstractController
             if (!is_numeric($v['published_at'][0])) $v['published_at'] = ucfirst($v['published_at']);
             $v['updated_at'] = $this->dateService->formatDateRelativeMedium($v['updated_at'], 'UTC', 'fr') . " " . $this->translator->trans('at') . " " . substr($v['updated_at'], 11, 5);
             if (!is_numeric($v['updated_at'][0])) $v['updated_at'] = ucfirst($v['updated_at']);
-            $v['duration'] = $this->videoController->formatDuration($v['duration']);
+            $v['duration'] = $this->youtubeController->formatDuration($v['duration']);
             return $v;
         }, $videos);
 
-        $pagination = $this->generateLinks($pageCount, $page, $this->generateUrl('admin_videos'), [
+        $pagination = $this->generateLinks($pageCount, $page, $this->generateUrl('admin_videos_youtube'), [
             's' => $sort,
             'o' => $order,
             'l' => $limit,
@@ -1359,7 +1359,7 @@ class AdminController extends AbstractController
         ]);
     }
 
-    #[Route('/video/{id}', name: 'video_edit')]
+    #[Route('/youtube/{id}', name: 'video_youtube_edit')]
     public function videoEdit(int $id): Response
     {
         $video = $this->videoRepository->find($id);
@@ -1376,7 +1376,7 @@ class AdminController extends AbstractController
             $publishedAt = $this->translator->trans("Published") . ' ' . $publishedAt;
         }
 
-        return $this->render('video/show.html.twig', [
+        return $this->render('youtube/show.html.twig', [
             'userVideo' => null,
             'video' => $video,
             'publishedAt' => $publishedAt,

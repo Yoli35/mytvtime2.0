@@ -59,7 +59,7 @@ readonly class ApiVideoCategory
         return ($this->json)([
             'ok' => true,
             'success' => true,
-            'block' => ($this->renderView)('_blocks/video/_categories.html.twig', [
+            'block' => ($this->renderView)('_blocks/youtube/_categories.html.twig', [
                 'categories' => $categories,
                 'video' => $video,
             ]),

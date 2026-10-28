@@ -33,8 +33,8 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 /** @method User|null getUser() */
-#[Route('/video', name: 'app_video_')]
-final class VideoController extends AbstractController
+#[Route('/youtube/youtube', name: 'app_video_youtube_')]
+final class YoutubeController extends AbstractController
 {
     private Google_Service_YouTube $service_YouTube;
     private int $maxResults = 10;
@@ -83,7 +83,7 @@ final class VideoController extends AbstractController
             } else {
                 $this->addFlash('error', 'Invalid YouTube link: "' . $newLink . '"<br> Please provide a valid YouTube link.');
             }
-            $page = 1; // Reset to first page after adding a new video
+            $page = 1; // Reset to first page after adding a new youtube video
             $categoryId = 0; // Reset category filter
         }
 
@@ -147,7 +147,7 @@ final class VideoController extends AbstractController
 
         $this->formatDates($userVideo);
 
-        return $this->render('video/show.html.twig', [
+        return $this->render('youtube/show.html.twig', [
             'userVideo' => $userVideo,
             'video' => $video,
             'page' => $page,
@@ -167,7 +167,7 @@ final class VideoController extends AbstractController
         }
         $publishedDate = $this->sharedVideoFormatDate($video);
 
-        return $this->render('video/share.html.twig', [
+        return $this->render('youtube/share.html.twig', [
             'video' => $video,
             'publishedAt' => $publishedDate,
 

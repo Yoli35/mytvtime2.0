@@ -36,8 +36,8 @@ import {Show} from 'Show';
 import {ToolTips} from 'ToolTips';
 import {TvTime} from 'TvTime';
 import {UserList} from "UserList";
-import {VideoList} from "VideoList";
-import {Video} from 'Video';
+import {YTVideoList} from "YTVideoList";
+import {YTVideo} from 'YTVideo';
 
 window.addEventListener("DOMContentLoaded", () => {
 
@@ -298,14 +298,14 @@ window.addEventListener("DOMContentLoaded", () => {
         new NetworkAndProvider(networkPage != null);
     }
 
-    const videoPage = document.querySelector(".video-page");
-    if (videoPage) {
-        new Video(toolTips);
+    const youtubeVideoPage = document.querySelector(".youtube-video-page");
+    if (youtubeVideoPage) {
+        new YTVideo(toolTips);
     }
 
     const videosPage = document.querySelector(".videos-page");
     if (videosPage) {
-        const videoList = new VideoList();
+        const videoList = new YTVideoList();
         videoList.init();
     }
 });

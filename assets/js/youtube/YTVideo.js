@@ -2,7 +2,7 @@ import {RgbToHsl} from "RgbToHsl";
 
 let self = null;
 
-export class Video {
+export class YTVideo {
 
     /**
      * @typedef Comment
@@ -17,10 +17,10 @@ export class Video {
     constructor(toolTips) {
         self = this;
         const globs = JSON.parse(document.querySelector("#global-data").textContent);
-        this.app_video_details = globs['app_video_details'];
-        this.app_video_comments = globs['app_video_comments'];
-        this.app_video_category_add = globs['app_video_category_add'];
-        this.app_video_category_delete = globs['app_video_category_delete'];
+        this.app_video_details = globs['app_video_youtube_details'];
+        this.app_video_comments = globs['app_video_youtube_comments'];
+        this.app_video_category_add = globs['app_video_youtube_category_add'];
+        this.app_video_category_delete = globs['app_video_youtube_category_delete'];
         this.publishedAt = globs['published_at'];
         this.addedAt = globs['added_at'];
         this.texts = globs['texts'];

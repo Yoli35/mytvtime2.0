@@ -111,14 +111,14 @@
                         </a>
                     {% endif %}
                     {% if videosLink is defined %}
-                        <a href="{{ videosLink|raw }}"{% if route starts with 'admin_video' %} class="active"{% endif %}>
+                        <a href="{{ videosLink|raw }}"{% if route matches '/^admin_video\\.?_youtube\\.+/' %} class="active"{% endif %}>
                             <div>{{ ux_icon('mdi:youtube-tv', {height: "18px", width: "18px"}) }}</div>
                             <div class="large">
                                 {{ 'Videos'|trans }}
                             </div>
                         </a>
                     {% else %}
-                        <a href="{{ path('admin_videos') }}"{% if route starts with 'admin_video' %} class="active"{% endif %}>
+                        <a href="{{ path('admin_videos_youtube') }}"{% if route matches '/^admin_video\\.?_youtube\\.+/' %} class="active"{% endif %}>
                             <div>{{ ux_icon('mdi:youtube-tv', {height: "18px", width: "18px"}) }}</div>
                             <div class="large">
                                 {{ 'Videos'|trans }}
@@ -221,11 +221,11 @@
                 {% if route == 'admin_point_of_interest_edit' %}
                     {% include('_blocks/admin/_point_of_interest-edit.html.twig') %}
                 {% endif %}
-                {% if route == 'admin_videos' %}
-                    {% include('_blocks/admin/_videos.html.twig') %}
+                {% if route == 'admin_videos_youtube' %}
+                    {% include('_blocks/admin/_videos_youtube.html.twig') %}
                 {% endif %}
-                {% if route == 'admin_video_edit' %}
-                    {% include('_blocks/admin/_video_edit.html.twig') %}
+                {% if route == 'admin_video_youtube_edit' %}
+                    {% include('_blocks/admin/_video_youtube_edit.html.twig') %}
                 {% endif %}
                 {% if route == 'admin_providers' %}
                     {% include('_blocks/admin/_providers.html.twig') %}
