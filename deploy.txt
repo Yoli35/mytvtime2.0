@@ -5,10 +5,21 @@ symfony -q serve --allow-all-ip --no-tls --port=8000
 // Mise à jours automatiques depuis git :
 
 // Pour le template updates.html.twig
-cons updates-from-git.php 94 94 --skip-empty --write
+// <div class="site-update glowing-border">
+//     <div class="list">
+//         <h2>94° mise à jour : 29/10/2026 11:00</h2>
+//         <ul>
+//             <li>
+//                 <div class="change">→ The changes included in Update 94 will be added soon</div>
+//                 <div class="details"></div>
+//             </li>
+//         </ul>
+//     </div>
+// </div>
+php bin/updates-from-git.php 94 94 --skip-empty --write
 
 // Pour index.php du serveur
-cons updates-from-git.php 81 93 --skip-empty --indent=12 > var/updates.html
+php bin/updates-from-git.php 94 94 --skip-empty > var/updates.html
 
 // Déploiement
 
