@@ -6,6 +6,7 @@ use App\Entity\PersonalVideo;
 use App\Entity\User;
 use App\Repository\PersonalVideoRepository;
 use App\Service\DateService;
+use App\Service\ImageService;
 use App\Service\PersonalVideoService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
@@ -24,6 +25,7 @@ final class PersonalVideoController extends AbstractController
 {
     public function __construct(
         private readonly DateService             $dateService,
+        private readonly ImageService            $imageService,
         private readonly PersonalVideoRepository $personalVideoRepository,
         private readonly PersonalVideoService    $personalVideoService,
         private readonly TranslatorInterface     $translator,
@@ -93,6 +95,7 @@ final class PersonalVideoController extends AbstractController
 
         return $this->render('personal_video/show.html.twig', [
             'video' => $video,
+            'bgImage' => $this->imageService->getRandomBlurredPosters(),
         ]);
     }
 

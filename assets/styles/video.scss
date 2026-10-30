@@ -903,14 +903,30 @@
 
     .back a {
         align-items: center;
+        background-color: var(--green);
+        border-radius: 5rem;
+        border: 4px solid hsl(from var(--green-10) h s l / .75);
         color: var(--orange-90);
         display: inline-flex;
-        gap: .5rem;
+        padding-block: .5rem;
+        padding-inline: 1.5rem;
+        text-decoration: none;
+    }
+
+    h1 {
+        background-color: hsl(from var(--orange-10) h s l / .5);
+        border-radius: 2rem;
+        border: 4px solid hsl(from var(--green-10) h s l / .35);
+        padding: 1rem 2rem;
     }
 
     .player {
+        background-color: hsl(from var(--orange-10) h s l / .5);
+        border-radius: 2rem;
+        border: 4px solid hsl(from var(--green-10) h s l / .35);
         display: flex;
         justify-content: center;
+        padding: 2rem;
 
         video {
             background-color: black;
@@ -950,26 +966,35 @@
     }
 
     .details {
+        background-color: hsl(from var(--orange-10) h s l / .5);
+        border-radius: 2rem;
+        border: 4px solid hsl(from var(--green-10) h s l / .35);
         color: var(--orange-90);
         display: flex;
         flex-wrap: wrap;
         gap: 1rem 2rem;
+        padding: 1rem 2rem;
     }
 
     .description {
+        background-color: hsl(from var(--orange-10) h s l / .5);
+        border-radius: 2rem;
+        border: 4px solid hsl(from var(--green-10) h s l / .35);
         color: var(--orange-90);
         line-height: 1.5;
+        padding: 1rem 2rem;
     }
 
     .video-tools {
         align-items: flex-end;
-        background-color: var(--orange-30-alpha-75);
-        border-radius: .5rem;
+        background-color: hsl(from var(--orange-10) h s l / .5);
+        border-radius: 2rem;
+        border: 4px solid hsl(from var(--green-10) h s l / .35);
         display: flex;
         flex-wrap: wrap;
         gap: 1rem;
         justify-content: space-between;
-        padding: 1rem;
+        padding: 1rem 2rem;
 
         form {
             &.edit {

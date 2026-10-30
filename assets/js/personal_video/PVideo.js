@@ -30,7 +30,9 @@ export class PVideo {
                     foldable.classList.remove('folded');
                     setTimeout(() => foldable.removeAttribute('style'), 250);
                 } else {
+                    foldable.style.height = '0px';
                     foldable.classList.add('folded');
+                    setTimeout(() => foldable.removeAttribute('style'), 250);
                 }
             });
         }
