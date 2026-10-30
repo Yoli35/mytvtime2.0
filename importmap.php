@@ -63,6 +63,7 @@ return [
     'Profile' => ['path' => './assets/js/user/Profile.js'],
     'ProviderRanking' => ['path' => './assets/js/home/ProviderRanking.js'],
     'ProviderSelect' => ['path' => './assets/js/home/ProviderSelect.js'],
+    'PVideo' => ['path' => './assets/js/personal_video/PVideo.js'],
     'RgbToHsl' => ['path' => './assets/js/images/RgbToHsl.js'],
     'RgbToLch' => ['path' => './assets/js/images/RgbToLch.js'],
     'Season' => ['path' => './assets/js/series/Season.js'],

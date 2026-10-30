@@ -117,6 +117,17 @@ final class PersonalVideoController extends AbstractController
             $this->addFlash('success', $this->translator->trans('Video updated'));
         }
 
+        // Vignette composée dans la page (PVideo.js) à partir de l'image sélectionnée dans la liste
+        $thumbnail = $request->files->get('thumbnail_image');
+        if ($thumbnail instanceof UploadedFile) {
+            $error = $this->personalVideoService->replaceThumbnail($video, $thumbnail);
+            if ($error) {
+                $this->addFlash('error', $this->translator->trans('Thumbnail update failed') . ' : ' . $error);
+            } else {
+                $this->addFlash('success', $this->translator->trans('Thumbnail updated'));
+            }
+        }
+
         return $this->redirectToRoute('app_video_personal_show', ['id' => $video->getId()]);
     }
 

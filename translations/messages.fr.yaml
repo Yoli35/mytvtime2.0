@@ -1882,3 +1882,7 @@ logo: logo
 'Video deleted': 'Vidéo supprimée'
 'Video is being converted, try again later': 'La vidéo est en cours de conversion, réessayez plus tard'
 'Delete this video?': 'Supprimer cette vidéo ?'
+'Modify thumbnails': 'Modifier la vignette'
+'No files currently selected for upload': 'Aucun fichier sélectionné'
+'Thumbnail updated': 'Vignette modifiée'
+'Thumbnail update failed': 'Échec de la modification de la vignette'

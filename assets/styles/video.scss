@@ -972,35 +972,41 @@
         padding: 1rem;
 
         form {
-            align-items: center;
-            display: flex;
-            gap: 1rem;
-
             &.edit {
-                align-items: flex-end;
+                align-items: stretch;
+                display: flex;
+                gap: 1rem;
                 flex: 1;
-                flex-wrap: wrap;
+                flex-direction: column;
             }
 
-            .form-group {
-                align-items: center;
+            .form-group:has(.foldable) {
+                align-items: flex-start;
                 display: flex;
                 flex: 1 1 100%;
                 gap: 1rem;
 
+                .thumbnail-toggler {
+                    cursor: pointer;
+                }
+
                 .foldable {
                     align-items: flex-start;
+                    display: flex;
                     flex-direction: column;
+                    gap: 1rem;
+                    overflow: clip;
                     transition: height .25s ease-in-out;
+                    width: 100%;
 
-                    .foldable.folded {
+                    &.folded {
                         height: 0;
                     }
 
                     .preview-thumbnail {
                         width: 100%;
 
-                        ol.thumbnail-list  {
+                        ol.thumbnail-list {
                             background-color: hsl(from var(--orange) h s l / .25);
                             border-radius: 3rem;
                             box-shadow: 0 0 1rem var(--orange) inset;
@@ -1014,7 +1020,8 @@
                                 border: 4px solid var(--orange-20);
                                 display: flex;
                                 gap: 2rem;
-                                padding: 0.5rem;
+                                padding-block: 0.5rem;
+                                padding-inline: 1rem .5rem;
                                 width: 100%;
 
                                 &:has(input[type="radio"]:checked) {
@@ -1027,22 +1034,49 @@
                                     }
                                 }
 
-                                label.thumbnail-choice {
-                                    .thumbnail-image {
-                                        align-items: center;
-                                        aspect-ratio: 16 /9;
-                                        background-color: var(--orange-20);
-                                        border-radius: .5rem;
-                                        display: flex;
-                                        justify-content: center;
-                                        margin-inline-start: auto;
-                                        width: 24rem;
+                                .thumbnail {
+                                    flex-grow: 1;
+                                    position: relative;
 
-                                        img {
-                                            max-height: 100%;
-                                            max-width: 100%;
-                                            object-fit: contain;
+                                    input[type="radio"] {
+                                        inset: 0;
+                                        opacity: 0;
+                                        position: absolute;
+                                    }
+
+                                    label.thumbnail-choice {
+                                        .thumbnail-infos {
+                                            display: flex;
+                                            flex-direction: column;
+                                            gap: 0.5rem;
                                         }
+
+                                        .thumbnail-image {
+                                            align-items: center;
+                                            aspect-ratio: 16 /9;
+                                            background-color: #000;
+                                            border-radius: .5rem;
+                                            display: flex;
+                                            flex-grow: 1;
+                                            height: 100%;
+                                            justify-content: center;
+                                            margin-inline-start: auto;
+                                            width: auto;
+
+                                            // Même ajustement que la vignette composée (PVideo.composeThumbnail)
+                                            img {
+                                                max-height: 100%;
+                                                max-width: 100%;
+                                                object-fit: contain;
+                                            }
+                                        }
+                                    }
+                                }
+
+                                .thumbnail-color {
+                                    input[type="color"] {
+                                        border-radius: 5rem;
+                                        border:4px solid;
                                     }
                                 }
                             }
@@ -1073,6 +1107,26 @@
                         border-radius: 1rem;
                         font: inherit;
                         resize: vertical;
+                    }
+
+                    &:has(input[type="file"]) {
+                        background-color: var(--ardoise-80);
+                        border: 2px dashed var(--orange-50);
+                        border-radius: 5rem;
+                        color: var(--ardoise-10);
+                        cursor: pointer;
+                        padding: .5rem 1rem;
+                        position: relative;
+
+                        &:hover {
+                            background-color: var(--ardoise-70);
+                        }
+
+                        input[type="file"] {
+                            inset: 0;
+                            opacity: 0;
+                            position: absolute;
+                        }
                     }
                 }
             }

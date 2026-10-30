@@ -114,18 +114,63 @@ class PersonalVideoService
             $this->setMetadata($video, $output);
         }
 
-        $thumbnailError = $this->thumbnail($userDir . $filename, $thumbnailDir . $thumbnail, $video->getDuration() ?? 0);
-        if ($thumbnailError) {
-            $this->logger->warning('Personal video thumbnail: ' . $thumbnailError);
+        // Une vignette choisie par l'utilisateur pendant l'attente de la conversion est conservée
+        $thumbnailError = null;
+        if (!$video->getThumbnail()) {
+            $thumbnailError = $this->thumbnail($userDir . $filename, $thumbnailDir . $thumbnail, $video->getDuration() ?? 0);
+            if ($thumbnailError) {
+                $this->logger->warning('Personal video thumbnail: ' . $thumbnailError);
+            } else {
+                $video->setThumbnail($thumbnail);
+            }
         }
 
         @unlink($source);
         $video->setSourcePath(null);
         $video->setFilename($filename);
-        $video->setThumbnail($thumbnailError ? null : $thumbnail);
         $video->setSize(filesize($userDir . $filename) ?: null);
         $video->setError(null);
         $this->setStatus($video, PersonalVideo::STATUS_READY);
+    }
+
+    /**
+     * Remplace la vignette par une image composée dans la page de la vidéo (cadre 16/9, PVideo.composeThumbnail).
+     * L'image est réencodée en WebP avec GD : seul un fichier image valide est enregistré.
+     *
+     * @return string|null message d'erreur, null en cas de succès
+     */
+    public function replaceThumbnail(PersonalVideo $video, UploadedFile $file): ?string
+    {
+        if ($file->getError() !== UPLOAD_ERR_OK) {
+            return $file->getErrorMessage();
+        }
+        if (!in_array($file->getMimeType(), ['image/jpeg', 'image/png', 'image/webp'], true)) {
+            return 'Not a valid file type';
+        }
+        $image = @imagecreatefromstring(file_get_contents($file->getPathname()));
+        if (!$image) {
+            return 'Unreadable image';
+        }
+        if (imagesx($image) > 1920) {
+            $image = imagescale($image, 1920, -1, IMG_BICUBIC);
+        }
+
+        $thumbnailDir = $this->videoDir . $video->getUser()->getId() . '/thumbnails/';
+        $this->checkForPaths([$thumbnailDir]);
+        // Nouveau nom à chaque changement : l'ancienne vignette ne reste pas dans le cache du navigateur
+        $thumbnail = $video->getId() . '-' . strtolower((new AsciiSlugger())->slug($video->getTitle())->slice(0, 80)) . '-' . time() . '.webp';
+        if (!imagewebp($image, $thumbnailDir . $thumbnail, 85)) {
+            return 'Thumbnail conversion to WebP failed';
+        }
+
+        if ($video->getThumbnail() && $video->getThumbnail() !== $thumbnail) {
+            @unlink($thumbnailDir . $video->getThumbnail());
+        }
+        $video->setThumbnail($thumbnail);
+        $video->setUpdatedAt($this->dateService->getNowImmutable('UTC'));
+        $this->personalVideoRepository->save($video, true);
+
+        return null;
     }
 
     public function delete(PersonalVideo $video): void

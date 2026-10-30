@@ -1876,3 +1876,7 @@ logo: logo
 'Video deleted': 'Video deleted'
 'Video is being converted, try again later': 'Video is being converted, try again later'
 'Delete this video?': 'Delete this video?'
+'Modify thumbnails': 'Modify thumbnails'
+'No files currently selected for upload': 'No files currently selected for upload'
+'Thumbnail updated': 'Thumbnail updated'
+'Thumbnail update failed': 'Thumbnail update failed'

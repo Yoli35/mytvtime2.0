@@ -50,7 +50,7 @@
             <div class="description">{{ video.description|nl2br }}</div>
         {% endif %}
         <div class="video-tools">
-            <form id="edit-form" action="{{ path('app_video_personal_edit', {'id': video.id}) }}" method="post" class="edit">
+            <form id="edit-form" action="{{ path('app_video_personal_edit', {'id': video.id}) }}" method="post" class="edit" enctype="multipart/form-data">
                 <input type="hidden" name="_token" value="{{ csrf_token('personal_video_edit_' ~ video.id) }}">
                 <div class="form-group">
                     <label for="title"><span>{{ 'Title'|trans }}</span>
@@ -63,15 +63,17 @@
                     </label>
                 </div>
                 <div class="form-group">
-                    <div class="thumbnail-toggler">{{ ux_icon('mdi:settings') }}</div>
+                    <div class="thumbnail-toggler" data-title="{{ 'Modify thumbnails'|trans }}">{{ ux_icon('mdi:settings') }}</div>
                     <div class="foldable folded">
-                        <label for="thumbnail"><span>{{ 'Vignette'|trans }}</span>
-                            <input type="file" id="thumbnail" name="thumbnail">
+                        <label for="thumbnail"><span>{{ 'Drop your images files here'|trans }} {{ 'or paste them (Ctrl/Cmd + V)'|trans }}</span>
+                            <input type="file" id="thumbnail" name="thumbnail" accept="image/jpeg,image/png,image/webp" multiple>
                         </label>
                         <div class="preview-thumbnail"></div>
                     </div>
                 </div>
-                <button type="submit">{{ 'Save'|trans }}</button>
+                <div class="form-group">
+                    <button type="submit">{{ 'Save'|trans }}</button>
+                </div>
             </form>
             <form action="{{ path('app_video_personal_delete', {'id': video.id}) }}" method="post" onsubmit="return confirm('{{ 'Delete this video?'|trans|e('js') }}')">
                 <input type="hidden" name="_token" value="{{ csrf_token('personal_video_delete_' ~ video.id) }}">
@@ -79,124 +81,15 @@
             </form>
         </div>
     </div>
+    <div id="global-data" style="display: none">
+        {
+            "texts": {
+                "No files currently selected for upload": {{ 'No files currently selected for upload'|trans|json_encode|raw }},
+                "Not a valid file type. Update your selection": {{ 'Not a valid file type. Update your selection'|trans|json_encode|raw }}
+            }
+        }
+    </div>
     {% include '_blocks/_footer.html.twig' %}
 {% endblock %}
-{% block javascripts %}
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            let imageCount = 0;
-            const toggler = document.querySelector('.thumbnail-toggler');
-            if (toggler) {
-                toggler.addEventListener('click', () => {
-                    const foldable = toggler.parentElement.querySelector('.foldable');
-                    foldable.classList.toggle('folded');
-                });
-            }
-            const editForm = document.getElementById('edit-form');
-            if (!editForm) return;
-            const imageFiles = editForm.querySelector('input[name="thumbnail"]');
-            imageFiles.addEventListener("change", updateImageDisplay);
 
-            // Les images peuvent aussi être ajoutées par copier-coller, n'importe où dans le panneau
-            document.addEventListener('paste', function (e) {
-                const pastedFiles = Array.from(e.clipboardData?.files || []).filter(file => file.type.startsWith('image/'));
-                if (!pastedFiles.length) return;
-                e.preventDefault();
-
-                const dataTransfer = new DataTransfer();
-                Array.from(imageFiles.files).forEach(file => dataTransfer.items.add(file));
-                pastedFiles.forEach(function (file, index) {
-                    // Les images collées s'appellent souvent toutes "image.png" : la vignette est retrouvée par son nom
-                    const extension = file.type.split('/')[1].replace('jpeg', 'jpg');
-                    const name = 'pasted-' + Date.now() + '-' + index + '.' + extension;
-                    dataTransfer.items.add(new File([file], name, {type: file.type}));
-                });
-                imageFiles.files = dataTransfer.files;
-                imageFiles.dispatchEvent(new Event('change'));
-            });
-
-            function updateImageDisplay(e) {
-                const input = e.target;
-                const inputName = input.name;
-                const preview = editForm.querySelector('.preview-' + inputName);
-                const existingList = preview.querySelector('ol');
-                existingList?.remove();
-
-                const curFiles = input.files;
-                if (curFiles.length === 0) {
-                    const div = document.createElement("div");
-                    div.textContent = "No files currently selected for upload";
-                    preview.appendChild(div);
-                    return;
-                }
-
-                const list = document.createElement("ol");
-                list.classList.add('thumbnail-list');
-                preview.appendChild(list);
-
-                let index = imageCount;
-                for (const file of curFiles) {
-                    const listItem = document.createElement("li");
-                    listItem.classList.add("thumbnail-item");
-                    if (validFileType(file)) {
-                        const radio = document.createElement("input");
-                        radio.id = "thumbnail-" + index;
-                        radio.type = "radio";
-                        radio.name = "thumbnail";
-                        radio.value = file.name;
-                        if (index === 0) radio.checked = true;
-                        const label = document.createElement("label");
-                        label.classList.add("thumbnail-choice");
-                        label.setAttribute("for", "thumbnail-" + index);
-                        const span = document.createElement("span");
-                        span.textContent = file.name + " (" + returnFileSize(file.size) + ")";
-                        const div = document.createElement("div");
-                        div.classList.add('selected');
-                        div.innerText = "Vignette";
-                        const imgContainer = document.createElement("div");
-                        imgContainer.classList.add("thumbnail-image");
-                        const image = document.createElement("img");
-                        image.src = URL.createObjectURL(file);
-                        image.alt = image.title = file.name;
-                        imgContainer.appendChild(image);
-
-                        label.appendChild(span);
-                        label.appendChild(div);
-                        label.appendChild(imgContainer);
-
-                        listItem.appendChild(radio);
-                        listItem.appendChild(label);
-                        index += 1;
-                    } else {
-                        const div = document.createElement("div");
-                        div.innerHTML = `${file.name}<span class="error">${self.translations['Not a valid file type. Update your selection']}.</span>`;
-                        listItem.appendChild(div);
-                    }
-
-                    list.appendChild(listItem);
-                }
-            }
-
-            const fileTypes = [
-                "image/jpeg",
-                "image/png",
-                "image/webp",
-            ];
-
-            function validFileType(file) {
-                return fileTypes.includes(file.type);
-            }
-
-            function returnFileSize(number) {
-                if (number < 1e3) {
-                    return `${number} bytes`;
-                } else if (number >= 1e3 && number < 1e6) {
-                    return `${(number / 1e3).toFixed(1)} KB`;
-                } else {
-                    return `${(number / 1e6).toFixed(1)} MB`;
-                }
-            }
-        });
-    </script>
-{% endblock %}
 
