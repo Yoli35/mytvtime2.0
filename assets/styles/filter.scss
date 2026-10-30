@@ -82,6 +82,7 @@
             top: 2.75rem;
             transition: height .25s ease-in-out, padding .25s ease-in-out;
             width: fit-content;
+            z-index: 500;
 
             &.collapse {
                 height: 0;
@@ -127,6 +128,7 @@
         }
 
         .pagination {
+            align-items: center;
             display: flex;
             gap: .5rem;
 
