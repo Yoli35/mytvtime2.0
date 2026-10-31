@@ -250,7 +250,7 @@ export class TvTime {
         kindDivs.forEach((k) => {
             k.addEventListener('click', (e) => {
                 e.preventDefault();
-                console.log(k,k.dataset.index);
+                console.log(k, k.dataset.index);
                 if (k.classList.contains('active')) return;
                 self.getEpisodes(null, k.dataset.index);
                 kindMenu.querySelector('li.active').classList.remove('active');
@@ -786,11 +786,8 @@ export class TvTime {
                 if (seriesCard) { // Pour les multiples épisodes, la carte n'apparaitra qu'après leurs lectures
                     const seriesCardVoteDiv = seriesCard.querySelector('.vote');
                     seriesCardVoteDiv.innerHTML = vote;
-                    if (vote === 11) {
-                        seriesCardVoteDiv.classList.add('voted-11');
-                    }
-                    if (vote === 12) {
-                        seriesCardVoteDiv.classList.add('voted-12');
+                    if (vote > 9) {
+                        seriesCardVoteDiv.classList.add('voted-' + vote);
                     }
                 }
                 if (isLastEpisode > 0) {
