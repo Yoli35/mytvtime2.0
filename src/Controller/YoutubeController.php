@@ -76,7 +76,7 @@ final class YoutubeController extends AbstractController
             $link = $this->videoService->parseLink($newLink);
             if ($link) {
                 $newId = $this->addVideo($link, $now);
-                return $this->redirectToRoute('app_video_show', [
+                return $this->redirectToRoute('app_video_youtube_show', [
                     'id' => $newId,
                     'page' => 1,
                 ]);
@@ -118,7 +118,7 @@ final class YoutubeController extends AbstractController
         }
         $categories = $this->videoService->getCategories();
 
-        return $this->render('video/index.html.twig', [
+        return $this->render('youtube/index.html.twig', [
             'dbUserVideos' => $dbUserVideos,
             'categories' => $categories,
             'totalDuration' => $totalDurationString,
