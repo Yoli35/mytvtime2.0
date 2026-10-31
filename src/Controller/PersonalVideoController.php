@@ -42,6 +42,7 @@ final class PersonalVideoController extends AbstractController
             'videos' => $videos,
             'maxFileSize' => UploadedFile::getMaxFilesize(),
             'hasPending' => (bool)array_filter($videos, fn(PersonalVideo $v) => !$v->isReady() && $v->getStatus() !== PersonalVideo::STATUS_FAILED),
+            'bgImage' => $this->imageService->getRandomBlurredPosters(),
         ]);
     }
 

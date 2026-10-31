@@ -171,7 +171,7 @@
             }
 
             .infos {
-                background-color: var(--orange-30-alpha-75);
+                background-color: hsl(from var(--orange-10) h s l / .25);
                 border-radius: 0 0 .5rem .5rem;
                 display: flex;
                 flex-direction: column;
@@ -204,27 +204,29 @@
                 .content {
                     display: flex;
                     flex-direction: column;
-                    gap: .25rem;
+                    gap: .5rem;
                     height: 5rem;
+                    justify-content: space-around;
 
                     .title {
                         color: var(--orange-90);
                         display: flex;
                         font-size: 1.25rem;
                         font-weight: 600;
-                        height: 3.5rem;
                         overflow-y: auto;
                     }
 
                     .at {
                         display: flex;
                         gap: 1rem;
-                        height: 1.5rem;
 
                         .published-at, .added-at {
+                            align-items: center;
                             color: var(--orange-90);
+                            display: flex;
                             font-size: .875rem;
                             font-weight: 400;
+                            gap: .5rem;
                         }
                     }
                 }
