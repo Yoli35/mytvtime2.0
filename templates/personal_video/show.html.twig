@@ -18,7 +18,7 @@
         </div>
         <h1>{{ video.title }}</h1>
         {% if video.ready %}
-            <div class="player{% if video.portrait %} portrait{% endif %}">
+            <div class="player{% if video.portrait %} portrait{% endif %}" style="aspect-ratio: {{ video.width + 40 }} / {{ video.height + 40 }}; height: {{ video.height + 40 }}px; width: {{ video.width + 40 }}px;">
                 <video controls playsinline preload="metadata"
                        {% if video.thumbnail %}poster="{{ dir }}/thumbnails/{{ video.thumbnail }}"{% endif %}
                         {% if video.width and video.height %}style="aspect-ratio: {{ video.width }}/{{ video.height }}"{% endif %}>
