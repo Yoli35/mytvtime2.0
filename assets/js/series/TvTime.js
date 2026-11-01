@@ -50,7 +50,7 @@ export class TvTime {
         this.initLayoutSwitch();
 
         this.initComponents();
-        this.initScreenSaver(5);
+        this.initScreenSaver(1);
 
         if (this.tab === 0) {
             self.fixDetailsDivs(document.querySelector('main .series-tab .wrapper'));
@@ -120,14 +120,15 @@ export class TvTime {
         try {
             const response = await fetch('/api/tv/time/posters');
             const data = await response.json();
+            self.setSlidesRange(data.range);
             data.posters.forEach(poster => {
-                if (!seen.has(poster.poster_path)) seen.set(poster.poster_path, poster.name);
+                if (!seen.has(poster.poster_path)) seen.set(poster.poster_path, {name: poster.name, year: poster.year});
             });
         } catch (error) {
             console.error('Error:', error);
         }
         if (this.screenSaver !== screenSaver) return; // Arrêté pendant la requête
-        const posters = [...seen].map(([src, name]) => ({src, name}));
+        const posters = [...seen].map(([src, infos]) => ({src, infos}));
         for (let i = posters.length - 1; i > 0; i--) {
             const j = Math.floor(Math.random() * (i + 1));
             [posters[i], posters[j]] = [posters[j], posters[i]];
@@ -140,8 +141,9 @@ export class TvTime {
             const slide = slides[current];
             const img = slide.querySelector('img');
             img.src = poster.src;
-            img.alt = poster.name;
-            slide.querySelector('.name').textContent = poster.name;
+            img.alt = poster.infos.name;
+            slide.querySelector('.name').textContent = poster.infos.name;
+            slide.querySelector('.year').textContent = poster.infos.year;
             try {
                 await img.decode();
             } catch (e) {
@@ -178,11 +180,25 @@ export class TvTime {
     createSlide() {
         const slide = document.createElement('div');
         slide.classList.add('screen-saver-slide');
+        const poster = document.createElement('div');
+        poster.classList.add('poster');
         const img = document.createElement('img');
+        const year = document.createElement('div');
+        year.classList.add('year');
+        poster.append(img, year);
+        const infos = document.createElement('div');
+        infos.classList.add('infos');
         const name = document.createElement('div');
         name.classList.add('name');
-        slide.append(img, name);
+        const range = document.createElement('div');
+        range.classList.add('range');
+        infos.append(name, range);
+        slide.append(poster, infos);
         return slide;
+    }
+
+    setSlidesRange(rangeText) {
+        this.screenSaver.slides.forEach(slide => slide.querySelector('.range').textContent = rangeText);
     }
 
     initTab() {

@@ -165,22 +165,38 @@ class SeriesRepository extends ServiceEntityRepository
         return $this->getAll($sql, ['seriesId' => $seriesId], ['seriesId' => ParameterType::INTEGER]);
     }
 
-    public function getSeriesPosters(int $userId, string $root = '/series/posters'): array
+    public function getSeriesPosters(int $userId, int$limit, $offset, string $root = '/series/posters'): array
     {
         $sql = <<<SQL
             --  Poster from series added by user
-                SELECT IFNULL(sln.name, s.name) AS name, CONCAT(:root, s.poster_path) AS poster_path
+                SELECT IFNULL(sln.name, s.name) AS name,
+                       CONCAT(:root, s.poster_path) AS poster_path,
+                       YEAR(s.first_air_date) AS year
                 FROM series s
                          INNER JOIN user_series us ON us.series_id = s.id
                          LEFT JOIN series_localized_name sln ON s.id = sln.series_id
                 WHERE us.user_id = :userId
                   AND s.poster_path IS NOT NULL
-                  AND (us.last_watched_at > SUBDATE(CURDATE(), INTERVAL 6 MONTH)
-                    OR s.first_air_date > SUBDATE(CURDATE(), INTERVAL 6 MONTH)
-                    );
+                  AND s.first_air_date IS NOT NULL
+                LIMIT :limit OFFSET :offset;
         SQL;
 
-        return $this->getAll($sql, ['userId' => $userId, 'root' => $root], ['userId' => ParameterType::INTEGER, 'root' => ParameterType::STRING]);
+        return $this->getAll($sql, ['userId' => $userId, 'root' => $root, 'limit' => $limit, 'offset' => $offset], ['userId' => ParameterType::INTEGER, 'root' => ParameterType::STRING, 'limit' => ParameterType::INTEGER, 'offset' => ParameterType::INTEGER]);
+    }
+
+    public function countSeriesPosters(int $userId): int
+    {
+        $sql = <<<SQL
+            --  Poster from series added by user
+                SELECT COUNT(*)
+                FROM series s
+                         INNER JOIN user_series us ON us.series_id = s.id
+                WHERE us.user_id = :userId
+                  AND s.poster_path IS NOT NULL
+                  AND s.first_air_date IS NOT NULL;
+        SQL;
+
+        return $this->getOneAsInt($sql, ['userId' => $userId], ['userId' => ParameterType::INTEGER]);
     }
 
     public function hasSeriesStartedAiring(int $seriesId, string $date): bool
@@ -419,6 +435,15 @@ class SeriesRepository extends ServiceEntityRepository
             return $this->em->getConnection()->fetchAllAssociative($sql, $params, $types);
         } catch (Exception) {
             $this->logger->error('Failed to execute SQL query: ' . $sql, ['params' => $params, 'types' => $types]);
+            return [];
+        }
+    }
+
+    public function getOneAsInt($sql, array $params = [], array $types = []): mixed
+    {
+        try {
+            return $this->em->getConnection()->fetchOne($sql, $params, $types);
+        } catch (Exception) {
             return [];
         }
     }

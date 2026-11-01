@@ -101,24 +101,46 @@ body {
             position: absolute;
             transition: opacity 1.5s ease-in-out;
 
-            img {
-                aspect-ratio: 2 / 3;
-                border-radius: .5rem;
-                box-shadow: 0 0 3rem hsl(0 0% 0% / .6);
-                /* Hauteur imposée (et non max-height) : les petits fichiers (222px, 342px…) sont agrandis comme les autres */
-                height: min(80vh, 120vw); /* 120vw = 80vw × 3/2 : largeur ≤ 80vw */
-                object-fit: cover;
-                width: auto;
+            .poster {
+                position: relative;
                 rotate: var(--rotation-from, 0deg); /* Sans animation (prefers-reduced-motion) : angle fixe */
+
+                img {
+                    aspect-ratio: 2 / 3;
+                    border-radius: .5rem;
+                    box-shadow: 0 0 3rem hsl(0 0% 0% / .6);
+                    /* Hauteur imposée (et non max-height) : les petits fichiers (222px, 342px…) sont agrandis comme les autres */
+                    height: min(80vh, 120vw); /* 120vw = 80vw × 3/2 : largeur ≤ 80vw */
+                    object-fit: cover;
+                    width: auto;
+                }
+
+                .year {
+                    position: absolute;
+                    bottom: clamp(2rem, max(2vw, 3vh), 4rem);
+                    left: 50%;
+                    transform: translateX(-50%);
+                    color: var(--yellow);
+                    font-size: clamp(2rem, max(2vw, 3vh), 4rem);
+                    font-weight: bold;
+                    text-align: center;
+                    text-shadow: 0 0 .25rem hsl(0 0% 0% / .8);
+                }
             }
 
-            .name {
-                color: var(--yellow);
-                font-size: 2rem;
-                font-weight: 600;
+            .infos {
+                display: flex;
+                flex-direction: column;
+                gap: .5rem;
                 margin-block-start: 5vh;
-                text-align: center;
-                text-shadow: 0 0 1rem hsl(0 0% 0% / .8);
+
+                .name, .range {
+                    color: var(--yellow);
+                    font-size: 2rem;
+                    font-weight: 600;
+                    text-align: center;
+                    text-shadow: 0 0 1rem hsl(0 0% 0% / .8);
+                }
             }
 
             &.visible {
@@ -128,7 +150,7 @@ body {
             /* .zoom n'est retiré qu'à la réutilisation du calque : le zoom est conservé pendant le fondu de sortie */
             &.zoom {
                 @media (prefers-reduced-motion: no-preference) {
-                    img {
+                    .poster {
                         animation: screenSaverZoom 7.5s ease-out forwards;
                     }
                 }

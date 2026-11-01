@@ -207,15 +207,27 @@ readonly class ApiTvTime
     {
         $timestamp = time() % 2;
         $posterUrl = $this->imageConfiguration->getUrl('poster_sizes', 5);
+        $limit = 50;
 
         if ($timestamp) {
-            $arr = $this->seriesRepository->getSeriesPosters($user->getId());
+            $count = $this->seriesRepository->countSeriesPosters($user->getId());
+            $offset = $count > $limit ? rand(0, $count - $limit) : 0;
+            $arr = $this->seriesRepository->getSeriesPosters($user->getId(), $limit, $offset);
             $this->imageService->saveImages($arr, "posters", $posterUrl);
         } else {
-            $arr = $this->movieRepository->getMoviesPosters($user->getId());
+            $count = $this->movieRepository->countMoviesPosters($user->getId());
+            $offset = $count > $limit ? rand(0, $count - $limit) : 0;
+            $arr = $this->movieRepository->getMoviesPosters($user->getId(), $limit, $offset);
             $this->imageService->saveImages($arr, "posters", $posterUrl, '/movies/');
         }
 
-        return new JsonResponse(['posters' => $arr]);
+        return new JsonResponse(['posters' => $arr, 'range' => $this->getRange($arr)]);
+    }
+
+    private function getRange(array $arr): string
+    {
+        $min = min(array_column($arr, 'year'));
+        $max = max(array_column($arr, 'year'));
+        return $min != $max ? $min . ' - ' . $max : $min;
     }
 }

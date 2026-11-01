@@ -331,22 +331,38 @@ class MovieRepository extends ServiceEntityRepository
         return $this->getAll($sql, $params, $types);
     }
 
-    public function getMoviesPosters(int $userId, string $root = '/movies/posters'): array
+    public function getMoviesPosters(int $userId, int $limit, int $offset, string $root = '/movies/posters'): array
     {
         $sql = <<<SQL
             --  Poster from movies added by user
-                SELECT IFNULL(mln.name, m.title) AS name, CONCAT(:root, m.poster_path) AS poster_path
+                SELECT IFNULL(mln.name, m.title) AS name,
+                       CONCAT(:root, m.poster_path) AS poster_path,
+                       YEAR(m.release_date) AS year
                 FROM movie m
                          INNER JOIN user_movie um ON um.movie_id = m.id
                          LEFT JOIN movie_localized_name mln ON m.id = mln.movie_id
                 WHERE um.user_id = :userId
                   AND m.poster_path IS NOT NULL
-                  AND (um.created_at > SUBDATE(CURDATE(), INTERVAL 1 YEAR)
-                    OR m.release_date > SUBDATE(CURDATE(), INTERVAL 1 YEAR)
-                    );
+                  AND m.release_date IS NOT NULL
+                LIMIT :limit OFFSET :offset;
         SQL;
 
-        return $this->getAll($sql, ['userId' => $userId, 'root' => $root], ['userId' => ParameterType::INTEGER, 'root' => ParameterType::STRING]);
+        return $this->getAll($sql, ['userId' => $userId, 'root' => $root, 'limit' => $limit, 'offset' => $offset], ['userId' => ParameterType::INTEGER, 'root' => ParameterType::STRING, 'limit' => ParameterType::INTEGER, 'offset' => ParameterType::INTEGER]);
+    }
+
+    public function countMoviesPosters(int $userId): int
+    {
+        $sql = <<<SQL
+            --  Poster from movies added by user
+                SELECT COUNT(*)
+                FROM movie m
+                         INNER JOIN user_movie um ON um.movie_id = m.id
+                WHERE um.user_id = :userId
+                  AND m.poster_path IS NOT NULL
+                  AND m.release_date IS NOT NULL;
+        SQL;
+
+        return $this->getOneAsInt($sql, ['userId' => $userId], ['userId' => ParameterType::INTEGER]);
     }
 
     public function getAll($sql, array $params = [], array $types = []): array
