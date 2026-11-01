@@ -471,6 +471,10 @@ export class TvTime {
         const episodeNumber = badge.dataset.episodeNumber;
         const lastEpisode = badge.dataset.lastEpisode;
 
+        const doneBadge = badge.parentElement.querySelector('.done[data-episode-id="' + episodeId + '"]');
+        badge.classList.add('d-none');
+        doneBadge.classList.remove('d-none');
+
         fetch('/api/episode/add/' + episodeId, {
             method: 'POST',
             headers: {
