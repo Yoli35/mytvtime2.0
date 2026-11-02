@@ -17,24 +17,46 @@
             <a href="{{ path('app_video_personal_index') }}">{{ ux_icon('mdi:arrow-left') }} {{ 'My videos'|trans }}</a>
         </div>
         <h1>{{ video.title }}</h1>
-        {% if video.ready %}
-            <div class="player{% if video.portrait %} portrait{% endif %}" style="aspect-ratio: {{ video.width + 40 }} / {{ video.height + 40 }}; height: {{ video.height + 40 }}px; width: {{ video.width + 40 }}px;">
-                <video controls playsinline preload="metadata"
-                       {% if video.thumbnail %}poster="{{ dir }}/thumbnails/{{ video.thumbnail }}"{% endif %}
-                        {% if video.width and video.height %}style="aspect-ratio: {{ video.width }}/{{ video.height }}"{% endif %}>
-                    <source src="{{ dir }}/{{ video.filename }}" type="video/mp4">
-                </video>
-            </div>
-        {% else %}
-            <div class="player status {{ video.status }}">
-                <div class="placeholder">
-                    {{ ux_icon(video.status == 'failed' ? 'mdi:alert-circle-outline' : 'mdi:progress-clock') }}
-                    <span>{{ pv.status(video) }}</span>
-                    {% if video.error %}
-                        <pre class="error">{{ video.error }}</pre>{% endif %}
+        <div class="videos">
+            {% if previousVideo %}
+                <div class="previous" data-title="{{ previousVideo.title }}" data-title-width="40ch">
+                    <a href="{{ path('app_video_personal_show', { 'id': previousVideo.id }) }}">
+                        <div class="poster">
+                            <img src="{{ dir }}/thumbnails/{{ previousVideo.thumbnail }}" alt="{{ previousVideo.title }}">
+                        </div>
+                    </a>
                 </div>
-            </div>
-        {% endif %}
+            {% endif %}
+
+            {% if video.ready %}
+                <div class="player{% if video.portrait %} portrait{% endif %}" style="aspect-ratio: {{ video.width + 40 }} / {{ video.height + 40 }}; height: {{ video.height + 40 }}px; width: {{ video.width + 40 }}px;">
+                    <video controls playsinline preload="metadata"
+                           {% if video.thumbnail %}poster="{{ dir }}/thumbnails/{{ video.thumbnail }}"{% endif %}
+                            {% if video.width and video.height %}style="aspect-ratio: {{ video.width }}/{{ video.height }}"{% endif %}>
+                        <source src="{{ dir }}/{{ video.filename }}" type="video/mp4">
+                    </video>
+                </div>
+            {% else %}
+                <div class="player status {{ video.status }}">
+                    <div class="placeholder">
+                        {{ ux_icon(video.status == 'failed' ? 'mdi:alert-circle-outline' : 'mdi:progress-clock') }}
+                        <span>{{ pv.status(video) }}</span>
+                        {% if video.error %}
+                            <pre class="error">{{ video.error }}</pre>{% endif %}
+                    </div>
+                </div>
+            {% endif %}
+
+            {% if nextVideo %}
+                <div class="next" data-title="{{ nextVideo.title }}" data-title-width="40ch">
+                    <a href="{{ path('app_video_personal_show', { 'id': nextVideo.id }) }}">
+                        <div class="poster">
+                            <img src="{{ dir }}/thumbnails/{{ nextVideo.thumbnail }}" alt="{{ nextVideo.title }}">
+                        </div>
+                    </a>
+                </div>
+            {% endif %}
+        </div>
         <div class="details">
             {% if video.duration %}
                 <div>{{ 'Duration'|trans }} : {{ pv.duration(video.duration) }}</div>{% endif %}
@@ -83,10 +105,10 @@
     </div>
     <div id="global-data" style="display: none">
         {
-            "texts": {
-                "No files currently selected for upload": {{ 'No files currently selected for upload'|trans|json_encode|raw }},
-                "Not a valid file type. Update your selection": {{ 'Not a valid file type. Update your selection'|trans|json_encode|raw }}
-            }
+        "texts": {
+        "No files currently selected for upload": {{ 'No files currently selected for upload'|trans|json_encode|raw }},
+        "Not a valid file type. Update your selection": {{ 'Not a valid file type. Update your selection'|trans|json_encode|raw }}
+        }
         }
     </div>
     {% include '_blocks/_footer.html.twig' %}
