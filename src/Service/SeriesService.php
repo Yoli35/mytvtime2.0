@@ -440,6 +440,12 @@ readonly class SeriesService
         $tv = json_decode($this->tmdbService->getTv($id, $language, ['translations']), true);
 
         if (!$series) $series = new Series();
+
+        $posterUrl = $this->imageConfiguration->getUrl('poster_sizes', 5);
+        $backdropUrl = $this->imageConfiguration->getUrl('backdrop_sizes', 3);
+        $this->imageService->saveImage("posters", $tv['poster_path'], $posterUrl);
+        $this->imageService->saveImage("backdrops", $tv['backdrop_path'], $backdropUrl);
+
         $series->setBackdropPath($tv['backdrop_path']);
         $series->setCreatedAt($date);
         $series->setFirstAirDate($tv['first_air_date'] ? $this->dateService->newDateImmutable($tv['first_air_date'], "Europe/Paris", true) : null);
