@@ -36,6 +36,7 @@ use App\Service\ImageConfiguration;
 use App\Service\ImageService;
 use App\Service\ProviderService;
 use App\Service\SeriesService;
+
 //use App\Service\ThetvdbSeriesService;
 use App\Service\TMDBService;
 use DateMalformedStringException;
@@ -362,7 +363,7 @@ final class SeriesShowController extends AbstractController
         $season['episodes'] = $seasonEpisodes;
         $season['progress'] = $this->userEpisodeRepository->seasonProgress($userSeries, $seasonNumber);
         $season['air_date'] = $this->adjustSeasonAirDate($user, $season, 'date');
-        $season['air_date_string'] = $this->adjustSeasonAirDate($user, $season, 'string');
+        $season['air_date_string'] = $this->adjustSeasonAirDate($user, $season, 'string', $series->getId());
 
         $season['credits'] = $this->castAndCrew($season, $series);
         $season['watch/providers'] = $this->watchProviders($season, $country);
@@ -668,12 +669,19 @@ final class SeriesShowController extends AbstractController
         return $userEpisodes;
     }
 
-    private function adjustSeasonAirDate(User $user, array $season, string $type): ?string
+    private function adjustSeasonAirDate(User $user, array $season, string $type, ?int $seriesId = null): ?string
     {
         if ($type == 'string') {
             $timezone = $user->getTimezone() ?? "Europe/Berlin";
             $locale = $user->getPreferredLanguage() ?? 'fr';
             if (count($season['episodes']) < 1) {
+                if ($season['air_date'] === null) {
+                    $schedule = $this->seriesBroadcastScheduleRepository->findBySeason($seriesId, $season['season_number']);
+                    if (count($schedule) > 0) {
+                        $first = array_first($schedule);
+                        $season['air_date'] = $first['air_date'];
+                    }
+                }
                 return $season['air_date'] ? $this->dateService->formatDateRelativeLong($season['air_date'], $timezone, $locale) : $this->translator->trans('No date yet');
             }
             $firstEpisode = $season['episodes'][0];
@@ -885,7 +893,8 @@ final class SeriesShowController extends AbstractController
             return $episode;
         }
 
-        $noFRName = $language === 'fr-FR' && $episode['name'] && str_starts_with($episode['name'], 'Épisode ')/* && !$userEpisode['substitute_name']*/;
+        $noFRName = $language === 'fr-FR' && $episode['name'] && str_starts_with($episode['name'], 'Épisode ')/* && !$userEpisode['substitute_name']*/
+        ;
         $episodeUS = json_decode($this->tmdbService->getTvEpisode($series->getTmdbId(), $episode['season_number'], $episode['episode_number'], 'en-US'), true);
         if ($noFRName) {
             $substituteName = $this->episodeSubstituteNameRepository->findOneBy(['episodeId' => $episode['id']]);
@@ -1485,7 +1494,7 @@ final class SeriesShowController extends AbstractController
         if (!$tv) {
             return ['cast' => [], 'crew' => [], 'guest_stars' => []];
         }
-        if ($key == 'aggregate_credits' && $tv['number_of_seasons']<2) {
+        if ($key == 'aggregate_credits' && $tv['number_of_seasons'] < 2) {
             return $tv['aggregate_credits'];
         }
         if ($series) {

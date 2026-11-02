@@ -4,8 +4,11 @@ namespace App\Repository;
 
 use App\Entity\SeriesBroadcastSchedule;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\DBAL\Exception;
+use Doctrine\DBAL\ParameterType;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
+use Psr\Log\LoggerInterface as MonologLogger;
 
 /**
  * @extends ServiceEntityRepository<SeriesBroadcastSchedule>
@@ -17,7 +20,11 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class SeriesBroadcastScheduleRepository extends ServiceEntityRepository
 {
-    public function __construct(ManagerRegistry $registry, private readonly EntityManagerInterface $em)
+    public function __construct(
+        ManagerRegistry $registry,
+        private readonly EntityManagerInterface $em,
+        private readonly MonologLogger          $logger,
+    )
     {
         parent::__construct($registry, SeriesBroadcastSchedule::class);
     }
@@ -26,5 +33,36 @@ class SeriesBroadcastScheduleRepository extends ServiceEntityRepository
     {
         $this->em->persist($seriesBroadcastSchedule);
         $this->em->flush();
+    }
+
+    public function findBySeason(int $seriesId, int $seasonNumber): array
+    {
+        $sql = <<<SQL
+                SELECT CONCAT(sbs.first_air_date, ' ', sbs.air_at) AS air_date
+                FROM series_broadcast_schedule sbs
+                WHERE sbs.series_id = :seriesId
+                  AND sbs.season_number = :seasonNumber
+            SQL;
+        return $this->getAll($sql, ['seriesId' => $seriesId, 'seasonNumber' => $seasonNumber], ['seriesId'=> ParameterType::INTEGER, 'seasonNumber'=> ParameterType::INTEGER]);
+    }
+
+    public function getAll($sql, array $params = [], array $types = []): array
+    {
+        try {
+            return $this->em->getConnection()->fetchAllAssociative($sql, $params, $types);
+        } catch (Exception $e) {
+            $this->logger->error('Error: ' . $e->getMessage());
+            return [];
+        }
+    }
+
+    public function getAssociative($sql, array $params = [], array $types = []): array
+    {
+        try {
+            return $this->em->getConnection()->fetchAssociative($sql, $params, $types);
+        } catch (Exception $e) {
+            $this->logger->error('Error: ' . $e->getMessage());
+            return [];
+        }
     }
 }

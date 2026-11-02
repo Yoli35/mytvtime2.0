@@ -1177,6 +1177,10 @@ readonly class SeriesService
 
     public function getAlternateSchedule(SeriesBroadcastSchedule $schedule, array $tvSeasons, array $userEpisodes): array
     {
+        $seasonNumber = $schedule->getSeasonNumber();
+        if (empty($userEpisodes)) {
+            return ['override' => false, 'seasonNumber' => $seasonNumber, 'multiPart' => false, 'seasonPart' => 0, 'airDays' => []];
+        }
         $ue = array_first($userEpisodes);
         $userSeason = $ue->getUserSeason();
         /*dump($userSeason);*/
@@ -1184,7 +1188,6 @@ readonly class SeriesService
         /*dump($isScheduleActive);*/
         $errorArr = ['override' => false, 'seasonNumber' => 0, 'multiPart' => false, 'seasonPart' => 0, 'airDays' => []];
         $now = $this->now();
-        $seasonNumber = $schedule->getSeasonNumber();
         $override = $schedule->isOverride();
         $multiPart = $schedule->isMultiPart();
         $seasonPart = $schedule->getSeasonPart();

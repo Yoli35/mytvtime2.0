@@ -952,10 +952,17 @@ class UserEpisodeRepository extends ServiceEntityRepository
         $result = $this->getAssociative($sql, $params, $types);
 
         if ($result) {
+            if ($result['episodeCount']){
+                return [
+                    'value' => round($result['episodeWatchedCount'] / $result['episodeCount'] * 100, 2),
+                    'episodeCount' => $result['episodeCount'],
+                    'episodeWatchedCount' => intval($result['episodeWatchedCount']),
+                ];
+            }
             return [
-                'value' => round($result['episodeWatchedCount'] / $result['episodeCount'] * 100, 2),
-                'episodeCount' => $result['episodeCount'],
-                'episodeWatchedCount' => intval($result['episodeWatchedCount']),
+                'value' => 0,
+                'episodeCount' => 0,
+                'episodeWatchedCount' => 0,
             ];
         }
 
