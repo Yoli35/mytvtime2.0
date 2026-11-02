@@ -14,9 +14,14 @@
             {% endif %}
             <div class="name">{{ people.name }}</div>
             <div>
-                {% for role in people.roles %}
-                    {{ role.character }}{% if not loop.last %}, {% endif %}
-                {% endfor %}
+                {% if people.roles is defined %}
+                    {% for role in people.roles %}
+                        {{ role.character }}{% if not loop.last %}, {% endif %}
+                    {% endfor %}
+                {% endif %}
+                {% if people.character_name is defined %}
+                    {{ people.character_name }}
+                {% endif %}
             </div>
         </div>
     </div>
