@@ -365,6 +365,40 @@ class MovieRepository extends ServiceEntityRepository
         return $this->getOneAsInt($sql, ['userId' => $userId], ['userId' => ParameterType::INTEGER]);
     }
 
+    public function getMoviesBackdrops(int $userId, int $limit, int $offset, string $root = '/movies/backdrops'): array
+    {
+        $sql = <<<SQL
+            --  Poster from movies added by user
+                SELECT IFNULL(mln.name, m.title) AS name,
+                       CONCAT(:root, m.backdrop_path) AS backdrop_path,
+                       YEAR(m.release_date) AS year
+                FROM movie m
+                         INNER JOIN user_movie um ON um.movie_id = m.id
+                         LEFT JOIN movie_localized_name mln ON m.id = mln.movie_id
+                WHERE um.user_id = :userId
+                  AND m.backdrop_path IS NOT NULL
+                  AND m.release_date IS NOT NULL
+                LIMIT :limit OFFSET :offset;
+        SQL;
+
+        return $this->getAll($sql, ['userId' => $userId, 'root' => $root, 'limit' => $limit, 'offset' => $offset], ['userId' => ParameterType::INTEGER, 'root' => ParameterType::STRING, 'limit' => ParameterType::INTEGER, 'offset' => ParameterType::INTEGER]);
+    }
+
+    public function countMoviesBackdrops(int $userId): int
+    {
+        $sql = <<<SQL
+            --  Poster from movies added by user
+                SELECT COUNT(*)
+                FROM movie m
+                         INNER JOIN user_movie um ON um.movie_id = m.id
+                WHERE um.user_id = :userId
+                  AND m.backdrop_path IS NOT NULL
+                  AND m.release_date IS NOT NULL;
+        SQL;
+
+        return $this->getOneAsInt($sql, ['userId' => $userId], ['userId' => ParameterType::INTEGER]);
+    }
+
     public function getAll($sql, array $params = [], array $types = []): array
     {
         try {

@@ -203,22 +203,45 @@ readonly class ApiTvTime
     }
 
     #[Route('/posters', name: 'posters')]
-    public function posters(#[CurrentUser] User $user): JsonResponse
+    public function posters(#[CurrentUser] User $user, Request $request): JsonResponse
     {
+        $aspectRatio = floatval($request->query->get('aspectRatio'));
         $timestamp = time() % 2;
-        $posterUrl = $this->imageConfiguration->getUrl('poster_sizes', 5);
         $limit = 50;
 
-        if ($timestamp) {
-            $count = $this->seriesRepository->countSeriesPosters($user->getId());
-            $offset = $count > $limit ? rand(0, $count - $limit) : 0;
-            $arr = $this->seriesRepository->getSeriesPosters($user->getId(), $limit, $offset);
-            $this->imageService->saveImages($arr, "posters", $posterUrl);
-        } else {
-            $count = $this->movieRepository->countMoviesPosters($user->getId());
-            $offset = $count > $limit ? rand(0, $count - $limit) : 0;
-            $arr = $this->movieRepository->getMoviesPosters($user->getId(), $limit, $offset);
-            $this->imageService->saveImages($arr, "posters", $posterUrl, '/movies/');
+        if ($aspectRatio> 1) {
+            $imageUrl = $this->imageConfiguration->getUrl('backdrop_sizes', 3);
+            if ($timestamp) {
+                $count = $this->seriesRepository->countSeriesBackdrops($user->getId());
+                $offset = $count > $limit ? rand(0, $count - $limit) : 0;
+                $arrB = $this->seriesRepository->getSeriesBackdrops($user->getId(), $limit, $offset);
+                $this->imageService->saveImages($arrB, "backdrop", $imageUrl);
+            } else {
+                $count = $this->movieRepository->countMoviesBackdrops($user->getId());
+                $offset = $count > $limit ? rand(0, $count - $limit) : 0;
+                $arrB = $this->movieRepository->getMoviesBackdrops($user->getId(), $limit, $offset);
+                $this->imageService->saveImages($arrB, "backdrop", $imageUrl, '/movies/');
+            }
+            $arr = [];
+            foreach ($arrB as $item) {
+                $item['poster_path'] = $item['backdrop_path'];
+                unset($item['backdrop_path']);
+                $arr[] = $item;
+            }
+        }
+        else {
+            $imageUrl = $this->imageConfiguration->getUrl('poster_sizes', 5);
+            if ($timestamp) {
+                $count = $this->seriesRepository->countSeriesPosters($user->getId());
+                $offset = $count > $limit ? rand(0, $count - $limit) : 0;
+                $arr = $this->seriesRepository->getSeriesPosters($user->getId(), $limit, $offset);
+                $this->imageService->saveImages($arr, "poster", $imageUrl);
+            } else {
+                $count = $this->movieRepository->countMoviesPosters($user->getId());
+                $offset = $count > $limit ? rand(0, $count - $limit) : 0;
+                $arr = $this->movieRepository->getMoviesPosters($user->getId(), $limit, $offset);
+                $this->imageService->saveImages($arr, "poster", $imageUrl, '/movies/');
+            }
         }
 
         return new JsonResponse(['posters' => $arr, 'range' => $this->getRange($arr)]);

@@ -199,6 +199,40 @@ class SeriesRepository extends ServiceEntityRepository
         return $this->getOneAsInt($sql, ['userId' => $userId], ['userId' => ParameterType::INTEGER]);
     }
 
+    public function getSeriesBackdrops(int $userId, int$limit, $offset, string $root = '/series/backdrops'): array
+    {
+        $sql = <<<SQL
+            --  Poster from series added by user
+                SELECT IFNULL(sln.name, s.name) AS name,
+                       CONCAT(:root, s.backdrop_path) AS backdrop_path,
+                       YEAR(s.first_air_date) AS year
+                FROM series s
+                         INNER JOIN user_series us ON us.series_id = s.id
+                         LEFT JOIN series_localized_name sln ON s.id = sln.series_id
+                WHERE us.user_id = :userId
+                  AND s.backdrop_path IS NOT NULL
+                  AND s.first_air_date IS NOT NULL
+                LIMIT :limit OFFSET :offset;
+        SQL;
+
+        return $this->getAll($sql, ['userId' => $userId, 'root' => $root, 'limit' => $limit, 'offset' => $offset], ['userId' => ParameterType::INTEGER, 'root' => ParameterType::STRING, 'limit' => ParameterType::INTEGER, 'offset' => ParameterType::INTEGER]);
+    }
+
+    public function countSeriesBackdrops(int $userId): int
+    {
+        $sql = <<<SQL
+            --  Poster from series added by user
+                SELECT COUNT(*)
+                FROM series s
+                         INNER JOIN user_series us ON us.series_id = s.id
+                WHERE us.user_id = :userId
+                  AND s.backdrop_path IS NOT NULL
+                  AND s.first_air_date IS NOT NULL;
+        SQL;
+
+        return $this->getOneAsInt($sql, ['userId' => $userId], ['userId' => ParameterType::INTEGER]);
+    }
+
     public function hasSeriesStartedAiring(int $seriesId, string $date): bool
     {
         $params = [

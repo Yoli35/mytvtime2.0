@@ -115,10 +115,14 @@ export class TvTime {
         this.screenSaver = screenSaver;
         document.body.classList.add('screen-saver');
 
+        // Dimensions de la fenêtre
+        const windowWidth = window.innerWidth;
+        const windowHeight = window.innerHeight;
+        const aspectRatio = windowWidth / windowHeight;
         // Posters des séries de l'utilisateur, sans doublons, dans un ordre aléatoire
         const seen = new Map();
         try {
-            const response = await fetch('/api/tv/time/posters');
+            const response = await fetch(`/api/tv/time/posters?aspectRatio=${aspectRatio}`);
             const data = await response.json();
             self.setSlidesRange(data.range);
             data.posters.forEach(poster => {
@@ -142,6 +146,15 @@ export class TvTime {
             const img = slide.querySelector('img');
             img.src = poster.src;
             img.alt = poster.infos.name;
+            if (aspectRatio > 1) {
+                img.style.aspectRatio = '16 / 9';
+                img.style.height = 'auto';
+                img.style.width = 'min(80vw, 120vh)';
+            } else {
+                img.style.aspectRatio = '2 / 3';
+                img.style.height = 'min(80vh, 120vw)';
+                img.style.width = 'auto';
+            }
             slide.querySelector('.name').textContent = poster.infos.name;
             slide.querySelector('.year').textContent = poster.infos.year;
             try {
