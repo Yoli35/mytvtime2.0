@@ -695,7 +695,7 @@ class ImageService
     public function saveImages(array $arr, string $type, string $imageUrl, string $localPath = "/series/"): bool
     {
         foreach ($arr as $item) {
-            $this->saveImage($type, '/' . basename($item['poster_path']), $imageUrl, $localPath);
+            $this->saveImage($type . 's', '/' . basename($item[$type . '_path']), $imageUrl, $localPath);
         }
         return true;
     }
@@ -722,11 +722,23 @@ class ImageService
 
     public function saveImageFromUrl(string $imageUrl, string $localeFile): bool
     {
-        if (file_exists($localeFile) && filesize($localeFile) == 0) {
+        /*if (file_exists($localeFile) && filesize($localeFile) == 0) {
             unlink($localeFile);
         }
 
         if (file_exists($localeFile)) {
+            return true;
+        }*/
+        $fileExists = file_exists($localeFile);
+        if ($fileExists) {
+            $localSize = filesize($localeFile);
+            $originalSize = $this->getDistantFileSize($imageUrl);
+        } else {
+            $localSize = 0;
+            $originalSize = 0;
+        }
+
+        if ($fileExists and $localSize == $originalSize) {
             return true;
         }
 
@@ -742,6 +754,20 @@ class ImageService
 
             return true;
         } catch (Exception) {
+            return false;
+        }
+    }
+
+    private function getDistantFileSize($url): int|false
+    {
+        // Récupération des en-têtes
+        $headers = get_headers($url, true);
+
+        // Vérification de la présence de la clé Content-Length
+        if (isset($headers['Content-Length'])) {
+            // Si plusieurs redirections ont eu lieu, Content-Length peut être un tableau
+            return is_array($headers['Content-Length']) ? end($headers['Content-Length']) : $headers['Content-Length'];
+        } else {
             return false;
         }
     }
