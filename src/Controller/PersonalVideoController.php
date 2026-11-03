@@ -97,8 +97,6 @@ final class PersonalVideoController extends AbstractController
         $nextVideo = $this->personalVideoRepository->findPNextByUser($video->getUser(), $video->getId());
         $previousVideo = $this->personalVideoRepository->findPreviousByUser($video->getUser(), $video->getId());
 
-        dump($nextVideo, $previousVideo);
-
         return $this->render('personal_video/show.html.twig', [
             'video' => $video,
             'nextVideo' => $nextVideo,
