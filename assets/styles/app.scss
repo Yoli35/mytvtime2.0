@@ -1616,6 +1616,7 @@ label:has(input[type="text"]) {
         gap: 0.125rem;
         max-height: calc(100dvh - 6rem);
         opacity: 0;
+        overflow-y: auto;
         padding: 0.25rem;
         position: absolute;
         transition: all 1s var(--menu-easing);
@@ -1714,6 +1715,12 @@ label:has(input[type="text"]) {
 
         &:has(+ div), + div {
             margin-inline-end: 0;
+        }
+    }
+
+    &:not(:has(.screen-size, .count-down)) {
+        .multi-search {
+            margin-inline-start: auto;
         }
     }
 

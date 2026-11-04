@@ -41,16 +41,15 @@ import {YTVideoList} from "YTVideoList";
 import {YTVideo} from 'YTVideo';
 
 window.addEventListener("DOMContentLoaded", () => {
+// Tooltips
+    const toolTips = new ToolTips();
 
-    const navBar = new NavBar();
+    const navBar = new NavBar(toolTips);
     const menu = new Menu();
     menu.init();
 
     // Flash messages
     const flashMessage = new FlashMessage();
-
-    // Tooltips
-    const toolTips = new ToolTips();
 
     new Application(menu, toolTips);
 

@@ -1,8 +1,9 @@
 let self;
 
 export class NavBar {
-    constructor() {
+    constructor(toolTips) {
         self = this;
+        this.toolTips = toolTips;
         this.root = document.documentElement;
         // this.debugDiv = null;
         this.navBarColor = this.navBarColor.bind(this);
@@ -39,7 +40,7 @@ export class NavBar {
             screenSizeDiv.classList.add('screen-size');
             navbar.insertBefore(screenSizeDiv, multiSearchDiv);
             screenSizeDiv.textContent = `${window.innerWidth}x${window.innerHeight}`;
-            navbar.insertBefore(screenSizeDiv, countDownDiv);
+            navbar.insertBefore(screenSizeDiv, multiSearchDevDiv);
             window.addEventListener('resize', () => {
                 screenSizeDiv.textContent = `${window.innerWidth}x${window.innerHeight}`;
             });
@@ -61,6 +62,7 @@ export class NavBar {
         countDownDiv.dataset.title = label;
         countDownDiv.title = label;
         countDownDiv.setAttribute('aria-label', label);
+        this.toolTips.initElement(countDownDiv);
 
         const update = () => {
             const currentDate = new Date();
