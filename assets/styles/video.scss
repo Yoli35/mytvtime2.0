@@ -844,6 +844,56 @@
 /* Vidéos personnelles (importées depuis des fichiers) */
 .personal-videos-page {
     .video-tools {
+        flex-wrap: wrap;
+
+        // Envoi par morceaux (PVideoUpload.js)
+        .upload-progress {
+            display: flex;
+            flex-direction: column;
+            gap: .5rem;
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            width: 100%;
+
+            &:empty {
+                display: none;
+            }
+
+            li {
+                align-items: center;
+                color: var(--orange-90);
+                display: grid;
+                gap: 1rem;
+                grid-template-columns: minmax(0, 2fr) minmax(0, 3fr) minmax(0, 2fr);
+
+                .name {
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                    white-space: nowrap;
+                }
+
+                progress {
+                    accent-color: var(--orange-50);
+                    height: .75rem;
+                    width: 100%;
+                }
+
+                .status {
+                    font-size: .875rem;
+                    font-variant-numeric: tabular-nums;
+                }
+
+                &.done .status {
+                    color: var(--green-50);
+                }
+
+                &.error .status {
+                    color: var(--red-50);
+                }
+            }
+        }
+
         background-color: hsl(from var(--orange-10) h s l / .5);
         border-radius: 2rem;
         border: 4px solid hsl(from var(--green-10) h s l / .35);

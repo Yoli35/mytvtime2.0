@@ -8,6 +8,7 @@ use App\Repository\PersonalVideoRepository;
 use DateTimeImmutable;
 use DateTimeZone;
 use Psr\Log\LoggerInterface;
+use RuntimeException;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\Process\Process;
@@ -24,7 +25,12 @@ use Throwable;
  */
 class PersonalVideoService
 {
+    // Envoi par morceaux : chaque requête reste bien en dessous de upload_max_filesize / post_max_size
+    public const int CHUNK_SIZE = 8 * 1024 * 1024;
+    public const int MAX_UPLOAD_SIZE = 4 * 1024 * 1024 * 1024;
+
     private string $tempDir;
+    private string $uploadDir;
     private string $videoDir;
 
     public function __construct(
@@ -40,6 +46,7 @@ class PersonalVideoService
     )
     {
         $this->tempDir = $projectDir . '/var/videos/temp/';
+        $this->uploadDir = $this->tempDir . 'uploads/';
         $this->videoDir = $projectDir . '/public/videos/personal/';
     }
 
@@ -49,7 +56,6 @@ class PersonalVideoService
      */
     public function import(UploadedFile $file, User $user): PersonalVideo
     {
-        $now = $this->dateService->getNowImmutable('UTC');
         $title = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
         $extension = strtolower($file->getClientOriginalExtension() ?: ($file->guessExtension() ?? 'mov'));
 
@@ -57,7 +63,139 @@ class PersonalVideoService
         $sourceName = bin2hex(random_bytes(8)) . '.' . $extension;
         $file->move($this->tempDir, $sourceName);
 
-        $video = new PersonalVideo($user, $title, $now);
+        return $this->create($user, $title, $sourceName);
+    }
+
+    /**
+     * Envoi par morceaux (PVideoUpload.js), pour les vidéos plus grosses que la limite d'upload de PHP.
+     * Le fichier est reconstitué dans /var/videos/temp/uploads/{uploadId}.part, ses informations sont dans {uploadId}.json.
+     *
+     * @return string identifiant de l'envoi
+     */
+    public function startChunkedUpload(User $user, string $name, int $size): string
+    {
+        if ($size <= 0 || $size > self::MAX_UPLOAD_SIZE) {
+            throw new RuntimeException('Invalid file size');
+        }
+        $this->checkForPaths([$this->uploadDir]);
+
+        $uploadId = bin2hex(random_bytes(16));
+        touch($this->uploadDir . $uploadId . '.part');
+        file_put_contents($this->uploadDir . $uploadId . '.json', json_encode([
+            'userId' => $user->getId(),
+            'name' => mb_substr($name, 0, 255),
+            'size' => $size,
+        ]));
+
+        return $uploadId;
+    }
+
+    /**
+     * Ajoute un morceau à la suite du fichier. Un morceau déjà reçu (requête renvoyée après une coupure) est ignoré.
+     *
+     * @return int nombre d'octets reçus : le prochain morceau doit commencer à cette position
+     */
+    public function appendChunk(User $user, string $uploadId, int $offset, UploadedFile $chunk): int
+    {
+        $info = $this->uploadInfo($user, $uploadId);
+        if ($chunk->getError() !== UPLOAD_ERR_OK) {
+            throw new RuntimeException($chunk->getErrorMessage());
+        }
+        $length = $chunk->getSize();
+        if ($length <= 0 || $length > self::CHUNK_SIZE || $offset < 0 || $offset + $length > $info['size']) {
+            throw new RuntimeException('Invalid chunk');
+        }
+
+        $part = fopen($this->uploadDir . $uploadId . '.part', 'ab');
+        flock($part, LOCK_EX);
+        try {
+            $received = fstat($part)['size'];
+            // Ce n'est pas le morceau attendu (déjà reçu, ou en avance) : le client reprend à partir de $received
+            if ($offset !== $received) {
+                return $received;
+            }
+            $input = fopen($chunk->getPathname(), 'rb');
+            stream_copy_to_stream($input, $part);
+            fclose($input);
+            fflush($part);
+
+            return fstat($part)['size'];
+        } finally {
+            flock($part, LOCK_UN);
+            fclose($part);
+        }
+    }
+
+    /**
+     * Le fichier est complet : il devient la source d'une nouvelle vidéo, traitée comme un fichier téléversé.
+     */
+    public function finishChunkedUpload(User $user, string $uploadId): PersonalVideo
+    {
+        $info = $this->uploadInfo($user, $uploadId);
+        $part = $this->uploadDir . $uploadId . '.part';
+        clearstatcache(true, $part);
+        if (filesize($part) !== $info['size']) {
+            throw new RuntimeException('Incomplete upload');
+        }
+        if (!str_starts_with(mime_content_type($part) ?: '', 'video/')) {
+            $this->cancelChunkedUpload($user, $uploadId);
+            throw new RuntimeException('Not a video file');
+        }
+
+        $extension = strtolower(pathinfo($info['name'], PATHINFO_EXTENSION));
+        if (!preg_match('/^[a-z0-9]{1,5}$/', $extension)) {
+            $extension = 'mov';
+        }
+        $sourceName = bin2hex(random_bytes(8)) . '.' . $extension;
+        rename($part, $this->tempDir . $sourceName);
+        @unlink($this->uploadDir . $uploadId . '.json');
+
+        return $this->create($user, pathinfo($info['name'], PATHINFO_FILENAME), $sourceName);
+    }
+
+    public function cancelChunkedUpload(User $user, string $uploadId): void
+    {
+        $this->uploadInfo($user, $uploadId);
+        @unlink($this->uploadDir . $uploadId . '.part');
+        @unlink($this->uploadDir . $uploadId . '.json');
+    }
+
+    /**
+     * Supprime les envois par morceaux abandonnés (page fermée, connexion perdue…).
+     *
+     * @return int nombre d'envois supprimés
+     */
+    public function purgeAbandonedUploads(int $maxAge = 86400): int
+    {
+        $count = 0;
+        foreach (glob($this->uploadDir . '*.json') ?: [] as $json) {
+            $part = substr($json, 0, -5) . '.part';
+            $lastActivity = max(@filemtime($json) ?: 0, @filemtime($part) ?: 0);
+            if ($lastActivity < time() - $maxAge) {
+                @unlink($part);
+                @unlink($json);
+                $count++;
+            }
+        }
+        return $count;
+    }
+
+    private function uploadInfo(User $user, string $uploadId): array
+    {
+        $json = $this->uploadDir . $uploadId . '.json';
+        if (!preg_match('/^[a-f0-9]{32}$/', $uploadId) || !file_exists($json)) {
+            throw new RuntimeException('Unknown upload');
+        }
+        $info = json_decode(file_get_contents($json), true);
+        if (($info['userId'] ?? null) !== $user->getId()) {
+            throw new RuntimeException('Unknown upload');
+        }
+        return $info;
+    }
+
+    private function create(User $user, string $title, string $sourceName): PersonalVideo
+    {
+        $video = new PersonalVideo($user, $title, $this->dateService->getNowImmutable('UTC'));
         $video->setSourcePath($sourceName);
         $this->personalVideoRepository->save($video, true);
 
@@ -94,7 +232,7 @@ class PersonalVideoService
         $thumbnailDir = $userDir . 'thumbnails/';
         $this->checkForPaths([$userDir, $thumbnailDir]);
 
-        $basename = $video->getId() . '-' . strtolower((new AsciiSlugger())->slug($video->getTitle())->slice(0, 80));
+        $basename = $video->getId() . '-' . strtolower(new AsciiSlugger()->slug($video->getTitle())->slice(0, 80));
         $filename = $basename . '.mp4';
         $thumbnail = $basename . '.webp';
 

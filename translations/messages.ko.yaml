@@ -1879,3 +1879,8 @@ logo: 로고
 'No files currently selected for upload': '선택된 파일이 없습니다'
 'Thumbnail updated': '썸네일이 수정되었습니다'
 'Thumbnail update failed': '썸네일 수정 실패'
+'Waiting': '대기 중'
+'Processing': '처리 중'
+'Done': '완료'
+'File too large': '파일이 너무 큽니다'
+'Upload failed': '업로드 실패'

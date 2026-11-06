@@ -1880,3 +1880,8 @@ logo: logo
 'No files currently selected for upload': 'No files currently selected for upload'
 'Thumbnail updated': 'Thumbnail updated'
 'Thumbnail update failed': 'Thumbnail update failed'
+'Waiting': 'Waiting'
+'Processing': 'Processing'
+'Done': 'Done'
+'File too large': 'File too large'
+'Upload failed': 'Upload failed'

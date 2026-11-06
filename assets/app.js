@@ -16,6 +16,7 @@ import {FlashMessage} from 'FlashMessage';
 import {HighlightSeries} from 'HighlightSeries';
 import {Index} from 'Index';
 import {PVideo} from "PVideo";
+import {PVideoUpload} from "PVideoUpload";
 import {Map} from 'Map';
 import {Menu} from 'Menu';
 import {MovieDiscover} from "MovieDiscover";
@@ -236,6 +237,11 @@ window.addEventListener("DOMContentLoaded", () => {
         const preferredName = new PreferredName();
         const episode = new Episode(flashMessage, toolTips, menu, preferredName);
         episode.init();
+    }
+
+    const pVideosPage = document.querySelector(".personal-videos-page");
+    if (pVideosPage) {
+        new PVideoUpload();
     }
 
     const pVideoPage = document.querySelector(".personal-video-page");

@@ -1886,3 +1886,8 @@ logo: logo
 'No files currently selected for upload': 'Aucun fichier sélectionné'
 'Thumbnail updated': 'Vignette modifiée'
 'Thumbnail update failed': 'Échec de la modification de la vignette'
+'Waiting': 'En attente'
+'Processing': 'Traitement'
+'Done': 'Terminé'
+'File too large': 'Fichier trop volumineux'
+'Upload failed': "Échec de l'envoi"

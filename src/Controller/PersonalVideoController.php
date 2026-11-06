@@ -10,6 +10,7 @@ use App\Service\ImageService;
 use App\Service\PersonalVideoService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -40,7 +41,7 @@ final class PersonalVideoController extends AbstractController
 
         return $this->render('personal_video/index.html.twig', [
             'videos' => $videos,
-            'maxFileSize' => UploadedFile::getMaxFilesize(),
+            'maxFileSize' => PersonalVideoService::MAX_UPLOAD_SIZE,
             'hasPending' => (bool)array_filter($videos, fn(PersonalVideo $v) => !$v->isReady() && $v->getStatus() !== PersonalVideo::STATUS_FAILED),
             'bgImage' => $this->imageService->getRandomBlurredPosters(),
         ]);
@@ -87,6 +88,88 @@ final class PersonalVideoController extends AbstractController
         }
 
         return $this->redirectToRoute('app_video_personal_index');
+    }
+
+    /**
+     * Envoi par morceaux (PVideoUpload.js) : start → chunk × n → finish.
+     */
+    #[Route('/upload/start', name: 'upload_start', methods: ['POST'])]
+    public function uploadStart(Request $request): JsonResponse
+    {
+        $this->checkUploadToken($request);
+        try {
+            $uploadId = $this->personalVideoService->startChunkedUpload(
+                $this->getUser(),
+                $request->request->getString('name'),
+                $request->request->getInt('size')
+            );
+        } catch (Throwable $e) {
+            return $this->json(['ok' => false, 'error' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
+        }
+
+        return $this->json(['ok' => true, 'uploadId' => $uploadId, 'chunkSize' => PersonalVideoService::CHUNK_SIZE]);
+    }
+
+    #[Route('/upload/chunk', name: 'upload_chunk', methods: ['POST'])]
+    public function uploadChunk(Request $request): JsonResponse
+    {
+        $this->checkUploadToken($request);
+        $chunk = $request->files->get('chunk');
+        if (!$chunk instanceof UploadedFile) {
+            return $this->json(['ok' => false, 'error' => 'No chunk received'], Response::HTTP_BAD_REQUEST);
+        }
+        try {
+            $received = $this->personalVideoService->appendChunk(
+                $this->getUser(),
+                $request->request->getString('uploadId'),
+                $request->request->getInt('offset'),
+                $chunk
+            );
+        } catch (Throwable $e) {
+            return $this->json(['ok' => false, 'error' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
+        }
+
+        return $this->json(['ok' => true, 'received' => $received]);
+    }
+
+    #[Route('/upload/finish', name: 'upload_finish', methods: ['POST'])]
+    public function uploadFinish(Request $request): JsonResponse
+    {
+        $this->checkUploadToken($request);
+        try {
+            $video = $this->personalVideoService->finishChunkedUpload($this->getUser(), $request->request->getString('uploadId'));
+        } catch (Throwable $e) {
+            return $this->json(['ok' => false, 'error' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
+        }
+
+        // Messages affichés au rechargement de la page, une fois tous les fichiers envoyés
+        $name = $request->request->getString('name');
+        match ($video->getStatus()) {
+            PersonalVideo::STATUS_READY => $this->addFlash('success', $name . ' : ' . $this->translator->trans('Video added')),
+            PersonalVideo::STATUS_PENDING => $this->addFlash('success', $name . ' : ' . $this->translator->trans('Video added, conversion pending')),
+            default => $this->addFlash('error', $name . ' : ' . $this->translator->trans('Video conversion failed')),
+        };
+
+        return $this->json(['ok' => true, 'status' => $video->getStatus()]);
+    }
+
+    #[Route('/upload/cancel', name: 'upload_cancel', methods: ['POST'])]
+    public function uploadCancel(Request $request): JsonResponse
+    {
+        $this->checkUploadToken($request);
+        try {
+            $this->personalVideoService->cancelChunkedUpload($this->getUser(), $request->request->getString('uploadId'));
+        } catch (Throwable) {
+        }
+
+        return $this->json(['ok' => true]);
+    }
+
+    private function checkUploadToken(Request $request): void
+    {
+        if (!$this->isCsrfTokenValid('personal_video_upload', $request->request->get('_token'))) {
+            throw $this->createAccessDeniedException();
+        }
     }
 
     #[Route('/show/{id}', name: 'show', requirements: ['id' => Requirement::DIGITS])]

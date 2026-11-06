@@ -11,19 +11,20 @@
 
 {% block body %}
     {{ include('_blocks/_menu.html.twig') }}
-    <div class="container-fluid videos-page personal-videos-page" style="background-image: url('{{ bgImage }}'); background-size: cover; background-position: center;">
+    <div class="container-fluid videos-page personal-videos-page"{% if hasPending %} data-has-pending{% endif %} style="background-image: url('{{ bgImage }}'); background-size: cover; background-position: center;">
         <h1>{{ 'My videos'|trans }} ({{ videos|length }})</h1>
         <div class="video-tools">
-            <form action="{{ path('app_video_personal_upload') }}" method="post" enctype="multipart/form-data">
+            <form id="upload-form" action="{{ path('app_video_personal_upload') }}" method="post" enctype="multipart/form-data">
                 <input type="hidden" name="_token" value="{{ csrf_token('personal_video_upload') }}">
                 <div class="form-group">
                     <label for="videos"><span>{{ 'Add videos'|trans }}</span>
                         <input type="file" id="videos" name="videos[]" accept="video/*,.mov" multiple required>
                     </label>
-                    <span class="max-size">{{ 'Max. size'|trans }} : {{ (maxFileSize / 1048576)|round }} Mo</span>
+                    <span class="max-size">{{ 'Max. size'|trans }} : {{ (maxFileSize / 1073741824)|round }} Go</span>
                     <button type="submit" id="upload-videos">{{ 'Add'|trans }}</button>
                 </div>
             </form>
+            <ol class="upload-progress"></ol>
         </div>
         <div class="video-wrapper">
             {% for video in videos %}
@@ -63,11 +64,22 @@
             {% endfor %}
         </div>
     </div>
-    {% if hasPending %}
-        <script>
-            // Des vidéos sont en cours de conversion (commande app:videos:process) : on rafraîchit la page
-            setTimeout(() => window.location.reload(), 30000);
-        </script>
-    {% endif %}
+    <div id="global-data" style="display: none">
+        {
+            "app_video_personal_upload_start": "{{ path('app_video_personal_upload_start') }}",
+            "app_video_personal_upload_chunk": "{{ path('app_video_personal_upload_chunk') }}",
+            "app_video_personal_upload_finish": "{{ path('app_video_personal_upload_finish') }}",
+            "app_video_personal_upload_cancel": "{{ path('app_video_personal_upload_cancel') }}",
+            "maxFileSize": {{ maxFileSize }},
+            "texts": {
+                "Waiting": {{ 'Waiting'|trans|json_encode|raw }},
+                "Processing": {{ 'Processing'|trans|json_encode|raw }},
+                "Done": {{ 'Done'|trans|json_encode|raw }},
+                "File too large": {{ 'File too large'|trans|json_encode|raw }},
+                "Not a video file": {{ 'Not a video file'|trans|json_encode|raw }},
+                "Upload failed": {{ 'Upload failed'|trans|json_encode|raw }}
+            }
+        }
+    </div>
     {% include '_blocks/_footer.html.twig' %}
 {% endblock %}

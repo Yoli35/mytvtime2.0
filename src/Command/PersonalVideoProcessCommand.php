@@ -56,6 +56,11 @@ class PersonalVideoProcessCommand
             $this->personalVideoService->fail($video, 'Processing interrupted');
         }
 
+        // Envois par morceaux sans activité depuis 24 h
+        if ($count = $this->personalVideoService->purgeAbandonedUploads()) {
+            $io->writeln("$count abandoned upload(s) deleted.");
+        }
+
         $video = $this->personalVideoRepository->findNextPending();
         if (!$video) {
             flock($lock, LOCK_UN);
