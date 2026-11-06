@@ -259,7 +259,7 @@ readonly class TvTimeService
             'loadCount' => $settings['count'],
             'tab' => $settings['tab'],
 //            'sub_0' => $settings['sub-0'],
-//            'sub_1' => $settings['sub-1'],
+            'sub_1' => $settings['sub-1'],
 //            'sub_2' => $settings['sub-2'],
             'list' => $settings['list'],
             'sort' => $settings['sort'],
