@@ -35,9 +35,9 @@ use App\Service\DateService;
 use App\Service\ImageConfiguration;
 use App\Service\ImageService;
 use App\Service\ProviderService;
+use App\Service\SeasonService;
 use App\Service\SeriesService;
 
-//use App\Service\ThetvdbSeriesService;
 use App\Service\TMDBService;
 use DateMalformedStringException;
 use DateTimeImmutable;
@@ -74,6 +74,7 @@ final class SeriesShowController extends AbstractController
         private readonly PeopleUserPreferredNameRepository  $peopleUserPreferredNameRepository,
         private readonly ProviderService                    $providerService,
         private readonly SeasonLocalizedOverviewRepository  $seasonLocalizedOverviewRepository,
+        private readonly SeasonService                      $seasonService,
         private readonly SeriesBroadcastScheduleRepository  $seriesBroadcastScheduleRepository,
         private readonly SeriesCastRepository               $seriesCastRepository,
         private readonly SeriesExternalRepository           $seriesExternalRepository,
@@ -81,7 +82,6 @@ final class SeriesShowController extends AbstractController
         private readonly SeriesService                      $seriesService,
         private readonly SettingsRepository                 $settingsRepository,
         private readonly SourceRepository                   $sourceRepository,
-//        private readonly ThetvdbSeriesService               $thetvdbSeriesService,
         private readonly TMDBService                        $tmdbService,
         private readonly TimezoneBookmarkRepository         $timezoneBookmarkRepository,
         private readonly TranslatorInterface                $translator,
@@ -352,7 +352,8 @@ final class SeriesShowController extends AbstractController
                 'slug' => $series->getSlug(),
             ]);
         }
-        //$tv = $this->seriesService->getTvMini($series);
+
+        $season['db_season'] = $this->seasonService->getSeason($series, $season['season_number'], $request->getLocale());
 
         $season['poster_path'] = $this->seriesService->cacheSeasonPoster($season, $series);
         $season['backdrop_path'] = $series->getBackdropPath();
@@ -586,7 +587,7 @@ final class SeriesShowController extends AbstractController
             foreach ($tv['networks'] as $network) {
                 $dbNetwork = $this->networkRepository->findOneBy(['name' => $network['name']]);
                 if (!$dbNetwork) {
-                    $tmdbNetwork = $this->tmdbService->getNetworkDetails($network['id']);
+                    $tmdbNetwork = json_decode($this->tmdbService->getNetworkDetails($network['id']), true);
                     $dbNetwork = new Network($network['headquarters'], $tmdbNetwork['logo_path'], $tmdbNetwork['name'], $tmdbNetwork['id'], $tmdbNetwork['origin_country'] ?? null, $now);
                     $this->networkRepository->save($dbNetwork);
                 }
