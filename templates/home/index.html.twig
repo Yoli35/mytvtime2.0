@@ -103,31 +103,6 @@
                 </div>
             {% endif %}
 
-            {% if 0 %}
-                {#            {% if movieVideos.firstVideo|length %} #}
-                {% set video = movieVideos.firstVideo %}
-                {% if video.site == 'YouTube' %}
-                    <h2>{{ movieVideos.title }}</h2>
-                    <div class="video-background">
-                        <div class="video-background__inner">
-                            <object class="video-background__video"
-                                    data="https://www.youtube.com/embed/{{ video.key }}?autoplay=1&mute=1&loop=1&playlist={{ movieVideos.videoList }}">
-                            </object>
-                        </div>
-                    </div>
-                {% endif %}
-            {% endif %}
-
-            {# <div class="video-background">
-                <!-- The video container -->
-                <div class="video-background__inner">
-                    <video class="video-background__video" src="/videos/make-up-make-me-grow-up.mp4" autoplay loop muted controls></video>
-                </div>
-
-                <!-- The content -->
-                <div class="video-background__content">Make Up, Make Me Grow Up!</div>
-            </div> #}
-
             {% if app.user %}
                 {% if lastViewedMovies|length > 20 %}
                     <div class="series-group">
@@ -350,6 +325,7 @@
                 </div>
                 <div class="wrapper" id="provider-series">
                     <div class="content">
+                        {# filteredSeries #}
                         {{ include('_blocks/home/_provider_series.html.twig') }}
                     </div>
                 </div>

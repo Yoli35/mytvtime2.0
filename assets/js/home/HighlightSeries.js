@@ -1,6 +1,7 @@
 import {AverageColor} from "AverageColor";
 import {ToolTips} from "ToolTips";
 
+let self = null;
 /**
  * @typedef Globs
  * @type {Object}
@@ -12,12 +13,14 @@ import {ToolTips} from "ToolTips";
 
 export class HighlightSeries {
     constructor(navBar) {
+        self = this;
+        this.lang = document.documentElement.lang;
         this.count = 0;
         this.fetchCount = 0;
         this.highlightDiv = null;
         this.highlightProgressDiv = null;
         this.interval = null;
-        this.intervalDuration = 20000;
+        this.intervalDuration = 5000;
         this.maxDisplayPerPoster = 1;
         this.navBarColor = navBar.navBarColor;
         this.posterListDiv = null;
@@ -78,9 +81,12 @@ export class HighlightSeries {
     }
 
     cycle() {
-        this.highlightDiv.querySelector('.poster').classList.remove('show');
-        this.highlightDiv.querySelector('.backdrop').classList.remove('show');
-        this.highlightDiv.querySelector('.details').classList.remove('show');
+        const poster = this.highlightDiv.querySelector('.poster');
+        const backdrop = this.highlightDiv.querySelector('.backdrop');
+        const details = this.highlightDiv.querySelector('.details');
+        if (poster) poster.classList.remove('show');
+        if (backdrop) backdrop.classList.remove('show');
+        if (details) details.classList.remove('show');
         this.highlightProgressDiv.classList.remove('show');
         if (this.timeToChangeSeries) {
             clearInterval(this.interval);
@@ -184,7 +190,7 @@ export class HighlightSeries {
 
     loadNewSeries() {
         this.loadingDiv.classList.add('show');
-        fetch('/load-new-series', {
+        fetch('/' + self.lang + '/load-new-series', {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',

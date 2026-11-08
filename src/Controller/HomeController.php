@@ -190,24 +190,6 @@ class HomeController extends AbstractController
         $movieSelection = $this->getMovieSelection($slugger, $country, $timezone, $language, true);
         $keywordSeries = $this->getKeywordSeries($user, $request->getLocale());
 
-        $movieId = $movieSelection[rand(0, count($movieSelection) - 1)]['id'];
-        $movie = json_decode($this->tmdbService->getMovie($movieId, $language, ['watch/providers', 'videos']), true);
-        $videoList = [];
-        $movieVideos = ['title' => '', 'firstVideo' => '', 'videoList' => ''];
-        if (count($movie['videos']['results'])) {
-            $movieVideos['title'] = $movie['title'];
-            $movieVideos['firstVideo'] = $movie['videos']['results'][0];
-            $videos = array_filter($movie['videos']['results'], function ($video) {
-                return $video['site'] === 'YouTube';
-            });
-            if (count($videos)) {
-                foreach ($videos as $video) {
-                    $videoList[] = $video['key'];
-                }
-            }
-            $videoList = implode(',', $videoList);
-            $movieVideos['videoList'] = $videoList;
-        }
         return $this->render('home/index.html.twig', [
             'highlightedSeries' => $seriesSelection,
             'highlightedMovies' => $movieSelection,
@@ -228,11 +210,10 @@ class HomeController extends AbstractController
             'watchProviders' => $watchProviders,
             'provider' => $provider,
             'filteredSeries' => $filteredSeries,
-            'movieVideos' => $movieVideos,
         ]);
     }
 
-    #[Route('/load-new-series', name: 'load_new_series')]
+    #[Route('/{_locale}/load-new-series', name: 'load_new_series', requirements: ['_locale' => 'fr|en|ko'])]
     public function loadNewSeries(): Response
     {
         $user = $this->getUser();
