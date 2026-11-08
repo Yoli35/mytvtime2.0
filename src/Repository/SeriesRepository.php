@@ -178,6 +178,7 @@ class SeriesRepository extends ServiceEntityRepository
                 WHERE us.user_id = :userId
                   AND s.poster_path IS NOT NULL
                   AND s.first_air_date IS NOT NULL
+                ORDER BY s.first_air_date DESC
                 LIMIT :limit OFFSET :offset;
         SQL;
 
@@ -212,6 +213,7 @@ class SeriesRepository extends ServiceEntityRepository
                 WHERE us.user_id = :userId
                   AND s.backdrop_path IS NOT NULL
                   AND s.first_air_date IS NOT NULL
+                ORDER BY s.first_air_date DESC
                 LIMIT :limit OFFSET :offset;
         SQL;
 

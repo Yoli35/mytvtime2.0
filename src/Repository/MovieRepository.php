@@ -344,6 +344,7 @@ class MovieRepository extends ServiceEntityRepository
                 WHERE um.user_id = :userId
                   AND m.poster_path IS NOT NULL
                   AND m.release_date IS NOT NULL
+                ORDER BY m.release_date DESC
                 LIMIT :limit OFFSET :offset;
         SQL;
 
@@ -378,6 +379,7 @@ class MovieRepository extends ServiceEntityRepository
                 WHERE um.user_id = :userId
                   AND m.backdrop_path IS NOT NULL
                   AND m.release_date IS NOT NULL
+                ORDER BY m.release_date DESC
                 LIMIT :limit OFFSET :offset;
         SQL;
 
