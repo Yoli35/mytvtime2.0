@@ -872,6 +872,7 @@ export class Menu {
                             e.preventDefault();
                             e.stopPropagation();
                             self.addThisMedia(this, aDiv, type);
+                            searchInput.select();
                         });
                         const addSvg = self.multiSearchAddIcon.cloneNode(true);
                         addSvg.removeAttribute('id');
@@ -983,6 +984,8 @@ export class Menu {
             let type = ul.getAttribute("data-type");
             if (e.key === 'Enter') {
                 e.preventDefault();
+                // Sélectionner le texte dans le champ de recherche
+                searchMenu.select();
                 const li = ul.querySelector("li.active") ?? ul.querySelector("li");
                 if (type === 'multi') {
                     li.querySelector("a").click();

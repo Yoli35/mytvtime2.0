@@ -72,14 +72,14 @@ class MovieController extends AbstractController
 
         $filtersBoxSettings = $this->settingsRepository->findOneBy(['user' => $user, 'name' => 'my movies boxes']);
         if (!$filtersBoxSettings) {
-            $filtersBoxSettings = new Settings($user, 'my movies boxes', ['filters' => true, 'pages' => true]);
+            $filtersBoxSettings = new Settings($user, 'my movies boxes', ['filters' => 0, 'pages' => 1]);
             $this->settingsRepository->save($filtersBoxSettings, true);
-            $filterBoxOpen = true;
-            $pageBoxOpen = true;
+            $filterBoxOpen = 0;
+//            $pageBoxOpen = true;
         } else {
             $data = $filtersBoxSettings->getData();
             $filterBoxOpen = $data['filters'];
-            $pageBoxOpen = $data['pages'];
+//            $pageBoxOpen = $data['pages'];
         }
         $page = 1;
         $settings = $this->settingsRepository->findOneBy(['user' => $user, 'name' => 'my movies']);
@@ -134,7 +134,7 @@ class MovieController extends AbstractController
             'pages' => ceil($userMovieCount / $filters['limit']),
             'filterMeanings' => $filterMeanings,
             'filterBoxOpen' => $filterBoxOpen,
-            'pageBoxOpen' => $pageBoxOpen,
+//            'pageBoxOpen' => $pageBoxOpen,
             'filters' => $filters,
         ]);
     }

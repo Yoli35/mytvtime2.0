@@ -1018,7 +1018,7 @@ class SeriesController extends AbstractController
             if ($name == 'my movies boxes') {
                 $box = $value['key'];
                 $open = $value['value'];
-                $value = ['filters' => true, 'pages' => true];
+                $value = ['filters' => 0, 'pages' => 1];
                 $value[$box] = $open;
             }
             $settings = new Settings($user, $name, $value);

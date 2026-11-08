@@ -93,11 +93,11 @@ export class MovieIndex {
                 console.log({div});
                 console.log({forBox});
                 if (div.classList.contains('collapse')) {
-                    saveBoxSettings(forBox, false);
+                    saveBoxSettings(forBox, 1);
                     div.style.height = (64 + div.scrollHeight) + 'px';
                     div.classList.remove('collapse');
                 } else {
-                    saveBoxSettings(forBox, true);
+                    saveBoxSettings(forBox, 0);
                     div.style.height = '0';
                     div.classList.add('collapse');
                 }
