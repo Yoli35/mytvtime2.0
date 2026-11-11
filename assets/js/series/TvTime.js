@@ -109,6 +109,7 @@ export class TvTime {
     }
 
     async startSlideshow(block) {
+        self.toolsTips.hide();
         const slides = [this.createSlide(), this.createSlide()];
         slides.forEach(slide => block.appendChild(slide));
         const screenSaver = {slides, intervalId: -1};
