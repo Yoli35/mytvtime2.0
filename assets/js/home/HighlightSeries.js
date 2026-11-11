@@ -20,7 +20,7 @@ export class HighlightSeries {
         this.highlightDiv = null;
         this.highlightProgressDiv = null;
         this.interval = null;
-        this.intervalDuration = 5000;
+        this.intervalDuration = 20000;
         this.maxDisplayPerPoster = 1;
         this.navBarColor = navBar.navBarColor;
         this.posterListDiv = null;
