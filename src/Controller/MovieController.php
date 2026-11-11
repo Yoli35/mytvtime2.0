@@ -323,6 +323,7 @@ class MovieController extends AbstractController
             'blurredPosterPath' => $blurredPosterPath,
             'providers' => $providers,
             'translations' => $translations,
+            'timezone' => $user->getTimezone() ?? 'Europe/Paris',
         ]);
     }
 
