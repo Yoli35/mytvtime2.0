@@ -169,7 +169,7 @@ class Series
 
     public function getName(): ?string
     {
-        return $this->name;
+        return str_replace(' :', ' :', $this->name);
     }
 
     public function setName(string $name): static

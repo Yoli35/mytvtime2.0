@@ -107,7 +107,7 @@ class Movie
 
     public function __toString(): string
     {
-        return $this->title;
+        return str_replace(' :', ' :', $this->title);
     }
 
     public function __construct(array $movie)
@@ -285,7 +285,7 @@ class Movie
 
     public function getTitle(): ?string
     {
-        return $this->title;
+        return str_replace(' :', ' :', $this->title);
     }
 
     public function setTitle(?string $title): static
