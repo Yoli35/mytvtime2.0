@@ -731,13 +731,12 @@ readonly class SeriesService
         $userEpisode->setUserSeason($userSeason);
         $airDate = $episode['air_date'] ? $this->date($episode['air_date'], true) : null;
         $userEpisode->setAirDate($airDate);
-        $this->userEpisodeRepository->save($userEpisode);
+        $this->userEpisodeRepository->save($userEpisode, true);
         if ($seasonNumber == 0) {
-            $this->userEpisodeRepository->flush();
             return 1;
         }
-        if ($userSeries->getNextUserEpisode() === null && $airDate /*&& $airDate > $this->now()*/) {
-            $this->userEpisodeRepository->flush();
+        $nextUserEpisode = $userSeries->getNextUserEpisode();
+        if ($nextUserEpisode === null  or $nextUserEpisode->getSeasonNumber() == 0 /*&& $airDate && $airDate > $this->now()*/) {
             $userSeries->setNextUserEpisode($userEpisode);
             $this->userSeriesRepository->save($userSeries, true);
             ($this->addFlash)('info', $this->translator->trans('Next episode to watch is %episode%', ['%episode%' => sprintf('S%02dE%02d', $seasonNumber, $episode['episode_number'])]));
