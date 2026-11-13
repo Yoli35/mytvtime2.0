@@ -331,84 +331,52 @@ class MovieRepository extends ServiceEntityRepository
         return $this->getAll($sql, $params, $types);
     }
 
-    public function getMoviesPosters(int $userId, int $limit, int $offset, string $locale, string $root = '/movies/posters'): array
+    public function getMoviesPosters(int $userId, int $limit, string $locale, string $root = '/movies/posters'): array
     {
         $sql = <<<SQL
             --  Posters from movies added by user
             SELECT IFNULL(mln.name, m.title) AS name,
                 CONCAT(:root, m.poster_path) AS poster_path,
-                YEAR(m.release_date) AS year,
-                RAND() AS newOrder
+                YEAR(m.release_date) AS year
             FROM movie m
                 INNER JOIN user_movie um ON um.movie_id = m.id
                 LEFT JOIN movie_localized_name mln ON m.id = mln.movie_id AND mln.locale = :locale
             WHERE um.user_id = :userId
                 AND m.poster_path IS NOT NULL
                 AND m.release_date IS NOT NULL
-            ORDER BY newOrder       
-            LIMIT :limit OFFSET :offset;
+            ORDER BY RAND()    
+            LIMIT :limit
         SQL;
 
         return $this->getAll(
             $sql,
-            ['userId' => $userId, 'root' => $root, 'limit' => $limit, 'offset' => $offset, 'locale' => $locale],
-            ['userId' => ParameterType::INTEGER, 'root' => ParameterType::STRING, 'limit' => ParameterType::INTEGER, 'offset' => ParameterType::INTEGER, 'locale' => ParameterType::STRING]
+            ['userId' => $userId, 'root' => $root, 'limit' => $limit, 'locale' => $locale],
+            ['userId' => ParameterType::INTEGER, 'root' => ParameterType::STRING, 'limit' => ParameterType::INTEGER, 'locale' => ParameterType::STRING]
         );
     }
 
-    public function countMoviesPosters(int $userId): int
-    {
-        $sql = <<<SQL
-            --  Poster from movies added by user
-                SELECT COUNT(*)
-                FROM movie m
-                         INNER JOIN user_movie um ON um.movie_id = m.id
-                WHERE um.user_id = :userId
-                  AND m.poster_path IS NOT NULL
-                  AND m.release_date IS NOT NULL;
-        SQL;
-
-        return $this->getOneAsInt($sql, ['userId' => $userId], ['userId' => ParameterType::INTEGER]);
-    }
-
-    public function getMoviesBackdrops(int $userId, int $limit, int $offset, string $locale, string $root = '/movies/backdrops'): array
+    public function getMoviesBackdrops(int $userId, int $limit, string $locale, string $root = '/movies/backdrops'): array
     {
         $sql = <<<SQL
             --  Backdrops from movies added by user
             SELECT IFNULL(mln.name, m.title) AS name,
                 CONCAT(:root, m.backdrop_path) AS backdrop_path,
-                YEAR(m.release_date) AS year,
-                RAND() AS newOrder
+                YEAR(m.release_date) AS year
             FROM movie m
                 INNER JOIN user_movie um ON um.movie_id = m.id
                 LEFT JOIN movie_localized_name mln ON m.id = mln.movie_id AND mln.locale = :locale
             WHERE um.user_id = :userId
                 AND m.backdrop_path IS NOT NULL
                 AND m.release_date IS NOT NULL
-            ORDER BY newOrder
-            LIMIT :limit OFFSET :offset;
+            ORDER BY RAND()
+            LIMIT :limit
         SQL;
 
         return $this->getAll(
             $sql,
-            ['userId' => $userId, 'root' => $root, 'locale' => $locale, 'limit' => $limit, 'offset' => $offset],
-            ['userId' => ParameterType::INTEGER, 'root' => ParameterType::STRING, 'locale' => ParameterType::STRING, 'limit' => ParameterType::INTEGER, 'offset' => ParameterType::INTEGER]
+            ['userId' => $userId, 'root' => $root, 'locale' => $locale, 'limit' => $limit],
+            ['userId' => ParameterType::INTEGER, 'root' => ParameterType::STRING, 'locale' => ParameterType::STRING, 'limit' => ParameterType::INTEGER]
         );
-    }
-
-    public function countMoviesBackdrops(int $userId): int
-    {
-        $sql = <<<SQL
-            --  Poster from movies added by user
-                SELECT COUNT(*)
-                FROM movie m
-                         INNER JOIN user_movie um ON um.movie_id = m.id
-                WHERE um.user_id = :userId
-                  AND m.backdrop_path IS NOT NULL
-                  AND m.release_date IS NOT NULL;
-        SQL;
-
-        return $this->getOneAsInt($sql, ['userId' => $userId], ['userId' => ParameterType::INTEGER]);
     }
 
     public function getAll($sql, array $params = [], array $types = []): array
