@@ -134,10 +134,6 @@ export class TvTime {
         }
         if (this.screenSaver !== screenSaver) return; // Arrêté pendant la requête
         const posters = [...seen].map(([src, infos]) => ({src, infos}));
-        for (let i = posters.length - 1; i > 0; i--) {
-            const j = Math.floor(Math.random() * (i + 1));
-            [posters[i], posters[j]] = [posters[j], posters[i]];
-        }
         if (!posters.length) return;
 
         let current = 0, index = 0;

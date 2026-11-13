@@ -208,18 +208,19 @@ readonly class ApiTvTime
         $aspectRatio = floatval($request->query->get('aspectRatio'));
         $timestamp = time() % 2;
         $limit = 50;
+        $locale = $request->getLocale();
 
         if ($aspectRatio> 1) {
             $imageUrl = $this->imageConfiguration->getUrl('backdrop_sizes', 3);
             if ($timestamp) {
                 $count = $this->seriesRepository->countSeriesBackdrops($user->getId());
                 $offset = $count > $limit ? rand(0, $count - $limit) : 0;
-                $arrB = $this->seriesRepository->getSeriesBackdrops($user->getId(), $limit, $offset);
+                $arrB = $this->seriesRepository->getSeriesBackdrops($user->getId(), $limit, $offset, $locale);
                 $this->imageService->saveImages($arrB, "backdrop", $imageUrl);
             } else {
                 $count = $this->movieRepository->countMoviesBackdrops($user->getId());
                 $offset = $count > $limit ? rand(0, $count - $limit) : 0;
-                $arrB = $this->movieRepository->getMoviesBackdrops($user->getId(), $limit, $offset);
+                $arrB = $this->movieRepository->getMoviesBackdrops($user->getId(), $limit, $offset, $locale);
                 $this->imageService->saveImages($arrB, "backdrop", $imageUrl, '/movies/');
             }
             $arr = [];
@@ -234,12 +235,12 @@ readonly class ApiTvTime
             if ($timestamp) {
                 $count = $this->seriesRepository->countSeriesPosters($user->getId());
                 $offset = $count > $limit ? rand(0, $count - $limit) : 0;
-                $arr = $this->seriesRepository->getSeriesPosters($user->getId(), $limit, $offset);
+                $arr = $this->seriesRepository->getSeriesPosters($user->getId(), $limit, $offset, $locale);
                 $this->imageService->saveImages($arr, "poster", $imageUrl);
             } else {
                 $count = $this->movieRepository->countMoviesPosters($user->getId());
                 $offset = $count > $limit ? rand(0, $count - $limit) : 0;
-                $arr = $this->movieRepository->getMoviesPosters($user->getId(), $limit, $offset);
+                $arr = $this->movieRepository->getMoviesPosters($user->getId(), $limit, $offset, $locale);
                 $this->imageService->saveImages($arr, "poster", $imageUrl, '/movies/');
             }
         }

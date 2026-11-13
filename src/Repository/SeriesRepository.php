@@ -165,24 +165,30 @@ class SeriesRepository extends ServiceEntityRepository
         return $this->getAll($sql, ['seriesId' => $seriesId], ['seriesId' => ParameterType::INTEGER]);
     }
 
-    public function getSeriesPosters(int $userId, int$limit, $offset, string $root = '/series/posters'): array
+    public function getSeriesPosters(int $userId, int $limit, int $offset, string $locale, string $root = '/series/posters'): array
     {
         $sql = <<<SQL
-            --  Poster from series added by user
-                SELECT IFNULL(sln.name, s.name) AS name,
-                       CONCAT(:root, s.poster_path) AS poster_path,
-                       YEAR(s.first_air_date) AS year
-                FROM series s
-                         INNER JOIN user_series us ON us.series_id = s.id
-                         LEFT JOIN series_localized_name sln ON s.id = sln.series_id
-                WHERE us.user_id = :userId
-                  AND s.poster_path IS NOT NULL
-                  AND s.first_air_date IS NOT NULL
-                ORDER BY s.first_air_date DESC
-                LIMIT :limit OFFSET :offset;
+            --  Posters from series added by user
+            SELECT
+                IFNULL(sln.`name`, s.`name`) AS name,
+                CONCAT(:root, s.poster_path) AS poster_path,
+                YEAR(s.`first_air_date`) AS year,
+                RAND() AS newOrder
+            FROM `series` s
+                INNER JOIN `user_series` us ON us.`series_id`=s.`id`
+                LEFT JOIN `series_localized_name` sln ON sln.`series_id`=s.`id` AND sln.`locale`=:locale
+            WHERE us.`user_id`=:userId
+                AND s.`poster_path` IS NOT NULL
+                AND s.`first_air_date` IS NOT NULL
+            ORDER BY newOrder
+            LIMIT :limit OFFSET :offset;
         SQL;
 
-        return $this->getAll($sql, ['userId' => $userId, 'root' => $root, 'limit' => $limit, 'offset' => $offset], ['userId' => ParameterType::INTEGER, 'root' => ParameterType::STRING, 'limit' => ParameterType::INTEGER, 'offset' => ParameterType::INTEGER]);
+        return $this->getAll(
+            $sql,
+            ['userId' => $userId, 'root' => $root, 'locale' => $locale, 'limit' => $limit, 'offset' => $offset],
+            ['userId' => ParameterType::INTEGER, 'root' => ParameterType::STRING, 'locale' => ParameterType::STRING, 'limit' => ParameterType::INTEGER, 'offset' => ParameterType::INTEGER]
+        );
     }
 
     public function countSeriesPosters(int $userId): int
@@ -200,24 +206,30 @@ class SeriesRepository extends ServiceEntityRepository
         return $this->getOneAsInt($sql, ['userId' => $userId], ['userId' => ParameterType::INTEGER]);
     }
 
-    public function getSeriesBackdrops(int $userId, int$limit, $offset, string $root = '/series/backdrops'): array
+    public function getSeriesBackdrops(int $userId, int$limit, $offset, string $locale, string $root = '/series/backdrops'): array
     {
         $sql = <<<SQL
-            --  Poster from series added by user
-                SELECT IFNULL(sln.name, s.name) AS name,
-                       CONCAT(:root, s.backdrop_path) AS backdrop_path,
-                       YEAR(s.first_air_date) AS year
-                FROM series s
-                         INNER JOIN user_series us ON us.series_id = s.id
-                         LEFT JOIN series_localized_name sln ON s.id = sln.series_id
-                WHERE us.user_id = :userId
-                  AND s.backdrop_path IS NOT NULL
-                  AND s.first_air_date IS NOT NULL
-                ORDER BY s.first_air_date DESC
-                LIMIT :limit OFFSET :offset;
+            --  Backdrops from series added by user
+            SELECT
+                IFNULL(sln.name, s.name) AS name,
+                CONCAT(:root, s.backdrop_path) AS backdrop_path,
+                YEAR(s.first_air_date) AS year,
+                RAND() AS newOrder
+            FROM series s
+                INNER JOIN user_series us ON us.series_id = s.id
+                LEFT JOIN series_localized_name sln ON s.id = sln.series_id AND sln.locale = :locale
+            WHERE us.user_id = :userId
+                AND s.backdrop_path IS NOT NULL
+                AND s.first_air_date IS NOT NULL
+            ORDER BY newOrder
+            LIMIT :limit OFFSET :offset;
         SQL;
 
-        return $this->getAll($sql, ['userId' => $userId, 'root' => $root, 'limit' => $limit, 'offset' => $offset], ['userId' => ParameterType::INTEGER, 'root' => ParameterType::STRING, 'limit' => ParameterType::INTEGER, 'offset' => ParameterType::INTEGER]);
+        return $this->getAll(
+            $sql,
+            ['userId' => $userId, 'root' => $root, 'locale' => $locale, 'limit' => $limit, 'offset' => $offset],
+            ['userId' => ParameterType::INTEGER, 'root' => ParameterType::STRING, 'locale' => ParameterType::STRING, 'limit' => ParameterType::INTEGER, 'offset' => ParameterType::INTEGER]
+        );
     }
 
     public function countSeriesBackdrops(int $userId): int
