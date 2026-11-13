@@ -6,6 +6,7 @@ use App\Entity\User;
 use App\Entity\UserEpisode;
 use App\Entity\UserSeries;
 use DateTime;
+use DateTimeImmutable;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\DBAL\Exception;
 use Doctrine\DBAL\ParameterType;
@@ -991,30 +992,51 @@ class UserEpisodeRepository extends ServiceEntityRepository
         return $this->getAll($sql, $params, $types);
     }
 
-    public function setNextUserEpisode(UserSeries $userSeries): bool
+    /**
+     * Premier épisode régulier (saison > 0) non vu de la série, dans l'ordre saison / épisode.
+     */
+    public function findFirstUnwatchedRegularEpisode(UserSeries $userSeries): ?UserEpisode
     {
-        $uerSerieId = $userSeries->getId();
-        $sql = <<<SQL
-            UPDATE user_series us
-            SET us.next_user_episode_id = (
-                SELECT ue.id
-                FROM user_episode ue
-                WHERE ue.user_series_id = :userSeriesId
-                  AND ue.season_number > 0
-                  AND ue.watched_at IS NULL
-                ORDER BY ue.season_number, ue.episode_number
-                LIMIT 1
-            )
-            WHERE us.id = :userSeriesId;
-        SQL;
+        return $this->createQueryBuilder('ue')
+            ->where('ue.userSeries = :userSeries')
+            ->andWhere('ue.seasonNumber > 0')
+            ->andWhere('ue.watchedAt IS NULL')
+            ->setParameter('userSeries', $userSeries)
+            ->orderBy('ue.seasonNumber', 'ASC')
+            ->addOrderBy('ue.episodeNumber', 'ASC')
+            ->setMaxResults(1)
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
 
-        try {
-            $this->em->getConnection()->executeStatement($sql, ['userSeriesId' => $uerSerieId], ['userSeriesId' => ParameterType::INTEGER]);
-        } catch (Exception $e) {
-            $this->logger->error('Error: ' . $e->getMessage());
-            return false;
+    /**
+     * Met à jour l'épisode suivant à voir (UserSeries::nextUserEpisode) avec le premier
+     * épisode régulier non vu. L'entité UserSeries est modifiée et enregistrée
+     * uniquement en cas de changement.
+     *
+     * - Par défaut, seulement si l'épisode suivant est nul ou un épisode spécial (saison 0).
+     * - $force = true : recalcul systématique (ex. : nouvelle saison) ; l'épisode suivant
+     *   est remis à null s'il n'y a plus aucun épisode régulier non vu.
+     *
+     * Les épisodes doivent avoir été flushés avant l'appel.
+     *
+     * @return UserEpisode|null Le nouvel épisode suivant, ou null s'il n'a pas changé (ou a été remis à null)
+     */
+    public function updateNextUserEpisodeIfNeeded(UserSeries $userSeries, bool $force = false): ?UserEpisode
+    {
+        $next = $userSeries->getNextUserEpisode();
+        if (!$force && $next !== null && $next->getSeasonNumber() > 0) {
+            return null;
         }
-        return true;
+        $candidate = $this->findFirstUnwatchedRegularEpisode($userSeries);
+        if ($candidate === $next || (!$force && $candidate === null)) {
+            return null;
+        }
+        $userSeries->setNextUserEpisode($candidate);
+        $this->em->persist($userSeries);
+        $this->em->flush();
+
+        return $candidate;
     }
 
     public function getAll($sql, array $params = [], array $types = []): array
@@ -1047,20 +1069,84 @@ class UserEpisodeRepository extends ServiceEntityRepository
         }
     }
 
+    /**
+     * Épisode de l'utilisateur remplacé par TMDB : même saison, même numéro, mais son id
+     * n'existe plus dans la saison TMDB (cas typique : saison annoncée longtemps à l'avance,
+     * puis épisodes recréés par TMDB quelques jours avant la diffusion).
+     *
+     * @param iterable<UserEpisode> $userEpisodes
+     * @param int[] $tmdbEpisodeIds ids des épisodes de la saison chez TMDB
+     */
+    public function findReplacedUserEpisode(iterable $userEpisodes, int $seasonNumber, int $episodeNumber, array $tmdbEpisodeIds): ?UserEpisode
+    {
+        foreach ($userEpisodes as $ue) {
+            if ($ue->getPreviousOccurrence() === null
+                && $ue->getSeasonNumber() == $seasonNumber
+                && $ue->getEpisodeNumber() == $episodeNumber
+                && !in_array($ue->getEpisodeId(), $tmdbEpisodeIds)) {
+                return $ue;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Remplace l'id TMDB d'un épisode de l'utilisateur, revisionnages compris, en conservant
+     * l'entité (visionnage, dates personnalisées, plateforme, épisode suivant…). Pas de flush.
+     *
+     * @return UserEpisode[] Les épisodes modifiés
+     */
+    public function replaceEpisodeId(UserSeries $userSeries, int $oldEpisodeId, int $newEpisodeId, ?DateTimeImmutable $airDate): array
+    {
+        $userEpisodes = $this->findBy(['userSeries' => $userSeries, 'episodeId' => $oldEpisodeId]);
+        foreach ($userEpisodes as $ue) {
+            $ue->setEpisodeId($newEpisodeId);
+            $ue->setAirDate($airDate);
+            $this->em->persist($ue);
+        }
+        return $userEpisodes;
+    }
+
+    /**
+     * Supprime les épisodes de l'utilisateur (revisionnages compris) dont l'id TMDB n'existe plus.
+     * L'épisode suivant / le dernier épisode vu sont d'abord détachés s'ils pointent sur l'un d'eux
+     * (clés étrangères en NO ACTION), puis l'épisode suivant est recalculé.
+     */
     public function removeByEpisodeIds(UserSeries $userSeries, array $removedEpisodeIds): bool
     {
         if (count($removedEpisodeIds) === 0) {
             return true;
         }
-        $userSeriesId = $userSeries->getId();
+        $removedEpisodeIds = array_map('intval', $removedEpisodeIds);
+
+        $nextCleared = false;
+        if (in_array($userSeries->getNextUserEpisode()?->getEpisodeId(), $removedEpisodeIds, true)) {
+            $userSeries->setNextUserEpisode(null);
+            $nextCleared = true;
+        }
+        $lastCleared = false;
+        if (in_array($userSeries->getLastUserEpisode()?->getEpisodeId(), $removedEpisodeIds, true)) {
+            $userSeries->setLastUserEpisode(null);
+            $lastCleared = true;
+        }
+        if ($nextCleared || $lastCleared) {
+            $this->em->persist($userSeries);
+            $this->em->flush();
+        }
+
+        $userSeriesId = (int)$userSeries->getId();
         $ids = implode(',', $removedEpisodeIds);
-        $sql = "DELETE FROM user_episode WHERE user_series_id=$userSeriesId AND episode_id IN ($ids)";
+        // Revisionnages (ids plus grands) d'abord, à cause de la clé étrangère previous_occurrence_id
+        $sql = "DELETE FROM user_episode WHERE user_series_id=$userSeriesId AND episode_id IN ($ids) ORDER BY id DESC";
         try {
             $this->em->getConnection()->executeStatement($sql);
         } catch (Exception $e) {
-            // Nothing
-            $this->logger->error('Error: ' . $e->getMessage());
+            $this->logger->error('removeByEpisodeIds: ' . $e->getMessage(), ['userSeriesId' => $userSeriesId, 'episodeIds' => $ids]);
             return false;
+        }
+
+        if ($nextCleared) {
+            $this->updateNextUserEpisodeIfNeeded($userSeries);
         }
         return true;
     }

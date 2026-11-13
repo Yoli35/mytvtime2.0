@@ -64,6 +64,8 @@ readonly class SeriesService
         private Closure                           $getParameter,
         #[AutowireMethodOf(ControllerHelper::class)]
         private Closure                           $getUser,
+        #[AutowireMethodOf(ControllerHelper::class)]
+        private Closure                           $isGranted,
         private ContactMessageRepository          $contactMessageRepository,
         private CountryRepository                 $countryRepository,
         private DateService                       $dateService,
@@ -537,6 +539,16 @@ readonly class SeriesService
         }
     }
 
+    /**
+     * Message flash réservé aux administrateurs (informations techniques de synchronisation).
+     */
+    public function adminFlash(string $type, string $message): void
+    {
+        if (($this->getUser)() && ($this->isGranted)('ROLE_ADMIN')) {
+            ($this->addFlash)($type, $message);
+        }
+    }
+
     public function addSeasonToUser(User $user, UserSeries $userSeries, int $seasonNumber, array $userEpisodes, array $season): array
     {
         $reloadUserEpisodes = false;
@@ -564,20 +576,42 @@ readonly class SeriesService
         else
             $finaleEpisodeNumber = $this->getFinaleEpisodeNumber($tvSeason);
 
+        $tmdbEpisodeIds = array_column($tvSeason['episodes'], 'id');
+        $newEpisodeLabels = [];
+        $replacedEpisodeLabels = [];
+
         foreach ($tvSeason['episodes'] as $episode) {
             $dbUserEpisode = array_find($userEpisodes, fn($e) => $e->getEpisodeId() == $episode['id']);
             if ($dbUserEpisode) {
                 // Episode already exists in user's series
                 continue;
             }
+            $label = sprintf("S%02dE%02d", $seasonNumber, $episode['episode_number']);
             if ($episode['episode_number'] > $finaleEpisodeNumber) {
-                ($this->addFlash)('warning', "// Skip episode " . sprintf("S%02dE%02d", $tvSeason['season_number'], $episode['episode_number']) . " after a finale");
+                $this->adminFlash('warning', "// Skip episode " . $label . " after a finale");
+                continue;
+            }
+            // Épisode recréé par TMDB avec un nouvel id : on met à jour l'épisode existant
+            // plutôt que d'en créer un nouveau (pas de doublon, données de l'utilisateur conservées)
+            $replacedUserEpisode = $this->userEpisodeRepository->findReplacedUserEpisode($userEpisodes, $seasonNumber, $episode['episode_number'], $tmdbEpisodeIds);
+            if ($replacedUserEpisode) {
+                $airDate = $episode['air_date'] ? $this->date($episode['air_date'], true) : null;
+                $this->userEpisodeRepository->replaceEpisodeId($userSeries, $replacedUserEpisode->getEpisodeId(), $episode['id'], $airDate);
+                $replacedEpisodeLabels[] = $label;
                 continue;
             }
             $newEpisodeCount += $this->addEpisodeToUser($userSeries, $userSeason, $episode, $seasonNumber);
+            $newEpisodeLabels[] = $label;
         }
 
-        if ($newEpisodeCount) {
+        if (count($replacedEpisodeLabels)) {
+            $this->userEpisodeRepository->flush();
+            $reloadUserEpisodes = true;
+            $this->adminFlash('info', $this->translator->trans('Episodes replaced by TMDB: %list%', ['%list%' => implode(', ', $replacedEpisodeLabels)]));
+        }
+        $this->announceNewEpisodes($newEpisodeLabels);
+
+        if ($newEpisodeCount || count($replacedEpisodeLabels)) {
             $this->userEpisodeRepository->flush();
             $ueIds = array_column($this->userEpisodeRepository->getSeasonEpisodeIds($userSeries->getId(), $seasonNumber), 'episode_id');
         } else {
@@ -593,9 +627,9 @@ readonly class SeriesService
 
         if ($removedEpisodeCount) {
             if ($removedEpisodeCount == 1) {
-                ($this->addFlash)('info', $this->translator->trans('An episode has been removed from the series (%id%)', ['%id%' => $removedEpisodeIds[0]]));
+                $this->adminFlash('info', $this->translator->trans('An episode has been removed from the series (%id%)', ['%id%' => $removedEpisodeIds[0]]));
             } else {
-                ($this->addFlash)('info', $this->translator->trans('%count% episodes have been removed from the series (%list%)', ['%count%' => $removedEpisodeCount, '%list%' => implode(', ', $removedEpisodeIds)]));
+                $this->adminFlash('info', $this->translator->trans('%count% episodes have been removed from the series (%list%)', ['%count%' => $removedEpisodeCount, '%list%' => implode(', ', $removedEpisodeIds)]));
             }
             $this->userEpisodeRepository->removeByEpisodeIds($userSeries, $removedEpisodeIds);
             $this->userEpisodeRepository->flush();
@@ -614,7 +648,7 @@ readonly class SeriesService
                         $dbUserEpisode->setEpisodeNumber($episode['episode_number']);
                         $this->userEpisodeRepository->save($dbUserEpisode);
                         $saveCount++;
-                        ($this->addFlash)('info', $this->translator->trans('Episode %number% has been updated', ['%number%' => sprintf('S%02dE%02d', $seasonNumber, $episode['episode_number'])]));
+                        $this->adminFlash('info', $this->translator->trans('Episode %number% has been updated', ['%number%' => sprintf('S%02dE%02d', $seasonNumber, $episode['episode_number'])]));
                     }
                 }
             }
@@ -625,6 +659,23 @@ readonly class SeriesService
         }
 
         return [$newEpisodeCount, $reloadUserEpisodes];
+    }
+
+    /**
+     * Annonce à l'utilisateur les nouveaux épisodes ajoutés à sa série.
+     *
+     * @param string[] $labels ex. : ['S02E05', 'S02E06']
+     */
+    public function announceNewEpisodes(array $labels): void
+    {
+        $count = count($labels);
+        if (!$count) {
+            return;
+        }
+        $message = $count == 1
+            ? $this->translator->trans('New episode available: %list%', ['%list%' => $labels[0]])
+            : $this->translator->trans('%count% new episodes available: %list%', ['%count%' => $count, '%list%' => implode(', ', $labels)]);
+        ($this->addFlash)('success', $message);
     }
 
     public function checkUserSeasons(array $userEpisodes): void
@@ -735,11 +786,10 @@ readonly class SeriesService
         if ($seasonNumber == 0) {
             return 1;
         }
-        $nextUserEpisode = $userSeries->getNextUserEpisode();
-        if ($nextUserEpisode === null  or $nextUserEpisode->getSeasonNumber() == 0 /*&& $airDate && $airDate > $this->now()*/) {
-            $userSeries->setNextUserEpisode($userEpisode);
-            $this->userSeriesRepository->save($userSeries, true);
-            ($this->addFlash)('info', $this->translator->trans('Next episode to watch is %episode%', ['%episode%' => sprintf('S%02dE%02d', $seasonNumber, $episode['episode_number'])]));
+        // Épisode suivant nul ou spécial → premier épisode régulier non vu
+        $nextUserEpisode = $this->userEpisodeRepository->updateNextUserEpisodeIfNeeded($userSeries);
+        if ($nextUserEpisode) {
+            ($this->addFlash)('info', $this->translator->trans('Next episode to watch is %episode%', ['%episode%' => sprintf('S%02dE%02d', $nextUserEpisode->getSeasonNumber(), $nextUserEpisode->getEpisodeNumber())]));
         }
         return 1;
     }

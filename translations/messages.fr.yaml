@@ -340,6 +340,9 @@ General: Général
 '%cast% is already in the series cast': '%cast% fait déjà partie de la distribution de la série'
 '%count% episodes have been removed from the series (%list%)': '%count% épisodes ont été supprimés de la série (%list%)'
 'An episode has been removed from the series (%id%)': 'Un épisode a été supprimé de la série (%id%)'
+'Episodes replaced by TMDB: %list%': 'Épisodes remplacés par TMDB : %list%'
+'New episode available: %list%': 'Nouvel épisode disponible : %list%'
+'%count% new episodes available: %list%': '%count% nouveaux épisodes disponibles : %list%'
 'Episode %number% has been updated': "L'épisode %number% a été mis à jour"
 
 1 episode seen: 1 épisode vu

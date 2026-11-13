@@ -340,6 +340,9 @@ General: General
 '%cast% is already in the series cast': '%cast% is already in the series cast'
 '%count% episodes have been removed from the series (%list%)': '%count% episodes have been removed from the series (%list%)'
 'An episode has been removed from the series (%id%)': 'An episode has been removed from the series (%id%)'
+'Episodes replaced by TMDB: %list%': 'Episodes replaced by TMDB: %list%'
+'New episode available: %list%': 'New episode available: %list%'
+'%count% new episodes available: %list%': '%count% new episodes available: %list%'
 'Episode %number% has been updated': 'Episode %number% has been updated'
 
 '1 episode seen': '1 episode seen'

@@ -340,6 +340,9 @@ General: 일반
 '%cast% is already in the series cast': '%cast%은(는) 이미 시리즈 출연진에 포함되어 있습니다'
 '%count% episodes have been removed from the series (%list%)': '시리즈에서 에피소드 %count%개가 삭제되었습니다 (%list%)'
 'An episode has been removed from the series (%id%)': '시리즈에서 에피소드가 삭제되었습니다 (%id%)'
+'Episodes replaced by TMDB: %list%': 'TMDB에서 교체된 에피소드: %list%'
+'New episode available: %list%': '새 에피소드 공개: %list%'
+'%count% new episodes available: %list%': '새 에피소드 %count%개 공개: %list%'
 'Episode %number% has been updated': '%number%화가 업데이트되었습니다'
 
 '1 episode seen': '1 에피소드 본'

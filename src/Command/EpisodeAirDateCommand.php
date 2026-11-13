@@ -102,13 +102,10 @@ class EpisodeAirDateCommand
             if ($force) {
                 $line .= ' 🔨 Force update';
             } else {
-                if ($userSeries->getProgress() == 100) {
-                    $line .= ' 👍🏻 Series already updated';
-                    $this->io->writeln($line);
-                    continue;
-                }
+                // Une série terminée ou annulée n'aura plus de nouveaux épisodes.
+                // Une série en cours entièrement vue (progress == 100) doit en revanche être vérifiée.
                 if ($series->getStatus() && in_array($series->getStatus(), $endedSeriesStatus)) {
-                    $line .= ' 🔒 Serie is finished';
+                    $line .= $userSeries->getProgress() == 100 ? ' 👍🏻 Series finished and watched' : ' 🔒 Serie is finished';
                     $this->io->writeln($line);
                     continue;
                 }
@@ -147,7 +144,7 @@ class EpisodeAirDateCommand
 
             $userEpisodes = $this->userEpisodeRepository->findBy(['userSeries' => $userSeries]);
             if (!in_array($series->getStatus(), $endedSeriesStatus)) {
-                $result = $this->adjustNextEpisodeToWatch($userSeries, $userEpisodes);
+                $result = $this->adjustNextEpisodeToWatch($userSeries);
                 if ($result) {
                     $notifications[] = $name . $result;
                 }
@@ -181,6 +178,8 @@ class EpisodeAirDateCommand
                     continue;
                 }
                 $seasonNewEpisodeCount = 0;
+                $seasonReplacedEpisodeCount = 0;
+                $tmdbEpisodeIds = array_column($episodes, 'id');
                 foreach ($episodes as $episode) {
                     $episodeId = $episode['id'];
                     $episodeNumber = $episode['episode_number'];
@@ -189,6 +188,20 @@ class EpisodeAirDateCommand
 
                     $userEpisode = array_find($userEpisodes, fn($userEpisode) => $userEpisode->getEpisodeId() == $episodeId);//$this->getUserEpisodeById($userEpisodes, $episodeId);
 
+                    if (!$userEpisode) {
+                        // Épisode recréé par TMDB avec un nouvel id : mise à jour de l'épisode existant (pas de doublon)
+                        $replacedUserEpisode = $this->userEpisodeRepository->findReplacedUserEpisode($userEpisodes, $seasonNumber, $episodeNumber, $tmdbEpisodeIds);
+                        if ($replacedUserEpisode) {
+                            $this->io->write(sprintf(' 🔁 S%02dE%02d replaced by TMDB (%d → %d)', $seasonNumber, $episodeNumber, $replacedUserEpisode->getEpisodeId(), $episodeId));
+                            $writeln = true;
+                            if (!$this->list) {
+                                // La date de diffusion est mise à jour (et notifiée) juste après
+                                $this->userEpisodeRepository->replaceEpisodeId($userSeries, $replacedUserEpisode->getEpisodeId(), $episodeId, $replacedUserEpisode->getAirDate());
+                                $seasonReplacedEpisodeCount++;
+                            }
+                            $userEpisode = $replacedUserEpisode;
+                        }
+                    }
                     if (!$userEpisode) {
                         $userEpisode = new UserEpisode($userSeries, $episodeId, $seasonNumber, $episodeNumber, null);
                         $userEpisode->setUserSeason($userSeason);
@@ -208,14 +221,21 @@ class EpisodeAirDateCommand
                     }
                     $episodeCount++;
                 }
+                if ($seasonReplacedEpisodeCount > 0 && $seasonNewEpisodeCount == 0) {
+                    $this->userEpisodeRepository->flush();
+                }
                 if ($seasonNewEpisodeCount > 0) {
                     $this->userEpisodeRepository->flush();
                     $this->io->writeln('🟡 🟡 ' . $seasonNewEpisodeCount . ' new episodes in season ' . $season['season_number']);
                     $writeln = true;
                 }
-                if (!$userSeries->getNextUserEpisode() && $newSeasonCount == 1 && $seasonNewEpisodeCount > 0) {
-                    $this->io->writeln('🟢 🟢 🟢 Next episode updated for user ' . $user->getUsername() . ' (' . $user->getId() . ')');
-                    $this->userEpisodeRepository->setNextUserEpisode($userSeries);
+            }
+            if ($seriesNewEpisodeCount > 0) {
+                // Nouveaux épisodes : si l'épisode suivant est nul ou spécial → premier épisode régulier non vu
+                $result = $this->adjustNextEpisodeToWatch($userSeries);
+                if ($result) {
+                    $notifications[] = $name . $result;
+                    $writeln = true;
                 }
             }
             if ($writeln) {
@@ -306,34 +326,16 @@ class EpisodeAirDateCommand
         return array_find($userEpisodes, fn($userEpisode) => $userEpisode->getSeasonNumber() && $userEpisode->getWatchedAt() === null);
     }
 
-    /**
-     * @param UserSeries $userSeries
-     * @param UserEpisode [] $userEpisodes
-     * @return string|null
-     */
-    private function adjustNextEpisodeToWatch(UserSeries $userSeries, array $userEpisodes): ?string
+    private function adjustNextEpisodeToWatch(UserSeries $userSeries): ?string
     {
-        if ($userSeries->getNextUserEpisode() === null) {
-            $userEpisodes = array_filter($userEpisodes, function ($ue) {
-                return $ue->getSeasonNumber() && $ue->getWatchedAt() === null/* && $ue->getPreviousOccurrence() === null*/;
-            });
-            usort($userEpisodes, function ($a, $b) {
-                if ($a->getSeasonNumber() == $b->getSeasonNumber()) {
-                    return $a->getEpisodeNumber() <=> $b->getEpisodeNumber();
-                }
-                return $a->getSeasonNumber() <=> $b->getSeasonNumber();
-            });
-            if (count($userEpisodes) > 0) {
-                $ep = $userEpisodes[0];
-                $userSeries->setNextUserEpisode($ep);
-                $this->userSeriesRepository->save($userSeries, true);
-                $userName = $userSeries->getUser()->getUsername();
-                $nextEpisodeString = sprintf(' - 🎉→ Next episode to watch for user %s: S%02dE%02d', $userName, $ep->getSeasonNumber(), $ep->getEpisodeNumber());
-                $this->io->write($nextEpisodeString);
-                return $nextEpisodeString;
-            }
+        $ep = $this->userEpisodeRepository->updateNextUserEpisodeIfNeeded($userSeries);
+        if (!$ep) {
+            return null;
         }
-        return null;
+        $userName = $userSeries->getUser()->getUsername();
+        $nextEpisodeString = sprintf(' - 🎉→ Next episode to watch for user %s: S%02dE%02d', $userName, $ep->getSeasonNumber(), $ep->getEpisodeNumber());
+        $this->io->write($nextEpisodeString);
+        return $nextEpisodeString;
     }
 
     public function commandStart(): void

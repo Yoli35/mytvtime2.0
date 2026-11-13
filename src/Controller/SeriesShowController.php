@@ -175,7 +175,7 @@ final class SeriesShowController extends AbstractController
 
         $userSeries = $this->userSeriesRepository->findOneBy(['user' => $user, 'series' => $series]);
         $userEpisodes = $this->userEpisodeRepository->findBy(['userSeries' => $userSeries, 'previousOccurrence' => null]);
-        $this->adjustNextEpisodeToWatch($userSeries, $userEpisodes);
+        $this->adjustNextEpisodeToWatch($userSeries);
 
         $this->seriesService->checkUserSeasons($userEpisodes);
 
@@ -252,14 +252,17 @@ final class SeriesShowController extends AbstractController
             |> (fn($x) => $this->checkForMissingFirstAirDate($series, $x));
         if ($this->reloadUserEpisodes) {
             $userEpisodes = $this->userEpisodeRepository->findBy(['userSeries' => $userSeries, 'previousOccurrence' => null]);
-            $this->addFlash('info', $this->translator->trans('Your episodes have been updated according to the series information.'));
+            $this->addAdminFlash('info', $this->translator->trans('Your episodes have been updated according to the series information.'));
             $this->reloadUserEpisodes = false;
         }
         if ($series->isNewSeason()) {
-            // Mettre à jour $userSeries→getNextUserEpisode() lorsqu'une nouvelle saison est disponible
-            $this->userEpisodeRepository->setNextUserEpisode($userSeries);
-            $this->addFlash('success', 'New season! Next episode updated');
+            // Nouvelle saison : recalcul forcé de l'épisode suivant (premier épisode régulier non vu)
+            $ep = $this->userEpisodeRepository->updateNextUserEpisodeIfNeeded($userSeries, true);
+            if ($ep) {
+                $this->addFlash('success', $this->translator->trans('Next episode to watch is %episode%', ['%episode%' => sprintf('S%02dE%02d', $ep->getSeasonNumber(), $ep->getEpisodeNumber())]));
+            }
             $series->setNewSeason(false);
+            $this->seriesRepository->save($series, true);
         }
 
         $schedules = $this->seriesSchedulesV2($userSeries, $tv);
@@ -336,7 +339,7 @@ final class SeriesShowController extends AbstractController
         $this->logger->info('showSeason', ['series' => $series->getId(), 'season' => $seasonNumber, 'slug' => $slug]);
 
         $userSeries = $this->userSeriesRepository->findOneBy(['user' => $user, 'series' => $series]);
-        $this->adjustNextEpisodeToWatch($userSeries, null);
+        $this->adjustNextEpisodeToWatch($userSeries);
 
         $season = json_decode($this->tmdbService->getTvSeason($series->getTmdbId(), $seasonNumber, $request->getLocale(), ['credits', 'watch/providers']), true);
         if (!$season) {
@@ -403,7 +406,7 @@ final class SeriesShowController extends AbstractController
 
         $tv = json_decode($this->tmdbService->getTv($series->getTmdbId(), 'en-US', ['external_ids']), true);
         if ($series->getNumberOfEpisode() != $tv['number_of_episodes'] || $series->getNumberOfSeason() != $tv['number_of_seasons']) {
-            $this->addFlash('info', 'The number of episodes has changed, the series has been updated.');
+            $this->addAdminFlash('info', 'The number of episodes has changed, the series has been updated.');
             if ($series->getNumberOfEpisode() != $tv['number_of_episodes'])
                 $series->setUpdates(['Number of episodes changed from ' . $series->getNumberOfEpisode() . ' to ' . $tv['number_of_episodes']]);
             if ($series->getNumberOfSeason() != $tv['number_of_seasons'])
@@ -616,11 +619,11 @@ final class SeriesShowController extends AbstractController
         if ($series->getNumberOfEpisode() != $episodeCount) {
             $series->setNumberOfEpisode($episodeCount);
             $this->seriesRepository->save($series, true);
-            $this->addFlash('success', 'Number of episode updated to ' . $episodeCount);
+            $this->addAdminFlash('success', 'Number of episode updated to ' . $episodeCount);
         }
 
         if ($episodeCount == 0 && $userSeries->getProgress() != 0) {
-            $this->addFlash('warning', 'Number of episodes is zero');
+            $this->addAdminFlash('warning', 'Number of episodes is zero');
             $userSeries->setProgress(0);
             $change = true;
         } else {
@@ -628,20 +631,20 @@ final class SeriesShowController extends AbstractController
                 $newProgress = round(100 * $userSeries->getViewedEpisodes() / $episodeCount, 2);
                 if ($newProgress != $userSeries->getProgress()) {
                     $userSeries->setProgress($newProgress);
-                    $this->addFlash('success', 'Progress updated to ' . $newProgress . '%');
+                    $this->addAdminFlash('success', 'Progress updated to ' . $newProgress . '%');
                     $change = true;
                 }
             }
             if ($userSeries->getProgress() != 100 && $episodeCount && $userSeries->getViewedEpisodes() === $episodeCount) {
                 $userSeries->setNextUserEpisode(null);
                 $userSeries->setProgress(100);
-                $this->addFlash('success', 'Progress fixed to 100%');
+                $this->addAdminFlash('success', 'Progress fixed to 100%');
                 $change = true;
             }
         }
         if ($userSeries->getViewedEpisodes() == 0 && $userSeries->getProgress() != 0) {
             $userSeries->setProgress(0);
-            $this->addFlash('warning', 'Progress reset to 0%');
+            $this->addAdminFlash('warning', 'Progress reset to 0%');
             $change = true;
         }
         if ($change) {
@@ -661,7 +664,7 @@ final class SeriesShowController extends AbstractController
                 return $ue->getSeasonNumber() == $seasonNumber;
             }), $season);
             $newEpisodeCount += $n;
-            $this->reloadUserEpisodes = $r;
+            $this->reloadUserEpisodes = $this->reloadUserEpisodes || $r;
         }
         if ($newEpisodeCount) {
             $series->addUpdate($newEpisodeCount . ' ' . $this->translator->trans('new episodes have been added to the series'));
@@ -732,17 +735,18 @@ final class SeriesShowController extends AbstractController
             $seasonEpisodes[] = $episode;
         }
 
-        $newCount = array_reduce($seasonEpisodes, function ($carry, $episode) {
-            return $carry + $episode['new'] ? 1 : 0;
-        }, 0);
+        $newEpisodeLabels = array_values(array_map(
+            fn($episode) => sprintf('S%02dE%02d', $episode['season_number'], $episode['episode_number']),
+            array_filter($seasonEpisodes, fn($episode) => $episode['new'] ?? false)
+        ));
 
-        if ($newCount) {
-            $this->addFlash('warning', $newCount . ' new episode' . ($newCount > 1 ? 's' : '') . ' added to your watchlist');
+        if (count($newEpisodeLabels)) {
+            $this->seriesService->announceNewEpisodes($newEpisodeLabels);
             $tv = json_decode($this->tmdbService->getTv($series->getTmdbId(), 'en-US'), true);
             $series->setNumberOfSeason($tv['number_of_seasons']);
             $series->setNumberOfEpisode($tv['number_of_episodes']);
             $this->seriesRepository->save($series, true);
-            $this->addFlash('success', sprintf("Series updated (%d season%s, %d episode%s)", $tv['number_of_seasons'], $tv['number_of_seasons'] > 1 ? 's' : '', $tv['number_of_episodes'], $tv['number_of_episodes'] > 1 ? 's' : ''));
+            $this->addAdminFlash('success', sprintf("Series updated (%d season%s, %d episode%s)", $tv['number_of_seasons'], $tv['number_of_seasons'] > 1 ? 's' : '', $tv['number_of_episodes'], $tv['number_of_episodes'] > 1 ? 's' : ''));
         }
         return [$seasonVotes, $seasonEpisodes, $userEpisodes];
     }
@@ -801,7 +805,7 @@ final class SeriesShowController extends AbstractController
     {
         $user = $userSeries->getUser();
         if ($episode['episode_number'] > $finaleEpisodeNumber) {
-            $this->addFlash('warning', "// Skip episode " . sprintf("S%02dE%02d", $seasonNumber, $episode['episode_number']) . " after a finale");
+            $this->addAdminFlash('warning', "// Skip episode " . sprintf("S%02dE%02d", $seasonNumber, $episode['episode_number']) . " after a finale");
             return [];
         }
         $episode['new'] = false;
@@ -811,7 +815,7 @@ final class SeriesShowController extends AbstractController
             $nue->setAirDate($episode['air_date'] ? $this->date($user, $episode['air_date']) : null);
             $userSeason = array_find($userSeries->getUserSeasons()->toArray(), fn($season) => $season->getSeasonNumber() === $seasonNumber);
             if ($userSeason) {
-                if ($user->getId() == 1) $this->addFlash("success", "Season manually added");
+                $this->addAdminFlash("success", "Season manually added");
                 $nue->setUserSeason($userSeason);
             }
             if ($episode['episode_number'] > 1) {
@@ -837,7 +841,7 @@ final class SeriesShowController extends AbstractController
                 $ue->setAirDate($airDate);
                 $this->userEpisodeRepository->save($ue, true);
                 $userEpisode['air_date'] = $airDate;
-                $this->addFlash('success',
+                $this->addAdminFlash('success',
                     $this->translator->trans('Episode air date updated')
                     . ' (' . sprintf('S%02dE%02d', $seasonNumber, $episode['episode_number'])
                     . ' → ' . $airDate->format('Y-m-d') . ')');
@@ -905,7 +909,7 @@ final class SeriesShowController extends AbstractController
                 $episode['name'] = $episodeUS['name'];
                 $substituteName = new EpisodeSubstituteName($episode['id'], $episodeUS['name']);
                 $this->episodeSubstituteNameRepository->save($substituteName, true);
-                $this->addFlash('success', 'Nom de l\'épisode en anglais ajouté');
+                $this->addAdminFlash('success', 'Nom de l\'épisode en anglais ajouté');
             }
         }
 
@@ -913,7 +917,7 @@ final class SeriesShowController extends AbstractController
             $episode['overview'] = $episodeUS['overview'];
             $localizedOverview = new EpisodeLocalizedOverview($episode['id'], $episode['overview'], 'en');
             $this->episodeLocalizedOverviewRepository->save($localizedOverview, true);
-            $this->addFlash('success', 'Résumé de l\'épisode en anglais ajouté');
+            $this->addAdminFlash('success', 'Résumé de l\'épisode en anglais ajouté');
         } else {
             $seasonUS = json_decode($this->tmdbService->getTvSeason($series->getTmdbId(), $episode['season_number'], 'en-US'), true);
             $episodeUS = array_find($seasonUS['episodes'], fn($ep) => $ep['episode_number'] === $episode['episode_number']);
@@ -921,7 +925,7 @@ final class SeriesShowController extends AbstractController
                 $episode['overview'] = $episodeUS['overview'];
                 $localizedOverview = new EpisodeLocalizedOverview($episode['id'], $episode['overview'], 'en');
                 $this->episodeLocalizedOverviewRepository->save($localizedOverview, true);
-                $this->addFlash('success', 'Résumé de l\'épisode en anglais ajouté (depuis la saison)');
+                $this->addAdminFlash('success', 'Résumé de l\'épisode en anglais ajouté (depuis la saison)');
             }
         }
         return $episode;
@@ -1442,28 +1446,22 @@ final class SeriesShowController extends AbstractController
         return [];
     }
 
-    private function adjustNextEpisodeToWatch(UserSeries $userSeries, ?array $userEpisodes): void
+    /**
+     * Message flash réservé aux administrateurs (informations techniques de synchronisation).
+     */
+    private function addAdminFlash(string $type, string $message): void
     {
-        if ($userSeries->getNextUserEpisode() === null) {
-            if (!$userEpisodes) {
-                $userEpisodes = $this->userEpisodeRepository->findBy(['userSeries' => $userSeries, 'watchedAt' => null, 'previousOccurrence' => null]);
-            } else {
-                $userEpisodes = array_filter($userEpisodes, function ($ue) {
-                    return $ue->getWatchedAt() === null && $ue->getSeasonNumber();
-                });
-                usort($userEpisodes, function ($a, $b) {
-                    if ($a->getSeasonNumber() == $b->getSeasonNumber()) {
-                        return $a->getEpisodeNumber() <=> $b->getEpisodeNumber();
-                    }
-                    return $a->getSeasonNumber() <=> $b->getSeasonNumber();
-                });
-            }
-            if (count($userEpisodes) > 0) {
-                $ep = $userEpisodes[0];
-                $userSeries->setNextUserEpisode($ep);
-                $this->userSeriesRepository->save($userSeries, true);
-                $this->addFlash('info', $this->translator->trans('Next episode to watch is %episode%', ['%episode%' => sprintf('S%02dE%02d', $ep->getSeasonNumber(), $ep->getEpisodeNumber())]));
-            }
+        if ($this->isGranted('ROLE_ADMIN')) {
+            $this->addFlash($type, $message);
+        }
+    }
+
+    private function adjustNextEpisodeToWatch(UserSeries $userSeries): void
+    {
+        // Épisode suivant nul ou spécial → premier épisode régulier non vu
+        $ep = $this->userEpisodeRepository->updateNextUserEpisodeIfNeeded($userSeries);
+        if ($ep) {
+            $this->addFlash('info', $this->translator->trans('Next episode to watch is %episode%', ['%episode%' => sprintf('S%02dE%02d', $ep->getSeasonNumber(), $ep->getEpisodeNumber())]));
         }
     }
 
@@ -1677,7 +1675,7 @@ final class SeriesShowController extends AbstractController
                     if ($episode['episode_type'] == 'finale') {
                         $count = count($s['episodes']);
                         if ($count > $episode['episode_number']) {
-                            $this->addFlash('warning', 'Finale episode number: ' . sprintf("S%02dE%02d", $s['season_number'], $episode['episode_number']) . ' - episode count: ' . $count);
+                            $this->addAdminFlash('warning', 'Finale episode number: ' . sprintf("S%02dE%02d", $s['season_number'], $episode['episode_number']) . ' - episode count: ' . $count);
                         }
                         break;
                     }
