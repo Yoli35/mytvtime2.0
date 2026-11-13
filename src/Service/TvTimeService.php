@@ -308,9 +308,15 @@ readonly class TvTimeService
         }, $this->userSeriesRepository->availableSeriesWatchLinks(array_unique($ids)));
     }
 
-    public function setTvTimeShowCast(int $tmdbId, int $seasonNumber): array
+    public function getTvTimeSeasonShowCast(int $tmdbId, int $seasonNumber): array
     {
         $credits = json_decode($this->tmdbService->getTvSeasonCredits($tmdbId, $seasonNumber, 'en-US'), true);
         return $credits['cast'];
+    }
+
+    public function getTvTimeEpisodeShowCast(int $tmdbId, int $seasonNumber, int $episodeNumber): array
+    {
+        $credits = json_decode($this->tmdbService->getTvEpisodeCredits($tmdbId, $seasonNumber, $episodeNumber, 'en-US'), true);
+        return array_merge($credits['cast'], $credits['guest_stars']);
     }
 }

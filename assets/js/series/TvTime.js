@@ -722,9 +722,10 @@ export class TvTime {
             castButton.addEventListener('click', (e) => {
                 e.preventDefault();
                 const id = castButton.dataset.id;
-                const season = castButton.dataset.season;
+                const seasonNumber = castButton.dataset.season;
+                const episodeNumber = castButton.dataset.episode;
                 const episodeId = div.dataset.id;
-                this.showCast(id, season, episodeId);
+                this.showCast(id, seasonNumber, episodeNumber, episodeId);
             });
             const yourVoteDiv = div.querySelector('.your-vote');
             const voteDiv = div.querySelector('.vote');
@@ -764,7 +765,7 @@ export class TvTime {
         });
     }
 
-    showCast(id, seasonNumber, episodeId) {
+    showCast(id, seasonNumber, episodeNumber, episodeId) {
         const tvTimeCastDiv = document.querySelector('.tv-time-cast');
         if (tvTimeCastDiv && tvTimeCastDiv.dataset.episodeId === episodeId) {
             self.dismissCast(episodeId);
@@ -778,6 +779,7 @@ export class TvTime {
             body: JSON.stringify({
                 tmdbId: id,
                 seasonNumber: seasonNumber,
+                episodeNumber: episodeNumber,
                 episodeId: episodeId
             })
         })

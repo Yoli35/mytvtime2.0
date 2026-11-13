@@ -154,8 +154,9 @@ readonly class ApiTvTime
         $inputBag = $request->getPayload();
         $tmdbId = $inputBag->getInt('tmdbId');
         $seasonNumber = $inputBag->getInt('seasonNumber');
+        $episodeNumber = $inputBag->getInt('episodeNumber');
         $episodeId = $inputBag->getInt('episodeId');
-        $cast = $this->tvTimeService->setTvTimeShowCast($tmdbId, $seasonNumber);
+        $cast = $this->tvTimeService->getTvTimeEpisodeShowCast($tmdbId, $seasonNumber, $episodeNumber);
 
         $slugger = new AsciiSlugger();
         $profileUrl = $this->imageConfiguration->getUrl('profile_sizes', 2);

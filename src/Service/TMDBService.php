@@ -139,6 +139,12 @@ readonly class TMDBService
         return $this->getResults($request);
     }
 
+    public function getTvEpisodeCredits(int $tvId, int $seasonNumber, int $episodeNumber, string $locale): string
+    {
+        $request = "https://api.themoviedb.org/3/tv/$tvId/season/$seasonNumber/episode/$episodeNumber/credits?language=$locale";
+        return $this->getResults($request);
+    }
+
     public function getTvKeywords(int $tvId): string
     {
         $request = "https://api.themoviedb.org/3/tv/$tvId/keywords";
