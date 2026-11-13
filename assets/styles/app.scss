@@ -2356,6 +2356,7 @@ section:has(.pages) {
         justify-content: center;
 
         .pages {
+            align-items: center;
             background-color: hsla(from var(--ardoise-60) h s l / .5);
             margin-block-start: unset;
             padding: .25rem;

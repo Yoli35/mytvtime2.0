@@ -1161,6 +1161,7 @@ body.screen-saver {
                     align-items: center;
                     display: flex;
                     gap: 1rem;
+                    position: relative;
 
                     span.year,
                     span.episode-runtime {
@@ -1173,9 +1174,12 @@ body.screen-saver {
                         background-color: var(--orange);
                         border-radius: 5rem;
                         display: flex;
+                        flex-shrink: 0;
                         height: 2rem;
                         justify-content: center;
-                        margin-inline-start: auto;
+                        position: absolute;
+                        right: -1.5rem;
+                        top: -1.5rem;
                         width: 2rem;
                     }
                 }
