@@ -34,10 +34,16 @@ export class MovieIndex {
         if (filterBoxDiv) {
             this.initFilter();
         }
-        const movieSearchDiv = document.querySelector('article:has(.movie-search)');
-        if (movieSearchDiv) {
-            console.log(movieSearchDiv);
+        const movieSearchArticle = document.querySelector('article:has(.movie-search)');
+        if (movieSearchArticle) {
+            console.log(movieSearchArticle);
             const movieSearchInput = document.getElementById('movie-search-2');
+
+            const offsetLeft = movieSearchInput.offsetLeft;
+            const movieSearchDiv = movieSearchInput.closest('.movie-search');
+            const searchResultDiv = movieSearchDiv.querySelector('.search-results');
+            searchResultDiv.style.left = offsetLeft + 'px';
+
             movieSearchInput.focus();
             movieSearchInput.addEventListener("input", this.menu.searchFetch);
             movieSearchInput.addEventListener("keydown", this.menu.searchMenuNavigate);

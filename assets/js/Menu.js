@@ -947,9 +947,10 @@ export class Menu {
             const searchBlockBoundingRect = seriesSearchBlockDiv.getBoundingClientRect();
             searchResultsDiv.style.left = -searchBlockBoundingRect.left + 'px';
             searchResultsDiv.style.width = viewportWidth + 'px';
-        } else {
-            searchResultsDiv.style.left = Math.min(0, viewportWidth - naturalRight) + 'px';
-            searchResultsDiv.style.width = 'auto';
+        }
+        if (currentLeft + currentWidth > viewportWidth) {
+            searchResultsDiv.style.left = (viewportWidth - currentWidth) + 'px';
+            searchResultsDiv.style.width = viewportWidth + 'px';
         }
     }
 
