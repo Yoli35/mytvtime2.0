@@ -80,6 +80,7 @@ class EpisodeAirDateCommand
         $newEpisodeCount = 0;
         $newSeriesDateCount = 0;
         $totalEpisodeUpdates = 0;
+        $tmdbCall = 0;
         $notifications = [];
 
         foreach ($allUserSeries as $userSeries) {
@@ -113,6 +114,7 @@ class EpisodeAirDateCommand
             $this->io->write($line);
 
             $tv = json_decode($this->tmdbService->getTv($series->getTmdbId(), $language, ['keywords']), true);
+            $tmdbCall++;
             if (key_exists('error', $tv)) {
                 $this->io->writeln(' 🚫📺 Error while fetching TV show: ' . $tv['message']);
                 continue;
@@ -165,6 +167,7 @@ class EpisodeAirDateCommand
                 }
                 $seasonNumber = $season['season_number'];
                 $tvSeason = json_decode($this->tmdbService->getTvSeason($series->getTmdbId(), $seasonNumber, $language), true);
+                $tmdbCall++;
                 if (key_exists('error', $tvSeason)) {
                     $response = json_decode($tvSeason['response'], true);
                     $this->io->write(' 🚫 - Season ' . $seasonNumber . ' not found. Message: ' . $response['status_message']);
@@ -277,6 +280,7 @@ class EpisodeAirDateCommand
         $this->io->writeln(sprintf('Episodes checked: %d', $episodeCount));
         $this->io->writeln(sprintf('New episodes: %d', $newEpisodeCount));
         $this->io->writeln(sprintf('Total episodes updated: %d', $totalEpisodeUpdates));
+        $this->io->writeln(sprintf('TMDB API calls: %d', $tmdbCall));
 
         $this->commandEnd();
 
@@ -285,8 +289,8 @@ class EpisodeAirDateCommand
 
     public function newNotification(string $type, UserSeries $userSeries, ?UserEpisode $userEpisode, ?SeriesLocalizedName $localizedName, ?DateTimeImmutable $airDate): string
     {
-        $seasonNumber = $userEpisode ? $userEpisode->getSeasonNumber() : 0;
-        $episodeNumber = $userEpisode ? $userEpisode->getEpisodeNumber() : 0;
+        $seasonNumber = $userEpisode?->getSeasonNumber();
+        $episodeNumber = $userEpisode?->getEpisodeNumber();
         $episodeId = $userEpisode ? $userEpisode->getEpisodeId() : 0;
 
         $series = $userSeries->getSeries();
@@ -296,7 +300,7 @@ class EpisodeAirDateCommand
         if ($localizedName) {
             $notification .= ' - ' . $localizedName->getName();
         }
-        if ($seasonNumber && $episodeNumber) {
+        if ($seasonNumber !== null && $episodeNumber !== null) {
             $notification .= sprintf(' - S%02dE%02d', $seasonNumber, $episodeNumber);
         }
         $notification .= ' - ' . ($airDate ? $airDate->format('d/m/Y') : 'Unknown');
