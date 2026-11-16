@@ -96,7 +96,7 @@ export class TvTime {
         };
 
         // Il n'existe pas d'événement unique "activité" : on écoute pointeur (souris, tactile, stylet), molette, clavier et défilement.
-        // "{capture: true}" pour attraper aussi les "scroll" des éléments internes (l'événement ne remonte pas)
+        // "{capture: true}" pour attraper aussi les "scroll" des éléments internes (l'événement ne remonte pas).
         ['pointermove', 'pointerdown', 'wheel', 'keydown', 'scroll'].forEach(type => {
             document.addEventListener(type, wake, {passive: true, capture: true});
         });
