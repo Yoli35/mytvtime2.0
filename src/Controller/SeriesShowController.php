@@ -689,14 +689,14 @@ final class SeriesShowController extends AbstractController
                 return $season['air_date'] ? $this->dateService->formatDateRelativeLong($season['air_date'], $timezone, $locale) : $this->translator->trans('No date yet');
             }
             $firstEpisode = $season['episodes'][0];
-            $airDate = $firstEpisode['air_date'];
+            $airDate = $firstEpisode['air_date'] ?? null;
             return $airDate ? $this->dateService->formatDateRelativeLong($airDate, $timezone, $locale) : $this->translator->trans('No date yet');
         }
         if (count($season['episodes']) < 1) {
             return $season['air_date'];
         }
         $firstEpisode = $season['episodes'][0];
-        return $firstEpisode['air_date'];
+        return $firstEpisode['air_date'] ?? null;
     }
 
     private function seasonEpisodes(array $season, UserSeries $userSeries, int $finaleEpisodeNumber, string $country): array
@@ -723,8 +723,6 @@ final class SeriesShowController extends AbstractController
             array_splice($season['episodes'], $finaleEpisodeNumber, $surplus);
         }
         foreach ($season['episodes'] as $episode) {
-
-//            $episode['substitute_name'] = $this->userEpisodeRepository->getSubstituteName($episode['id']);
             $episode['locale'] = $locale;
             $episode['language_query'] = $locale . '-' . $country;
             $episodeArr[] = $this->seasonEpisode($episode, $userSeries, $userEpisodes, $season['season_number'], $finaleEpisodeNumber, $language, $stills);
@@ -804,22 +802,23 @@ final class SeriesShowController extends AbstractController
     private function seasonEpisode(array $episode, UserSeries $userSeries, array $userEpisodes, int $seasonNumber, int $finaleEpisodeNumber, string $language, ?array $stills = null): array
     {
         $user = $userSeries->getUser();
+        $episodeNumber = $episode['episode_number'];
         if ($episode['episode_number'] > $finaleEpisodeNumber) {
-            $this->addAdminFlash('warning', "// Skip episode " . sprintf("S%02dE%02d", $seasonNumber, $episode['episode_number']) . " after a finale");
+            $this->addAdminFlash('warning', "// Skip episode " . sprintf("S%02dE%02d", $seasonNumber, $episodeNumber) . " after a finale");
             return [];
         }
         $episode['new'] = false;
-        $userEpisode = $this->getUserEpisode($userEpisodes, $episode['episode_number']);
+        $userEpisode = $this->getUserEpisode($userEpisodes, $episodeNumber);
         if (!$userEpisode) {
-            $nue = new UserEpisode($userSeries, $episode['id'], $seasonNumber, $episode['episode_number'], null);
+            $nue = new UserEpisode($userSeries, $episode['id'], $seasonNumber, $episodeNumber, null);
             $nue->setAirDate($episode['air_date'] ? $this->date($user, $episode['air_date']) : null);
             $userSeason = array_find($userSeries->getUserSeasons()->toArray(), fn($season) => $season->getSeasonNumber() === $seasonNumber);
             if ($userSeason) {
                 $this->addAdminFlash("success", "Season manually added");
                 $nue->setUserSeason($userSeason);
             }
-            if ($episode['episode_number'] > 1) {
-                $previousEpisode = $this->getUserEpisode($userEpisodes, $episode['episode_number'] - 1);
+            if ($episodeNumber > 1) {
+                $previousEpisode = array_find($userEpisodes, fn($ep) => $ep['episode_number'] === $episodeNumber - 1);
                 if ($previousEpisode) {
                     $nue->setProviderId($previousEpisode['provider_id']);
                     $nue->setDeviceId($previousEpisode['device_id']);
@@ -829,10 +828,9 @@ final class SeriesShowController extends AbstractController
             $userEpisode = $this->userEpisodeRepository->getUserEpisodeDB($nue->getId(), $episode['locale']);
             $episode['new'] = true;
         }
-        $series = $userSeries->getSeries();
-        $next_episode_to_air = $series->getNextEpisodeAirDate();
-        if (!$userEpisode['custom_date'] && !$next_episode_to_air && !$episode['air_date']) {
-            return [];
+        // Les vieilles séries ajoutées et marquées comme vues en block peuvent avoir des épisodes sans date de sortie
+        if (!$episode['air_date'] && $userEpisode['watched_at']) {
+            $episode['air_date'] = $userEpisode['watched_at'];
         }
         if (!$userEpisode['air_date'] && $episode['air_date']) {
             $ue = $this->userEpisodeRepository->findOneBy(['userSeries' => $userSeries, 'episodeId' => $episode['id']]);
@@ -843,22 +841,19 @@ final class SeriesShowController extends AbstractController
                 $userEpisode['air_date'] = $airDate;
                 $this->addAdminFlash('success',
                     $this->translator->trans('Episode air date updated')
-                    . ' (' . sprintf('S%02dE%02d', $seasonNumber, $episode['episode_number'])
+                    . ' (' . sprintf('S%02dE%02d', $seasonNumber, $episodeNumber)
                     . ' → ' . $airDate->format('Y-m-d') . ')');
             }
         }
 
-        $userEpisodeList = $this->getUserEpisodes($userEpisodes, $episode['episode_number']);
-
+        $userEpisodeList = $this->getUserEpisodes($userEpisodes, $episodeNumber);
+        $series = $userSeries->getSeries();
         $stillUrl = $this->imageConfiguration->getUrl('still_sizes', 3);
 
         if ($episode['still_path'] == null && $language != 'en-US') {
-            $episodeUS = json_decode($this->tmdbService->getTvEpisode($series->getTmdbId(), $seasonNumber, $episode['episode_number'], 'en-US', ['credits', 'watch/providers']), true);
+            $episodeUS = json_decode($this->tmdbService->getTvEpisode($series->getTmdbId(), $seasonNumber, $episodeNumber, 'en-US', ['credits', 'watch/providers']), true);
             $episode['still_path'] = $episodeUS['still_path'];
         }
-        /*if ($episode['still_path'] == null && $season['episodes'][$episode['episode_number'] - 1]['still_path'] != null) {
-            $episode['still_path'] = $season['episodes'][$episode['episode_number'] - 1]['still_path'];
-        }*/
 
         $episode['still_path'] = $episode['still_path'] ? $stillUrl . $episode['still_path'] : null; // w300
         if ($stills) {
@@ -898,9 +893,8 @@ final class SeriesShowController extends AbstractController
             return $episode;
         }
 
-        $noFRName = $language === 'fr-FR' && $episode['name'] && str_starts_with($episode['name'], 'Épisode ')/* && !$userEpisode['substitute_name']*/
-        ;
-        $episodeUS = json_decode($this->tmdbService->getTvEpisode($series->getTmdbId(), $episode['season_number'], $episode['episode_number'], 'en-US'), true);
+        $noFRName = $language === 'fr-FR' && $episode['name'] && str_starts_with($episode['name'], 'Épisode ');
+        $episodeUS = json_decode($this->tmdbService->getTvEpisode($series->getTmdbId(), $seasonNumber, $episodeNumber, 'en-US'), true);
         if ($noFRName) {
             $substituteName = $this->episodeSubstituteNameRepository->findOneBy(['episodeId' => $episode['id']]);
             if ($substituteName) {
@@ -919,8 +913,8 @@ final class SeriesShowController extends AbstractController
             $this->episodeLocalizedOverviewRepository->save($localizedOverview, true);
             $this->addAdminFlash('success', 'Résumé de l\'épisode en anglais ajouté');
         } else {
-            $seasonUS = json_decode($this->tmdbService->getTvSeason($series->getTmdbId(), $episode['season_number'], 'en-US'), true);
-            $episodeUS = array_find($seasonUS['episodes'], fn($ep) => $ep['episode_number'] === $episode['episode_number']);
+            $seasonUS = json_decode($this->tmdbService->getTvSeason($series->getTmdbId(), $seasonNumber, 'en-US'), true);
+            $episodeUS = array_find($seasonUS['episodes'], fn($ep) => $ep['episode_number'] === $episodeNumber);
             if (strlen($episodeUS['overview'] ?? '')) {
                 $episode['overview'] = $episodeUS['overview'];
                 $localizedOverview = new EpisodeLocalizedOverview($episode['id'], $episode['overview'], 'en');
@@ -954,26 +948,24 @@ final class SeriesShowController extends AbstractController
     private function getUserEpisode(array $userEpisodes, int $episodeNumber): ?array
     {
         $logoUrl = $this->imageConfiguration->getUrl('logo_sizes', 2);
-        foreach ($userEpisodes as $userEpisode) {
-            if ($userEpisode['episode_number'] == $episodeNumber) {
-                $userEpisode['provider_logo_path'] = $this->providerService->getProviderLogoFullPath($userEpisode['provider_logo_path'], $logoUrl);
-                if ($userEpisode['custom_date']) {
-                    $cd = $this->dateService->newDateImmutable($userEpisode['custom_date'], 'Europe/Paris');
-                    $userEpisode['custom_date'] = $cd->format('Y-m-d H:i O');
-                }
-                if ($userEpisode['air_at']) {
-                    // 10:00:00 → 10:00
-                    $userEpisode['air_at'] = $this->dateService->newDateImmutable($userEpisode['air_at'], 'Europe/Paris');
-                    $userEpisode['air_at'] = $userEpisode['air_at']->format('H:i');
-                }
-                $userEpisode['watched_at_db'] = $userEpisode['watched_at'];
-                /*if ($userEpisode['watched_at']) {
-                    $ue['watched_at'] = $this->dateService->newDateImmutable($userEpisode['watched_at'], 'UTC');
-                }*/
-                return $userEpisode;
-            }
+        $userEpisode = array_find($userEpisodes, fn($ep) => $ep['episode_number'] === $episodeNumber);
+        if (!$userEpisode) {
+            return null;
         }
-        return null;
+
+        $userEpisode['provider_logo_path'] = $this->providerService->getProviderLogoFullPath($userEpisode['provider_logo_path'], $logoUrl);
+        if ($userEpisode['custom_date']) {
+            $cd = $this->dateService->newDateImmutable($userEpisode['custom_date'], 'Europe/Paris');
+            $userEpisode['custom_date'] = $cd->format('Y-m-d H:i O');
+        }
+        if ($userEpisode['air_at']) {
+            // 10:00:00 → 10:00
+            $userEpisode['air_at'] = $this->dateService->newDateImmutable($userEpisode['air_at'], 'Europe/Paris');
+            $userEpisode['air_at'] = $userEpisode['air_at']->format('H:i');
+        }
+        $userEpisode['watched_at_db'] = $userEpisode['watched_at'];
+
+        return $userEpisode;
     }
 
     private function episodeGuestStars(array $episode, AsciiSlugger $slugger, Series $series, string $profileUrl, array $peopleUserPreferredNames): array
@@ -1069,8 +1061,8 @@ final class SeriesShowController extends AbstractController
         }
         $now = $this->now($user);
         $nowString = $now->format('Y-m-d H:i');
-
         $quickLinks = array_map(function ($link) use ($nowString) {
+            if (!key_exists('air_date', $link)) $link['air_date'] = null;
             if (!$link['air_date']) {
                 $class = "quick-link future";
                 $future = true;
