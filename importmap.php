@@ -31,6 +31,7 @@ return [
     'AdminMovieEdit' => ['path' => './assets/js/admin/AdminMovieEdit.js'],
     'AdminPointsOfInterest' => ['path' => './assets/js/admin/AdminPointsOfInterest.js'],
     'AdminSeriesUpdates' => ['path' => './assets/js/admin/AdminSeriesUpdates.js'],
+    'AdminEpisodesCheck' => ['path' => './assets/js/admin/AdminEpisodesCheck.js'],
     'AdminTools' => ['path' => './assets/js/admin/AdminTools.js'],
     'AlbumShow' => ['path' => './assets/js/album/AlbumShow.js'],
     'Application' => ['path' => './assets/js/Application.js'],

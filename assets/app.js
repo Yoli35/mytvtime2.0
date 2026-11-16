@@ -1,6 +1,7 @@
 import './bootstrap.js';
 
 import {AdminApi} from "AdminApi";
+import {AdminEpisodesCheck} from "AdminEpisodesCheck";
 import {AdminKeyword} from "AdminKeyword";
 import {AdminMessages} from "AdminMessages";
 import {AdminMovieEdit} from "AdminMovieEdit";
@@ -57,6 +58,10 @@ window.addEventListener("DOMContentLoaded", () => {
     // Admin page
     const admin = document.querySelector(".admin");
     if (admin) {
+        if (admin.querySelector(".admin__episodes__check")) {
+            new AdminEpisodesCheck();
+            return;
+        }
         if (admin.querySelector(".admin__tools")) {
             new AdminTools(toolTips);
             return;

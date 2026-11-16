@@ -1219,6 +1219,156 @@
             }
         }
 
+        &.admin__episodes__check {
+            .episodes-check-help {
+                margin-block: 1rem;
+                opacity: .8;
+            }
+
+            .form-row {
+                align-items: center;
+                flex-wrap: wrap;
+                gap: 1rem;
+                margin-block-end: 1rem;
+            }
+
+            .admin__label.apply {
+                color: var(--orange-50);
+            }
+
+            form.apply .admin__button[value="check"] {
+                background-color: var(--red-50);
+            }
+
+            .episodes-check-progress {
+                font-variant-numeric: tabular-nums;
+                opacity: .8;
+                text-align: center;
+                width: 100%;
+            }
+
+            .episodes-check-progress-bar {
+                border-radius: 5rem;
+                border: 2px solid var(--orange);
+                height: .75rem;
+                width: 100%;
+
+                .episodes-check-progress-bar-fill {
+                    background-color: var(--orange);
+                    border-radius: 5rem;
+                    height: .5rem;
+                    /*transition: width .25s linear;*/
+                    width: 0;
+                }
+            }
+
+            &:has(.episodes-check-progress:empty) {
+                .episodes-check-progress-bar {
+                    display: none;
+
+                    .episodes-check-progress-bar-fill {
+                        width: 0;
+                    }
+                }
+            }
+
+            .form-results.episodes-check-results {
+                display: flex;
+                flex-direction: column;
+                gap: .5rem;
+                max-height: 60dvh;
+                overflow-y: auto;
+
+                &:empty {
+                    display: none;
+                }
+
+                &.watched-missing-only .item:not(.has-watched-missing, .summary) {
+                    display: none;
+                }
+
+                .item {
+                    background-color: hsla(from var(--orange-30) h s l / .5);
+                    border-inline-start: .5rem solid var(--ardoise-50);
+                    border-radius: .5rem;
+                    padding: .5rem 1rem;
+
+                    &.status-ok {
+                        border-color: var(--green-50);
+                    }
+
+                    &.status-issues {
+                        border-color: var(--orange);
+                    }
+
+                    &.status-fixed {
+                        border-color: var(--green-50);
+                    }
+
+                    &.status-error {
+                        border-color: var(--red-50);
+                    }
+
+                    &.summary {
+                        font-weight: bold;
+                    }
+
+                    // Épisodes vus qui n'existent plus chez TMDB : à vérifier à la main
+                    &.has-watched-missing {
+                        border-color: var(--purple-50);
+                    }
+
+                    .watched-missing-badge {
+                        background-color: var(--purple-50);
+                        border-radius: 5rem;
+                        color: white;
+                        font-size: .875rem;
+                        font-weight: bold;
+                        padding: .125rem .75rem;
+                    }
+
+                    li.watched-missing {
+                        background-color: hsla(from var(--purple-50) h s l / .25);
+                        border-radius: .25rem;
+                        font-weight: bold;
+                        padding-inline: .25rem;
+                    }
+
+                    .item-header {
+                        align-items: baseline;
+                        display: flex;
+                        flex-wrap: wrap;
+                        gap: 1rem;
+
+                        .name {
+                            font-weight: bold;
+                        }
+
+                        .ids {
+                            font-size: .875rem;
+                            opacity: .7;
+                        }
+
+                        .status {
+                            font-weight: bold;
+                            margin-inline-start: auto;
+                            text-transform: uppercase;
+                        }
+                    }
+
+                    ul {
+                        list-style: none;
+                        margin: .25rem 0 0;
+                        padding: 0;
+
+                        li.level-info {
+                            opacity: .7;
+                        }
+                    }
+                }
+            }
+        }
+
         .admin__series__tool {
             align-items: center;
             background-color: hsla(from var(--orange-40) h s l / .5);

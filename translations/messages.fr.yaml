@@ -1894,3 +1894,25 @@ logo: logo
 'Done': 'Terminé'
 'File too large': 'Fichier trop volumineux'
 'Upload failed': "Échec de l'envoi"
+# Admin : vérification des épisodes
+'Episode check': 'Vérification des épisodes'
+'Check user episodes against TMDB': 'Vérifier les épisodes des utilisateurs avec TMDB'
+'Missing episodes, gaps in numbering, duplicates and wrong TMDB ids. Without "Apply changes", nothing is modified.': 'Épisodes manquants, trous dans la numérotation, doublons et ids TMDB erronés. Sans « Appliquer les modifications », rien n''est modifié.'
+'Series ID': 'ID de la série'
+'User ID': 'ID de l''utilisateur'
+'User series ID': 'ID de la série de l''utilisateur'
+'Deep check (every season, one TMDB request per season)': 'Vérification complète (toutes les saisons, une requête TMDB par saison)'
+'Only show series with issues': 'N''afficher que les séries avec des anomalies'
+'Stop': 'Arrêter'
+'Added during': 'Ajoutées depuis'
+'Any time': 'Toujours'
+'1 day': '1 jour'
+'1 week': '1 semaine'
+'1 month': '1 mois'
+'3 months': '3 mois'
+'6 months': '6 mois'
+'1 year': '1 an'
+'Up to': "Jusqu'au"
+'Offset': 'Décalage'
+'Next batch': 'Lot suivant'
+'Only show watched episodes no longer on TMDB': "N'afficher que les épisodes vus absents de TMDB"

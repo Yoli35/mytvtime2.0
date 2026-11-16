@@ -17,6 +17,7 @@ use App\Repository\PointOfInterestRepository;
 use App\Repository\SeriesRepository;
 use App\Repository\SettingsRepository;
 use App\Repository\UserRepository;
+use App\Repository\UserSeriesRepository;
 use App\Repository\VideoCategoryRepository;
 use App\Repository\VideoRepository;
 use App\Repository\WatchProviderRepository;
@@ -28,6 +29,7 @@ use App\Service\KeywordService;
 use App\Service\ProviderService;
 use App\Service\SeriesService;
 use App\Service\TMDBService;
+use App\Service\UserEpisodeCheckService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -66,7 +68,9 @@ class AdminController extends AbstractController
         private readonly SettingsRepository             $settingsRepository,
         private readonly TMDBService                    $tmdbService,
         private readonly TranslatorInterface            $translator,
+        private readonly UserEpisodeCheckService        $userEpisodeCheckService,
         private readonly UserRepository                 $userRepository,
+        private readonly UserSeriesRepository           $userSeriesRepository,
         private readonly VideoCategoryRepository        $categoryRepository,
         private readonly YoutubeController              $youtubeController,
         private readonly VideoRepository                $videoRepository,
@@ -741,6 +745,66 @@ class AdminController extends AbstractController
                     'high' => $this->imageConfiguration->getUrl('backdrop_sizes', 2),
                 ],
             ],
+        ]);
+    }
+
+    #[Route('/episodes/check', name: 'episodes_check')]
+    public function adminEpisodesCheck(#[CurrentUser] User $user): Response
+    {
+        return $this->render('admin/index.html.twig', [
+            'currentUserId' => $user->getId(),
+        ]);
+    }
+
+    /**
+     * Liste des séries d'utilisateurs à vérifier (filtrée par série / utilisateur / série d'utilisateur / période d'ajout),
+     * éventuellement limitée à un lot (offset / limit). "total" : nombre de séries correspondant aux filtres, hors lot.
+     */
+    #[Route('/episodes/check/list', name: 'episodes_check_list', methods: ['POST'])]
+    public function adminEpisodesCheckList(Request $request): JsonResponse
+    {
+        $data = $request->getPayload();
+        $filters = [
+            'userSeriesId' => $data->getInt('userSeriesId') ?: null,
+            'seriesId' => $data->getInt('seriesId') ?: null,
+            'userId' => $data->getInt('userId') ?: null,
+            'period' => $data->getString('period') ?: null,
+            'date' => $data->getString('date') ?: null,
+        ];
+        $offset = max(0, $data->getInt('offset'));
+        $limit = $data->getInt('limit') ?: null;
+
+        try {
+            $total = $this->userEpisodeCheckService->countUserSeries($filters);
+            $list = $this->userEpisodeCheckService->getUserSeriesList($filters, $offset, $limit);
+        } catch (\InvalidArgumentException $e) {
+            return $this->json(['status' => 'error', 'message' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
+        }
+
+        return $this->json([
+            'status' => 'success',
+            'total' => $total,
+            'offset' => $offset,
+            'list' => $list,
+        ]);
+    }
+
+    /**
+     * Vérifie (et corrige si "apply") une série d'utilisateur : appelé en boucle par le JS, une série par requête.
+     */
+    #[Route('/episodes/check/run', name: 'episodes_check_run', methods: ['POST'])]
+    public function adminEpisodesCheckRun(Request $request): JsonResponse
+    {
+        $data = $request->getPayload();
+        $userSeries = $this->userSeriesRepository->find($data->getInt('id'));
+        if (!$userSeries) {
+            return $this->json(['status' => 'error', 'message' => 'User series not found'], Response::HTTP_NOT_FOUND);
+        }
+        $result = $this->userEpisodeCheckService->checkUserSeries($userSeries, $data->getBoolean('apply'), $data->getBoolean('deep'));
+
+        return $this->json([
+            'status' => 'success',
+            'result' => $result,
         ]);
     }
 

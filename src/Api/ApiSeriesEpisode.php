@@ -126,9 +126,9 @@ readonly class ApiSeriesEpisode
 
         if ($new) {
             $userEpisode->setAirDate($airDate);
-            $lastViewedUserEpisode = $userEpisodes[count($userEpisodes) - 1];
-            $userEpisode->setProviderId($lastViewedUserEpisode->getProviderId());
-            $userEpisode->setDeviceId($lastViewedUserEpisode->getDeviceId());
+            $lastViewedUserEpisode = array_last($userEpisodes); // $userEpisodes[count($userEpisodes) - 1];
+            $userEpisode->setProviderId($lastViewedUserEpisode?->getProviderId());
+            $userEpisode->setDeviceId($lastViewedUserEpisode?->getDeviceId());
         } else {
             if ($airDate) {
                 $diff = $now->diff($airDate);
@@ -147,8 +147,9 @@ readonly class ApiSeriesEpisode
 
             if ($episodeNumber > 1) {
                 $previousUserEpisode = $this->userEpisodeRepository->findOneBy(['userSeries' => $userSeries, 'seasonNumber' => $seasonNumber, 'episodeNumber' => $episodeNumber - 1]);
-                $userEpisode->setProviderId($previousUserEpisode->getProviderId());
-                $userEpisode->setDeviceId($previousUserEpisode->getDeviceId());
+                dump($previousUserEpisode, $userSeries, $seasonNumber, $episodeNumber);
+                $userEpisode->setProviderId($previousUserEpisode?->getProviderId());
+                $userEpisode->setDeviceId($previousUserEpisode?->getDeviceId());
             } else {
                 if ($seasonNumber > 1) {
                     $previousUserEpisode = $this->userEpisodeRepository->findOneBy(['userSeries' => $userSeries, 'seasonNumber' => $seasonNumber - 1], ['episodeNumber' => 'DESC']);

@@ -1,0 +1,93 @@
+<div class="admin__tools admin__episodes__check">
+    <div class="tools">
+        <h1>{{ ux_icon('mdi:playlist-check') }} {{ 'Episode check'|trans }}</h1>
+
+        <div class="tool">
+            <h2>{{ ux_icon('mdi:magnify') }} {{ 'Check user episodes against TMDB'|trans }}</h2>
+            <p class="episodes-check-help">
+                {{ 'Missing episodes, gaps in numbering, duplicates and wrong TMDB ids. Without "Apply changes", nothing is modified.'|trans }}
+            </p>
+            <form id="episodes-check" class="form" data-list-url="{{ path('admin_episodes_check_list') }}" data-run-url="{{ path('admin_episodes_check_run') }}">
+                <div class="form-row">
+                    <div class="form-field">
+                        <label for="episodes-check-series-id">{{ 'Series ID'|trans }}
+                            <input type="number" min="1" id="episodes-check-series-id" name="seriesId">
+                        </label>
+                    </div>
+                    <div class="form-field">
+                        <label for="episodes-check-user-id">{{ 'User ID'|trans }}
+                            <input type="number" min="1" id="episodes-check-user-id" name="userId" value="{{ currentUserId }}">
+                        </label>
+                    </div>
+                    <div class="form-field">
+                        <label for="episodes-check-user-series-id">{{ 'User series ID'|trans }}
+                            <input type="number" min="1" id="episodes-check-user-series-id" name="userSeriesId">
+                        </label>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-field">
+                        <label for="episodes-check-period">{{ 'Added during'|trans }}
+                            <select id="episodes-check-period" name="period">
+                                <option value="">{{ 'Any time'|trans }}</option>
+                                <option value="1 day">{{ '1 day'|trans }}</option>
+                                <option value="1 week">{{ '1 week'|trans }}</option>
+                                <option value="1 month">{{ '1 month'|trans }}</option>
+                                <option value="3 months">{{ '3 months'|trans }}</option>
+                                <option value="6 months">{{ '6 months'|trans }}</option>
+                                <option value="1 year">{{ '1 year'|trans }}</option>
+                            </select>
+                        </label>
+                    </div>
+                    <div class="form-field">
+                        <label for="episodes-check-date">{{ 'Up to'|trans }}
+                            <input type="date" id="episodes-check-date" name="date" value="{{ 'now'|date('Y-m-d') }}" disabled>
+                        </label>
+                    </div>
+                    <div class="form-field">
+                        <label for="episodes-check-offset">{{ 'Offset'|trans }}
+                            <input type="number" min="0" id="episodes-check-offset" name="offset" value="0">
+                        </label>
+                    </div>
+                    <div class="form-field">
+                        <label for="episodes-check-limit">{{ 'Limit'|trans }}
+                            <input type="number" min="1" id="episodes-check-limit" name="limit" placeholder="{{ 'All'|trans }}">
+                        </label>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <label class="admin__label">
+                        <input type="checkbox" switch name="deep">
+                        <span>{{ 'Deep check (every season, one TMDB request per season)'|trans }}</span>
+                    </label>
+                    <label class="admin__label">
+                        <input type="checkbox" switch name="issuesOnly" checked>
+                        <span>{{ 'Only show series with issues'|trans }}</span>
+                    </label>
+                    <label class="admin__label watched-missing">
+                        <input type="checkbox" switch name="watchedMissingOnly">
+                        <span>{{ 'Only show watched episodes no longer on TMDB'|trans }}</span>
+                    </label>
+                    <label class="admin__label apply">
+                        <input type="checkbox" switch name="apply">
+                        <span>{{ 'Apply changes'|trans }}</span>
+                    </label>
+                </div>
+                <div class="form-row">
+                    <button type="submit" class="admin__button" value="check">{{ 'Check'|trans }}</button>
+                    <button type="button" class="admin__button" value="stop" disabled>{{ 'Stop'|trans }}</button>
+                    <button type="button" class="admin__button" value="next" disabled>{{ 'Next batch'|trans }}</button>
+                </div>
+                <div class="form-row">
+                    <div class="episodes-check-progress"></div>
+                </div>
+                <div class="form-row">
+                    <div class="episodes-check-progress-bar">
+                        <div class="episodes-check-progress-bar-fill"></div>
+                    </div>
+                </div>
+                <div class="form-results episodes-check-results"></div>
+            </form>
+        </div>
+    </div>
+</div>

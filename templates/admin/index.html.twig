@@ -65,6 +65,12 @@
                             </div>
                         </a>
                     {% endif %}
+                    <a href="{{ path('admin_episodes_check') }}"{% if route starts with 'admin_episodes_check' %} class="active"{% endif %}>
+                        <div>{{ ux_icon('mdi:playlist-check', {height: "18px", width: "18px"}) }}</div>
+                        <div class="large">
+                            {{ 'Episode check'|trans }}
+                        </div>
+                    </a>
                     {% if movieLink is defined %}
                         <a href="{{ movieLink|raw }}"{% if route starts with 'admin_movie' %} class="active"{% endif %}>
                             <div>{{ ux_icon('mdi:filmstrip-box', {height: "18px", width: "18px"}) }}</div>
@@ -202,6 +208,9 @@
                 {% endif %}
                 {% if route == 'admin_series_search_by_name' %}
                     {% include('_blocks/admin/_series_list.html.twig') %}
+                {% endif %}
+                {% if route == 'admin_episodes_check' %}
+                    {% include('_blocks/admin/_episodes_check.html.twig') %}
                 {% endif %}
                 {% if route == 'admin_movies' %}
                     {% include('_blocks/admin/_movies.html.twig') %}
