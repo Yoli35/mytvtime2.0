@@ -147,7 +147,6 @@ readonly class ApiSeriesEpisode
 
             if ($episodeNumber > 1) {
                 $previousUserEpisode = $this->userEpisodeRepository->findOneBy(['userSeries' => $userSeries, 'seasonNumber' => $seasonNumber, 'episodeNumber' => $episodeNumber - 1]);
-                dump($previousUserEpisode, $userSeries, $seasonNumber, $episodeNumber);
                 $userEpisode->setProviderId($previousUserEpisode?->getProviderId());
                 $userEpisode->setDeviceId($previousUserEpisode?->getDeviceId());
             } else {
