@@ -8,7 +8,12 @@
         <div class="login">
             <form action="{{ path('app_login') }}" method="post">
                 {% if error %}
-                    <div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
+                    <div class="alert alert-danger">
+                        {{ error.messageKey|trans(error.messageData, 'security') }}
+                        {% if app.session.get('unverified_user_id') %}
+                            <button type="submit" class="resend-verification" form="resend-verification-form">{{ 'Resend the verification email'|trans }}</button>
+                        {% endif %}
+                    </div>
                 {% endif %}
 
                 <div class="header">{{ 'Connect'|trans }}</div>
@@ -33,6 +38,12 @@
                     <button type="submit">{{ 'Sign in'|trans }}</button>
                 </div>
             </form>
+            {% if error and app.session.get('unverified_user_id') %}
+                {# Outside the login form (no nested forms), targeted by the button above #}
+                <form id="resend-verification-form" action="{{ path('app_verify_resend') }}" method="post">
+                    <input type="hidden" name="_token" value="{{ csrf_token('verify_resend') }}">
+                </form>
+            {% endif %}
         </div>
     </div>
     {% include('_blocks/_footer.html.twig') %}

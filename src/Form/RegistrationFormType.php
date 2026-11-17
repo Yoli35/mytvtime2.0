@@ -8,6 +8,7 @@ use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\CountryType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\LanguageType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
@@ -15,10 +16,10 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\TimezoneType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Validator\Constraints\IdenticalTo;
 use Symfony\Component\Validator\Constraints\IsTrue;
 use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\NotBlank;
+use Symfony\Component\Validator\Constraints\Regex;
 
 class RegistrationFormType extends AbstractType
 {
@@ -37,34 +38,30 @@ class RegistrationFormType extends AbstractType
             ->add('agreeTerms', CheckboxType::class, [
                 'label' => 'I agree to the terms and conditions',
                 'mapped' => false,
-                /*'constraints' => [
-                    new IsTrue([
-                        'message' => 'You should agree to our terms.',
-                    ]),
-                ],*/
+                'constraints' => [
+                    new IsTrue(message: 'You should agree to our terms.'),
+                ],
             ])
             ->add('plainPassword', PasswordType::class, [
                 'mapped' => false,
                 'attr' => ['placeholder' => 'Password'],
-                /*'constraints' => [
-                    new NotBlank([
-                        'message' => 'Please enter a password',
-                    ]),
-                    new Length([
-                        'min' => 6,
-                        'minMessage' => 'Your password should be at least {{ limit }} characters',
-                        'max' => 4096,
-                    ]),
-                ],*/
+                'constraints' => [
+                    new NotBlank(message: 'Please enter a password'),
+                    new Length(
+                        min: 12,
+                        max: 4096,
+                        minMessage: 'Your password should be at least {{ limit }} characters',
+                    ),
+                    new Regex(
+                        pattern: '/^(?=.*[A-Za-z])(?=.*\\d).+$/',
+                        message: 'Your password must contain at least one letter and one digit',
+                    ),
+                ],
             ])
             ->add('confirmPassword', PasswordType::class, [
                 'mapped' => false,
                 'attr' => ['placeholder' => 'Re-type your password'],
-                'constraints' => [
-//                    new IdenticalTo([
-//                        'propertyPath' => 'plainPassword',
-//                    ])
-                ],
+                // The match with plainPassword is checked in RegistrationController
                 'label' => 'Confirm Password',
             ])
             ->add('country', CountryType::class, [
@@ -87,6 +84,15 @@ class RegistrationFormType extends AbstractType
                 'label' => 'Timezone',
                 'preferred_choices' => ['Europe/Paris', 'Europe/Berlin', 'Europe/London', 'Europe/Madrid', 'America/New_York'],
                 'required' => false,
+            ])
+            // Anti-bot: honeypot field, hidden from humans (must stay empty)
+            ->add('website', TextType::class, [
+                'mapped' => false,
+                'required' => false,
+            ])
+            // Anti-bot: signed timestamp of the form display
+            ->add('startedAt', HiddenType::class, [
+                'mapped' => false,
             ]);
     }
 

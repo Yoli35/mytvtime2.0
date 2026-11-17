@@ -16,10 +16,12 @@
             <div class="header">{{ 'Register'|trans }}</div>
             <div class="body">
                 <label for="{{ registrationForm.username.vars.id }}" class="required">{{ 'Username'|trans }}
-                    <input type="text" name="{{ field_name(registrationForm.username) }}" id="{{ registrationForm.username.vars.id }}" placeholder="{{ registrationForm.username.vars.attr.placeholder|trans }}" autocomplete="new-password" required>
+                    <input type="text" name="{{ field_name(registrationForm.username) }}" id="{{ registrationForm.username.vars.id }}" value="{{ registrationForm.username.vars.value }}" placeholder="{{ registrationForm.username.vars.attr.placeholder|trans }}" autocomplete="new-password" required>
+                    {{ form_errors(registrationForm.username) }}
                 </label>
                 <label for="{{ registrationForm.email.vars.id }}" class="required">{{ 'Email'|trans }}
-                    <input type="text" name="{{ field_name(registrationForm.email) }}" id="{{ registrationForm.email.vars.id }}" placeholder="{{ registrationForm.email.vars.attr.placeholder|trans }}" autocomplete="new-password" required>
+                    <input type="text" name="{{ field_name(registrationForm.email) }}" id="{{ registrationForm.email.vars.id }}" value="{{ registrationForm.email.vars.value }}" placeholder="{{ registrationForm.email.vars.attr.placeholder|trans }}" autocomplete="new-password" required>
+                    {{ form_errors(registrationForm.email) }}
                 </label>
                 <label for="{{ registrationForm.plainPassword.vars.id }}" class="required">{{ 'Password'|trans }}
                     <input type="password"
@@ -31,6 +33,7 @@
                            autocomplete="new-password"
                            required>
                     <div class="password-toggle-view"><i class="fas fa-eye"></i></div>
+                    {{ form_errors(registrationForm.plainPassword) }}
                 </label>
                 <label for="{{ registrationForm.confirmPassword.vars.id }}" class="required">{{ 'Password'|trans }}
                     <input type="password"
@@ -42,6 +45,7 @@
                            autocomplete="new-password"
                            required>
                     <div class="password-toggle-view"><i class="fas fa-eye"></i></div>
+                    {{ form_errors(registrationForm.confirmPassword) }}
                 </label>
                 <label for="{{ registrationForm.country.vars.id }}" class="{{ registrationForm.country.vars.required ? 'required' }}">
                     <div>{{ registrationForm.country.vars.label|trans }}</div>
@@ -64,11 +68,18 @@
                     {% endif %}
                     {{ form_widget(registrationForm.timezone) }}
                 </label>
+                {# Anti-bot: honeypot (hidden from humans and screen readers) + signed display timestamp #}
+                <div class="hp-field" aria-hidden="true">
+                    <label for="{{ registrationForm.website.vars.id }}">Website</label>
+                    <input type="text" name="{{ field_name(registrationForm.website) }}" id="{{ registrationForm.website.vars.id }}" value="" tabindex="-1" autocomplete="off">
+                </div>
+                {{ form_widget(registrationForm.startedAt) }}
                 <div class="remember-me">
                     <label for="{{ registrationForm.agreeTerms.vars.id }}">
                         <input type="checkbox" switch checked name="{{ field_name(registrationForm.agreeTerms) }}" id="{{ registrationForm.agreeTerms.vars.id }}">
                         <span>{{ registrationForm.agreeTerms.vars.label|trans }}</span>
                     </label>
+                    {{ form_errors(registrationForm.agreeTerms) }}
                 </div>
             </div>
             <div class="footer">

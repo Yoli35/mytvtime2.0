@@ -1,0 +1,4 @@
+'You should agree to our terms.': '약관에 동의해야 합니다.'
+'Please enter a password': '비밀번호를 입력하세요'
+'Your password should be at least {{ limit }} characters': '비밀번호는 최소 {{ limit }}자 이상이어야 합니다'
+'Your password must contain at least one letter and one digit': '비밀번호에는 문자와 숫자가 각각 하나 이상 포함되어야 합니다'

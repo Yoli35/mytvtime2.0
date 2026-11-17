@@ -1,0 +1,4 @@
+'You should agree to our terms.': 'Vous devez accepter nos conditions.'
+'Please enter a password': 'Veuillez saisir un mot de passe'
+'Your password should be at least {{ limit }} characters': 'Votre mot de passe doit contenir au moins {{ limit }} caractères'
+'Your password must contain at least one letter and one digit': 'Votre mot de passe doit contenir au moins une lettre et un chiffre'

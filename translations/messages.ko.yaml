@@ -1909,3 +1909,7 @@ logo: 로고
 'Offset': '오프셋'
 'Next batch': '다음 묶음'
 'Only show watched episodes no longer on TMDB': 'TMDB에 없는 시청한 에피소드만 표시'
+'The passwords do not match': '비밀번호가 일치하지 않습니다'
+'Resend the verification email': '인증 이메일 다시 보내기'
+'A new verification email has been sent to you. Please check your inbox (and your spam folder).': '새 인증 이메일을 보냈습니다. 받은 편지함(및 스팸함)을 확인하세요.'
+'An email has been sent to you. Please check your inbox to verify your email address.': '이메일을 보냈습니다. 받은 편지함에서 이메일 주소를 인증하세요.'
