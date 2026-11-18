@@ -214,31 +214,25 @@ readonly class ApiTvTime
         if ($aspectRatio> 1) {
             $imageUrl = $this->imageConfiguration->getUrl('backdrop_sizes', 3);
             if ($timestamp) {
-                $arrB = $this->seriesRepository->getSeriesBackdrops($user->getId(), $limit, $locale);
-                $this->imageService->saveImages($arrB, "backdrop", $imageUrl);
+                $arr = $this->seriesRepository->getSeriesImages($user->getId(), 'backdrop',  $limit, $locale);
+                $this->imageService->saveImages($arr, "backdrop", $imageUrl);
             } else {
-                $arrB = $this->movieRepository->getMoviesBackdrops($user->getId(), $limit, $locale);
-                $this->imageService->saveImages($arrB, "backdrop", $imageUrl, '/movies/');
-            }
-            $arr = [];
-            foreach ($arrB as $item) {
-                $item['poster_path'] = $item['backdrop_path'];
-                unset($item['backdrop_path']);
-                $arr[] = $item;
+                $arr = $this->movieRepository->getMoviesImages($user->getId(), 'backdrop', $limit, $locale);
+                $this->imageService->saveImages($arr, "backdrop", $imageUrl, '/movies/');
             }
         }
         else {
             $imageUrl = $this->imageConfiguration->getUrl('poster_sizes', 5);
             if ($timestamp) {
-                $arr = $this->seriesRepository->getSeriesPosters($user->getId(), $limit, $locale);
+                $arr = $this->seriesRepository->getSeriesImages($user->getId(), 'poster', $limit, $locale);
                 $this->imageService->saveImages($arr, "poster", $imageUrl);
             } else {
-                $arr = $this->movieRepository->getMoviesPosters($user->getId(), $limit, $locale);
+                $arr = $this->movieRepository->getMoviesImages($user->getId(), 'poster', $limit, $locale);
                 $this->imageService->saveImages($arr, "poster", $imageUrl, '/movies/');
             }
         }
 
-        return new JsonResponse(['posters' => $arr, 'range' => $this->getRange($arr)]);
+        return new JsonResponse(['images' => $arr, 'range' => $this->getRange($arr)]);
     }
 
     private function getRange(array $arr): string

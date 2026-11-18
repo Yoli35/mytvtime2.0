@@ -165,6 +165,30 @@ class SeriesRepository extends ServiceEntityRepository
         return $this->getAll($sql, ['seriesId' => $seriesId], ['seriesId' => ParameterType::INTEGER]);
     }
 
+    public function getSeriesImages(?int $userId, string $type, int $limit, string $locale)
+    {
+        $sql = <<<SQL
+            -- V2 incluant la table image
+            SELECT
+                IFNULL(sln.name, s.name) AS name,
+                CONCAT('/series/', :type, 's', si.image_path) AS image_path,
+                YEAR(s.`first_air_date`) AS year
+            FROM series_image si
+                INNER JOIN series s ON si.series_id = s.id
+                INNER JOIN user_series us ON us.series_id = s.id
+                LEFT JOIN series_localized_name sln ON s.id = sln.series_id AND sln.locale = :locale
+            WHERE us.user_id = :userId AND si.type = :type
+            ORDER BY RAND()
+            LIMIT :limit
+        SQL;
+
+        return $this->getAll(
+            $sql,
+            ['userId' => $userId, 'type' => $type, 'locale' => $locale, 'limit' => $limit],
+            ['userId' => ParameterType::INTEGER, 'type' => ParameterType::STRING, 'locale' => ParameterType::STRING, 'limit' => ParameterType::INTEGER]
+        );
+    }
+
     public function getSeriesPosters(int $userId, int $limit, string $locale, string $root = '/series/posters'): array
     {
         $sql = <<<SQL
@@ -179,7 +203,7 @@ class SeriesRepository extends ServiceEntityRepository
             WHERE us.`user_id`=:userId
                 AND s.`poster_path` IS NOT NULL
                 AND s.`first_air_date` IS NOT NULL
-                ORDER BY RAND()
+            ORDER BY RAND()
             LIMIT :limit
         SQL;
 

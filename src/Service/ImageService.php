@@ -695,7 +695,7 @@ class ImageService
     public function saveImages(array $arr, string $type, string $imageUrl, string $localPath = "/series/"): bool
     {
         foreach ($arr as $item) {
-            $this->saveImage($type . 's', '/' . basename($item[$type . '_path']), $imageUrl, $localPath);
+            $this->saveImage($type . 's', '/' . basename($item['image_path']), $imageUrl, $localPath);
         }
         return true;
     }

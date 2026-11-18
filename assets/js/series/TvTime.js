@@ -126,23 +126,23 @@ export class TvTime {
             const response = await fetch(`/api/tv/time/posters?aspectRatio=${aspectRatio}`);
             const data = await response.json();
             self.setSlidesRange(data.range);
-            data.posters.forEach(poster => {
-                if (!seen.has(poster.poster_path)) seen.set(poster.poster_path, {name: poster.name, year: poster.year});
+            data.images.forEach(image => {
+                if (!seen.has(image.image_path)) seen.set(image.image_path, {name: image.name, year: image.year});
             });
         } catch (error) {
             console.error('Error:', error);
         }
         if (this.screenSaver !== screenSaver) return; // Arrêté pendant la requête
-        const posters = [...seen].map(([src, infos]) => ({src, infos}));
-        if (!posters.length) return;
+        const images = [...seen].map(([src, infos]) => ({src, infos}));
+        if (!images.length) return;
 
         let current = 0, index = 0;
         const show = async () => {
-            const poster = posters[index];
+            const image = images[index];
             const slide = slides[current];
             const img = slide.querySelector('img');
-            img.src = poster.src;
-            img.alt = poster.infos.name;
+            img.src = image.src;
+            img.alt = image.infos.name;
             if (aspectRatio > 1) {
                 img.style.aspectRatio = '16 / 9';
                 img.style.height = 'auto';
@@ -152,8 +152,8 @@ export class TvTime {
                 img.style.height = 'min(80vh, 120vw)';
                 img.style.width = 'auto';
             }
-            slide.querySelector('.name').textContent = poster.infos.name;
-            slide.querySelector('.year').textContent = poster.infos.year;
+            slide.querySelector('.name').textContent = image.infos.name;
+            slide.querySelector('.year').textContent = image.infos.year;
             try {
                 await img.decode();
             } catch (e) {
@@ -169,12 +169,12 @@ export class TvTime {
             slides[1 - current].classList.remove('visible');
             slide.classList.add('visible', 'zoom');
             current = 1 - current;
-            index = (index + 1) % posters.length;
+            index = (index + 1) % images.length;
         };
         show().then(r => {
             console.log(r)
         });
-        if (posters.length > 1) {
+        if (images.length > 1) {
             this.screenSaver.intervalId = setInterval(show, 6000);
         }
     }
