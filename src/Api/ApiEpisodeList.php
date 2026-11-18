@@ -5,6 +5,7 @@ namespace App\Api;
 use App\Entity\User;
 use App\Entity\UserEpisode;
 use App\Entity\UserSeries;
+use App\Repository\SeriesBroadcastDateRepository;
 use App\Repository\SettingsRepository;
 use App\Repository\UserEpisodeRepository;
 use App\Repository\UserSeasonRepository;
@@ -31,6 +32,7 @@ readonly class ApiEpisodeList
         private Closure                 $renderView,
         private DateService             $dateService,
         private ImageConfiguration      $imageConfiguration,
+        private SeriesBroadcastDateRepository $seriesBroadcastDateRepository,
         private SettingsRepository      $settingsRepository,
         private TMDBService             $tmdbService,
         private UserEpisodeRepository   $userEpisodeRepository,
@@ -127,10 +129,19 @@ readonly class ApiEpisodeList
             if ($ue) {
                 if ($episode['watched']) {
                     $ue->setWatchedAt(null);
+                    $ue->setDeviceId(null);
+                    $ue->setProviderId(null);
+                    $ue->setVote(null);
                     $markedAsNotWatched++;
                 } else {
                     if ($isWatchedAsTheyGo) {
-                        $lastDate = $ue->getAirDate() ?: $lastDate;
+                        // Series Schedule date ?
+                        $sbd  = $this->seriesBroadcastDateRepository->findOneBy(['episodeId' => $ue->getEpisodeId()]);
+                        if ($sbd) {
+                            $lastDate = $sbd->getDate();
+                        } else {
+                            $lastDate = $ue->getAirDate() ?: $lastDate;
+                        }
                         $ue->setWatchedAt($lastDate->setTime(18, 0));
                     } else {
                         $ue->setWatchedAt($now);
@@ -152,7 +163,7 @@ readonly class ApiEpisodeList
         if ($markedAsWatched > 0) {
             $message = 'Episode marked as watched: ' . $markedAsWatched;
         }
-            if ($n > 0) {
+        if ($n > 0) {
             $this->updateUserSeries($userEpisodes, array_last($episodeData));
             $this->userEpisodeRepository->flush();
             $success = true;
@@ -171,9 +182,9 @@ readonly class ApiEpisodeList
         $watchStateWhenClicked = $episodeClicked['watched'];
 
         /** @var UserEpisode $userEpisode */
-        $userEpisode = array_find($userEpisodes, fn(UserEpisode $userEpisode) => $userEpisode->getEpisodeId() === $episodeId);
+        $userEpisode = array_find($userEpisodes, fn(UserEpisode $userEpisode) => $userEpisode->getId() === $episodeId);
         $episodeCount = count($userEpisodes);
-        $viewedEpisodeCount = count(array_filter($userEpisodes, fn(UserEpisode $ue) => $ue->getWatched()));
+        $viewedEpisodeCount = count(array_filter($userEpisodes, fn(UserEpisode $ue) => $ue->getWatchedAt()));
 
         if ($watchStateWhenClicked) {
             // L'épisode vient d'être marqué comme non lu.
