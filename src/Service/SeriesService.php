@@ -75,7 +75,7 @@ readonly class SeriesService
         private KeywordService                    $keywordService,
         private MonologLogger                     $logger,
         private MailerInterface                   $mailer,
-        private NetworkRepository                $networkRepository,
+        private NetworkRepository                 $networkRepository,
         private ProviderService                   $providerService,
         private SeasonService                     $seasonService,
         private SeriesBroadcastScheduleRepository $seriesBroadcastScheduleRepository,
@@ -566,6 +566,15 @@ readonly class SeriesService
             $userSeason = new UserSeason($userSeries, $seasonNumber);
             $this->userSeasonRepository->save($userSeason, true);
         }
+
+        // S'il existe un calendrier de sortie pour la saison (SeriesBroadcastSchedule),
+        // il faut l'activer en créant un nouvel élément dans la table user_season_series_broadcast_schedule (userSeason, seriesBroadcastSchedule)
+        $sbs = $this->seriesBroadcastScheduleRepository->findOneBy(['series' => $series, 'seasonNumber' => $seasonNumber]);
+        if ($sbs) {
+            $userSeason->addBroadcastSchedule($sbs);
+            $this->userSeasonRepository->save($userSeason, true);
+        }
+
         if (!isset($tvSeason['episodes']) || count($tvSeason['episodes']) == 0) {
             return [0, false];
         }
