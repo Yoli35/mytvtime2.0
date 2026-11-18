@@ -57,16 +57,18 @@ Dismiss: 취소
 'Save article': '문서 저장'
 # Menu
 'All locations': '모든 위치'
-Apply: 신청하기
 'Change your avatar on your account page': '계정 페이지에서 아바타 변경'
 'Contact me': '다음 연락처로 문의하세요.'
+'Display the countdown': '카운트다운 표시'
 'Display the poster': '포스터 보기'
+'Event countdown': '이벤트 카운트다운'
+'Event date and time': '이벤트 날짜 및 시간'
+'Event label': '이벤트 이름'
 'Final air date': '최종 릴리스 날짜'
 'In my movie list': '내 영화 목록에서'
 'In my series list': '내 시리즈 목록에서'
 'Last adds': '최신 추가 사항'
 'Last watched': '마지막으로 시청한 시리즈'
-Limit: 제한
 'Link to': 링크
 'Menu people': 사람
 'Movies, series, actors…': '영화, 시리즈, 배우...'
@@ -79,10 +81,9 @@ Limit: 제한
 'Please log in to see more options': '더 많은 옵션을 보려면 로그인하세요.'
 'Search options': '검색 옵션'
 'What next to watch': '다음에 볼 내용'
-'Event countdown': '이벤트 카운트다운'
-'Event label': '이벤트 이름'
-'Event date and time': '이벤트 날짜 및 시간'
-'Display the countdown': '카운트다운 표시'
+Apply: 신청하기
+Limit: 제한
+Site: 사이트
 
 # Home
 'A series by name/year': '이름/년도로 시리즈'

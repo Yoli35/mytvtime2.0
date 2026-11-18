@@ -273,7 +273,7 @@
                     <a href="{{ path('app_user_providers') }}">{{ 'My providers'|trans }}</a>
                     <a href="{{ path('app_user_networks') }}">{{ 'My networks'|trans }}</a>
                     <a href="{{ path('app_logout') }}">{{ 'Disconnect'|trans }}</a>
-                    <div class="separation">{{ 'Admin'|trans }}</div>
+                    <div class="separation">{{ 'Site'|trans }}</div>
                     {% if 'ROLE_ADMIN' in app.user.roles %}
                         <a href="{{ path('admin_index') }}" class="admin-link">{{ 'Dashboard'|trans }}{{ adminNewMessageCheck('user menu')|raw }}</a>
                     {% endif %}
