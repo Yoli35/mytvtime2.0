@@ -40,7 +40,7 @@ echo 'Compressing files...'
 zip -rq Archives.zip bin composer.json composer.lock config importmap.php package.json src symfony.lock templates translations var vendor;
 echo 'Compressing images...'
 
-find './public/' -type f -mmin -5871 -exec zip -q -n .png:.webp:.jpg:.jpeg:.mp4 public.zip {} \;
+find './public/' -type f -mmin -20646 -exec zip -q -n .png:.webp:.jpg:.jpeg:.mp4 public.zip {} \;
 
 echo 'Compiling assets...'
 cons asset-map:compile
@@ -50,7 +50,7 @@ zip -rq Archives.zip assets.zip public.zip;
 rm assets.zip public.zip;
 echo 'Uploading to server...'
 scp /Users/iboy/Sites/mytvtime2.0/Archives.zip u109355875@access922206626.webspace-data.io:/
-
+dYrfih-jydkem-9zanqu
 5- copy Archives.zip to server
 
 6- export db      >>>> SAUF TABLES contact_message, history et user <<<<
