@@ -8,137 +8,139 @@
             {{ ux_icon('mdi:home', {'data-title': 'Home'|trans}) }}
         </a>
         {% if app.user %}
-            <div class="navbar-item">
-                {{ ux_icon('mdi:filmstrip-box', {'data-title': 'My movies'|trans}) }}
-                <div class="menu movies">
-                    <div class="menu-item"><a href="{{ path('app_movie_index') }}" class="desktop">{{ 'My movies'|trans }}</a></div>
-                    <div class="menu-item"><a href="{{ path('app_movie_favorite_index') }}" class="desktop">{{ 'My favorite movies'|trans }}</a></div>
-                    <div class="separation">{{ 'Search'|trans }}</div>
-                    <div class="menu-item"><a href="{{ path('app_movie_search') }}" class="desktop">{{ 'Search'|trans }}</a></div>
-                    <div class="menu-item"><a href="{{ path('app_movie_discover') }}" class="desktop">{{ 'Advanced search'|trans }}</a></div>
-                </div>
+        <div class="navbar-item">
+            {{ ux_icon('mdi:filmstrip-box', {'data-title': 'My movies'|trans}) }}
+            <div class="menu movies">
+                <div class="menu-item"><a href="{{ path('app_movie_index') }}" class="desktop">{{ 'My movies'|trans }}</a></div>
+                <div class="menu-item"><a href="{{ path('app_movie_favorite_index') }}" class="desktop">{{ 'My favorite movies'|trans }}</a></div>
+                <div class="separation">{{ 'Search'|trans }}</div>
+                <div class="menu-item"><a href="{{ path('app_movie_search') }}" class="desktop">{{ 'Search'|trans }}</a></div>
+                <div class="menu-item"><a href="{{ path('app_movie_discover') }}" class="desktop">{{ 'Advanced search'|trans }}</a></div>
             </div>
-            <div class="navbar-item">
-                {{ ux_icon('mdi:tv', {'data-title': 'My series'|trans}) }}
-                <div class="menu series">
-                    {% set country=getUserCountrySettings(app.user) %}
-                    {% set provider=getUserProviderSettings(app.user) %}
-                    <div class="menu-item"><a href="{{ path('app_series_index') }}" class="desktop">{{ ux_icon('mdi:calendar') }}{{ 'Series.week'|trans }}</a></div>
-                    <div class="menu-item"><a href="{{ path('app_series_in_progress') }}" class="desktop">{{ ux_icon('mdi:play') }}{{ 'Series.in progress'|trans }}</a></div>
-                    <div class="menu-item"><a href="{{ path('app_series_not_seen_in_a_while') }}">{{ ux_icon('mdi:sleep') }}{{ 'Series.not seen in a while'|trans }}</a></div>
-                    <div class="menu-item"><a href="{{ path('app_series_to_start') }}">{{ ux_icon('mdi:eye') }}{{ 'Series.to start'|trans }}</a></div>
-                    <div class="menu-item"><a href="{{ path('app_series_up_coming') }}">{{ ux_icon('mdi:page-next-outline') }}{{ 'Series.up coming series'|trans }}</a></div>
-                    <div class="menu-item"><a href="{{ path('app_series_ranking_by_vote') }}">{{ ux_icon('mdi:star') }}{{ 'Series.by ranking vote'|trans }}</a></div>
-                    <div class="menu-item"><a href="{{ path('app_series_user_favorites') }}">{{ ux_icon('mdi:heart') }}{{ 'Series.favorites'|trans }}</a></div>
-                    <div class="menu-item"><a href="{{ path('app_series_by_country', {country: country}) }}">{{ ux_icon('mdi:world') }}{{ 'Series.by country'|trans }} - {{ country|country_name(app.locale) }}</a></div>
-                    <div class="menu-item"><a href="{{ path('app_series_by_provider', {provider: provider}) }}">{{ ux_icon('mdi:network-outline') }}{{ 'Series.by provider'|trans }}</a></div>
-                    <div class="separation">{{ 'Shooting locations'|trans }}</div>
-                    <div class="menu-item"><a href="{{ path('app_map_index') }}" class="desktop">{{ ux_icon('mdi:map-outline') }}{{ 'All locations'|trans }}</a></div>
-                    <div class="menu-item"><a href="{{ path('app_map_last', { type: 'creation' }) }}" class="desktop">{{ ux_icon('mdi:timer-plus-outline') }}{{ 'Recent additions'|trans }}</a></div>
-                    <div class="separation">{{ 'Search'|trans }}</div>
-                    <div class="menu-item"><a href="{{ path('app_series_search_db') }}">{{ ux_icon('mdi:account-search-outline') }}{{ 'Among your series'|trans }}</a></div>
-                    <div class="menu-item"><a href="{{ path('app_series_advanced_search_db') }}">{{ ux_icon('mdi:account-search-outline') }}{{ 'Advanced among your series'|trans }}</a></div>
-                    <div class="menu-item"><a href="{{ path('app_series_search') }}">{{ ux_icon('mdi:search') }}{{ 'A series by name/year'|trans }}</a></div>
-                    <div class="menu-item"><a href="{{ path('app_series_advanced_search') }}">{{ ux_icon('mdi:text-box-search-outline') }}{{ 'Advanced search'|trans }}</a></div>
-                </div>
+        </div>
+        <div class="navbar-item">
+            {{ ux_icon('mdi:tv', {'data-title': 'My series'|trans}) }}
+            <div class="menu series">
+                {% set country=getUserCountrySettings(app.user) %}
+                {% set provider=getUserProviderSettings(app.user) %}
+                <div class="menu-item"><a href="{{ path('app_series_index') }}" class="desktop">{{ ux_icon('mdi:calendar') }}{{ 'Series.week'|trans }}</a></div>
+                <div class="menu-item"><a href="{{ path('app_series_in_progress') }}" class="desktop">{{ ux_icon('mdi:play') }}{{ 'Series.in progress'|trans }}</a></div>
+                <div class="menu-item"><a href="{{ path('app_series_not_seen_in_a_while') }}">{{ ux_icon('mdi:sleep') }}{{ 'Series.not seen in a while'|trans }}</a></div>
+                <div class="menu-item"><a href="{{ path('app_series_to_start') }}">{{ ux_icon('mdi:eye') }}{{ 'Series.to start'|trans }}</a></div>
+                <div class="menu-item"><a href="{{ path('app_series_up_coming') }}">{{ ux_icon('mdi:page-next-outline') }}{{ 'Series.up coming series'|trans }}</a></div>
+                <div class="menu-item"><a href="{{ path('app_series_ranking_by_vote') }}">{{ ux_icon('mdi:star') }}{{ 'Series.by ranking vote'|trans }}</a></div>
+                <div class="menu-item"><a href="{{ path('app_series_user_favorites') }}">{{ ux_icon('mdi:heart') }}{{ 'Series.favorites'|trans }}</a></div>
+                <div class="menu-item"><a href="{{ path('app_series_by_country', {country: country}) }}">{{ ux_icon('mdi:world') }}{{ 'Series.by country'|trans }} - {{ country|country_name(app.locale) }}</a></div>
+                <div class="menu-item"><a href="{{ path('app_series_by_provider', {provider: provider}) }}">{{ ux_icon('mdi:network-outline') }}{{ 'Series.by provider'|trans }}</a></div>
+                <div class="separation">{{ 'Shooting locations'|trans }}</div>
+                <div class="menu-item"><a href="{{ path('app_map_index') }}" class="desktop">{{ ux_icon('mdi:map-outline') }}{{ 'All locations'|trans }}</a></div>
+                <div class="menu-item"><a href="{{ path('app_map_last', { type: 'creation' }) }}" class="desktop">{{ ux_icon('mdi:timer-plus-outline') }}{{ 'Recent additions'|trans }}</a></div>
+                <div class="separation">{{ 'Search'|trans }}</div>
+                <div class="menu-item"><a href="{{ path('app_series_search_db') }}">{{ ux_icon('mdi:account-search-outline') }}{{ 'Among your series'|trans }}</a></div>
+                <div class="menu-item"><a href="{{ path('app_series_advanced_search_db') }}">{{ ux_icon('mdi:account-search-outline') }}{{ 'Advanced among your series'|trans }}</a></div>
+                <div class="menu-item"><a href="{{ path('app_series_search') }}">{{ ux_icon('mdi:search') }}{{ 'A series by name/year'|trans }}</a></div>
+                <div class="menu-item"><a href="{{ path('app_series_advanced_search') }}">{{ ux_icon('mdi:text-box-search-outline') }}{{ 'Advanced search'|trans }}</a></div>
             </div>
-            <div class="navbar-item">
-                {{ ux_icon('mdi:user-outline', {'data-title': 'Menu people'|trans}) }}
-                <div class="menu people">
-                    <div class="menu-item"><a href="{{ path('app_people_index') }}" class="desktop">{{ 'People'|trans }}</a></div>
-                    <div class="menu-item"><a href="{{ path('app_people_star') }}" class="desktop">{{ 'Star people'|trans }}</a></div>
-                </div>
+        </div>
+        <div class="navbar-item">
+            {{ ux_icon('mdi:user-outline', {'data-title': 'Menu people'|trans}) }}
+            <div class="menu people">
+                <div class="menu-item"><a href="{{ path('app_people_index') }}" class="desktop">{{ 'People'|trans }}</a></div>
+                <div class="menu-item"><a href="{{ path('app_people_star') }}" class="desktop">{{ 'Star people'|trans }}</a></div>
             </div>
-            <div class="navbar-item">
-                {{ ux_icon('mdi:perm-media', {'data-title': 'My media'|trans}) }}
-                <div class="menu videos">
-                    <div class="separation">{{ 'Blog'|trans }}</div>
-                    <div class="menu-item"><a href="{{ path('app_blog_index') }}" class="desktop">{{ 'My blog'|trans }}</a></div>
-                    <div class="separation">{{ 'Videos'|trans }}</div>
-                    <div class="menu-item"><a href="{{ path('app_video_youtube_index') }}" class="desktop">{{ 'My YouTube videos'|trans }}</a></div>
-                    <div class="menu-item"><a href="{{ path('app_video_personal_index') }}" class="desktop">{{ 'My videos'|trans }}</a></div>
-                    <div class="separation">{{ 'Images'|trans }}</div>
-                    <div class="menu-item"><a href="{{ path('app_album_index') }}" class="desktop">{{ 'My albums'|trans }}</a></div>
-                    <div class="menu-item"><a href="{{ path('app_album_all') }}" class="desktop">{{ 'Photos'|trans }}</a></div>
-                </div>
+        </div>
+        <div class="navbar-item">
+            {{ ux_icon('mdi:perm-media', {'data-title': 'My media'|trans}) }}
+            <div class="menu videos">
+                <div class="separation">{{ 'Blog'|trans }}</div>
+                <div class="menu-item"><a href="{{ path('app_blog_index') }}" class="desktop">{{ 'My blog'|trans }}</a></div>
+                <div class="separation">{{ 'Videos'|trans }}</div>
+                <div class="menu-item"><a href="{{ path('app_video_youtube_index') }}" class="desktop">{{ 'My YouTube videos'|trans }}</a></div>
+                <div class="menu-item"><a href="{{ path('app_video_personal_index') }}" class="desktop">{{ 'My videos'|trans }}</a></div>
+                <div class="separation">{{ 'Images'|trans }}</div>
+                <div class="menu-item"><a href="{{ path('app_album_index') }}" class="desktop">{{ 'My albums'|trans }}</a></div>
+                <div class="menu-item"><a href="{{ path('app_album_all') }}" class="desktop">{{ 'Photos'|trans }}</a></div>
             </div>
-            <div class="navbar-item" id="history-menu">
-                {{ ux_icon('mdi:clipboard-text-history', {'data-title': 'My viewing history'|trans}) }}
-                {% set history = seriesHistory(app.user) %}
-                <div class="menu history" id="history-list" data-last="{{ history.last }}">
-                    <div class="menu-item" id="history-options">
-                        <label><input id="history-option-type" type="checkbox"{% if history.type == 'episode' %} checked{% endif %} switch>{{ 'Episodes detail'|trans }}</label>
-                        <label>{{ 'Page'|trans }}<input id="history-option-page" type="number" value="{{ history.page }}"></label>
-                        <label>{{ 'Count'|trans }}<input id="history-option-count" type="number" value="{{ history.count }}"></label>
-                        {#                        <label><input id="history-option-vote" type="checkbox"{% if history.vote %} checked{% endif %} switch>{{ 'Rating'|trans }}</label> #}
-                        {#                        <label><input id="history-option-device" type="checkbox"{% if history.device %} checked{% endif %} switch>{{ 'Device'|trans }}</label> #}
-                        {#                        <label><input id="history-option-provider" type="checkbox"{% if history.provider %} checked{% endif %} switch>{{ 'Provider'|trans }}</label> #}
-                    </div>
-                    <ul>
-                        {% for h in history.list %}
-                            {% set ep = 'S%02dE%02d'|format(h.seasonNumber, h.episodeNumber) %}
-                            <li class="menu-item history-item" id="{{ h.episodeId }}" data-title="{{ h.name }} - {{ ep }}">
-                                <a class="history" href="{{ path('app_tv_episode', {id: h.id, slug: h.slug, seasonNumber: h.seasonNumber, episodeNumber: h.episodeNumber}) }}">
-                                    <div class="poster">
-                                        {% if h.posterPath|length %}
-                                            <img src="/series/posters{{ h.posterPath }}" alt="{{ h.name }}">
-                                        {% else %}
-                                            {{ h.name|slice(0,1)|upper }}
-                                        {% endif %}
-                                    </div>
-                                    <div class="name">{{ h.name }}</div>
-                                    <div class="date">{{ h.lastWatchedAt|format_datetime('relative_short', 'short') }}</div>
-                                    <div class="number{% if h.progress==100 %} ended{% endif %}">{{ ep }}</div>
-                                    <div class="user-part">
-                                        <div class="vote{# {% if history.vote == 0 %} hidden{% endif %} #}">{% if h.vote %}{{ h.vote }}{% endif %}</div>
-                                        <div class="device{# {% if history.device == 0 %} hidden{% endif %} #}">{% if h.deviceSvg %}{{ ux_icon(h.deviceSvg, {height: "18px", width: "18px"}) }}{% endif %}</div>
-                                        <div class="provider{# {% if history.provider == 0 %} hidden{% endif %} #}">{% if h.providerLogoPath %}<img src="{{ h.providerLogoPath }}" alt="{{ h.providerName }}">{% endif %}</div>
-                                    </div>
-                                </a>
-                            </li>
-                        {% else %}
-                            <div>{{ 'No history'|trans }}</div>
-                        {% endfor %}
-                    </ul>
+        </div>
+        <div class="navbar-item" id="history-menu">
+            {{ ux_icon('mdi:clipboard-text-history', {'data-title': 'My viewing history'|trans}) }}
+            {% set history = seriesHistory(app.user) %}
+            <div class="menu history" id="history-list" data-last="{{ history.last }}">
+                <div class="menu-item" id="history-options">
+                    <label><input id="history-option-type" type="checkbox"{% if history.type == 'episode' %} checked{% endif %} switch>{{ 'Episodes detail'|trans }}</label>
+                    <label>{{ 'Page'|trans }}<input id="history-option-page" type="number" value="{{ history.page }}"></label>
+                    <label>{{ 'Count'|trans }}<input id="history-option-count" type="number" value="{{ history.count }}"></label>
+                    {#                        <label><input id="history-option-vote" type="checkbox"{% if history.vote %} checked{% endif %} switch>{{ 'Rating'|trans }}</label> #}
+                    {#                        <label><input id="history-option-device" type="checkbox"{% if history.device %} checked{% endif %} switch>{{ 'Device'|trans }}</label> #}
+                    {#                        <label><input id="history-option-provider" type="checkbox"{% if history.provider %} checked{% endif %} switch>{{ 'Provider'|trans }}</label> #}
                 </div>
+                <ul>
+                    {% for h in history.list %}
+                        {% set ep = 'S%02dE%02d'|format(h.seasonNumber, h.episodeNumber) %}
+                        <li class="menu-item history-item" id="{{ h.episodeId }}" data-title="{{ h.name }} - {{ ep }}">
+                            <a class="history" href="{{ path('app_tv_episode', {id: h.id, slug: h.slug, seasonNumber: h.seasonNumber, episodeNumber: h.episodeNumber}) }}">
+                                <div class="poster">
+                                    {% if h.posterPath|length %}
+                                        <img src="/series/posters{{ h.posterPath }}" alt="{{ h.name }}">
+                                    {% else %}
+                                        {{ h.name|slice(0,1)|upper }}
+                                    {% endif %}
+                                </div>
+                                <div class="name">{{ h.name }}</div>
+                                <div class="date">{{ h.lastWatchedAt|format_datetime('relative_short', 'short') }}</div>
+                                <div class="number{% if h.progress==100 %} ended{% endif %}">{{ ep }}</div>
+                                <div class="user-part">
+                                    <div class="vote{# {% if history.vote == 0 %} hidden{% endif %} #}">{% if h.vote %}{{ h.vote }}{% endif %}</div>
+                                    <div class="device{# {% if history.device == 0 %} hidden{% endif %} #}">{% if h.deviceSvg %}{{ ux_icon(h.deviceSvg, {height: "18px", width: "18px"}) }}{% endif %}</div>
+                                    <div class="provider{# {% if history.provider == 0 %} hidden{% endif %} #}">{% if h.providerLogoPath %}<img src="{{ h.providerLogoPath }}" alt="{{ h.providerName }}">{% endif %}</div>
+                                </div>
+                            </a>
+                        </li>
+                    {% else %}
+                        <div>{{ 'No history'|trans }}</div>
+                    {% endfor %}
+                </ul>
             </div>
-            <div class="navbar-item">
-                {{ ux_icon('mdi:history', {'data-title': 'My browsing history'|trans}) }}
-                {% set history = getHistory(app.user) %}
-                {% set historyCount = getHistoryCount(app.user) %}
-                <div class="menu log" id="log-list" data-last="{{ historyCount ? history.0.id : -1 }}">
-                    <div class="menu-item" id="log-count">
-                        {{ history|length }} / {{ historyCount }} {{ 'history entries'|trans }}
-                    </div>
-                    {% set logDate = '' %}
-                    <ul>
-                        {% for h in history %}
-                            {% set d = h.date|format_date('relative_medium') %}
-                            {% if logDate != d %}
-                                {% set logDate = d %}
-                                <li class="menu-item log-date">{{ logDate|capitalize }}</li>
-                            {% endif %}
-                            <li class="menu-item log-item" data-id="{{ h.id }}">
-                                <a class="log" href="{{ h.link }}">
-                                    <div class="name">{{ h.title }}</div>
-                                    <div class="time">{{ h.date|date("H:i") }}</div>
-                                </a>
-                            </li>
-                        {% else %}
-                            <div class="menu-item">{{ 'No history'|trans }}</div>
-                        {% endfor %}
-                    </ul>
+        </div>
+        <div class="navbar-item">
+            {{ ux_icon('mdi:history', {'data-title': 'My browsing history'|trans}) }}
+            {% set history = getHistory(app.user) %}
+            {% set historyCount = getHistoryCount(app.user) %}
+            <div class="menu log" id="log-list" data-last="{{ historyCount ? history.0.id : -1 }}">
+                <div class="menu-item" id="log-count">
+                    {{ history|length }} / {{ historyCount }} {{ 'history entries'|trans }}
                 </div>
+                {% set logDate = '' %}
+                <ul>
+                    {% for h in history %}
+                        {% set d = h.date|format_date('relative_medium') %}
+                        {% if logDate != d %}
+                            {% set logDate = d %}
+                            <li class="menu-item log-date">{{ logDate|capitalize }}</li>
+                        {% endif %}
+                        <li class="menu-item log-item" data-id="{{ h.id }}">
+                            <a class="log" href="{{ h.link }}">
+                                <div class="name">{{ h.title }}</div>
+                                <div class="time">{{ h.date|date("H:i") }}</div>
+                            </a>
+                        </li>
+                    {% else %}
+                        <div class="menu-item">{{ 'No history'|trans }}</div>
+                    {% endfor %}
+                </ul>
             </div>
-            <a href="{{ path('app_tv_time_index') }}">
-                {{ ux_icon('mdi:grid', {'data-title': 'Series.tv time'|trans}) }}
-            </a>
+        </div>
+    </div>
+    <div class="navbar-items-visible">
+        <a href="{{ path('app_tv_time_index') }}">
+            {{ ux_icon('mdi:grid', {'data-title': 'Series.tv time'|trans}) }}
+        </a>
         {% endif %}
-        <a href="{{ path('app_contact_form') }}" class="desktop">
+        <a href="{{ path('app_contact_form') }}">
             {{ ux_icon('mdi:email', {'data-title': 'Contact me'|trans}) }}
         </a>
         {% if app.environment == 'dev' %}
-            <a href="{{ path('app_tools_index') }}" class="desktop">
+            <a href="{{ path('app_tools_index') }}">
                 {{ ux_icon('mdi:tools', {'data-title': 'Tools'|trans}) }}
             </a>
         {% endif %}
@@ -268,10 +270,12 @@
             </div>
             <div class="menu user" data-user-connected="{{ app.user ? 'true' : 'false' }}">
                 {% if app.user %}
+                    <div class="separation">{{ app.user.username }} - {{ app.user.email }}</div>
                     <a href="{{ path('app_user_profile') }}">{{ 'My account'|trans }}</a>
                     <a href="{{ path('app_user_list_index') }}">{{ 'My lists'|trans }}</a>
                     <a href="{{ path('app_user_providers') }}">{{ 'My providers'|trans }}</a>
                     <a href="{{ path('app_user_networks') }}">{{ 'My networks'|trans }}</a>
+                    <a href="{{ path('app_login') }}">{{ 'Connect to an other account'|trans }}…</a>
                     <a href="{{ path('app_logout') }}">{{ 'Disconnect'|trans }}</a>
                     <div class="separation">{{ 'Site'|trans }}</div>
                     {% if 'ROLE_ADMIN' in app.user.roles %}

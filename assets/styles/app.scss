@@ -474,7 +474,7 @@ label:has(input[type="text"]) {
         }
     }
 
-    .navbar-items {
+    .navbar-items, .navbar-items-visible {
         align-items: center;
         display: flex;
         flex-shrink: 0;
@@ -482,6 +482,10 @@ label:has(input[type="text"]) {
         &.right {
             margin-inline-start: 0;
         }
+    }
+
+    .navbar-items-visible {
+        margin-inline-start: -.5rem;
     }
 
     &:not(:has(.multi-search)) {
@@ -493,6 +497,7 @@ label:has(input[type="text"]) {
     }
 
     .navbar-items > a,
+    .navbar-items-visible > a,
     .navbar-item {
         align-items: center;
         border-radius: .25rem;
@@ -1136,9 +1141,10 @@ label:has(input[type="text"]) {
         }
     }
 
-    > *:not(.multi-search, .navbar-items):hover,
+    > *:not(.multi-search, .navbar-items, .navbar-items-visible):hover,
     .navbar-item:not(:has(.avatar, .burger)):hover,
-    .navbar-items > a:hover {
+    .navbar-items > a:hover,
+    .navbar-items-visible > a:hover {
         background-color: var(--navbar-bg-hover);
         color: var(--navbar-bg-hover);
 
