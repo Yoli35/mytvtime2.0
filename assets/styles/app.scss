@@ -2140,7 +2140,24 @@ label:has(input[type="text"]) {
         .debug {
             position: absolute;
             left: 1rem;
-            top: 4rem;
+            top: 3rem;
+        }
+
+        .screen-size {
+            backdrop-filter: blur(1rem);
+            position: absolute;
+            right: 8rem;
+            top: 3rem;
+        }
+
+        .multi-search, .screen-size + div {
+            margin-inline-start: auto;
+        }
+
+        &:has(.multi-search.active) {
+            .navbar-items-visible {
+                display: none;
+            }
         }
 
         &:not(:has(.multi-search)) {
