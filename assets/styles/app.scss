@@ -3031,7 +3031,7 @@ section:has(.pages) {
     right: 0;
     top: 4rem;
     transition: all 500ms ease-in-out;
-    z-index: 999;
+    z-index: 499;
 
     &:hover {
         background-color: hsla(from var(--orange-50) h s l / .5);
