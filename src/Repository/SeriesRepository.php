@@ -165,7 +165,7 @@ class SeriesRepository extends ServiceEntityRepository
         return $this->getAll($sql, ['seriesId' => $seriesId], ['seriesId' => ParameterType::INTEGER]);
     }
 
-    public function getSeriesImages(?int $userId, string $type, int $limit, string $locale)
+    public function getSeriesImages(?int $userId, string $type, int $limit, string $locale): array
     {
         $sql = <<<SQL
             -- V2 incluant la table image
@@ -186,56 +186,6 @@ class SeriesRepository extends ServiceEntityRepository
             $sql,
             ['userId' => $userId, 'type' => $type, 'locale' => $locale, 'limit' => $limit],
             ['userId' => ParameterType::INTEGER, 'type' => ParameterType::STRING, 'locale' => ParameterType::STRING, 'limit' => ParameterType::INTEGER]
-        );
-    }
-
-    public function getSeriesPosters(int $userId, int $limit, string $locale, string $root = '/series/posters'): array
-    {
-        $sql = <<<SQL
-            --  Posters from series added by user
-            SELECT
-                IFNULL(sln.`name`, s.`name`) AS name,
-                CONCAT(:root, s.poster_path) AS poster_path,
-                YEAR(s.`first_air_date`) AS year
-            FROM `series` s
-                INNER JOIN `user_series` us ON us.`series_id`=s.`id`
-                LEFT JOIN `series_localized_name` sln ON sln.`series_id`=s.`id` AND sln.`locale`=:locale
-            WHERE us.`user_id`=:userId
-                AND s.`poster_path` IS NOT NULL
-                AND s.`first_air_date` IS NOT NULL
-            ORDER BY RAND()
-            LIMIT :limit
-        SQL;
-
-        return $this->getAll(
-            $sql,
-            ['userId' => $userId, 'root' => $root, 'locale' => $locale, 'limit' => $limit],
-            ['userId' => ParameterType::INTEGER, 'root' => ParameterType::STRING, 'locale' => ParameterType::STRING, 'limit' => ParameterType::INTEGER]
-        );
-    }
-
-    public function getSeriesBackdrops(int $userId, int $limit, string $locale, string $root = '/series/backdrops'): array
-    {
-        $sql = <<<SQL
-            --  Backdrops from series added by user
-            SELECT
-                IFNULL(sln.name, s.name) AS name,
-                CONCAT(:root, s.backdrop_path) AS backdrop_path,
-                YEAR(s.first_air_date) AS year
-            FROM series s
-                INNER JOIN user_series us ON us.series_id = s.id
-                LEFT JOIN series_localized_name sln ON s.id = sln.series_id AND sln.locale = :locale
-            WHERE us.user_id = :userId
-                AND s.backdrop_path IS NOT NULL
-                AND s.first_air_date IS NOT NULL
-            ORDER BY RAND()
-            LIMIT :limit
-        SQL;
-
-        return $this->getAll(
-            $sql,
-            ['userId' => $userId, 'root' => $root, 'locale' => $locale, 'limit' => $limit],
-            ['userId' => ParameterType::INTEGER, 'root' => ParameterType::STRING, 'locale' => ParameterType::STRING, 'limit' => ParameterType::INTEGER]
         );
     }
 
@@ -479,14 +429,14 @@ class SeriesRepository extends ServiceEntityRepository
         }
     }
 
-    public function getOneAsInt($sql, array $params = [], array $types = []): mixed
+    /*public function getOneAsInt($sql, array $params = [], array $types = []): mixed
     {
         try {
             return $this->em->getConnection()->fetchOne($sql, $params, $types);
         } catch (Exception) {
             return [];
         }
-    }
+    }*/
 
     public function getOne($sql, array $params = [], array $types = []): array|int|null
     {
@@ -508,7 +458,9 @@ class SeriesRepository extends ServiceEntityRepository
         $parts = array_filter($parts, static fn(string $v) => $v !== '');
 
         $ids = array_map('intval', $parts);
-        return array_values(array_unique(array_filter($ids, static fn(int $v) => $v > 0)));
+        return array_filter($ids, static fn(int $v) => $v > 0)
+                |> array_unique(...)
+                |> array_values(...);
     }
 
     /**
@@ -659,7 +611,7 @@ class SeriesRepository extends ServiceEntityRepository
         }
 
         // On extrait la partie "FROM ..."
-// (supporte: espaces avant FROM, CRLF, etc.)
+        // (supporte : espaces avant FROM, CRLF, etc.)
         if (!preg_match('/\bFROM\b.*$/is', $sql, $m)) {
             throw new RuntimeException('Unable to build count query: FROM clause not found.');
         }
