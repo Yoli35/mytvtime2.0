@@ -1,4 +1,4 @@
-<div class="card{% if series.special_number==1 %} premiere{% endif %}"
+<div class="tv-card{% if series.special_number==1 %} premiere{% endif %}"
      data-episode-id="{{ series.episode_id }}"
      data-ref="{{ series.tmdb_id }}-{{ series.episode_id }}-{{ series.season_number }}-{{ series.episode_number }}-{{ series.esn_name }}">
     <a href="{{ path('app_tv_series', { 'id': series.id, slug: series.name|slug}) }}" target="_blank">

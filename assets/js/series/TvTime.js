@@ -407,7 +407,7 @@ export class TvTime {
                 const contentDiv = document.querySelector(`.content[data-content="${content}"]`);
                 const newBlockDiv = document.createElement('div');
                 newBlockDiv.innerHTML = data['block'];
-                const newCards = newBlockDiv.querySelectorAll('.card');
+                const newCards = newBlockDiv.querySelectorAll('.tv-card');
                 newCards.forEach(card => contentDiv.insertBefore(card, button));
                 const dividerDiv = document.querySelector(`.divider[data-content="${content}"]`);
                 const countsSpan = dividerDiv.querySelector('.counts');
@@ -469,7 +469,7 @@ export class TvTime {
     }
 
     filterSeries(needle) {
-        const cards = document.querySelectorAll('.series-tv-time .series-tab.active .wrapper .content .card');
+        const cards = document.querySelectorAll('.series-tv-time .series-tab.active .wrapper .content .tv-card');
         if (needle.length === 0) {
             cards.forEach(card => {
                 card.removeAttribute('style');
@@ -636,7 +636,7 @@ export class TvTime {
     }
 
     getEpisodeDetails(parent) {
-        const cards = parent.querySelectorAll('.card');
+        const cards = parent.querySelectorAll('.tv-card');
         if (!cards)
             return;
         const refArray = Array.from(cards).map(card => card.getAttribute('data-ref'));
@@ -664,7 +664,7 @@ export class TvTime {
                         return;
                     }
                     updatesCount++;
-                    const episodeCard = document.querySelector(`.series-tv-time .card[data-episode-id="${update.episode_id}"]`);
+                    const episodeCard = document.querySelector(`.series-tv-time .tv-card[data-episode-id="${update.episode_id}"]`);
                     if (episodeCard) {
                         const esnNameDiv = episodeCard.querySelector('.esn-name');
                         if (esnNameDiv) {
@@ -828,7 +828,7 @@ export class TvTime {
             .then((response) => response.json())
             .then((data) => {
                 console.log(data);
-                const seriesCard = document.querySelector('.card[data-prev-id="' + id + '"]');
+                const seriesCard = document.querySelector('.tv-card[data-prev-id="' + id + '"]');
                 if (seriesCard) { // Pour les multiples épisodes, la carte n'apparaitra qu'après leurs lectures
                     const seriesCardVoteDiv = seriesCard.querySelector('.vote');
                     seriesCardVoteDiv.innerHTML = vote;
