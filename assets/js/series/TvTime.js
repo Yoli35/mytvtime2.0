@@ -272,15 +272,23 @@ export class TvTime {
         const kindMenu = document.querySelector('#series-kind-menu');
         const activeMenu = kindMenu.querySelector('.active-menu');
         const kindDivs = kindMenu.querySelectorAll('.kind-by');
+        const weekFilterContainer = document.querySelector('#filter-series-specials-week').closest('.tab-filter');
         self.setActiveMenu(activeMenu, kindMenu.querySelector('li.active'));
         kindDivs.forEach((k) => {
             k.addEventListener('click', (e) => {
                 e.preventDefault();
-                console.log(k, k.dataset.index);
+                const kind = k.dataset.index;
                 if (k.classList.contains('active')) return;
-                self.getEpisodes(null, k.dataset.index);
+                self.getEpisodes(null, kind);
                 kindMenu.querySelector('li.active').classList.remove('active');
                 k.classList.add('active');
+
+                if (parseInt(kind) < 2) {
+                    weekFilterContainer.classList.add('d-none');
+                } else {
+                    weekFilterContainer.classList.remove('d-none');
+                }
+
                 self.setActiveMenu(activeMenu, k);
             });
         });
@@ -436,6 +444,12 @@ export class TvTime {
 
         const tabNameDiv = seriesTvTimeDiv.querySelector(`header .tab-names div[data-tab-index="${index}"]`);
         tabNameDiv.classList.add('active');
+
+        if (index === 0 && sub <= 2) {
+            tabNameDiv.classList.add('d-none');
+        } else {
+            tabNameDiv.classList.remove('d-none');
+        }
 
         seriesTvTimeDiv.style.setProperty('--active-tab', index);
 

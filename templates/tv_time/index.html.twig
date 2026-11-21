@@ -36,7 +36,9 @@
                             {{ 'Filter'|trans }}
                             <input type="search" id="filter-series-input" placeholder="{{ 'Start typing…'|trans }}">
                         </label>
-                        <label for="filter-series-specials-week" data-title="{{ 'tv-time.week-number'|trans }}"{% if tab != 0 and kind != 2 %} class="d-none"{% endif %}>
+                    </div>
+                    <div class="tab-filter{% if tab == 0 and kind < 2 %} d-none{% endif %}">
+                        <label for="filter-series-specials-week" data-title="{{ 'tv-time.week-number'|trans }}">
                             <input type="number" id="filter-series-specials-week" value="{{ week }}">
                             {{ 'tv-time.weeks'|trans }}
                         </label>
