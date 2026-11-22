@@ -120,25 +120,35 @@ export class TvTime {
         const windowWidth = window.innerWidth;
         const windowHeight = window.innerHeight;
         const aspectRatio = windowWidth / windowHeight;
-        // Posters des séries de l'utilisateur, sans doublons, dans un ordre aléatoire
-        const seen = new Map();
-        try {
-            const response = await fetch(`/api/tv/time/posters?aspectRatio=${aspectRatio}`);
-            const data = await response.json();
-            self.setSlidesRange(data.range);
-            data.images.forEach(image => {
-                if (!seen.has(image.image_path)) seen.set(image.image_path, {name: image.name, year: image.year});
-            });
-        } catch (error) {
-            console.error('Error:', error);
-        }
+
+        let batch = await this.fetchSlideshowBatch(aspectRatio);
         if (this.screenSaver !== screenSaver) return; // Arrêté pendant la requête
-        const images = [...seen].map(([src, infos]) => ({src, infos}));
-        if (!images.length) return;
+        if (!batch?.images.length) return;
+
+        // Renouvellement du lot : si la source compte plus de deux fois la limite d'images,
+        // un nouveau lot est chargé en tâche de fond et remplace le lot courant au bout de "renewAfterCycles" cycles
+        const renewAfterCycles = 2;
+        let nextBatch = null, cycles = 0;
+        const prefetch = () => {
+            if (!batch.renewable) return;
+            this.fetchSlideshowBatch(aspectRatio, batch.nextSource).then(b => {
+                if (this.screenSaver === screenSaver && b?.images.length) nextBatch = b;
+            });
+        };
+        prefetch();
 
         let current = 0, index = 0;
         const show = async () => {
-            const image = images[index];
+            if (index === 0 && cycles >= renewAfterCycles && nextBatch) {
+                batch = nextBatch;
+                nextBatch = null;
+                cycles = 0;
+                prefetch();
+            } else if (index === 0 && cycles > 0) {
+                // Lot conservé : nouvel ordre à chaque cycle
+                this.shuffleSlides(batch.images);
+            }
+            const image = batch.images[index];
             const slide = slides[current];
             const img = slide.querySelector('img');
             img.src = image.src;
@@ -154,6 +164,9 @@ export class TvTime {
             }
             slide.querySelector('.name').textContent = image.infos.name;
             slide.querySelector('.year').textContent = image.infos.year;
+            slide.querySelector('.range').textContent = batch.range;
+            index = (index + 1) % batch.images.length;
+            if (index === 0) cycles++;
             try {
                 await img.decode();
             } catch (e) {
@@ -169,13 +182,48 @@ export class TvTime {
             slides[1 - current].classList.remove('visible');
             slide.classList.add('visible', 'zoom');
             current = 1 - current;
-            index = (index + 1) % images.length;
         };
-        show().then(r => {
-            console.log(r)
-        });
-        if (images.length > 1) {
+        void show();
+        if (batch.images.length > 1 || batch.renewable) {
             this.screenSaver.intervalId = setInterval(show, 6000);
+        }
+    }
+
+    // Mélange de Fisher-Yates, sans que la dernière image du cycle précédent ouvre le suivant
+    shuffleSlides(images) {
+        if (images.length < 2) return;
+        const last = images[images.length - 1];
+        for (let i = images.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [images[i], images[j]] = [images[j], images[i]];
+        }
+        if (images[0] === last) {
+            const j = 1 + Math.floor(Math.random() * (images.length - 1));
+            [images[0], images[j]] = [images[j], images[0]];
+        }
+    }
+
+    // Lot d'images des séries ou des films de l'utilisateur, sans doublons, dans un ordre aléatoire
+    async fetchSlideshowBatch(aspectRatio, source = null) {
+        const params = new URLSearchParams({aspectRatio});
+        if (source) params.set('source', source);
+        try {
+            const response = await fetch(`/api/tv/time/posters?${params}`);
+            const data = await response.json();
+            const seen = new Map();
+            data.images.forEach(image => {
+                if (!seen.has(image.image_path)) seen.set(image.image_path, {name: image.name, year: image.year});
+            });
+            return {
+                images: [...seen].map(([src, infos]) => ({src, infos})),
+                range: data.range,
+                source: data.source,
+                nextSource: data.nextSource,
+                renewable: data.renewable,
+            };
+        } catch (error) {
+            console.error('Error:', error);
+            return null;
         }
     }
 
@@ -205,10 +253,6 @@ export class TvTime {
         infos.append(name, range);
         slide.append(poster, infos);
         return slide;
-    }
-
-    setSlidesRange(rangeText) {
-        this.screenSaver.slides.forEach(slide => slide.querySelector('.range').textContent = rangeText);
     }
 
     initTab() {

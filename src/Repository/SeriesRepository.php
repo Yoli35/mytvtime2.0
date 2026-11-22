@@ -189,6 +189,22 @@ class SeriesRepository extends ServiceEntityRepository
         );
     }
 
+    public function countSeriesImages(int $userId, string $type): int
+    {
+        $sql = <<<SQL
+            SELECT COUNT(*)
+            FROM series_image si
+                INNER JOIN user_series us ON us.series_id = si.series_id
+            WHERE us.user_id = :userId AND si.type = :type
+        SQL;
+
+        try {
+            return (int)$this->em->getConnection()->fetchOne($sql, ['userId' => $userId, 'type' => $type], ['userId' => ParameterType::INTEGER, 'type' => ParameterType::STRING]);
+        } catch (Exception) {
+            return 0;
+        }
+    }
+
     public function hasSeriesStartedAiring(int $seriesId, string $date): bool
     {
         $params = [

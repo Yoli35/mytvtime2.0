@@ -207,32 +207,51 @@ readonly class ApiTvTime
     public function posters(#[CurrentUser] User $user, Request $request): JsonResponse
     {
         $aspectRatio = floatval($request->query->get('aspectRatio'));
-        $timestamp = time() % 2;
-        $limit = 50;
+        // Source imposée (renouvellement du lot) ou tirée au sort (séries / films)
+        $source = $request->query->get('source');
+        if (!in_array($source, ['series', 'movies'], true)) {
+            $source = time() % 2 ? 'series' : 'movies';
+        }
         $locale = $request->getLocale();
+        $userId = $user->getId();
 
-        if ($aspectRatio> 1) {
-            $imageUrl = $this->imageConfiguration->getUrl('backdrop_sizes', 3);
-            if ($timestamp) {
-                $arr = $this->seriesRepository->getSeriesImages($user->getId(), 'backdrop',  $limit, $locale);
-                $this->imageService->saveImages($arr, "backdrop", $imageUrl);
-            } else {
-                $arr = $this->movieRepository->getMoviesImages($user->getId(), 'backdrop', $limit, $locale);
-                $this->imageService->saveImages($arr, "backdrop", $imageUrl, '/movies/');
-            }
+        $type = $aspectRatio > 1 ? 'backdrop' : 'poster';
+        $imageUrl = $aspectRatio > 1
+            ? $this->imageConfiguration->getUrl('backdrop_sizes', 3)
+            : $this->imageConfiguration->getUrl('poster_sizes', 5);
+
+        $totals = [
+            'series' => $this->seriesRepository->countSeriesImages($userId, $type),
+            'movies' => $this->movieRepository->countMoviesImages($userId, $type),
+        ];
+        $other = $source === 'series' ? 'movies' : 'series';
+        // Source demandée vide : on se rabat sur l'autre
+        if (!$totals[$source] && $totals[$other]) {
+            [$source, $other] = [$other, $source];
         }
-        else {
-            $imageUrl = $this->imageConfiguration->getUrl('poster_sizes', 5);
-            if ($timestamp) {
-                $arr = $this->seriesRepository->getSeriesImages($user->getId(), 'poster', $limit, $locale);
-                $this->imageService->saveImages($arr, "poster", $imageUrl);
-            } else {
-                $arr = $this->movieRepository->getMoviesImages($user->getId(), 'poster', $limit, $locale);
-                $this->imageService->saveImages($arr, "poster", $imageUrl, '/movies/');
-            }
+        $total = $totals[$source];
+        // Taille du lot selon le stock : un tiers des images disponibles, entre 10 et 50,
+        // afin que le renouvellement (stock > 2 × lot) profite au plus grand nombre
+        $limit = min(50, max(10, intdiv($total, 3)));
+
+        if ($source === 'series') {
+            $arr = $this->seriesRepository->getSeriesImages($userId, $type, $limit, $locale);
+            $this->imageService->saveImages($arr, $type, $imageUrl);
+        } else {
+            $arr = $this->movieRepository->getMoviesImages($userId, $type, $limit, $locale);
+            $this->imageService->saveImages($arr, $type, $imageUrl, '/movies/');
         }
 
-        return new JsonResponse(['images' => $arr, 'range' => $this->getRange($arr)]);
+        return new JsonResponse([
+            'images' => $arr,
+            'range' => $arr ? $this->getRange($arr) : '',
+            'source' => $source,
+            // Lot suivant : l'autre source si elle a des images, sinon la même
+            'nextSource' => $totals[$other] ? $other : $source,
+            // Renouvellement utile : l'autre source a des images, ou la source courante
+            // a assez d'images pour qu'un nouveau tirage apporte de la nouveauté
+            'renewable' => $totals[$other] > 0 || $total > 2 * $limit,
+        ]);
     }
 
     private function getRange(array $arr): string

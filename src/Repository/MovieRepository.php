@@ -355,6 +355,22 @@ class MovieRepository extends ServiceEntityRepository
         );
     }
 
+    public function countMoviesImages(int $userId, string $type): int
+    {
+        $sql = <<<SQL
+            SELECT COUNT(*)
+            FROM movie_image mi
+                INNER JOIN user_movie um ON um.movie_id = mi.movie_id
+            WHERE um.user_id = :userId AND mi.type = :type
+        SQL;
+
+        try {
+            return (int)$this->em->getConnection()->fetchOne($sql, ['userId' => $userId, 'type' => $type], ['userId' => ParameterType::INTEGER, 'type' => ParameterType::STRING]);
+        } catch (Exception) {
+            return 0;
+        }
+    }
+
     public function getMoviesPosters(int $userId, int $limit, string $locale, string $root = '/movies/posters'): array
     {
         $sql = <<<SQL
