@@ -92,7 +92,14 @@ export class TvTime {
         const wake = () => {
             this.stopSlideshow();
             clearTimeout(idleTimeout);
-            idleTimeout = setTimeout(() => this.startSlideshow(block), delay);
+            idleTimeout = setTimeout(() => {
+                // Page cachée (autre onglet, fenêtre réduite, session verrouillée…) : personne ne verrait le diaporama
+                if (!document.hidden) this.startSlideshow(block);
+            }, delay);
+        };
+        const sleep = () => {
+            this.stopSlideshow();
+            clearTimeout(idleTimeout);
         };
 
         // Il n'existe pas d'événement unique "activité" : on écoute pointeur (souris, tactile, stylet), molette, clavier et défilement.
@@ -101,9 +108,9 @@ export class TvTime {
             document.addEventListener(type, wake, {passive: true, capture: true});
         });
         document.addEventListener("visibilitychange", () => {
-            if (document.visibilityState === 'visible') {
-                wake();
-            }
+            // Cachée : plus de diaporama ni de chargement de lots (et donc de sauvegarde d'images côté serveur)
+            if (document.hidden) sleep();
+            else wake();
         });
         wake();
     }
