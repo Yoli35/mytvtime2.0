@@ -1,5 +1,5 @@
 <div class="tv-card">
-    <a href="{{ movie.link }}">
+    <a href="{{ movie.link }}" target="_blank">
         <div class="poster">
             {% if movie.posterPath %}
                 <img src="/movies/posters{{ movie.posterPath }}" alt="{{ movie.title }}">
@@ -7,6 +7,8 @@
                 <div>{{ 'No poster'|trans }}</div>
             {% endif %}
         </div>
+    </a>
+    <a href="{{ movie.link }}" target="_blank">
         <div class="infos">
             <div class="details">
                 <div class="name">{{ movie.title }}</div>
