@@ -1066,7 +1066,7 @@ body.screen-saver {
     width 1s ease-in-out .5s;
     transition-behavior: allow-discrete;
     width: 35rem;
-    z-index: 100;
+    z-index: 500;
 
     &:not(:has(.last-episode-vote)) {
         border-radius: 0;

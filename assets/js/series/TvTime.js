@@ -489,12 +489,6 @@ export class TvTime {
         const tabNameDiv = seriesTvTimeDiv.querySelector(`header .tab-names div[data-tab-index="${index}"]`);
         tabNameDiv.classList.add('active');
 
-        if (index === 0 && sub <= 2) {
-            tabNameDiv.classList.add('d-none');
-        } else {
-            tabNameDiv.classList.remove('d-none');
-        }
-
         seriesTvTimeDiv.style.setProperty('--active-tab', index);
 
         const h1Spans = seriesTvTimeDiv.querySelectorAll('h1 span');
