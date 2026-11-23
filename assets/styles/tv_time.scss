@@ -447,6 +447,34 @@ body.screen-saver {
                 display: block;
             }
 
+            // Loader affiché pendant le chargement du contenu d'un onglet (cf. TvTime.changeTab)
+            &.loading {
+                min-height: 16rem;
+                position: relative;
+
+                .wrapper {
+                    filter: blur(2px);
+                    opacity: .4;
+                    pointer-events: none;
+                    transition: opacity .2s, filter .2s;
+                }
+
+                &::after {
+                    animation: tv-time-loader-spin .8s linear infinite;
+                    aspect-ratio: 1;
+                    border: 4px solid hsl(from var(--orange-80) h s l / .25);
+                    border-radius: 50%;
+                    border-top-color: var(--orange-80);
+                    content: '';
+                    left: 50%;
+                    position: absolute;
+                    top: 6rem;
+                    translate: -50% 0;
+                    width: 3rem;
+                    z-index: 1;
+                }
+            }
+
             .wrapper {
                 position: relative;
 
@@ -1396,5 +1424,10 @@ body.screen-saver {
                 }
             }
         }
+    }
+}
+@keyframes tv-time-loader-spin {
+    to {
+        rotate: 1turn;
     }
 }

@@ -8,7 +8,6 @@ export class TvTime {
         self = this;
         const globs = JSON.parse(document.querySelector("#global-data").textContent);
         this.tab = globs.tab;
-        this.sub = globs.sub;
         this.sort = globs.sort;
         this.seriesKind = globs.seriesKind;
         this.moviesKind = globs.moviesKind;
@@ -95,7 +94,7 @@ export class TvTime {
             clearTimeout(idleTimeout);
             idleTimeout = setTimeout(() => {
                 // Page cachée (autre onglet, fenêtre réduite, session verrouillée…) : personne ne verrait le diaporama
-                if (!document.hidden) this.startSlideshow(block);
+                if (!document.hidden) this.startSlideshow(block).then(r => console.log(r));
             }, delay);
         };
         const sleep = () => {
@@ -264,7 +263,7 @@ export class TvTime {
     }
 
     initTab() {
-        this.changeTab(this.tab, this.sub, false);
+        this.changeTab(this.tab, false);
 
         const seriesTabNameDiv = document.querySelector('.series-tv-time header .series-tab-name');
         const moviesTabNameDiv = document.querySelector('.series-tv-time header .movies-tab-name');
@@ -472,7 +471,7 @@ export class TvTime {
             });
     }
 
-    changeTab(index, sub = 0, save = true) {
+    changeTab(index, save = true) {
         if (save) {
             self.tab = index;
             self.saveTab(index);
@@ -480,7 +479,7 @@ export class TvTime {
 
         const seriesTvTimeDiv = document.querySelector('.series-tv-time');
         const activeTabNameDiv = seriesTvTimeDiv.querySelector('header .tab-names .active');
-        const activeTabHeaderDiv = seriesTvTimeDiv.querySelector('header .tab-headers .active');
+        const activeTabHeaderDiv = seriesTvTimeDiv.querySelector('header .tab-headers > div.active');
         const activeContentTab = seriesTvTimeDiv.querySelector('main .content-tab.active');
 
         activeTabNameDiv.classList.remove('active');
@@ -494,6 +493,16 @@ export class TvTime {
         newTabHeaderDiv.classList.add('active');
         newTabNameDiv.classList.add('active');
         newContentTab.classList.add('active');
+        // Loader jusqu'à ce que getEpisodes() ait remplacé le contenu de l'onglet
+        if (save) newContentTab.classList.add('loading');
+
+        // Les épisodes non notés ne concernent que l'onglet « Séries »
+        if (index !== 0) {
+            seriesTvTimeDiv.querySelector('.last-episode-votes')?.remove();
+        }/* else {
+            self.initKindSwitch();
+            self.initSortSwitch();
+        }*/
 
         seriesTvTimeDiv.style.setProperty('--active-tab', index);
 
@@ -598,6 +607,7 @@ export class TvTime {
                 self.getEpisodeDetails(newWrapper);
                 const update = () => {
                     wrapper.replaceWith(newWrapper);
+                    newWrapper.closest('.content-tab').classList.remove('loading');
                     self.fixDetailsDivs(document.querySelector(selector));
                 };
                 let updateDone;
@@ -612,6 +622,9 @@ export class TvTime {
             .then(data => {
                 if (!data) {
                     return;
+                }
+                if (data['data']['tab'] !== 0) {
+                    document.querySelector('.series-tv-time .last-episode-votes')?.remove();
                 }
                 if (data['noVoteView']) {
                     const tvTimeDiv = document.querySelector('.series-tv-time');
@@ -632,6 +645,9 @@ export class TvTime {
             })
             .catch((error) => {
                 console.error('Error:', error);
+                // Ne pas laisser un loader tourner indéfiniment
+                document.querySelectorAll('.series-tv-time main .content-tab.loading')
+                    .forEach(tab => tab.classList.remove('loading'));
             });
     }
 
@@ -952,26 +968,6 @@ export class TvTime {
             });
     }
 
-    /*saveSpecials(specials) {
-        console.log(specials);
-        fetch('/api/tv/time/specials', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                specials: specials
-            })
-        })
-            .then((response) => response.json())
-            .then((data) => {
-                console.log(data);
-            })
-            .catch((error) => {
-                console.error('Error:', error);
-            });
-    }*/
-
     saveWeek(week) {
         console.log(week);
         fetch('/api/tv/time/week', {
@@ -1010,6 +1006,8 @@ export class TvTime {
             })
             .catch((error) => {
                 console.error('Error:', error);
+                document.querySelectorAll('.series-tv-time main .content-tab.loading')
+                    .forEach(tab => tab.classList.remove('loading'));
             });
     }
 }

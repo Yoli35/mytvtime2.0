@@ -14,9 +14,9 @@
     {% include('_blocks/_menu.html.twig') %}
     <div class="container-fluid series-tv-time">
         <h1>
-            <span class="series-tab-name active">{{ 'tv-time.series'|trans }}</span>
-            <span class="movies-tab-name">{{ 'tv-time.movies'|trans }}</span>
-            <span class="coming-tab-name">{{ 'tv-time.coming'|trans }}</span>
+            <span class="series-tab-name{% if tab == 0 %} active{% endif %}">{{ 'tv-time.series'|trans }}</span>
+            <span class="movies-tab-name{% if tab == 1 %} active{% endif %}">{{ 'tv-time.movies'|trans }}</span>
+            <span class="coming-tab-name{% if tab == 2 %} active{% endif %}">{{ 'tv-time.coming'|trans }}</span>
         </h1>
         <div class="search-block{% if tab == 0 %} active{% endif %}" data-tab="0">
             {{ include('_blocks/series/_search.html.twig') }}
@@ -117,7 +117,9 @@
             <div id="svg-bookmark-outline">{{ ux_icon('mdi:bookmark-outline') }}</div>
             <div>{{ ux_icon('mdi:close', {id: 'cancel'}) }}</div>
         </div>
-        {{ include('_blocks/tv_time/_card_series_vote.html.twig', {seriesArr: noVoteArr}) }}
+        {% if tab == 0 %}
+            {{ include('_blocks/tv_time/_card_series_vote.html.twig', {seriesArr: noVoteArr}) }}
+        {% endif %}
         {% include('_blocks/_footer.html.twig') %}
     </div>
     <div class="screen-saver-block">

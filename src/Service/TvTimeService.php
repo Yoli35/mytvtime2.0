@@ -45,13 +45,6 @@ readonly class TvTimeService
         $this->setSettings($user, $data);
     }
 
-    public function setTvTimeSpecials(User $user, int $specials): void
-    {
-        $data = $this->getSettings($user);
-        $data['specials'] = $specials;
-        $this->setSettings($user, $data);
-    }
-
     public function setTvTimeWeek(User $user, int $week): void
     {
         $data = $this->getSettings($user);
@@ -66,7 +59,7 @@ readonly class TvTimeService
         $this->setSettings($user, $data);
     }
 
-    public function getTvTimeSort(User $user): string
+    public function getTvTimeSort(User $user): int
     {
         $data = $this->getSettings($user);
         return $data['sort'] ?? 0;
@@ -78,12 +71,6 @@ readonly class TvTimeService
         $data['sort'] = $sort;
         $this->setSettings($user, $data);
     }
-
-    /*public function getTvTimeKind(User $user, string $tab): string
-    {
-        $data = $this->getSettings($user);
-        return $data[$tab . '-kind'] ?? 0;
-    }*/
 
     public function setTvTimeKind(User $user, string $tab, int $kind): void
     {
@@ -111,12 +98,9 @@ readonly class TvTimeService
             return $defaults;
         }
         $data = $s->getData();
-        // Anciens réglages : reprise de 'kind' et 'sub-1' dans les nouvelles clés
+        // Anciens réglages : reprise de 'kind' dans 'series-kind'
         if (!isset($data['series-kind']) && isset($data['kind'])) {
             $data['series-kind'] = $data['kind'];
-        }
-        if (!isset($data['movies-kind']) && isset($data['sub-1'])) {
-            $data['movies-kind'] = $data['sub-1'];
         }
         return $data + $defaults;
     }
@@ -224,7 +208,7 @@ readonly class TvTimeService
             ];
             $noVoteArr = $lastEpisodeWithNoVoteArr;
         } else {
-            $noVoteArr = $this->userSeriesRepository->seriesWithNoVote($locale);
+            $noVoteArr = []; // Les épisodes non notés ne s'affichent que dans l'onglet « Séries »
             $series = [
                 'content' => [],
                 'watchLinks' => [],
@@ -309,12 +293,6 @@ readonly class TvTimeService
             return $wp;
         }, $this->userSeriesRepository->availableSeriesWatchLinks(array_unique($ids)));
     }
-
-    /*public function getTvTimeSeasonShowCast(int $tmdbId, int $seasonNumber): array
-    {
-        $credits = json_decode($this->tmdbService->getTvSeasonCredits($tmdbId, $seasonNumber, 'en-US'), true);
-        return $credits['cast'];
-    }*/
 
     public function getTvTimeEpisodeShowCast(int $tmdbId, int $seasonNumber, int $episodeNumber): array
     {
