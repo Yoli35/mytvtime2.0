@@ -194,7 +194,25 @@ body.screen-saver {
         }
     }
 
-    .series-search-block {
+    .search-block {
+        display: none;
+        width: 100%;
+
+        &.active {
+            display: block;
+        }
+
+        .fill-the-block {
+            border: 3px solid hsl(from var(--orange-80) h s l / .5);
+            border-radius: 5rem;
+            height: 38px;
+            margin-block: 2rem;
+            margin-inline: auto;
+            width: max(50vw, 25rem);
+        }
+    }
+
+    .series-search-block, .movie-search {
         margin-block: 2rem;
         margin-inline: auto;
         width: max(50vw, 25rem);

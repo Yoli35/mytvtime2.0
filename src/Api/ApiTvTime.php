@@ -36,8 +36,15 @@ readonly class ApiTvTime
     public function check(#[CurrentUser] User $user, Request $request): JsonResponse
     {
         $inputBag = $request->getPayload();
+        $tab = $inputBag->getInt('tab');
         $sort = $inputBag->get('sort');
         $kind = $inputBag->get('kind');
+
+        $tabString = match ($tab) {
+            1 => 'movies',
+            2 => 'coming',
+            default => 'series',
+        };
 
         $view = 'No data yet ;p';
         $noVoteView = null;
@@ -47,36 +54,44 @@ readonly class ApiTvTime
             $this->tvTimeService->setTvTimeSort($user, intval($sort));
         }
         if ($kind != null) {
-            $this->tvTimeService->setTvTimeKind($user, intval($kind));
+            $this->tvTimeService->setTvTimeKind($user, $tabString, intval($kind));
         }
-        $data = $this->tvTimeService->getData($user, $locale);
+        $data = $this->tvTimeService->getTvTimeData($user, $locale);
 
         if ($data['tab'] == 0) {
             $noVoteView = ($this->renderView)('_blocks/tv_time/_card_series_vote.html.twig', ['seriesArr' => $data['noVoteArr']]);
             $view = ($this->renderView)('_blocks/tv_time/_wrapper_series.html.twig', [
+                'tab' => $data['tab'],
                 'series' => $data['series']['content'],
                 'watchLinks' => $data['series']['watchLinks'],
                 'week' => $data['week'],
                 'list' => $data['list'],
-                'kind' => $data['kind'],
+                'seriesKind' => $data['series-kind'],
                 'loadCount' => $data['loadCount'],
             ]);
         }
 
         if ($data['tab'] == 1) {
             $view = ($this->renderView)('_blocks/tv_time/_wrapper_movies.html.twig', [
-                'moviesToSee' => $data['movies']['toSee'],
-                'moviesSeen' => $data['movies']['seen'],
-                'moviesToSeeCount' => $data['movies']['toSeeCount'],
-                'moviesSeenCount' => $data['movies']['seenCount'],
+                'tab' => $data['tab'],
+                'movies' => $data['movies']['results'],
+                'moviesCount' => $data['movies']['count'],
                 'list' => $data['list'],
-                'sub' => $data['sub'],
+                'moviesKind' => $data['movies-kind'],
+                'loadCount' => $data['loadCount'],
+            ]);
+        }
+
+        if ($data['tab'] == 2) {
+            $view = ($this->renderView)('_blocks/tv_time/_wrapper_coming.html.twig', [
+                'tab' => $data['tab'],
+                'list' => $data['list'],
+                'comingKind' => $data['coming-kind'],
                 'loadCount' => $data['loadCount'],
             ]);
         }
 
         return new JsonResponse([
-            'new_episode' => true,
             'view' => $view,
             'noVoteView' => $noVoteView,
             'data' => $data,

@@ -30,7 +30,7 @@ readonly class TvTimeService
         ];
     }
 
-    public function getTvTimeData(User $user): array
+    public function getTvTimeSettings(User $user): array
     {
         $settings = $this->getSettings($user);
         $settings['count']++;
@@ -79,39 +79,46 @@ readonly class TvTimeService
         $this->setSettings($user, $data);
     }
 
-    public function getTvTimeKind(User $user): string
+    /*public function getTvTimeKind(User $user, string $tab): string
     {
         $data = $this->getSettings($user);
-        return $data['kind'] ?? 0;
-    }
+        return $data[$tab . '-kind'] ?? 0;
+    }*/
 
-    public function setTvTimeKind(User $user, int $kind): void
+    public function setTvTimeKind(User $user, string $tab, int $kind): void
     {
         $data = $this->getSettings($user);
-        $data['kind'] = $kind;
+        $data[$tab . '-kind'] = $kind;
         $this->setSettings($user, $data);
     }
 
     private function getSettings(User $user): array
     {
+        $defaults = [
+            'tab' => 0,             // Tab "Séries", "Films" et "À venir"
+            'count' => 0,           // Nombre d'appels à l'API
+            'list' => 0,            // Affichage en mode liste ou grille
+            'series-kind' => 0,     // Affichage des séries disponibles / terminées / épisodes spéciaux
+            'movies-kind' => 0,     // Affichage des films à voir / vus
+            'coming-kind' => 0,
+            'sort' => 0,            // Affichage par jours restants / derniers vus / date de diffusion
+            'week' => 52,           // Nombre de semaines avant de considérer un épisode spécial comme ancien
+        ];
         $s = $this->settingsRepository->findOneBy(['user' => $user, 'name' => 'tv time']);
         if ($s === null) {
-            $data = [
-                'count' => 0,           // Nombre d'appels à l'API
-                'list' => 0,            // Affichage en mode liste ou grille
-                'kind' => 0,            // Affichage des séries disponibles / terminées / épisodes spéciaux
-                'sort' => 0,            // Affichage par jours restants / derniers vus / date de diffusion
-                'specials' => 0,        // Affichage des épisodes spéciaux
-                'tab' => 0,             // Onglet Séries, Films et séries et films à venir
-                'week' => 52,           // Nombre de semaines avant de considérer un épisode spécial comme ancien
-                'sub-0' => 0,
-                'sub-1' => 0,
-                'sub-2' => 0,
-            ];
-            $s = new Settings($user, 'tv time', $data);
+            $s = new Settings($user, 'tv time', $defaults);
             $this->settingsRepository->save($s, true);
+            return $defaults;
         }
-        return $s->getData();
+        $data = $s->getData();
+        // Anciens réglages : reprise de 'kind' et 'sub-1' dans les nouvelles clés
+        if (!isset($data['series-kind']) && isset($data['kind'])) {
+            $data['series-kind'] = $data['kind'];
+        }
+        if (!isset($data['movies-kind']) && isset($data['sub-1'])) {
+            $data['movies-kind'] = $data['sub-1'];
+        }
+        return $data + $defaults;
     }
 
     private function setSettings(User $user, array $data): void
@@ -125,13 +132,10 @@ readonly class TvTimeService
         $this->settingsRepository->save($s, true);
     }
 
-    public function getData(?User $user, string $locale): array
+    public function getTvTimeData(?User $user, string $locale): array
     {
         $userId = $user->getId();
-        $settings = $this->getTvTimeData($user);
-        /*$settings['tab'] = 1;*/
-        $movies = [];
-        $coming = [];
+        $settings = $this->getTvTimeSettings($user);
         $providerUrl = $this->imageConfiguration->getUrl('logo_sizes', 3);
 
         // Reload page at midnight plus 1 to 60 secondes
@@ -141,7 +145,7 @@ readonly class TvTimeService
 
         if ($settings['tab'] === 0) { // series
             $sort = $settings['sort'] ?? 0;
-            $kind = $settings['kind'] ?? 0;
+            $kind = $settings['series-kind'] ?? 0;
             $reloadAt = null;
             $content = [];
             $ids = [];
@@ -229,7 +233,7 @@ readonly class TvTimeService
         }
 
         if ($settings['tab'] === 1) {// movies
-            if ($settings['sub-1'] == 0) {
+            if ($settings['movies-kind'] == 0) {
                 $movies = $this->userMovieRepository->moviesToSee($user, $locale);
                 $movieCount = $this->userMovieRepository->moviesToSeeCount($user);
             } else {
@@ -237,12 +241,12 @@ readonly class TvTimeService
                 $movieCount = $this->userMovieRepository->moviesSeenCount($user);
             }
             $movies = [
-                'movies' => $movies,
-                'movieCount' => $movieCount,
+                'results' => $movies,
+                'count' => $movieCount,
             ];
         }
         if ($settings['tab'] === 2) {// coming
-            if ($settings['sub-2'] == 0) {
+            if ($settings['coming-kind'] == 0) {
                 $media = [];
                 $actors = [];
             } else {
@@ -256,18 +260,16 @@ readonly class TvTimeService
         }
         return [
             'series' => $series,
-            'movies' => $movies,
-            'coming' => $coming,
+            'movies' => $movies ?? ['results' => [], 'count' => 0],
+            'coming' => $coming ?? ['media' => [], 'actors' => []],
             'noVoteArr' => $noVoteArr,
             'loadCount' => $settings['count'],
             'tab' => $settings['tab'],
-//            'sub_0' => $settings['sub-0'],
-            'sub_1' => $settings['sub-1'],
-//            'sub_2' => $settings['sub-2'],
             'list' => $settings['list'],
             'sort' => $settings['sort'],
-            'kind' => $settings['kind'],
-            'specials' => $settings['specials'],
+            'series-kind' => $settings['series-kind'],
+            'movies-kind' => $settings['movies-kind'],
+            'coming-kind' => $settings['coming-kind'],
             'week' => $settings['week'],
             'remainingSecondes' => $remainingSecondes,
         ];
@@ -308,11 +310,11 @@ readonly class TvTimeService
         }, $this->userSeriesRepository->availableSeriesWatchLinks(array_unique($ids)));
     }
 
-    public function getTvTimeSeasonShowCast(int $tmdbId, int $seasonNumber): array
+    /*public function getTvTimeSeasonShowCast(int $tmdbId, int $seasonNumber): array
     {
         $credits = json_decode($this->tmdbService->getTvSeasonCredits($tmdbId, $seasonNumber, 'en-US'), true);
         return $credits['cast'];
-    }
+    }*/
 
     public function getTvTimeEpisodeShowCast(int $tmdbId, int $seasonNumber, int $episodeNumber): array
     {

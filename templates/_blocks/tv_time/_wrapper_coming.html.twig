@@ -1,7 +1,9 @@
 <div class="wrapper{% if list %} list{% endif %}">
     <div class="content">
-        {% if app.environment == 'dev' %}
-            <div class="count">{{ loadCount }}</div>
+        {% if tab == 2 %}
+            {% if app.environment == 'dev' %}
+                <div class="count">{{ loadCount }}</div>
+            {% endif %}
         {% endif %}
     </div>
 </div>

@@ -10,8 +10,9 @@ export class TvTime {
         this.tab = globs.tab;
         this.sub = globs.sub;
         this.sort = globs.sort;
-        this.kind = globs.kind;
-        /*this.episodesAvailable = globs.episodesAvailable;*/
+        this.seriesKind = globs.seriesKind;
+        this.moviesKind = globs.moviesKind;
+        this.comingKind = globs.comingKind;
         this.remainingSecondes = globs.remainingSecondes;
         this.intervalId = -1;
         this.toolsTips = toolsTips;
@@ -472,35 +473,37 @@ export class TvTime {
     }
 
     changeTab(index, sub = 0, save = true) {
-        if (save) self.saveTab(index);
+        if (save) {
+            self.tab = index;
+            self.saveTab(index);
+        }
 
         const seriesTvTimeDiv = document.querySelector('.series-tv-time');
-        const seriesTabNameDiv = seriesTvTimeDiv.querySelector('header .series-tab-name');
-        const moviesTabNameDiv = seriesTvTimeDiv.querySelector('header .movies-tab-name');
-        const comingTabNameDiv = seriesTvTimeDiv.querySelector('header .coming-tab-name');
-        const seriesTabHeaderDiv = seriesTvTimeDiv.querySelector('header .series-tab-header');
-        const moviesTabHeaderDiv = seriesTvTimeDiv.querySelector('header .movies-tab-header');
-        const comingTabHeaderDiv = seriesTvTimeDiv.querySelector('header .coming-tab-header');
+        const activeTabNameDiv = seriesTvTimeDiv.querySelector('header .tab-names .active');
+        const activeTabHeaderDiv = seriesTvTimeDiv.querySelector('header .tab-headers .active');
+        const activeContentTab = seriesTvTimeDiv.querySelector('main .content-tab.active');
 
-        seriesTabNameDiv.classList.remove('active');
-        moviesTabNameDiv.classList.remove('active');
-        comingTabNameDiv.classList.remove('active');
+        activeTabNameDiv.classList.remove('active');
+        activeTabHeaderDiv.classList.remove('active');
+        activeContentTab.classList.remove('active');
 
-        seriesTabHeaderDiv.classList.remove('active');
-        moviesTabHeaderDiv.classList.remove('active');
-        comingTabHeaderDiv.classList.remove('active');
+        const newTabHeaderDiv = seriesTvTimeDiv.querySelector(`header .tab-headers div[data-tab-index="${index}"]`);
+        const newTabNameDiv = seriesTvTimeDiv.querySelector(`header .tab-names div[data-tab-index="${index}"]`);
+        const newContentTab = seriesTvTimeDiv.querySelector(`main .content-tab[data-tab-index="${index}"]`);
 
-        const tabHeaderDiv = seriesTvTimeDiv.querySelector(`header .tab-headers div[data-tab-index="${index}"]`);
-        tabHeaderDiv.classList.add('active');
-
-        const tabNameDiv = seriesTvTimeDiv.querySelector(`header .tab-names div[data-tab-index="${index}"]`);
-        tabNameDiv.classList.add('active');
+        newTabHeaderDiv.classList.add('active');
+        newTabNameDiv.classList.add('active');
+        newContentTab.classList.add('active');
 
         seriesTvTimeDiv.style.setProperty('--active-tab', index);
 
         const h1Spans = seriesTvTimeDiv.querySelectorAll('h1 span');
         h1Spans.forEach(span => span.classList.remove("active"));
         h1Spans[index].classList.add("active");
+
+        const searchBlocks = seriesTvTimeDiv.querySelectorAll('.search-block');
+        searchBlocks.forEach(block => block.classList.remove('active'));
+        searchBlocks[index].classList.add('active');
     }
 
     initAddEpisodes() {
@@ -576,6 +579,7 @@ export class TvTime {
                 'X-Requested-With': 'XMLHttpRequest'
             },
             body: JSON.stringify({
+                tab: self.tab,
                 sort: sort,
                 kind: kind,
             })
@@ -583,10 +587,10 @@ export class TvTime {
             .then(response => response.json())
             .then(data => {
                 console.log(data);
-                if (data['new_episode'] === false) {
-                    return;
-                }
-                const wrapper = document.querySelector('.series-tv-time .series-tab .wrapper');
+                // L'onglet rendu par le serveur (réglage enregistré) fait foi : évite d'injecter
+                // la vue d'un onglet dans un autre si la requête croise un changement d'onglet.
+                const selector = `.series-tv-time main .content-tab[data-tab-index="${data['data']['tab']}"] .wrapper`;
+                const wrapper = document.querySelector(selector);
 
                 const div = document.createElement('div');
                 div.innerHTML = data['view'];
@@ -594,7 +598,7 @@ export class TvTime {
                 self.getEpisodeDetails(newWrapper);
                 const update = () => {
                     wrapper.replaceWith(newWrapper);
-                    self.fixDetailsDivs(document.querySelector('.series-tv-time .series-tab .wrapper'));
+                    self.fixDetailsDivs(document.querySelector(selector));
                 };
                 let updateDone;
                 if (window.ViewTransition && 'types' in ViewTransition.prototype) {
@@ -622,7 +626,7 @@ export class TvTime {
                     self.toolsTips.init(tvTimeDiv.querySelector('.last-episode-votes'));
                 }
                 self.initComponents();
-                self.toolsTips.init(document.querySelector('.series-tv-time .wrapper'));
+                self.toolsTips.init(document.querySelector(`.series-tv-time main .content-tab[data-tab-index="${data['data']['tab']}"] .wrapper`));
                 /*self.episodesAvailable = data['data']['series']['episodesAvailable'];*/
                 self.resetReload(data['data']['remainingSecondes']);
             })
@@ -1002,6 +1006,7 @@ export class TvTime {
             .then((response) => response.json())
             .then((data) => {
                 console.log(data);
+                self.getEpisodes();
             })
             .catch((error) => {
                 console.error('Error:', error);

@@ -37,6 +37,12 @@ export class Index {
             const searchResultsDiv = seriesSearchBlockDiv.querySelector('.search-results');
             window.addEventListener('resize', () => this.menu.fixSearchResultsWidth(searchResultsDiv));
         }
+        // Page TV Time : recherche de films (onglet « Films »)
+        const movieSearchInput = document.querySelector('.series-tv-time #movie-search-2');
+        if (movieSearchInput) {
+            movieSearchInput.addEventListener("input", this.menu.searchFetch);
+            movieSearchInput.addEventListener("keydown", this.menu.searchMenuNavigate);
+        }
 
         new UserList(this.flashMessage, this.toolTips, null);
 

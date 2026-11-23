@@ -1,14 +1,16 @@
 <div class="wrapper{% if list %} list{% endif %}">
     <div class="content">
-        {% if sub_1 == 0 %}
-            {% for movie in movies %}
-                {{ include('_blocks/tv_time/_card_movies.html.twig', {next: true}) }}
-            {% endfor %}
-        {% endif %}
-        {% if sub_1 == 1 %}
-            {% for movie in movies %}
-                {{ include('_blocks/tv_time/_card_movies.html.twig', {next: false}) }}
-            {% endfor %}
+        {% if tab == 1 %}
+            {% if moviesKind == 0 %}
+                {% for movie in movies %}
+                    {{ include('_blocks/tv_time/_card_movies.html.twig', {next: true}) }}
+                {% endfor %}
+            {% endif %}
+            {% if moviesKind == 1 %}
+                {% for movie in movies %}
+                    {{ include('_blocks/tv_time/_card_movies.html.twig', {next: false}) }}
+                {% endfor %}
+            {% endif %}
         {% endif %}
     </div>
     {% if app.environment == 'dev' %}

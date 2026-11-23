@@ -18,7 +18,15 @@
             <span class="movies-tab-name">{{ 'tv-time.movies'|trans }}</span>
             <span class="coming-tab-name">{{ 'tv-time.coming'|trans }}</span>
         </h1>
-        {{ include('_blocks/series/_search.html.twig') }}
+        <div class="search-block{% if tab == 0 %} active{% endif %}" data-tab="0">
+            {{ include('_blocks/series/_search.html.twig') }}
+        </div>
+        <div class="search-block{% if tab == 1 %} active{% endif %}" data-tab="1">
+            {{ include('_blocks/movie/_search.html.twig') }}
+        </div>
+        <div class="search-block{% if tab == 2 %} active{% endif %}" data-tab="2">
+            <div class="fill-the-block"></div>
+        </div>
         <header>
             <div class="tab-names">
                 <div class="active-tab-name"></div>
@@ -37,7 +45,7 @@
                             <input type="search" id="filter-series-input" placeholder="{{ 'Start typing…'|trans }}">
                         </label>
                     </div>
-                    <div class="tab-filter{% if tab == 0 and kind < 2 %} d-none{% endif %}">
+                    <div class="tab-filter{% if tab == 0 and seriesKind < 2 %} d-none{% endif %}">
                         <label for="filter-series-specials-week" data-title="{{ 'tv-time.week-number'|trans }}">
                             <input type="number" id="filter-series-specials-week" value="{{ week }}">
                             {{ 'tv-time.weeks'|trans }}
@@ -53,7 +61,7 @@
                         ] }) }}
                     {{ include('_blocks/tv_time/_tab_menu.html.twig', {
                         menuId: 'series-kind-menu',
-                        tab: kind, class: 'kind-by',
+                        tab: seriesKind, class: 'kind-by',
                         list: [
                             {id: 'in-progress', title: 'tv-time.in-progress-title'|trans, icon: '', text: 'tv-time.in-progress'|trans},
                             {id: 'ended', title: 'tv-time.ended-title'|trans, icon: '', text: 'tv-time.ended'|trans},
@@ -65,11 +73,6 @@
                 <div class="tab-header movies-tab-header{% if tab == 1 %} active{% endif %}" data-tab-index="1">
                     <div class="infos">{{ 'tv-time.my-list'|trans }}</div>
                     <div class="tab-content">
-{#                        <div class="sub-tab">#}
-{#                            <div class="active-sub-tab"></div>#}
-{#                            <div class="to-see{% if sub_1 == 0 %} active{% endif %}">{{ 'tv-time.movies.to-see'|trans }}</div>#}
-{#                            <div class="seen{% if sub_1 == 1 %} active{% endif %}">{{ 'tv-time.movies.seen'|trans }}</div>#}
-{#                        </div>#}
                     </div>
                 </div>
 
@@ -77,11 +80,6 @@
                 <div class="tab-header coming-tab-header{% if tab == 2 %} active{% endif %}" data-tab-index="2">
                     <div class="infos">{{ 'tv-time.coming'|trans }}</div>
                     <div class="tab-content">
-{#                        <div class="sub-tab">#}
-{#                            <div class="active-sub-tab"></div>#}
-{#                            <div class="my-list{% if sub_2 == 0 %} active{% endif %}">{{ 'tv-time.coming.my-list'|trans }}</div>#}
-{#                            <div class="actors{% if sub_2 == 1 %} active{% endif %}">{{ 'tv-time.coming.actors'|trans }}</div>#}
-{#                        </div>#}
                     </div>
                 </div>
                 <div class="tab-layout">
@@ -92,29 +90,22 @@
         </header>
         <main>
             <article id="tv-time-series" class="content-tab series-tab{% if tab == 0 %} active{% endif %}" data-tab-index="0">
-                {% if tab==0 %}
-                    {{ include('_blocks/tv_time/_wrapper_series.html.twig') }}
-                {% endif %}
+                {{ include('_blocks/tv_time/_wrapper_series.html.twig') }}
             </article>
             <article id="tv-time-movies" class="content-tab movies-tab{% if tab == 1 %} active{% endif %}" data-tab-index="1">
-                {% if tab==1 %}
-                    {{ include('_blocks/tv_time/_wrapper_movies.html.twig', {movies: movies.movies, movieCount: movies.movieCount, loadCount: loadCount}) }}
-                {% endif %}
+                {{ include('_blocks/tv_time/_wrapper_movies.html.twig', {movies: movies.results, movieCount: movies.count, loadCount: loadCount}) }}
             </article>
             <article id="tv-time-coming" class="content-tab coming-tab{% if tab == 2 %} active{% endif %}" data-tab-index="2">
-                {% if tab==2 %}
-                    {{ include('_blocks/tv_time/_wrapper_coming.html.twig', {comingMedia: coming.media, comingActors: coming.actors, loadCount: loadCount}) }}
-                {% endif %}
+                {{ include('_blocks/tv_time/_wrapper_coming.html.twig', {comingMedia: coming.media, comingActors: coming.actors, loadCount: loadCount}) }}
             </article>
         </main>
         <div id="global-data" class="hidden">{# "episodesAvailable": {{ episodesAvailable|json_encode|raw }}, #}
             {
                 "tab": {{ tab }},
-                "kind": {{ kind }},
+                "seriesKind": {{ seriesKind }},
+                "moviesKind": {{ moviesKind }},
+                "comingKind": {{ comingKind }},
                 "sort": {{ sort }},
-{#                "sub_0": {{ sub_0 }},#}
-{#                "sub_1": {{ sub_1 }},#}
-{#                "sub_2": {{ sub_2 }},#}
                 "tmdbIds": {{ tmdbIds|json_encode|raw }},
                 "api_series_tmdb_check": "{{ path('api_series_tmdb_check') }}",
                 "remainingSecondes": {{ remainingSecondes }}

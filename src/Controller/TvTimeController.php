@@ -24,15 +24,14 @@ final class TvTimeController extends AbstractController
     {
         $locale = $user->getPreferredLanguage() ?? $request->getLocale();
 
-        $data = $this->tvTimeService->getData($user, $locale);
+        $data = $this->tvTimeService->getTvTimeData($user, $locale);
 
         return $this->render('tv_time/index.html.twig', [
             'tab' => $data['tab'],
-//            'sub_0' => $data['sub_0'],
-            'sub_1' => $data['sub_1'],
-//            'sub_2' => $data['sub_2'],
             'sort' => $data['sort'],
-            'kind' => $data['kind'],
+            'seriesKind' => $data['series-kind'],
+            'moviesKind' => $data['movies-kind'],
+            'comingKind' => $data['coming-kind'],
             'series' => $data['series']['content'],
             'watchLinks' => $data['series']['watchLinks'],
             'tmdbIds' => $data['series']['tmdbIds'],
@@ -41,9 +40,7 @@ final class TvTimeController extends AbstractController
             'noVoteArr' => $data['noVoteArr'],
             'loadCount' => $data['loadCount'],
             'list' => $data['list'],
-            'specials' => $data['specials'],
             'week' => $data['week'],
-            /*'episodesAvailable' => $data['series']['episodesAvailable'],*/
             'remainingSecondes' => $data['remainingSecondes'],
         ]);
     }
