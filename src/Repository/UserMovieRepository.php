@@ -144,7 +144,8 @@ class UserMovieRepository extends ServiceEntityRepository
                        m.poster_path                             AS posterPath,
                        CONCAT('/',:locale,'/movie/show/', um.id) AS link,
                        m.release_date                            AS releaseDate,
-                       um.rating                                 AS rating
+                       um.rating                                 AS rating,
+                       YEAR(m.release_date)                      AS year
                 FROM user_movie um
                     LEFT JOIN movie m ON um.movie_id=m.id
                     LEFT JOIN movie_localized_name mln ON mln.movie_id=m.id AND mln.locale=:locale
@@ -185,7 +186,8 @@ class UserMovieRepository extends ServiceEntityRepository
                        m.poster_path                             AS posterPath,
                        CONCAT('/',:locale,'/movie/show/', um.id) AS link,
                        m.release_date                            AS releaseDate,
-                       um.rating                                 AS rating
+                       um.rating                                 AS rating,
+                       YEAR(m.release_date)                      AS year
                 FROM user_movie um
                     LEFT JOIN movie m ON um.movie_id=m.id
                     LEFT JOIN movie_localized_name mln ON mln.movie_id=m.id AND mln.locale=:locale

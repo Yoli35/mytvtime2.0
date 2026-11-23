@@ -1371,7 +1371,9 @@ class UserSeriesRepository extends ServiceEntityRepository
                 -- Épisodes pas notés
                 SELECT
                     s.id                         AS id,
+                    s.tmdb_id                    AS tmdb_id,
                     IFNULL(sln.`name`, s.`name`) AS name,
+                    Year(s.first_air_date)       AS year,
                     s.`poster_path`              AS poster_path,
                     ue.`id`                      AS episode_id,
                     ue.`vote`                    AS episode_vote,
