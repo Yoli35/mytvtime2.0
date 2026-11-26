@@ -1890,4 +1890,22 @@ readonly class SeriesService
         }
         return $overview;
     }
+
+    public function getSeries(int $id, string $locale): array
+    {
+        $series = $this->seriesRepository->find($id);
+
+        $posterUrl = $this->imageConfiguration->getUrl('poster_sizes', 5);
+        $backdropUrl = $this->imageConfiguration->getUrl('backdrop_sizes', 3);
+        $this->imageService->saveImage("posters", $series->getPosterPath(), $posterUrl);
+        $this->imageService->saveImage("backdrops", $series->getBackdropPath(), $backdropUrl);
+        $blurredPoster = $this->imageService->blurPoster($series->getPosterPath(), 'series', 8);
+
+        return [
+            'series' => $series,
+            'blurredPoster' => $blurredPoster,
+            'localizedName' => $this->seriesLocalizedNameRepository->findOneBy(['series' => $id, 'locale' => $locale]),
+            'localizedOverview' => $this->seriesLocalizedOverviewRepository->findOneBy(['series' => $id, 'locale' => $locale]),
+        ];
+    }
 }

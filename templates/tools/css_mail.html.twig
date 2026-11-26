@@ -1,0 +1,25 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Tools → New addition mail!{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('styles/tools.scss') }}">
+{% endblock %}
+
+{% block body %}
+    {% if background %}
+        <script>
+            const bd = '{{ background }}';
+            const body = document.querySelector("body");
+            body.style.backgroundImage = "url(" + bd + ")";
+        </script>
+    {% endif %}
+    {% include('_blocks/_menu.html.twig') %}
+    <div class="container-fluid">
+        <div class="content">
+            {% include('emails/new_series.html.twig') %}
+        </div>
+        {% include('_blocks/_footer.html.twig') %}
+    </div>
+{% endblock %}

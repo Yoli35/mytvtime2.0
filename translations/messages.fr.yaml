@@ -1498,17 +1498,19 @@ Quality Control Supervisor: Superviseur du contrôle qualité
 Sound Effects: Effets sonores
 
 # Contact
-Contact: Contact
-Name: Nom
-Subject: Sujet
-Message: Message
+An error occurred, please try again later: Une erreur s'est produite, veuillez réessayer plus tard
+Availability: Disponibilité
 Cancel: Annuler
-Send: Envoyer
 Contact form: Formulaire de contact
 Contact message: Message de contact
+Contact: Contact
 From: De
+Message: Message
+Name: Nom
+New addition: Nouvel ajout
+Send: Envoyer
+Subject: Sujet
 Your message has been sent: Votre message a été envoyé
-An error occurred, please try again later: Une erreur s'est produite, veuillez réessayer plus tard
 
 # User / Profile
 Avatar: Avatar

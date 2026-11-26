@@ -1,0 +1,17 @@
+<div class="mail" style="background: #0000001c url('{{ series.backgroundUrl }}'); background-size: cover;">
+    <h1>{{ title|trans }}</h1>
+    <h2>
+        {{ 'From'|trans }}: {{ user.username }} ({{ user.id }}) - {{ user.email }}<br>
+    </h2>
+    <div class="poster">
+        <img src="{{ series.posterUrl }}" alt="{{ series.posterAlt }}">
+    </div>
+    <div class="series">
+        <div class="backdrop">
+            <img src="{{ series.backdropUrl }}" alt="{{ series.backdropAlt }}">
+        </div>
+        <div class="name">{{ series.name }}{% if series.localizedName %} ({{ series.localizedName }}){% endif %}</div>
+        <h4>{{ 'Availability'|trans }} → {{ series.firstAirDate|format_date('relative_long')|capitalize }}</h4>
+        <p>{{ series.overview }}</p>
+    </div>
+</div>
