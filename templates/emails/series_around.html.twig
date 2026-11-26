@@ -1,0 +1,8 @@
+<div class="around">
+    <a href="{{ path('app_tools_css_mail', {id: around.previous.id}) }}" class="series">
+        <img src="/series/posters{{ around.previous.poster_path }}" alt="{{ around.previous.name }}" data-title="{{ around.previous.name }}">
+    </a>
+    <a href="{{ path('app_tools_css_mail', {id: around.next.id}) }}" class="series">
+        <img src="/series/posters{{ around.next.poster_path }}" alt="{{ around.next.name }}" data-title="{{ around.next.name }}">
+    </a>
+</div>
