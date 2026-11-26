@@ -853,6 +853,7 @@ body.screen-saver {
                                     .watch-links {
                                         display: flex;
                                         gap: 1rem;
+                                        margin-inline-end: 1rem;
                                         margin-inline-start: auto;
 
                                         .watch-link {
@@ -880,7 +881,7 @@ body.screen-saver {
                                         font-weight: 300;
                                         height: 2.5rem;
                                         justify-content: center;
-                                        margin-inline: 1rem;
+                                        margin-inline-end: 1rem;
                                         width: 2.5rem;
 
                                         svg {
@@ -917,7 +918,7 @@ body.screen-saver {
                                         flex-shrink: 0;
                                         height: 2.5rem;
                                         justify-content: center;
-                                        margin-inline: 1rem;
+                                        margin-inline-end: 1rem;
                                         width: 2.5rem;
 
                                         svg {

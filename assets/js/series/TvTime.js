@@ -659,9 +659,10 @@ export class TvTime {
                 const watchLinksDid = infosDiv.querySelector('.watch-links');
                 if (watchLinksDid) {
                     const voteDiv = infosDiv.querySelector('.vote');
-                    const extraWidth = watchLinksDid.getBoundingClientRect().width + 72 + (voteDiv ? 72 : 0);
+                    const doneDiv = infosDiv.querySelector('.done');
+                    const extraWidth = watchLinksDid.getBoundingClientRect().width + 56 + (voteDiv ? 56 : 0) + (doneDiv ? 56 : 0);
                     const detailsDiv = infosDiv.querySelector('.details');
-                    detailsDiv.style.width = 'calc(100% - ' + extraWidth + 'px)';
+                    detailsDiv.style.maxWidth = 'calc(100% - ' + extraWidth + 'px)';
                 }
             });
         } else {
