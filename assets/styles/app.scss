@@ -722,7 +722,7 @@ label:has(input[type="text"]) {
                         .name {
                             flex-grow: 1;
                             font-weight: 300;
-                            max-width: calc(100% - 7rem);
+                            max-width: 32rem;/*calc(100% - 7rem);*/
                             overflow: hidden;
                             text-overflow: ellipsis;
                             white-space: nowrap;
@@ -2150,6 +2150,12 @@ label:has(input[type="text"]) {
             top: 3rem;
         }
 
+        &:has(.navbar-items.left.open) {
+            .debug, .screen-size {
+                display: none;
+            }
+        }
+
         .multi-search, .screen-size + div {
             margin-inline-start: auto;
         }
@@ -2225,16 +2231,22 @@ label:has(input[type="text"]) {
                 }
 
                 .menu {
-                    border-top: 2px solid var(--navbar-bg-75);
+                    border-radius: .5rem;
+                    /*border-top: 2px solid var(--navbar-bg-75);*/
+                    border-width: 2px;
                     box-shadow: none;
                     display: flex;
                     left: unset;
                     opacity: 1;
-                    margin-block-start: 0.5rem;
+                    margin-block: 0.5rem;
                     position: unset;
                     top: unset;
                     transform: translateY(0);
                     width: 100%;
+
+                    .menu-item:not(:has(img)) {
+                        border-radius: .25rem;
+                    }
 
                     .menu-item > label,
                     .separation {
