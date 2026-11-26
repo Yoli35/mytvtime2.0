@@ -6,9 +6,9 @@ use App\Entity\User;
 use App\Repository\HistoryRepository;
 use App\Service\DateService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\CurrentUser;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 #[Route('/api/log', name: 'api_log_')]
@@ -23,11 +23,8 @@ class LogMenu extends AbstractController
     }
 
     #[Route('/load', name: 'menu', methods: ['POST'])]
-    public function load(Request $request): Response
+    public function load(#[CurrentUser] User $user): Response
     {
-        /** @var User $user */
-        $user = $this->getUser();
-
         $dates = [];
         $logs = array_map(function ($l) use ($user, &$dates) {
             $date = $l->getDate();
@@ -47,7 +44,7 @@ class LogMenu extends AbstractController
                 'date' => $date,
                 'dateKey' => $dateKey,
             ];
-        }, $this->historyRepository->findBy(['user' => $user], [], 50));
+        }, $this->historyRepository->findBy(['user' => $user], ['id' => 'DESC'], 50));
 
         $lastId = $logs[0]['id'] ?? 0;
 
@@ -61,12 +58,9 @@ class LogMenu extends AbstractController
     }
 
     #[Route('/last', name: 'menu_last', methods: ['GET'])]
-    public function last(): Response
+    public function last(#[CurrentUser] User $user): Response
     {
-        /** @var User $user */
-        $user = $this->getUser();
-
-        $last = $this->historyRepository->findOneBy(['user' => $user]);
+        $last = $this->historyRepository->findOneBy(['user' => $user], ['id' => 'DESC']);
 
         return $this->json([
             'ok' => true,
