@@ -179,7 +179,7 @@ final class SeriesShowController extends AbstractController
 
         $this->seriesService->checkUserSeasons($userEpisodes);
 
-        $seriesAround = $this->seriesService->getSeriesAround($user->getId(), $userSeries->getId(), $locale);
+        $seriesAround = $this->seriesService->getUserSeriesAround($user->getId(), $userSeries->getId(), $locale);
 
         $blurredPosterPath = $this->imageService->blurPoster($series->getPosterPath(), 'series', 8);
 

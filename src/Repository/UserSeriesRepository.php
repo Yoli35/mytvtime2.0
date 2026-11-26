@@ -633,7 +633,7 @@ class UserSeriesRepository extends ServiceEntityRepository
         return $this->getAll($sql, ['userId' => $userId], ['userId' => ParameterType::INTEGER]);
     }
 
-    public function getSeriesAround(int $userId, int $userSeriesId, string $locale): array
+    public function getUserSeriesAround(int $userId, int $userSeriesId, string $locale): array
     {
         $params = [
             'userId' => $userId,
@@ -676,7 +676,7 @@ class UserSeriesRepository extends ServiceEntityRepository
         return $this->getAll($sql, $params, $types);
     }
 
-    public function getFirstSeries(int $userId, string $locale): array
+    public function getFirstUserSeries(int $userId, string $locale): array
     {
         $params = [
             'userId' => $userId,
@@ -704,7 +704,7 @@ class UserSeriesRepository extends ServiceEntityRepository
         return $this->getAll($sql, $params, $types);
     }
 
-    public function getLastSeries(int $userId, string $locale): array
+    public function getLastUserSeries(int $userId, string $locale): array
     {
         $params = [
             'userId' => $userId,
