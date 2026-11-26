@@ -1,17 +1,58 @@
-<div class="mail" style="background: #0000001c url('{{ series.backgroundUrl }}'); background-size: cover;">
-    <h1>{{ title|trans }}</h1>
-    <h2>
-        {{ 'From'|trans }}: {{ user.username }} ({{ user.id }}) - {{ user.email }}<br>
-    </h2>
-    <div class="poster">
-        <img src="{{ series.posterUrl }}" alt="{{ series.posterAlt }}">
-    </div>
-    <div class="series">
-        <div class="backdrop">
-            <img src="{{ series.backdropUrl }}" alt="{{ series.backdropAlt }}">
-        </div>
-        <div class="name">{{ series.name }}{% if series.localizedName %} ({{ series.localizedName }}){% endif %}</div>
-        <h4>{{ 'Availability'|trans }} → {{ series.firstAirDate|format_date('relative_long')|capitalize }}</h4>
-        <p>{{ series.overview }}</p>
-    </div>
-</div>
+{#
+    Mail « Nouvelle série ».
+    Mise en page en tableaux + styles inline : les clients mail ignorent les feuilles de style externes,
+    flex, aspect-ratio et les variables CSS.
+    Couleurs : --orange-10 = hsl(32, 76%, 10%) ≈ #2d1a06, --orange-100 = #ffffff
+#}
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color: transparent; margin: 0; padding: 0;">
+    <tr>
+        <td align="center" style="padding: 1rem 0;">
+            <table role="presentation" width="640" cellpadding="0" cellspacing="0" border="0"
+                   {% if series.backgroundUrl %}background="{{ series.backgroundUrl }}"{% endif %}
+                   style="width: 100%; max-width: 640px; background-color: #2d1a06;{% if series.backgroundUrl %} background-image: url('{{ series.backgroundUrl }}'); background-position: center; background-size: cover;{% endif %} box-shadow: 0 0 16px #2d1a06; color: #ffffff; font-family: Helvetica, Arial, sans-serif;">
+                <tr>
+                    <td style="padding: 32px; background-color: rgba(0, 0, 0, .11);">
+                        <h1 style="margin: 0 0 16px; font-size: 28px; font-weight: 700; color: #ffffff;">{{ title|trans }}</h1>
+                        <h2 style="margin: 0 0 16px; font-size: 18px; font-weight: 400; color: #ffffff;">
+                            {{ 'From'|trans }}: {{ user.username }} ({{ user.id }}) - <a href="mailto:{{ user.email }}" style="color: #ffffff;">{{ user.email }}</a>
+                        </h2>
+
+                        {% if series.posterUrl %}
+                            <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+                                <tr>
+                                    <td align="center" style="padding: 0 0 16px;">
+                                        <img src="{{ series.posterUrl }}" alt="{{ series.posterAlt }}" width="288"
+                                             style="display: block; width: 50%; max-width: 288px; height: auto; border: 0; border-radius: 16px; box-shadow: 0 0 16px rgba(45, 26, 6, .2);">
+                                    </td>
+                                </tr>
+                            </table>
+                        {% endif %}
+
+                        {% if series.backdropUrl %}
+                            <img src="{{ series.backdropUrl }}" alt="{{ series.backdropAlt }}" width="576"
+                                 style="display: block; width: 100%; max-width: 576px; height: auto; border: 0; border-radius: 16px; margin: 0 0 16px;">
+                        {% endif %}
+
+                        <div style="font-size: 24px; font-weight: 500; margin: 0 0 16px; color: #ffffff;">
+                            {{ series.name }}{% if series.localizedName and series.localizedName != series.name %} ({{ series.localizedName }}){% endif %}
+                        </div>
+                        {% if series.firstAirDate %}
+                            <h4 style="margin: 0 0 16px; font-size: 16px; font-weight: 600; color: #ffffff;">
+                                {{ 'Availability'|trans }} → {{ series.firstAirDate|format_date('relative_long')|capitalize }}
+                            </h4>
+                        {% endif %}
+                        {% set overview = series.localizedOverview ?: series.overview %}
+                        {% if overview %}
+                            <p style="margin: 0; font-size: 16px; font-weight: 300; line-height: 1.5; color: #ffffff;">{{ overview|nl2br }}</p>
+                        {% endif %}
+                        {% if series.id is defined %}
+                            <p style="margin: 24px 0 0; font-size: 12px; color: #ffffff; opacity: .7;">
+                                IDs : {{ series.id }}{% if series.userSeriesId %} / {{ series.userSeriesId }}{% endif %}
+                            </p>
+                        {% endif %}
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+</table>

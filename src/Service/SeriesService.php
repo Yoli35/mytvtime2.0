@@ -41,6 +41,7 @@ use Psr\Log\LoggerInterface as MonologLogger;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Bundle\FrameworkBundle\Controller\ControllerHelper;
 use Symfony\Component\DependencyInjection\Attribute\AutowireMethodOf;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
@@ -77,6 +78,7 @@ readonly class SeriesService
         private MailerInterface                   $mailer,
         private NetworkRepository                 $networkRepository,
         private ProviderService                   $providerService,
+        private RequestStack                      $requestStack,
         private SeasonService                     $seasonService,
         private SeriesBroadcastScheduleRepository $seriesBroadcastScheduleRepository,
         private SeriesImageRepository             $seriesImageRepository,
@@ -419,7 +421,7 @@ readonly class SeriesService
         }
 
         if (!$alreadyAdded) {
-            $this->sendMail('Nouvelle série', $this->prepareMail($userSeries, $result['localizedName'], $result['localizedOverview']), $userSeries);
+            $this->sendMail('New addition', $this->prepareMail($userSeries, $result['localizedName'], $result['localizedOverview']), $userSeries, $result['localizedName'], $result['localizedOverview']);
         }
 
         $firstAirDate = $tv['first_air_date'] ? $this->dateService->newDateImmutable($tv['first_air_date'], 'Europe/Paris', true) : null;
@@ -518,25 +520,70 @@ readonly class SeriesService
         return $message;
     }
 
-    public function sendMail(string $title, ContactMessage $message, UserSeries $userSeries): void
+    public function sendMail(string $title, ContactMessage $message, UserSeries $userSeries, ?string $localizedName = null, ?string $localizedOverview = null): void
     {
         $this->contactMessageRepository->save($message, true);
+
+        $context = $this->getNewSeriesMailContext($userSeries->getUser(), $userSeries->getSeries(), $localizedName, $localizedOverview, $this->getAppUrl(), $userSeries);
+        $context['title'] = $title;
 
         $mail = new TemplatedEmail()
             ->from($message->getEmail())
             ->to('contact@mytvtime.fr')
             ->subject($this->translator->trans('Contact form') . ' - ' . $message->getSubject())
-            ->htmlTemplate('emails/contact.html.twig')
-            ->context([
-                'title' => $title,
-                'data' => $message,
-            ])
+            ->htmlTemplate('emails/new_series.html.twig')
+            ->context($context)
             ->locale('fr');
         try {
             $this->mailer->send($mail);
         } catch (TransportExceptionInterface) {
             $this->logger->error("Error sending email (serie {$userSeries->getSeries()->getTmdbId()}) new addition by {$userSeries->getUser()->getUsername()})");
         }
+    }
+
+    /**
+     * Données du template emails/new_series.html.twig (mail envoyé et aperçu ToolsController::cssMail).
+     * Les URLs doivent être absolues pour être affichées par les clients mail.
+     */
+    public function getNewSeriesMailContext(User $user, Series $series, ?string $localizedName, ?string $localizedOverview, string $appUrl, ?UserSeries $userSeries = null): array
+    {
+        $appUrl = rtrim($appUrl, '/');
+        $posterPath = $series->getPosterPath();
+        $backdropPath = $series->getBackdropPath();
+        $blurredPoster = $this->imageService->blurPoster($posterPath, 'series', 8);
+        $name = $localizedName ?: $series->getName();
+
+        return [
+            'title' => 'New addition',
+            'user' => [
+                'id' => $user->getId(),
+                'username' => $user->getUsername(),
+                'email' => $user->getEmail(),
+            ],
+            'series' => [
+                'id' => $series->getId(),
+                'userSeriesId' => $userSeries?->getId(),
+                'name' => $series->getName(),
+                'localizedName' => $localizedName,
+                'firstAirDate' => $series->getFirstAirDate(),
+                'overview' => $series->getOverview(),
+                'localizedOverview' => $localizedOverview,
+                'backgroundUrl' => $blurredPoster ? $appUrl . '/series/posters_blurred' . $blurredPoster : null,
+                'posterUrl' => $posterPath ? $appUrl . '/series/posters' . $posterPath : null,
+                'posterAlt' => $name,
+                'backdropUrl' => $backdropPath ? $appUrl . '/series/backdrops' . $backdropPath : null,
+                'backdropAlt' => $name,
+            ],
+        ];
+    }
+
+    private function getAppUrl(): string
+    {
+        $request = $this->requestStack->getCurrentRequest();
+        if ($request) {
+            return $request->getSchemeAndHttpHost();
+        }
+        return $_SERVER['DEFAULT_URI'] ?? $_ENV['DEFAULT_URI'] ?? 'https://mytvtime.fr';
     }
 
     /**
@@ -865,9 +912,9 @@ readonly class SeriesService
         return $translation;
     }
 
-    public function getSeriesAround(int $userId, int $userSeriesId, string $locale): array
+    public function getUserSeriesAround(int $userId, int $userSeriesId, string $locale): array
     {
-        $seriesAround = $this->userSeriesRepository->getSeriesAround($userId, $userSeriesId, $locale);
+        $seriesAround = $this->userSeriesRepository->getUserSeriesAround($userId, $userSeriesId, $locale);
         $previousSeries = null;
         $nextSeries = null;
         if (count($seriesAround) == 2) {
@@ -876,10 +923,33 @@ readonly class SeriesService
         }
         if (count($seriesAround) == 1 and $seriesAround[0]['id'] < $userSeriesId) {
             $previousSeries = $seriesAround[0];
-            $nextSeries = $this->userSeriesRepository->getFirstSeries($userId, $locale)[0];
+            $nextSeries = $this->userSeriesRepository->getFirstUserSeries($userId, $locale)[0];
         }
         if (count($seriesAround) == 1 and $seriesAround[0]['id'] > $userSeriesId) {
-            $previousSeries = $this->userSeriesRepository->getLastSeries($userId, $locale)[0];
+            $previousSeries = $this->userSeriesRepository->getLastUserSeries($userId, $locale)[0];
+            $nextSeries = $seriesAround[0];
+        }
+        return [
+            'previous' => $previousSeries,
+            'next' => $nextSeries,
+        ];
+    }
+
+    public function getSeriesAround(int $id, string $locale): array
+    {
+        $seriesAround = $this->seriesRepository->getSeriesAround($id, $locale);
+        $previousSeries = null;
+        $nextSeries = null;
+        if (count($seriesAround) == 2) {
+            $previousSeries = $seriesAround[0];
+            $nextSeries = $seriesAround[1];
+        }
+        if (count($seriesAround) == 1 and $seriesAround[0]['id'] < $id) {
+            $previousSeries = $seriesAround[0];
+            $nextSeries = $this->seriesRepository->getFirstSeries($locale);
+        }
+        if (count($seriesAround) == 1 and $seriesAround[0]['id'] > $id) {
+            $previousSeries = $this->seriesRepository->getLastSeries($locale);
             $nextSeries = $seriesAround[0];
         }
         return [

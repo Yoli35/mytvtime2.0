@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\User;
 use App\Service\BackgroundService;
 use App\Service\SeriesService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -46,35 +47,24 @@ final class ToolsController extends AbstractController
     #[Route('/css/mail', name: 'css_mail')]
     public function cssMail(Request $request): Response
     {
-        $id = $request->query->get('id', 1);
-        $appUrl = $request->server->get('DEFAULT_URI');
-        $addition = $this->seriesService->getSeries($id, 'fr');
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED');
+        $id = $request->query->getInt('id', 1);
+        /** @var User $user */
+        $user = $this->getUser();
+        $locale = $user->getPreferredLanguage() ?: 'fr';
+        $addition = $this->seriesService->getSeries($id, $locale);
 
-        $series = $addition['series'];
-        $blurredPoster = $addition['blurredPoster'];
-        $localizedName = $addition['localizedName']?->getName();
-        $localizedOverview = $addition['localizedOverview']?->getOverview();
+        $context = $this->seriesService->getNewSeriesMailContext(
+            $user,
+            $addition['series'],
+            $addition['localizedName']?->getName(),
+            $addition['localizedOverview']?->getOverview(),
+            $request->getSchemeAndHttpHost(),
+        );
 
-        return $this->render('tools/css_mail.html.twig', [
+        return $this->render('tools/css_mail.html.twig', $context + [
             'background' => $this->backgroundService->getRandomBackgroundImage(),
-            'title' => 'New addition',
-            'user' => [
-                'id' => 1,
-                'username' => 'iboy',
-                'email' => 'iboy35@gmail.com'
-            ],
-            'series' => [
-                'name' => $series->getName(),
-                'localizedName' => $localizedName,
-                'firstAirDate' => $series->getFirstAirDate(),
-                'overview' => $series->getOverview(),
-                'localizedOverview' => $localizedOverview,
-                'backgroundUrl' => $appUrl . '/series/posters_blurred' . $blurredPoster,
-                'posterUrl' => $appUrl . '/series/posters' . $series->getPosterPath(),
-                'posterAlt' => 'Shinji: Double Shuffle',
-                'backdropUrl' => $appUrl . '/series/backdrops' . $series->getBackdropPath(),
-                'backdropAlt' => 'Shinji: Double Shuffle',
-            ],
+            'around' => $this->seriesService->getSeriesAround($id, $locale),
         ]);
     }
 }

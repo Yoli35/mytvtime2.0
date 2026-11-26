@@ -122,6 +122,89 @@ class SeriesRepository extends ServiceEntityRepository
         return $this->getAll($sql, $params, $types);
     }
 
+    public function getSeriesAround(int $id, string $locale): array
+    {
+        $params = [
+            'id' => $id,
+            'locale' => $locale,
+        ];
+        $types = [
+            'id' => ParameterType::INTEGER,
+            'locale' => ParameterType::STRING,
+        ];
+
+        $sql = <<<SQL
+                SELECT
+                    s.`id` AS id,
+                    IF(sln.`id`, sln.`name`, s.`name`) AS name,
+                    s.`poster_path` AS poster_path
+                FROM `series` s
+                    LEFT JOIN `series_localized_name` sln ON sln.`series_id`=s.`id` AND sln.`locale`=:locale
+                WHERE (s.`id`=(
+                                SELECT s1.`id` AS previoud_id
+                                FROM `series` s1
+                                WHERE s1.`id` < :id
+                                ORDER BY id DESC
+                                LIMIT 1
+                            )
+                  OR s.`id`=(
+                                SELECT s2.`id` AS previoud_id
+                                FROM `series` s2
+                                WHERE s2.`id` > :id
+                                ORDER BY id
+                                LIMIT 1
+                            ))
+            SQL;
+
+        return $this->getAll($sql, $params, $types);
+    }
+
+    public function getFirstSeries(string $locale): array
+    {
+        $params = [
+            'locale' => $locale,
+        ];
+        $types = [
+            'locale' => ParameterType::STRING,
+        ];
+
+        $sql = <<<SQL
+                SELECT
+                    s.`id` AS id,
+                    IF(sln.`id`, sln.`name`, s.`name`) AS name,
+                    IF(sln.`id`, sln.`slug`, s.`slug`) AS slug,
+                    s.`poster_path` AS poster_path
+                FROM `series` s
+                    LEFT JOIN `series_localized_name` sln ON sln.`series_id`=s.`id` AND sln.`locale` = :locale
+                ORDER BY s.`id` LIMIT 1
+            SQL;
+
+        return $this->getOne($sql, $params, $types);
+    }
+
+    public function getLastSeries(string $locale): array
+    {
+        $params = [
+            'locale' => $locale,
+        ];
+        $types = [
+            'locale' => ParameterType::STRING,
+        ];
+
+        $sql = <<<SQL
+                SELECT
+                    s.`id` AS id,
+                    IF(sln.`id`, sln.`name`, s.`name`) AS name,
+                    IF(sln.`id`, sln.`slug`, s.`slug`) AS slug,
+                    s.`poster_path` AS poster_path
+                FROM `series` s
+                    LEFT JOIN `series_localized_name` sln ON sln.`series_id`=s.`id` AND sln.`locale` = :locale
+                ORDER BY s.`id` DESC LIMIT 1
+            SQL;
+
+        return $this->getOne($sql, $params, $types);
+    }
+
     public function userSeriesInfos(User $user): array
     {
         $userId = $user->getId();
