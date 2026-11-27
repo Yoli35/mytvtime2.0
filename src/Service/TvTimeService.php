@@ -119,7 +119,7 @@ readonly class TvTimeService
     public function getTvTimeData(?User $user, string $locale): array
     {
         $userId = $user->getId();
-        $userAdmin = array_key_exists('ROLE_ADMIN', $user->getRoles());
+        $userAdmin = array_find($user->getRoles(), fn($role) => $role === 'ROLE_ADMIN');
         $settings = $this->getTvTimeSettings($user);
         $providerUrl = $this->imageConfiguration->getUrl('logo_sizes', 3);
 
