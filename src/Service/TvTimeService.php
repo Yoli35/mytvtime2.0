@@ -119,6 +119,7 @@ readonly class TvTimeService
     public function getTvTimeData(?User $user, string $locale): array
     {
         $userId = $user->getId();
+        $userAdmin = array_key_exists('ROLE_ADMIN', $user->getRoles());
         $settings = $this->getTvTimeSettings($user);
         $providerUrl = $this->imageConfiguration->getUrl('logo_sizes', 3);
 
@@ -134,6 +135,7 @@ readonly class TvTimeService
             $content = [];
             $ids = [];
             $tmdbIds = [];
+            $users = [];
 
             $upToDateSeries = $this->userSeriesRepository->findUpToDateSeries($userId, $sort, $locale);
 
@@ -156,6 +158,12 @@ readonly class TvTimeService
                         array_column($content['upToDateInAWhile']['items'], 'id')
                     )
                 );
+                if ($userAdmin) {
+                    $availableIds = array_column($content['available']['items'], 'id');
+                    foreach ($this->userSeriesRepository->findUsersInAvailableSeries($userId, $availableIds) as $u) {
+                        $users[$u['seriesId']][] = $u;
+                    }
+                }
 
                 $todaySeries = array_filter($content['upToDate']['items'], fn($s) => $s['remainingDays'] == 0);
                 if (!empty($todaySeries)) {
@@ -205,6 +213,7 @@ readonly class TvTimeService
                 'content' => $content,
                 'watchLinks' => $watchLinks,
                 'tmdbIds' => $tmdbIds,
+                'users' => $users,
             ];
             $noVoteArr = $lastEpisodeWithNoVoteArr;
         } else {
@@ -213,6 +222,7 @@ readonly class TvTimeService
                 'content' => [],
                 'watchLinks' => [],
                 'tmdbIds' => [],
+                'users' => [],
             ];
         }
 

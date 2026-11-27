@@ -73,6 +73,19 @@
                         <div class="duration">{% if series.episode_runtime %}{{ series.episode_runtime }} minutes{% endif %}</div>
                     </div>
                 {% endif %}
+                {% if 'ROLE_ADMIN' in app.user.roles and next == 1 %}
+                    <div class="series-users">
+                        {% for u in users[series.id] ?? [] %}
+                            <div class="series-user" data-title="{{ u.username }}">
+                                {% if u.avatar %}
+                                    <img src="/images/users/avatars/{{ u.avatar }}" alt="{{ u.username }}">
+                                {% else %}
+                                    <img src="https://i.pravatar.cc/450?img={{ u.id }}" alt="{{ u.username }}'s avatar">
+                                {% endif %}
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
             </div>
 
             {% set wps = watchLinks|filter((wp) => wp.seriesId == series.id and (wp.seasonNumber == -1 or wp.seasonNumber == series.season_number)) %}

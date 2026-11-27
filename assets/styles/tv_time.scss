@@ -741,6 +741,10 @@ body.screen-saver {
                                         overflow-y: auto;
                                         width: min(100%, 70ch);
                                     }
+
+                                    .series-users {
+                                        display: none;
+                                    }
                                 }
 
                                 .watch-links {
@@ -847,6 +851,35 @@ body.screen-saver {
 
                                         .overview {
                                             display: block;
+                                        }
+
+                                        &:hover:has(.series-users) {
+                                            position: relative;
+
+                                            .series-users {
+                                                backdrop-filter: blur(1rem);
+                                                border-radius: .5rem;
+                                                bottom: 0;
+                                                display: flex;
+                                                gap: .5rem;
+                                                right: 0;
+                                                max-width: 100%;
+                                                overflow-x: auto;
+                                                position: absolute;
+
+                                                .series-user {
+                                                    height: 2.5rem;
+                                                    width: 2.5rem;
+
+                                                    img {
+                                                        border-radius: 50%;
+                                                        border: 2px solid;
+                                                        height: 100%;
+                                                        object-fit: cover;
+                                                        width: 100%;
+                                                    }
+                                                }
+                                            }
                                         }
                                     }
 
@@ -1427,6 +1460,7 @@ body.screen-saver {
         }
     }
 }
+
 @keyframes tv-time-loader-spin {
     to {
         rotate: 1turn;

@@ -35,6 +35,7 @@ final class TvTimeController extends AbstractController
             'series' => $data['series']['content'],
             'watchLinks' => $data['series']['watchLinks'],
             'tmdbIds' => $data['series']['tmdbIds'],
+            'users' => $data['series']['users'],
             'movies' => $data['movies'],
             'coming' => $data['coming'],
             'noVoteArr' => $data['noVoteArr'],

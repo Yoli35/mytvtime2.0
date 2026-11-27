@@ -1032,6 +1032,19 @@ class UserSeriesRepository extends ServiceEntityRepository
         return $this->getAll($sql, ['id' => $userId, 'locale' => $locale], ['id' => Types::INTEGER, 'locale' => Types::STRING]);
     }
 
+    public function findUsersInAvailableSeries(int $userId, array $idList):array
+    {
+        $sql = <<<SQL
+            -- Utilisateurs regardant aussi les séries dont l'id est inclus dans [ids]
+            SELECT us.series_id AS seriesId, u.id, u.username, u.avatar
+            FROM user u
+                INNER JOIN user_series us ON us.user_id = u.id
+            WHERE u.id <> :userId AND us.series_id IN (:list)
+        SQL;
+
+        return $this->getAll($sql, ['userId' => $userId, 'list' => $idList], ['userId' => ParameterType::INTEGER, 'list' => ArrayParameterType::INTEGER]);
+    }
+
     public function findSpecialEpisodes(int $userId, int $week, string $label, string  $locale): array
     {
         $sql = <<<SQL
