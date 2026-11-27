@@ -172,16 +172,15 @@ export class Map {
                 const moveHandler = (e) => {
                     const diff = e.clientY - startY;
                     mapDiv.style.height = startHeight + diff + 'px';
+                    this.map?.resize();
                 }
-                document.addEventListener('mousemove', moveHandler);
-                document.addEventListener('mouseup', () => {
+                const upHandler = () => {
                     document.removeEventListener('mousemove', moveHandler);
-                    self.handleDiv.removeEventListener('mousedown', heightHandle);
-
-                    if (self.map) self.map.remove();
-                    initializeMap();
-                    initializeMapHandle();
-                });
+                    document.removeEventListener('mouseup', upHandler);
+                    this.map?.resize();
+                };
+                document.addEventListener('mousemove', moveHandler);
+                document.addEventListener('mouseup', upHandler);
             }
             this.handleDiv.classList.add('height-handle');
             mapboxglControlContainerDiv.appendChild(this.handleDiv);

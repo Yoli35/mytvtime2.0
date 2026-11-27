@@ -84,7 +84,7 @@ export class Location {
             let currentImages = [];
             imageDivs.forEach(function (imageDiv, imageDivIndex) {
                 if (!imageDiv.classList.contains('help-text')) {
-                    const listDiv = imageDiv.querySelector('.list');
+                    const listDiv = imageDiv.querySelector('.image-list');
                     if (listDiv) {
                         const imageList = Array.from(listDiv.querySelectorAll('img'));
                         if (imageList.length > 1) {
@@ -92,8 +92,8 @@ export class Location {
                                 return {src: image.src};
                             });
                             const imageImg = imageDiv.querySelector('img');
-                            const leftArrow = imageDiv.querySelector('.arrow.left');
-                            const rightArrow = imageDiv.querySelector('.arrow.right');
+                            const leftArrow = imageDiv.closest("li").querySelector('.tool-left');
+                            const rightArrow = imageDiv.closest("li").querySelector('.tool-right');
                             currentImages[imageDivIndex] = 0;
 
                             leftArrow.addEventListener('click', function () {
@@ -112,13 +112,13 @@ export class Location {
                             });
                         }
                     }
-                    const editButton = imageDiv.querySelector('.edit');
+                    const editButton = imageDiv.closest("li").querySelector('.tool-edit');
                     editButton.addEventListener('click', function () {
                         const locationId = this.getAttribute('data-loc-id');
                         const location = self.filmingLocations.find(location => location.id === parseInt(locationId));
                         self.openLocationPanel('update', location, self.translations['Update']);
                     });
-                    const editImagesButton = imageDiv.querySelector('.edit-images');
+                    const editImagesButton = imageDiv.closest("li").querySelector('.tool-images');
                     editImagesButton?.addEventListener('click', function () {
                         const locationId = this.getAttribute('data-loc-id');
                         const location = self.filmingLocations.find(location => location.id === parseInt(locationId));

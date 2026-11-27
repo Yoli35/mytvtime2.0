@@ -28,16 +28,13 @@
                     </div>
                 </li>
                 {% for location in locations %}
-                    <li class="location-item" data-loc-id="{{ location.id }}">
+                    <li class="location-item" data-loc-id="{{ location.id }}" style="--location-anchor: --location-{{ location.id }}">
                         <div class="series-location-image" data-title="{{ location.title }}" data-position="0">
                             <img src="/images/map{{ location.still_path }}" alt="{{ location.title }}">
-                            {% if location.filmingLocationImages|length-1 %}
+                            {% if location.filmingLocationImages|length > 1 %}
                                 <div class="count">
                                     {{ location.filmingLocationImages|length }}
                                 </div>
-                                <div class="edit-images" data-loc-id="{{ location.id }}">{{ ux_icon('mdi:images') }}</div>
-                                <div class="arrow left">{{ ux_icon('mdi:arrow-left') }}</div>
-                                <div class="arrow right">{{ ux_icon('mdi:arrow-right') }}</div>
                                 <div class="image-list" data-still-id="{{ location.still_id }}">
                                     {% for i in location.filmingLocationImages %}
                                         <img data-id="{{ i.id }}" src="/images/map{{ i.path }}" alt="{{ location.title ~ ' - ' ~ 'image'|trans ~ ' #' ~ (loop.index + 1) }}">
@@ -53,10 +50,15 @@
                                     {{ 'S%02d'|format(location.season_number) }}
                                 </div>
                             {% endif %}
-                            <div class="edit" data-loc-id="{{ location.id }}">{{ ux_icon('mdi:pencil') }}</div>
                         </div>
                         <div class="location target-map" data-loc-id="{{ location.id }}" data-lat="{{ location.latitude }}" data-lng="{{ location.longitude }}">
                             {{ location.location }}
+                        </div>
+                        <div class="series-location-image-tools">
+                            <div class="tool-edit" data-loc-id="{{ location.id }}">{{ ux_icon('mdi:pencil') }}</div>
+                            <div class="tool-images" data-loc-id="{{ location.id }}">{{ ux_icon('mdi:images') }}</div>
+                            <div class="tool-left">{{ ux_icon('mdi:arrow-left') }}</div>
+                            <div class="tool-right">{{ ux_icon('mdi:arrow-right') }}</div>
                         </div>
                     </li>
                 {% endfor %}

@@ -323,6 +323,7 @@
     justify-content: flex-end;
     overflow: hidden;
     padding: 8px;
+    position: relative; /* bloc conteneur de .series-location-image-tools (hors du scroller .locations) */
 
     &:has(h1) {
         margin-block-start: 4rem;
@@ -390,6 +391,16 @@
                 border-radius: .375rem;
                 display: flex;
                 flex-direction: column;
+                /* Pas de position: relative ici : la barre d'outils doit avoir
+                   .series-map comme bloc conteneur pour ne pas être rognée par .locations.*/
+                anchor-name: var(--location-anchor);
+
+                &:hover {
+                    .series-location-image-tools {
+                        display: flex;
+                        opacity: 1;
+                    }
+                }
 
                 .series-location-image {
                     aspect-ratio: 16/9;
@@ -557,6 +568,42 @@
                         color: var(--ardoise-10);
                         font-weight: 500;
                         gap: 1rem;
+                    }
+                }
+
+                .series-location-image-tools {
+                    backdrop-filter: blur(1rem);
+                    background-color: hsl(from var(--orange-80) h s l / .25);
+                    border-radius: .5rem;
+                    border: .25rem solid hsl(from var(--orange-80) h s l / .25);
+                    display: none;
+                    gap: 1rem;
+                    height: 4rem;
+                    margin-block-end: -.25rem; /* léger chevauchement : pas de « trou » qui ferait perdre le :hover */
+                    opacity: 0;
+                    padding: .5rem;
+                    position: absolute;
+                    position-anchor: var(--location-anchor);
+                    position-area: top;
+                    position-visibility: anchors-visible;
+                    z-index: 1001; /* au-dessus de .height-handle (z-index: 1000) */
+                    transition: opacity .25s ease-in-out;
+
+                    > div {
+                        align-items: center;
+                        border-radius: .25rem;
+                        border: .25rem solid hsl(from var(--orange-80) h s l / .75);
+                        color: var(--orange);
+                        cursor: pointer;
+                        display: flex;
+                        height: 2.5rem;
+                        justify-content: center;
+                        width: 2.5rem;
+
+                        svg {
+                            height: 2rem;
+                            width: 2rem;
+                        }
                     }
                 }
             }
