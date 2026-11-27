@@ -84,6 +84,8 @@ export class Location {
             let currentImages = [];
             imageDivs.forEach(function (imageDiv, imageDivIndex) {
                 if (!imageDiv.classList.contains('help-text')) {
+                    const leftArrow = imageDiv.closest("li").querySelector('.tool-left');
+                    const rightArrow = imageDiv.closest("li").querySelector('.tool-right');
                     const listDiv = imageDiv.querySelector('.image-list');
                     if (listDiv) {
                         const imageList = Array.from(listDiv.querySelectorAll('img'));
@@ -92,8 +94,6 @@ export class Location {
                                 return {src: image.src};
                             });
                             const imageImg = imageDiv.querySelector('img');
-                            const leftArrow = imageDiv.closest("li").querySelector('.tool-left');
-                            const rightArrow = imageDiv.closest("li").querySelector('.tool-right');
                             currentImages[imageDivIndex] = 0;
 
                             leftArrow.addEventListener('click', function () {
@@ -111,6 +111,9 @@ export class Location {
                                 imageImg.src = imageSrcLists[imageDivIndex][i].src;
                             });
                         }
+                    } else {
+                        leftArrow.style.display = 'none';
+                        rightArrow.style.display = 'none';
                     }
                     const editButton = imageDiv.closest("li").querySelector('.tool-edit');
                     editButton.addEventListener('click', function () {
