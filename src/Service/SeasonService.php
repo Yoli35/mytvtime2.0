@@ -27,12 +27,12 @@ readonly class SeasonService
     /**
      * Saison (et ses épisodes) depuis la table season, mise à jour depuis TheMovieDB si absente ou trop ancienne.
      */
-    public function getSeason(Series $series, int $seasonNumber, string $locale): ?Season
+    public function getSeason(Series $series, int $seasonNumber, string $locale, bool $force = false): ?Season
     {
         $key = $series->getId() . '-' . $seasonNumber;
         $season = $this->seasonRepository->findWithEpisodes([['seriesId' => $series->getId(), 'seasonNumber' => $seasonNumber]], $locale)[$key] ?? null;
 
-        if (!$this->isFresh($season)) {
+        if ($force || !$this->isFresh($season)) {
             $season = $this->refreshSeason($series, $seasonNumber, $locale, $season);
             $this->seasonRepository->flush();
         }

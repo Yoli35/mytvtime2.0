@@ -4501,7 +4501,8 @@ aside:has(.episode__cards) {
         width: 2rem;
     }
 
-    .quick-future, .future-future {
+    /*.quick-future, .future-future {*/
+    .quick-link {
         &.first {
             border-bottom-left-radius: 5rem;
             border-top-left-radius: 5rem;

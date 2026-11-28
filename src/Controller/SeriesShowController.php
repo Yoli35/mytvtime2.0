@@ -401,9 +401,6 @@ final class SeriesShowController extends AbstractController
             }
         }
 
-//        $tvKeywords = json_decode($this->tmdbService->getTvKeywords($series->getTmdbId()), true);
-//        $tvExternalIds = json_decode($this->tmdbService->getTvExternalIds($series->getTmdbId()), true);
-
         $tv = json_decode($this->tmdbService->getTv($series->getTmdbId(), 'en-US', ['external_ids']), true);
         if ($series->getNumberOfEpisode() != $tv['number_of_episodes'] || $series->getNumberOfSeason() != $tv['number_of_seasons']) {
             $this->addAdminFlash('info', 'The number of episodes has changed, the series has been updated.');
@@ -733,10 +730,9 @@ final class SeriesShowController extends AbstractController
             $seasonEpisodes[] = $episode;
         }
 
-        $newEpisodeLabels = array_values(array_map(
-            fn($episode) => sprintf('S%02dE%02d', $episode['season_number'], $episode['episode_number']),
-            array_filter($seasonEpisodes, fn($episode) => $episode['new'] ?? false)
-        ));
+        $newEpisodeLabels = array_filter($seasonEpisodes, fn($episode) => $episode['new'] ?? false)
+                |> (fn($x) => array_map(fn($episode) => sprintf('S%02dE%02d', $episode['season_number'], $episode['episode_number']), $x))
+                |> array_values(...);
 
         if (count($newEpisodeLabels)) {
             $this->seriesService->announceNewEpisodes($newEpisodeLabels);
@@ -994,13 +990,11 @@ final class SeriesShowController extends AbstractController
 
     private function getSeriesQuickLinks(User $user, array $seasons): array
     {
-//        dump($seasons);
         if (!count($seasons)) {
             return ['items' => [], 'count' => 0, 'itemPerLine' => 0, 'lineCount' => 0];
         }
         $now = $this->now($user);
         $nowString = $now->format('Y-m-d H:i');
-
         $quickLinks = array_map(function ($link) use ($nowString) {
             if (!$link['air_date']) {
                 $class = "quick-link future";
@@ -1020,38 +1014,7 @@ final class SeriesShowController extends AbstractController
             ];
         }, $seasons);
 
-        $count = count($quickLinks);
-        if ($count <= 10) {
-            $quickLinks[0]['class'] .= ' first';
-            $quickLinks[$count - 1]['class'] .= ' last';
-            $itemPerLine = $count;
-            $lineCount = 1;
-        } else {
-            if ($count % 2 == 0)
-                $itemPerLine = $count / 2;
-            else {
-                $quickLinks[] = ['name' => null, 'link_number' => null, 'air_date' => null, 'watched' => null, 'future' => null, 'class' => 'quick-link empty'];
-                $itemPerLine = ($count + 1) / 2;
-                $count += 1;
-            }
-            if ($itemPerLine > 10) {
-                if ($count % 19 == 0) $itemPerLine = 19;
-                if ($count % 17 == 0) $itemPerLine = 17;
-                if ($count % 15 == 0) $itemPerLine = 15;
-                if ($count % 13 == 0) $itemPerLine = 13;
-                if ($count % 11 == 0) $itemPerLine = 11;
-                if ($count % 10 == 0) $itemPerLine = 10;
-                if ($count % 9 == 0) $itemPerLine = 9;
-                if ($count % 8 == 0) $itemPerLine = 8;
-                if ($count % 7 == 0) $itemPerLine = 7;
-            }
-            $lineCount = ceil($count / $itemPerLine);
-            $quickLinks[0]['class'] .= ' top-left';
-            $quickLinks[$itemPerLine - 1]['class'] .= ' top-right';
-            $quickLinks[$count - $itemPerLine]['class'] .= ' bottom-left';
-            $quickLinks[$count - 1]['class'] .= ' bottom-right';
-        }
-        return ['items' => $quickLinks, 'count' => $count, 'itemPerLine' => $itemPerLine, 'lineCount' => $lineCount];
+        return $this->getQuickLinks($quickLinks);
     }
 
     private function getSeasonQuickLinks(User $user, array $episodes): array
@@ -1090,6 +1053,10 @@ final class SeriesShowController extends AbstractController
             ];
         }, $episodes);
 
+        return $this->getQuickLinks($quickLinks);
+    }
+
+    private function getQuickLinks(array $quickLinks): array{
         $count = count($quickLinks);
         if ($count <= 10) {
             $quickLinks[0]['class'] .= ' first';
@@ -1121,6 +1088,7 @@ final class SeriesShowController extends AbstractController
             $quickLinks[$count - $itemPerLine]['class'] .= ' bottom-left';
             $quickLinks[$count - 1]['class'] .= ' bottom-right';
         }
+
         return ['items' => $quickLinks, 'count' => $count, 'itemPerLine' => $itemPerLine, 'lineCount' => $lineCount];
     }
 
