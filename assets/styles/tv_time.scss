@@ -478,6 +478,10 @@ body.screen-saver {
             .wrapper {
                 position: relative;
 
+                .block {
+                    position: relative;
+                }
+
                 .divider {
                     align-items: center;
                     background-color: var(--orange);
@@ -487,8 +491,11 @@ body.screen-saver {
                     height: .25rem;
                     justify-content: center;
                     margin-block: 1.5rem;
+                    position: sticky;
                     text-align: center;
+                    top: 10rem;
                     width: 100%;
+                    z-index: 1;
 
                     span {
                         backdrop-filter: blur(0.75rem);
